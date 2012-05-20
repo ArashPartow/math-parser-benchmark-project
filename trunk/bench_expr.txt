@@ -1,0 +1,85 @@
+#
+# trivial expressions and expressions eliminated by
+# constant folding
+1
+a
+sin((1+2/2*3)*4^5)+cos(6*pi)
+
+#
+# Variablen und Variablenzusammenfassung
+#
+# direkte Rückgabe von Variablen Zusammenfassung von Variablen
+# Alle gleichungen hier können auf eine Variable oder einen Term
+# der Form a*x+b mit a,b konstant zurückgeführt werden
+a+1
+a*2
+2*a+1
+(2*a+1)*3
+
+#
+# Polynome / Optimierung von Potenzfunktionen testen
+#
+# Polynomials with integer exponents
+a^2+1
+1+a^2
+1.1*a^2
+1.1*a^2 + 2.2*b^3
+1.1*a^2 + 2.2*b^3 + 3.3*c^4
+
+# Polynome mit floating point exponenten 
+1.1*a^2.01
+1.1*a^2.01 + 2.2*b^3.01
+1.1*a^2.01 + 2.2*b^3.01 + 3.3*c^4.01
+
+#physikalisch relevante gleichungen (variablen sind willkürlich gesetzt)
+# gausskurve
+1/(a*sqrt(2*pi))*e^(-0.5*((b-a)/a)^2)
+
+# hornerschema:
+(((((((7*a+6)*a+5)*a+4)*a+3)*a+2)*a+1)*a+ 0.1)
+7*a^7 + 6*a^6 + 5*a^5 + 4*a^4 + 3*a^3 + 2*a^2 + 1*a^1 + 0.1
+
+# distance calculation
+sqrt(a^2+b^2)
+
+# Overhead of basic function calls
+sin(a)
+sqrt(a)
+abs(a)
+
+# Simple expressions without functions
+a+b
+a+b-c
+a/b/c
+a+b*c
+a*b+c
+a*2+b*2
+a/((a+b)*(a-b))/b
+1-((a*b)+(a/b))-3
+(a+b)*3
+-(b^1.1)
+a+b*(a+b)
+(1+b)*(-3)
+a+b-e*pi/5^6
+a^b/e*pi-5+6
+2*(a+b)
+(a/((((b+(((e*(((((pi*((((3.45*((pi+a)+pi))+b)+b)*a))+0.68)+e)+a)/a))+a)+b))+b)*a)-pi))
+
+# expressions with functions
+a+(cos(b-sin(2/a*pi))-sin(a-cos(2*b/pi)))-b
+sin(a)+sin(b)
+abs(sin(sqrt(a^2+b^2))*255)
+sqrt(a)<sin(8)
+(10+sqrt(a))<(sin(8)^2)
+(b+a/b) * (a-b/a)
+(0.1*a+1)*a+1.1-sin(a)-log(a)/a*3/4
+sin(2 * a) + cos(pi / b)
+1 - sin(2 * a) + cos(pi / b)
+sqrt(1 - sin(2 * a) + cos(pi / b) / 3)
+(a^2 / sin(2 * pi / b)) -a / 2
+1-(a/b*0.5)
+e^log(7*a)
+10^log(3+b)
+(cos(2.41)/b)
+-(sin(pi+a)+1)
+a-(e^(log(7+b)))

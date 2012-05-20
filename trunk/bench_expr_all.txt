@@ -1,0 +1,133 @@
+#
+# triviale Gleichungen
+#
+# direkte Rückgabe von Konstanten und Zusammenfassung von Konstanten
+# Alle gleichungen hier können auf eine Konstante zurückgeführt werden
+1
+#sin((1+2/2*3)*4^5)+cos(6*pi)
+
+#
+# Variablen und Variablenzusammenfassung
+#
+# direkte Rückgabe von Variablen Zusammenfassung von Variablen
+# Alle gleichungen hier können auf eine Variable oder einen Term
+# der Form a*x+b mit a,b konstant zurückgeführt werden
+a
+a+1
+a*2
+2*a+1
+(2*a+1)*3
+
+#
+# Polynome / Optimierung von Potenzfunktionen testen
+#
+# Polynome mit integer exponenten
+1.1*a^2
+1.1*a^2 + 2.2*b^3
+1.1*a^2 + 2.2*b^3 + 3.3*c^4
+1.1*a^2 + 2.2*b^3 + 3.3*c^4 + 3.3*a^5
+# hohe exponenten; zeigt ob die optimiert werden?
+1.1*a^7 + 2.2*b^8
+
+# Polynome mit floating point exponenten 
+# (std::pow ist langsam für float typem)
+1.1*a^2.01
+1.1*a^2.01 + 2.2*b^3.01
+1.1*a^2.01 + 2.2*b^3.01 + 3.3*c^4.01
+1.1*a^2.01 + 2.2*b^3.01 + 3.3*c^4.01 + 4.4*a^5.01
+
+#
+# Optimierungen testen
+#
+# Ausnutzen des Assoziativgesetz 
+# assoziativ
+a+b+c
+a*b*c
+# nicht assoziativ (als referenz)
+a-b-c
+a/b/c
+
+# 
+a^2+1
+1+a^2
+b^2*2
+2*b^2
+
+# Gleichungen, die Mängel in der optimierung sichtbar machen
+# -> muParserSSE beschränkte Registerzahl bremst die 2. Gleichung
+# -> muParser optimierer versagt
+(1*(2*(3*(4*(5*(6*(a+b)))))))
+(1*(2*(3*(4*(5*(6*(7*(a+b))))))))
+
+
+# Gleichungen von Garry Beenes benchmark
+a*2+b*2
+sin(a)+sin(b)
+a^2+b^2
+abs(sin(sqrt(a^2.1+b^2.1))*255)
+abs(sin(sqrt(a^2+b^2))*255)
+abs(sin(sqrt(a*a+b*b))*255)
+
+# http://dabroz.scythe.pl/2010/11/18/quick-data-transformation
+#2+min(a+a+a,1/5)*(2+a*3)
+
+# Gleichungen mit logischen verknüpfungen
+sqrt(a)<sin(8)
+(10+sqrt(a))<(sin(8)^2)
+
+# Gleichungen mit Variablen, ohne Funktionen
+#max(3.33, min(sqrt(1 - sin(2 * x) + cos(pi / y) / 3), 1.11))
+
+
+(b+a/b) * (a-b/a)
+a/((a+b)*(a-b))/b
+1-((a*b)+(a/b))-3
+a+b
+(a+b)*3
+(2 * a + 2 * a)
+-(b^1.1)
+a+b*c
+a*b+c
+a+b*(a+b)
+(1+b)*(-3)
+a+b-e*pi/5^6
+a^b/e*pi-5+6
+2*(a+b)
+
+#1+b-3*4/5^6*(2*(1-5+(3*7^9)*(4+6*7-3)))+12*a
+(a/((((b+(((e*(((((pi*((((3.45*((pi+a)+pi))+b)+b)*a))+0.68)+e)+a)/a))+a)+b))+b)*a)-pi))
+(b+1)*(b+2)*(b+3)*(b+4)*(b+5)*(b+6)*(b+7)*(b+8)*(b+9)*(b+10)*(b+11)*(b+12)
+
+#physikalisch relevante gleichungen (variablen sind willkürlich gesetzt)
+1/(a*sqrt(2*pi))*e^(-0.5*((b-a)/a)^2)
+a+(cos(b-sin(2/a*pi))-sin(a-cos(2*b/pi)))-b
+(((((((7*a+6)*a+5)*a+4)*a+3)*a+2)*a+1)*a+ 0.1)
+7*a^7 + 6*a^6 + 5*a^5 + 4*a^4 + 3*a^3 + 2*a^2 + 1*a^1 + 0.1
+
+# fourierreihe
+#a*(4/pi)*((1 /1)*sin( 2*pi*b*c)+(1 /3)*sin( 6*pi*b*c)+(1 /5)*sin(10*pi*b*c)+(1 /7)*sin(14*pi*b*c)+(1 /9)*sin(18*pi*b*c)+(1/11)*sin(22*pi*b*c)+(1/13)*sin(26*pi*b*c)+(1/15)*sin(30*pi*b*c)+(1/17)*sin(34*pi*b*c)+(1/19)*sin(38*pi*b*c)+(1/21)*sin(42*pi*b*c)+(1/23)*sin(46*pi*b*c)+(1/25)*sin(50*pi*b*c)+(1/27)*sin(54*pi*b*c))
+
+# Gleichungen mit Variablen und Funktionen
+sin(2 * a) + cos(pi / b)
+1 - sin(2 * a) + cos(pi / b)
+sqrt(1 - sin(2 * a) + cos(pi / b) / 3)
+(a^2 / sin(2 * pi / b)) -a / 2
+1-(a/b*0.5)
+e^log(7*a)
+10^log(3+b)
+(cos(2.41)/b)
+-(sin(pi+a)+1)
+a-(e^(log(7+b)))
+#(((-9))-e/(((((((pi-(((-7)+(-3)/4/e))))/(((-5))-2)-((pi+(-0))*(sqrt((e+e))*(-8))*(((-pi)+(-pi)-(-9)*(6*5))/(-e)-e))/2)/((((sqrt(2/(-e)+6)-(4-2))+((5/(-2))/(1*(-pi)+3))/8)*pi*((pi/((-2)/(-6)*1*(-1))*(-6)+(-e)))))/((e+(-2)+(-e)*((((-3)*9+(-e)))+(-9)))))))-((((e-7+(((5/pi-(3/1+pi)))))/e)/(-5))/(sqrt((((((1+(-7))))+((((-e)*(-e)))-8))*(-5)/((-e)))*(-6)-((((((-2)-(-9)-(-e)-1)/3))))/(sqrt((8+(e-((-6))+(9*(-9))))*(((3+2-8))*(7+6+(-5))+((0/(-e)*(-pi))+7)))+(((((-e)/e/e)+((-6)*5)*e+(3+(-5)/pi))))+pi))/sqrt((((9))+((((pi))-8+2))+pi))/e*4)*((-5)/(((-pi))*(sqrt(e)))))-(((((((-e)*(e)-pi))/4+(pi)*(-9)))))))+(-pi)
+
+# Testen auf optimierte Winkelfunktionen und Funktionsaufrufoverhead
+sin(a)
+cos(a)
+tan(a)
+sqrt(a)
+abs(a)
+
+# von mparser
+(0.1*a+1)*a+1.1
+(0.1*a+1)*a+1.1-sin(a)
+(0.1*a+1)*a+1.1-sin(a)-log(a)/a*3/4

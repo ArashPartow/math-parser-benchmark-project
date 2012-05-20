@@ -1,0 +1,557 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Quelldateien\fparser4.4.3">
+      <UniqueIdentifier>{d6f4abb9-fc6a-4461-b2ba-3452e242b368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\muparserx">
+      <UniqueIdentifier>{a9d21e7f-f530-41d7-8baf-d1e1457ec3e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\muParserSSE">
+      <UniqueIdentifier>{052c94d4-8482-4d16-a45e-61a7da300104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\atmsp">
+      <UniqueIdentifier>{9375774e-15fd-46f5-8dd4-53927bc7a76b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\muparser3">
+      <UniqueIdentifier>{e014649f-4e81-4064-a17b-1c98f6784b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\MTParser">
+      <UniqueIdentifier>{325581cd-6788-48c0-9dcf-74c438220890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="Quelldateien\exprtk">
+      <UniqueIdentifier>{ebf21168-5605-4065-bdc7-a4da765fa066}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\muparser2">
+      <UniqueIdentifier>{602171d5-6b33-475c-89c4-a332ae2bd959}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BenchATMSP.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchFParser.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Benchmark.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchMuParserNT.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchMuParserX.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="FormelGenerator.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ParserBench.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Stopwatch.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="fparser\fparser.cc">
+      <Filter>Quelldateien\fparser4.4.3</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpError.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpFuncCmplx.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpFuncCommon.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpFuncMatrix.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpFuncNonCmplx.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpFuncStr.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpICallback.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpIfThenElse.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpIOprt.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpIPackage.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpIToken.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpIValReader.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpIValue.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpOprtBinAssign.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpOprtBinCommon.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpOprtCmplx.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpOprtIndex.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpOprtMatrix.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpOprtNonCmplx.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpPackageCmplx.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpPackageCommon.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpPackageMatrix.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpPackageNonCmplx.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpPackageStr.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpPackageUnit.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpParser.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpParserBase.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpRPN.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpScriptTokens.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpTest.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpTokenReader.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpValReader.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpValue.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpValueCache.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpVariable.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParser.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParserCompiler.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParserExcepStrEng.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParserLocalizer.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParserMacroFunc.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParserRegistrar.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTParserTestCases.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTSearchFile.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTTools.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="MTParser\MTParserLib\MTUnicodeANSIDefs.cpp">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchExprTk.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchMuParser2.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="muparser2\muParserTokenReader.cpp">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+    <ClCompile Include="muparser2\muParser.cpp">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+    <ClCompile Include="muparser2\muParserBase.cpp">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+    <ClCompile Include="muparser2\muParserBytecode.cpp">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+    <ClCompile Include="muparser2\muParserCallback.cpp">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+    <ClCompile Include="muparser2\muParserError.cpp">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BenchATMSP.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchFParser.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Benchmark.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchMuParserNT.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchMuParserX.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Stopwatch.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpDefines.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpError.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpFuncCmplx.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpFuncCommon.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpFuncMatrix.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpFuncNonCmplx.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpFuncStr.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpFwdDecl.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpICallback.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIfThenElse.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIOprt.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIPackage.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIPrecedence.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIToken.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIValReader.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpIValue.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpMatrix.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpMatrixError.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtBinAssign.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtBinCommon.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtCmplx.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtIndex.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtMatrix.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtNonCmplx.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpPackageCmplx.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpPackageCommon.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpPackageMatrix.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpPackageNonCmplx.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpPackageStr.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpPackageUnit.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpParser.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpParserBase.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpRPN.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpScriptTokens.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpStack.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpTest.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpTokenReader.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpTypes.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpValReader.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpValue.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpValueCache.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpVariable.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\suSortPred.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\utGeneric.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muParserSSE\muParserSSE.h">
+      <Filter>Quelldateien\muParserSSE</Filter>
+    </ClInclude>
+    <ClInclude Include="atmsp\atmsp.base.h">
+      <Filter>Quelldateien\atmsp</Filter>
+    </ClInclude>
+    <ClInclude Include="atmsp\atmsp.h">
+      <Filter>Quelldateien\atmsp</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTGlobalString.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserCompiler.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserDefFuncs.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserDefOps.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserExcepStrEng.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserException.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserLocalizer.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserMacroFunc.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserPrivate.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserPublic.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserRegistrar.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParserTestCases.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTSearchFile.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTTools.h">
+      <Filter>Quelldateien\MTParser</Filter>
+    </ClInclude>
+    <ClInclude Include="FormelGenerator.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParser.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\MTParsingException.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParser.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserBase.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserBytecode.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserCallback.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserDef.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserError.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserFixes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserStack.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserToken.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParser\ParserLib\muParserTokenReader.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MTParser\MTParserLib\UnicodeANSIDefs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="exprtk\exprtk.hpp">
+      <Filter>Quelldateien\exprtk</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchExprTk.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserTokenReader.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserToken.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserBytecode.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserBase.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserStack.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserMath.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParser.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserError.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserDef.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser3\muParserTest.h">
+      <Filter>Quelldateien\muparser3</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchMuParser2.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserError.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserFixes.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserStack.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserTemplateMagic.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserToken.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserTokenReader.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParser.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserBase.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserBytecode.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserCallback.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="muparser2\muParserDef.h">
+      <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fparser\fparser.hh">
+      <Filter>Quelldateien\fparser4.4.3</Filter>
+    </None>
+    <None Include="fparser.hh">
+      <Filter>Headerdateien</Filter>
+    </None>
+  </ItemGroup>
+</Project>
