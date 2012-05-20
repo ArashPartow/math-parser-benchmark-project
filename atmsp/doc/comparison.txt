@@ -1,0 +1,54 @@
+TEST-SYSTEM
+========================================================================
+Linux 64 bit Core2 Duo 2.4 GHz
+Kernel 2.6.37 + GCC 4.5.1
+Compiler switches: -O3 -ffast-math -flto -fwhole-program [-static]
+
+
+PARSERS COMPARED
+========================================================================
+MP = muParser 2.1.0
+FP = fParser 4.4.3
+AP = ATMSP 1.0.2
+
+
+BASIC INFORMATION     MP      FP    AP
+========================================================================
+Code total (KB)      243     420    22
+Code lines (net)    6066   24208   322   (Comments, blank lines removed)
+Executable (KB)      111     292    31   (Dynamic executable stripped)
+Executable (KB)     1326    1518  1251   (Static executable stripped)
+Compile time (s)      11      27     2   (Dynamic executable)
+
+Notes: values rounded. Measured sizes contain the minimum to calculate
+a small expression for standard-type double without bells and whistles.
+
+
+AVAILABLE TYPES       MP      FP    AP
+========================================================================
+int8                                 x
+uint8                                x
+int16                                x
+uint16                               x
+int32                          x     x
+uint32                               x
+int64                                x
+uint64                               x
+int128                               x
+uint128                              x
+float                  x       x     x
+double                 x       x     x
+long double            x       x     x
+complex<float>                 x     x
+complex<double>                x     x
+complex<long double>           x     x
+GMP-integer                    x
+MPFR-float                     x     x
+
+Notes: int128-types are available on X86_64 with GCC only. On thumb MSVC
+long double is fake for double only. For special types like GMP, MPFR, NTL
+or SSE2 external libs needed to be linked.
+
+GMP  = GNU Multiple Precision Arithmetic Library
+MPFR = GNU Multiple Precision Float Library
+NTL  = Number Theory Library for bignums and multiprecision-floats

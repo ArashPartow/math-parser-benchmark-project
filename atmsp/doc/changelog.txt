@@ -1,0 +1,28 @@
+1.0.3
+
+- Switched own uint-types to more general size_t
+- Another slight code-shrink to 322 LOC now
+- Updated mpfr::real library to new 0.0.9-alpha
+- Updated readme.html and test-codes
+
+1.0.2
+
+- Calculate constant MPFR-pi on the fly now
+- No need for spefific include/type sequence with MPFR anymore
+- Adopted bytecode-benchmark for MPFR
+- Spent more digits for pi/e-float-constants
+- Restructured includes in test-dir
+- Updated comparison.txt
+- Minor src/doc improvements elsewhere
+
+1.0.1
+
+- Improved self-tests
+- Adopted self-tests for MPFR
+- Another slight code-shrink
+- Minor doc improvements
+- Added changelog
+
+1.0.0
+
+- Initial release
