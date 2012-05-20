@@ -1,0 +1,34 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTDatePlugin", "MTDatePlugin\MTDatePlugin.vcproj", "{85312B03-5AAB-4ABB-8C7D-862AF94675A4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTDatePluginPS", "MTDatePlugin\MTDatePluginPS.vcproj", "{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4} = {85312B03-5AAB-4ABB-8C7D-862AF94675A4}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Unicode|Win32 = Debug_Unicode|Win32
+		Debug|Win32 = Debug|Win32
+		Release_Unicode|Win32 = Release_Unicode|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug_Unicode|Win32.ActiveCfg = Debug_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug_Unicode|Win32.Build.0 = Debug_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug|Win32.Build.0 = Debug|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release_Unicode|Win32.ActiveCfg = Release_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release_Unicode|Win32.Build.0 = Release_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release|Win32.ActiveCfg = Release|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release|Win32.Build.0 = Release|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Debug_Unicode|Win32.ActiveCfg = Debug_Unicode|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Release_Unicode|Win32.ActiveCfg = Release_Unicode|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

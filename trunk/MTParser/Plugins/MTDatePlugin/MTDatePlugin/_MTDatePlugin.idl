@@ -1,0 +1,38 @@
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\prsht.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\mshtml.idl";
+import "c:\program files\microsoft visual studio .net 2003\vc7\platformsdk\include\dimm.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\mshtmhst.idl";
+import "c:\program files\microsoft visual studio .net 2003\vc7\platformsdk\include\docobj.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\exdisp.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\objsafe.idl";
+
+[
+	object,
+	uuid(AF39D9F5-EF4F-4356-B035-0A58AD12579F),
+	dual,
+	helpstring("IMTDatePlugin Interface"),
+	pointer_default(unique)
+] 
+#line 14 "e:\\temp\\mtparser_src\\plugins\\mtdateplugin\\mtdateplugin\\mtdatecomplugin.h"
+interface IMTDatePlugin : IDispatch {
+};
+
+
+[ version(1.0), uuid(12C43572-A2FB-4D74-8C40-D231128B34E4), helpstring("MTDatePlugin 1.0 Type Library") ]
+library MTDatePlugin
+{
+	importlib("stdole2.tlb");
+	importlib("olepro32.dll");
+
+	[
+		version(1.0),
+		uuid(43F6302F-94FD-4702-908D-EA1F157080AD),
+		helpstring("MTDatePlugin Class")
+	] 
+#line 32 "e:\\temp\\mtparser_src\\plugins\\mtdateplugin\\mtdateplugin\\mtdatecomplugin.h"
+	coclass CMTDatePlugin {
+		interface IMTDatePlugin;
+	};
+
+}
+

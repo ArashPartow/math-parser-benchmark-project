@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTDatePlugin", "MTDatePlugin\MTDatePlugin.vcproj", "{85312B03-5AAB-4ABB-8C7D-862AF94675A4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTDatePluginPS", "MTDatePlugin\MTDatePluginPS.vcproj", "{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4} = {85312B03-5AAB-4ABB-8C7D-862AF94675A4}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug_Unicode = Debug_Unicode
+		Release = Release
+		Release_Unicode = Release_Unicode
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug.ActiveCfg = Debug|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug.Build.0 = Debug|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release.ActiveCfg = Release|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release.Build.0 = Release|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Debug.ActiveCfg = Debug|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Release.ActiveCfg = Release|Win32
+		{5AB1F6DC-E2D2-4C99-83B8-90B301E59AE6}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

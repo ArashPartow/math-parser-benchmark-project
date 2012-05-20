@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserLib", "MTParserLib.vcproj", "{F1C7A7BA-87EA-4DF1-9F48-3ECFCE7CEE0A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{F1C7A7BA-87EA-4DF1-9F48-3ECFCE7CEE0A}.Debug.ActiveCfg = Release|Win32
+		{F1C7A7BA-87EA-4DF1-9F48-3ECFCE7CEE0A}.Debug.Build.0 = Release|Win32
+		{F1C7A7BA-87EA-4DF1-9F48-3ECFCE7CEE0A}.Release.ActiveCfg = Release|Win32
+		{F1C7A7BA-87EA-4DF1-9F48-3ECFCE7CEE0A}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

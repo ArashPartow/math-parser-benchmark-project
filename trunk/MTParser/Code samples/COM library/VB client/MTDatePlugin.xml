@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LibraryInfo schema="2" type="plugin" data1="MTDatePlugin.dll" data2="{43F6302F-94FD-4702-908D-EA1F157080AD}" version="1">
+	<Resource LCID="en">
+		<library title="Date/Time" description="Date and time manipulation functions" />
+		
+		<function id="datevalue" symbol="datevalue" args="date_text" argDescs="a date string" description="Converts a date string to a decimal number (a data value)" />
+		<function id="timevalue" symbol="timevalue" args="time_text" argDescs="a time string" description="Converts a time string to a decimal number (a data value)" />
+		<function id="date" symbol="date" args="year,month,day" argDescs="" description="Returns a number representing this date" />
+		<function id="time" symbol="time" args="hour,minute,second" argDescs="" description="Returns a number representing this time" />
+		<function id="day" symbol="day" args="date_value" argDescs="a number representing a date" description="Returns the day of the month portion of this date value" />
+		<function id="hour" symbol="hour" args="date_value" argDescs="a number representing a date" description="Returns the hour portion of this date value" />
+		<function id="minute" symbol="minute" args="date_value" argDescs="a number representing a date" description="Returns the minute portion of this date value" />
+		<function id="second" symbol="second" args="date_value" argDescs="a number representing a date" description="Returns the second portion of this date value" />
+		<function id="year" symbol="year" args="date_value" argDescs="a number representing a date" description="Returns the year portion of this date value" />
+		<function id="month" symbol="month" args="date_value" argDescs="a number representing a date" description="Returns the month portion of this date value" />
+		<function id="weekday" symbol="weekday" args="date_value" argDescs="a number representing a date" description="Returns the day of the week (1..7) corresponding to this date value" />
+		<function id="yearday" symbol="yearday" args="date_value" argDescs="a number representing a date" description="Returns the day of the year (January 1 = 1) corresponding to this date value" />
+		<function id="nowdate" symbol="nowdate" args="" argDescs="" description="Returns today's date" />		
+		<function id="nowtime" symbol="nowtime" args="" argDescs="" description="Returns actual time" />				
+		
+	</Resource>
+	<Resource LCID="fr">
+		
+		<library title="Date/Temps" description="Manipulation de dates et d'heures" />
+		
+		<function id="datevalue" symbol="datevalue" args="data" argDescs="" description="Convertie une date en sa représentation numérique" />
+		<function id="timevalue" symbol="timevalue" args="heure" argDescs="a time string" description="Convertie une heure en sa représentation numérique" />
+		<function id="date" symbol="date" args="année,mois,jour" argDescs="" description="Convertie une date en sa représentation numérique" />
+		<function id="time" symbol="time" args="heure,minute,seconde" argDescs="" description="Convertie une heure en sa représentation numérique" />
+		<function id="day" symbol="day" args="date" argDescs="représentation numérique d'une date" description="Retourne le jour du mois de cette date" />
+		<function id="hour" symbol="hour" args="date" argDescs="représentation numérique d'une date" description="Retourne la portion heure de cette date" />
+		<function id="minute" symbol="minute" args="date" argDescs="représentation numérique d'une date" description="Retourne la portion minute de cette date" />
+		<function id="second" symbol="second" args="date" argDescs="représentation numérique d'une date" description="Retourne la portion seconde de cette date" />
+		<function id="year" symbol="year" args="date" argDescs="représentation numérique d'une date" description="Retourne la portion année de cette date" />
+		<function id="month" symbol="month" args="date" argDescs="représentation numérique d'une date" description="Retourne la portion mois de cette date" />
+		<function id="weekday" symbol="weekday" args="date" argDescs="représentation numérique d'une date" description="Retourne le jour de la semaine entre 1 et 7" />
+		<function id="yearday" symbol="yearday" args="date" argDescs="représentation numérique d'une date" description="Retourne le jour de l'année avec 1 représentant le premier janvier" />
+		<function id="nowdate" symbol="nowdate" args="" argDescs="" description="Retourne la date d'aujourd'hui" />		
+		<function id="nowtime" symbol="nowtime" args="" argDescs="" description="Retourne l'heure actuelle" />				
+	</Resource>
+</LibraryInfo>

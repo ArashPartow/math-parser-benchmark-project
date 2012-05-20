@@ -1,0 +1,119 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserLib", "MTParserLib\MTParserLib.vcproj", "{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserCOM", "MTParserCOM\MTParserCOM.vcproj", "{4D18E862-A745-4D29-A162-ADA7AD11FEA2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40} = {BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTDatePlugin", "Plugins\MTDatePlugin\MTDatePlugin\MTDatePlugin.vcproj", "{85312B03-5AAB-4ABB-8C7D-862AF94675A4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40} = {BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserPlugin", "Plugins\MTParserPlugin\MTParserPlugin\MTParserPlugin.vcproj", "{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTNumAlgoPlugin", "Plugins\MTNumAlgoPlugin\MTNumAlgoPlugin\MTNumAlgoPlugin.vcproj", "{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40} = {BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExample", "Code samples\COM library\C# client\CSharpExample.csproj", "{123A28C2-EF90-4FF0-9416-0B4A1C58F023}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2} = {4D18E862-A745-4D29-A162-ADA7AD11FEA2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathExpr", "Code samples\C++ library\c++ client\MathExpr.vcproj", "{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}"
+	ProjectSection(ProjectDependencies) = postProject
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4} = {85312B03-5AAB-4ABB-8C7D-862AF94675A4}
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40} = {BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87} = {F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathExprCOM", "Code samples\COM library\c++ client\MathExprCOM.vcproj", "{B464DD76-4AAB-4E9A-84AB-2314B901C043}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2} = {4D18E862-A745-4D29-A162-ADA7AD11FEA2}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug_Unicode = Debug_Unicode
+		Release = Release
+		Release_Unicode = Release_Unicode
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug.ActiveCfg = Debug|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug.Build.0 = Debug|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release.ActiveCfg = Release|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release.Build.0 = Release|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Debug.ActiveCfg = Debug_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Debug.Build.0 = Debug_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Release.ActiveCfg = Release_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Release.Build.0 = Release_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{4D18E862-A745-4D29-A162-ADA7AD11FEA2}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug.ActiveCfg = Debug|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug.Build.0 = Debug|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release.ActiveCfg = Release|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release.Build.0 = Release|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{85312B03-5AAB-4ABB-8C7D-862AF94675A4}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Debug.ActiveCfg = Debug|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Debug.Build.0 = Debug|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Debug_Unicode.ActiveCfg = Debug|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Debug_Unicode.Build.0 = Debug|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Release.ActiveCfg = Release|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Release.Build.0 = Release|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Release_Unicode.ActiveCfg = Release|Win32
+		{D2A3CD7C-DED3-42FE-B2D9-3F70E7060723}.Release_Unicode.Build.0 = Release|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug.ActiveCfg = Debug|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug.Build.0 = Debug|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release.ActiveCfg = Release|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release.Build.0 = Release|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Debug.ActiveCfg = Debug|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Debug.Build.0 = Debug|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Debug_Unicode.ActiveCfg = Debug|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Debug_Unicode.Build.0 = Debug|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Release.ActiveCfg = Release|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Release.Build.0 = Release|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Release_Unicode.ActiveCfg = Release|.NET
+		{123A28C2-EF90-4FF0-9416-0B4A1C58F023}.Release_Unicode.Build.0 = Release|.NET
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Debug.ActiveCfg = Debug|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Debug.Build.0 = Debug|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Release.ActiveCfg = Release|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Release.Build.0 = Release|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{ECC6F59D-0674-4F48-8AC4-D75A2F91FF04}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Debug.ActiveCfg = Debug|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Debug.Build.0 = Debug|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Debug_Unicode.ActiveCfg = Debug|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Debug_Unicode.Build.0 = Debug|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Release.ActiveCfg = Release|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Release.Build.0 = Release|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Release_Unicode.ActiveCfg = Release|Win32
+		{B464DD76-4AAB-4E9A-84AB-2314B901C043}.Release_Unicode.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

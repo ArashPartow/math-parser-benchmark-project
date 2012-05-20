@@ -1,0 +1,26 @@
+HKCR
+{
+	MTParserCOM.MTDouble.1 = s 'MTDouble Class'
+	{
+		CLSID = s '{0146FD58-5279-4F3F-A70B-77845A2E7B75}'
+	}
+	MTParserCOM.MTDouble = s 'MTDouble Class'
+	{
+		CLSID = s '{0146FD58-5279-4F3F-A70B-77845A2E7B75}'
+		CurVer = s 'MTParserCOM.MTDouble.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {0146FD58-5279-4F3F-A70B-77845A2E7B75} = s 'MTDouble Class'
+		{
+			ProgID = s 'MTParserCOM.MTDouble.1'
+			VersionIndependentProgID = s 'MTParserCOM.MTDouble'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			'TypeLib' = s '{3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3}'
+		}
+	}
+}

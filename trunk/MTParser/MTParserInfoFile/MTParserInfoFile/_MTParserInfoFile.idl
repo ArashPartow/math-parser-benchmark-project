@@ -1,0 +1,137 @@
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\wtypes.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\prsht.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\unknwn.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\objidl.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\urlmon.idl";
+import "c:\program files\microsoft visual studio 8\vc\platformsdk\include\oleidl.idl";
+import "c:\program files\microsoft visual studio 8\vc\platformsdk\include\servprov.idl";
+import "c:\program files\microsoft visual studio 8\vc\platformsdk\include\msxml.idl";
+import "c:\program files\microsoft visual studio 8\vc\platformsdk\include\oaidl.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\propidl.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\ocidl.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\comcat.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\atlmfc\include\atliface.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\oleacc.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\shtypes.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\mshtml.idl";
+import "c:\program files\microsoft visual studio 8\vc\platformsdk\include\dimm.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\mshtmhst.idl";
+import "c:\program files\microsoft visual studio 8\vc\platformsdk\include\docobj.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\exdisp.idl";
+import "C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include\objsafe.idl";
+
+[
+	object,
+	uuid(9D7C0E16-9513-4884-9F47-BFCFA847AFCF),
+	dual,
+	helpstring("IMTParserInfoFile Interface"),
+	pointer_default(unique)
+] 
+#line 73 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+interface IMTParserInfoFile : IDispatch {
+#line 75 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	[id(1),helpstring("method load")] HRESULT  load([in] BSTR fileName);
+	[id(2),helpstring("method getNbLocales")] HRESULT  getNbLocales([out,retval] ULONG *pNbLocales);
+	[id(3),helpstring("method getLocale")] HRESULT  getLocale([in] ULONG id, [out,retval] BSTR *pLocale);
+	[id(4),helpstring("method setLocale")] HRESULT  setLocale([in] BSTR locale);
+	[id(5),helpstring("method getNbFuncs")] HRESULT  getNbFuncs([out,retval] ULONG *pNbFuncs);
+	[id(6),helpstring("method getFunc")] HRESULT  getFunc([in] ULONG id, [out,retval] struct SATLFuncInfo *pFunc);
+	[id(7),helpstring("method getOp")] HRESULT  getOp([in] ULONG id, [out,retval] struct SATLOpInfo *pOp);
+	[id(8),helpstring("method getConst")] HRESULT  getConst([in] ULONG id, [out,retval] struct SATLConstInfo *pConst);
+	[id(9),helpstring("method getVar")] HRESULT  getVar([in] ULONG id, [out,retval] struct SATLVarInfo *pVar);
+	[id(10),helpstring("method getLibInfo")] HRESULT  getLib([out,retval] struct SATLLibInfo *pLib);
+	[id(11),helpstring("method getNbOps")] HRESULT  getNbOps([out,retval] ULONG *pNbOps);
+	[id(12),helpstring("method getNbConsts")] HRESULT  getNbConsts([out,retval] ULONG *pNbConsts);
+	[id(13),helpstring("method getNbVars")] HRESULT  getNbVars([out,retval] ULONG *pNbVars);
+	[id(14),helpstring("method getNbExceps")] HRESULT  getNbExceps([out,retval] ULONG *pNbExceps);
+	[id(15),helpstring("method getExcep")] HRESULT  getExcep([in] ULONG id, [out,retval] struct SATLExcepInfo *pExcep);
+};
+
+
+[ version(1.0), uuid(298AE240-9666-439A-878C-F1FE1702783E), helpstring("MTParserInfoFile 1.0 Type Library") ]
+library MTParserInfoFile
+{
+	importlib("stdole2.tlb");
+	importlib("olepro32.dll");
+
+	[
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9D7C0E15-9513-4884-9F47-BFCFA847AFCF)
+	] 
+#line 12 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	struct SATLFuncInfo {
+		[helpstring("Function's identifier")] BSTR id;
+		[helpstring("Function's symbol")] BSTR symbol;
+		[helpstring("Function's arguments")] BSTR args;
+		[helpstring("Function argument descriptions")] BSTR argDescs;
+		[helpstring("Function's description")] BSTR desc;
+	};
+
+	[
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9D7C0E14-9513-4884-9F47-BFCFA847AFCF)
+	] 
+#line 22 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	struct SATLOpInfo {
+		[helpstring("Operator's identifier")] BSTR id;
+		[helpstring("Operator's symbol")] BSTR symbol;
+		[helpstring("Operator's arguments")] BSTR args;
+		[helpstring("Operator's description")] BSTR desc;
+	};
+
+	[
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9D7C0E13-9513-4884-9F47-BFCFA847AFCF)
+	] 
+#line 32 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	struct SATLConstInfo {
+		[helpstring("Constant's name")] BSTR symbol;
+		[helpstring("Constant's description")] BSTR desc;
+	};
+
+	[
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9D7C0E12-9512-4884-9F47-BFCFA847AFCF)
+	] 
+#line 40 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	struct SATLVarInfo {
+		[helpstring("Variable's name")] BSTR symbol;
+		[helpstring("Variable's description")] BSTR desc;
+	};
+
+	[
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9D7C0E12-9512-4884-9F47-BFAFB846AFCF)
+	] 
+#line 48 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	struct SATLExcepInfo {
+		[helpstring("Exception's id")] BSTR id;
+		[helpstring("Exception's description")] BSTR desc;
+	};
+
+	[
+		custom(8AFCDA7F-33B7-3120-86A8-754D2C0C0578, "library_block"),
+		uuid(9D7C0E11-9512-4884-9F47-BFCFA847AFCF)
+	] 
+#line 56 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	struct SATLLibInfo {
+		[helpstring("Library's title")] BSTR title;
+		[helpstring("Library's description")] BSTR desc;
+		[helpstring("Library's compatible version")] BSTR version;
+		[helpstring("Library's type")] BSTR type;
+		[helpstring("Data1")] BSTR data1;
+		[helpstring("Data2")] BSTR data2;
+	};
+
+	[
+		version(1.0),
+		uuid(B521F2A0-5D67-4164-A04B-32D636DB8F9F),
+		helpstring("MTParserInfoFile Class")
+	] 
+#line 106 "e:\\projets\\mtparser\\mtparser_src-bak3\\mtparserinfofile\\mtparserinfofile\\atlmtparserinfofile.h"
+	coclass CATLMTParserInfoFile {
+		interface IMTParserInfoFile;
+	};
+
+}
+

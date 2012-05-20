@@ -1,0 +1,321 @@
+// MTParserCOM.idl : IDL source for MTParserCOM.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (MTParserCOM.tlb) and marshalling code.
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+// Constant information
+typedef struct sMTConstant
+{
+	[helpstring("Constant's name.")]
+	BSTR name;
+	
+	[helpstring("Constant's value.")]
+	double value;
+
+	[helpstring("Constant's description.")]
+	BSTR description;
+
+}SMTConstant;
+
+// Function information
+typedef struct sMTFunction
+{
+	[helpstring("Function's identifier.")]
+	BSTR ID;
+	
+	[helpstring("Function's symbol.")]
+	BSTR symbol;
+	
+	[helpstring("Function's usage specification.")]
+	BSTR helpString;
+	
+	[helpstring("Function's description.")]
+	BSTR description;
+
+
+}SMTFunction;
+
+
+// Operator information
+typedef struct sMTOperator
+{
+	[helpstring("Operator's identifier.")]
+	BSTR ID;
+
+	[helpstring("Operator's symbol.")]
+	BSTR symbol;
+	
+	[helpstring("Operator's usage specification.")]
+	BSTR helpString;
+	
+	[helpstring("Operator's description.")]
+	BSTR description;
+
+}SMTOperator;
+
+typedef struct sMTSyntax
+{
+	[helpstring("Decimal point character.")]
+	int decimalPoint;		// decimal point character
+	
+	[helpstring("Function argument separator character.")]
+	int argumentSeparator;	// function argument separator character
+	
+}SMTSyntax;
+
+
+
+interface IMTExcepData;
+
+
+	[
+		object,
+		uuid(AC930F10-590E-5928-BE23-12C694D5B035),
+		dual,
+		helpstring("Abstract variable class."),
+		pointer_default(unique)
+	]
+	interface IMTVariable : IDispatch		
+	{
+		[id(1), helpstring("Return the variable name.")] HRESULT getName([out, retval] BSTR *pName);
+		[id(2), helpstring("method getNativeVar")] HRESULT getNativeVar([out,retval] int* pVar);
+	};
+	[
+		object,
+		uuid(ED930F11-520E-5926-BE23-12C694D5B035),
+		dual,
+		helpstring("Abstract function class."),
+		pointer_default(unique)
+	]
+	interface IMTFunction : IDispatch		
+	{
+		[id(1), helpstring("Return the function's symbol")] HRESULT getSymbol([out, retval] BSTR *pSymbol);
+		[id(2), helpstring("Return the function's helpString")] HRESULT getHelpString([out, retval] BSTR *pHelpString);
+		[id(3), helpstring("Return the function's description")] HRESULT getDescription([out,retval] BSTR *pDescription);
+		[id(4), helpstring("Return the function's number of arguments")] HRESULT getNbArgs([out,retval] int *pNbArgs);
+		[id(5), helpstring("Evaluate without argument")] HRESULT evaluate0([out,retval] double *pResult);		
+		[id(6), helpstring("Evaluate with one argument")] HRESULT evaluate1([in] double arg, [out,retval] double *pResult);		
+		[id(7), helpstring("Evaluate with two arguments")] HRESULT evaluate2([in] double arg, [in] double arg2, [out,retval] double *pResult);		
+		[id(8), helpstring("Evaluate with three arguments")] HRESULT evaluate3([in] double arg, [in] double arg2, [in] double arg3, [out,retval] double *pResult);		
+		[id(9), helpstring("Evaluate with an undefined number of arguments")] HRESULT evaluate([in] SAFEARRAY(double) pArgs, [out,retval] double *pResult);		
+	};
+	[
+		object,
+		uuid(AB830D10-490E-4228-AE23-01C794E5C036),
+		dual,		
+		helpstring("IMTParser Interface"),
+		pointer_default(unique)
+	]
+	interface IMTParser : IDispatch		
+	{
+		[id(1), helpstring("Evaluate the compiled expression")] HRESULT evaluateCompiled([out, retval] double *pResult);		
+		[id(2), helpstring("Compile an expression to speed up multiple evaluations. THROWS EXCEPTION")] HRESULT compile([in] BSTR expr);
+		[id(3), helpstring("Evaluate an expression")] HRESULT evaluate([in] BSTR expr, [out, retval] double *pResult);	
+		[id(4), helpstring("Undefine a variable. THROWS EXCEPTION")] HRESULT undefineVar([in] BSTR symbol);
+		[id(5), helpstring("Undefine all variables")] HRESULT undefineAllVars();
+		[id(6), helpstring("Set a null expression")] HRESULT resetExpression();
+		[id(7), helpstring("Load a plugin. THROWS EXCEPTION")] HRESULT loadPlugin([in] BSTR clsid);
+		[id(8), helpstring("Set the syntax accordingly to the locale settings")] HRESULT useLocaleSettings();
+		[id(9), helpstring("Set a custom syntax. THROWS EXCEPTION")] HRESULT setSyntax([in] SMTSyntax *pSyntax);
+		[id(10), helpstring("Get the current syntax")] HRESULT getSyntax([out, retval] SMTSyntax *pSyntax);
+		[id(11), helpstring("Define a constant. THROWS EXCEPTION")] HRESULT defineConst([in] BSTR name, [in] double value);
+		[id(12), helpstring("Get a pointer to the internal c++ parser object. For internal use only.")] HRESULT getParserPtr([out] int *pParserPtr);
+		[id(13), helpstring("Re-configure the parser using the configuration of an existing parser")] HRESULT copy([in] IMTParser *pParser);
+		[id(14), helpstring("Get the number of variables used in the current expression")] HRESULT getNbUsedVars([out, retval] int *pNbUsedVars);
+		[id(15), helpstring("Get a used variable's symbol. THROWS EXCEPTION")] HRESULT getUsedVar([in] int index, [out, retval] BSTR *symbol);
+		[id(16), helpstring("Get the number of defined constants")] HRESULT getNbDefinedConsts([out, retval] int *pNbDefinedConsts);
+		[id(17), helpstring("Get the information about a defined constant. Parameter index ranges from 0 to the number of defined constants -1. THROWS EXCEPTION")] HRESULT getConst([in] int index, [out, retval] SMTConstant *pConst);
+		[id(18), helpstring("Get the number of defined functions")] HRESULT getNbDefinedFuncs([out, retval] int *pNbDefinedFuncs);
+		[id(19), helpstring("Get the information about a defined function.  Parameter index ranges from 0 to the number of defined functions -1. THROWS EXCEPTION")] HRESULT getFunc([in] int index, [out, retval] SMTFunction *pFunc);
+		[id(20), helpstring("Get the number of defined operators")] HRESULT getNbDefinedOps([out, retval] int *pNbDefinedOps);
+		[id(21), helpstring("Get the information about a defined operator.  Parameter index ranges from 0 to the number of defined operators -1. THROWS EXCEPTION")] HRESULT getOp([in] int index, [out, retval] SMTOperator *pOp);		
+		[id(23), helpstring("Get the last exception that occured.  Fill the exception object. It may have more than one exception so call until you got the no error exception.")] HRESULT getLastExcep([in] IMTExcepData *pExcep);
+		[id(24), helpstring("Define a variable. THROWS EXCEPTION")] HRESULT defineVar([in] IMTVariable *pVar);	
+		[id(25), helpstring("Return a NaN value.  Can be used to indicate an uninitialized value.")] HRESULT getNaN([out, retval] double *pNaN);
+		[id(26), helpstring("Test whether the last evaluated result is a NaN value")] HRESULT isNaN([out, retval] int *pRet);
+		[id(27), helpstring("Define a macro function. THROWS EXCEPTION")] HRESULT defineMacro([in] BSTR prototype, [in] BSTR macro, [in] BSTR description);
+		[id(28), helpstring("Test whether the last evaluated result is finite")] HRESULT isFinite([out, retval] int *pRet);		
+		[id(29), helpstring("Load all plug-ins defined in info files. THROWS EXCEPTION")] HRESULT loadAllPlugins([in] BSTR directory, [in] BSTR searchPattern);
+		[id(30), helpstring("Evaluate multiple times in the same call the compiled expression.")] HRESULT evaluateCompiledBatch([in] int nbLoops, [in, out] SAFEARRAY(double) pResults);		
+		[id(31), helpstring("Redefine a defined variable. THROWS EXCEPTION")] HRESULT redefineVar([in] IMTVariable* pVar);
+		[propget, id(32), helpstring("Get/Compile the current expression. THROWS EXCEPTION")] HRESULT expression([out, retval] BSTR* pVal);
+		[propput, id(32), helpstring("Get/Compile the current expression. THROWS EXCEPTION")] HRESULT expression([in] BSTR newVal);
+		[propget, id(33), helpstring("Get/Set the automatic variable definition feature")] HRESULT autoVarDefinitionEnabled([out, retval] SHORT* pVal);
+		[propput, id(33), helpstring("Get/Set the automatic variable definition feature")] HRESULT autoVarDefinitionEnabled([in] SHORT newVal);
+		[propget, id(34), helpstring("Get the current syntax")] HRESULT syntax([out, retval] SMTSyntax* pVal);
+		[propputref, id(34), helpstring("Set a custom syntax. THROWS EXCEPTION")] HRESULT syntax([in] SMTSyntax newVal);
+		[id(35), helpstring("Undefine a constant. THROWS EXCEPTION")] HRESULT undefineConst([in] BSTR name);
+		[id(36), helpstring("Undefine a function with its id.")] HRESULT undefineFuncById([in] BSTR id);
+		[id(37), helpstring("Undefine an operator with its id.")] HRESULT undefineOpById([in] BSTR id);
+		[id(38), helpstring("Undefine all functions with this symbol")] HRESULT undefineFuncsBySymbol([in] BSTR symbol);
+		[id(39), helpstring("Undefine all operators with this symbol")] HRESULT undefineOpsBySymbol([in] BSTR symbol);
+		[id(40), helpstring("Get the number of defined variables")] HRESULT getNbDefinedVars([out, retval] int *pNbDefinedOps);
+		[id(41), helpstring("Get a defined variable's symbol. THROWS EXCEPTION")] HRESULT getVar([in] int index, [out, retval] BSTR *symbol);
+		[id(42), helpstring("Define a new function.  THROWS EXCEPTION")] HRESULT defineFunc([in] IMTFunction* pFunc);
+		[id(47), helpstring("Evaluate multiple times in the same call the compiled expression. VB6 special signature")] HRESULT evaluateCompiledBatchVB6([in] int nbLoops, [in, out] SAFEARRAY(double) *pResults);
+		
+
+	};	
+	
+	[
+		object,
+		uuid(287D18CE-1D30-4909-80D2-DF45DA3010F4),
+		dual,
+		helpstring("Double variable type.  Can be used as a IMTVariable object."),
+		pointer_default(unique)
+	]
+	interface IMTDouble : IDispatch
+	{
+		[id(1), helpstring("Initialize the variable with a default value.")] HRESULT create([in] BSTR name, [in] double value);
+		[propget, id(2), helpstring("Variable's value.")] HRESULT value([out, retval] double *pVal);
+		[propput, id(2), helpstring("Variable's value.")] HRESULT value([in] double newVal);
+		[propget, id(3), helpstring("Variable's name.")] HRESULT name([out, retval] BSTR *pVal);
+		[id(4), helpstring("Change the variable value.")] HRESULT setValue([in] double value);
+		[id(5), helpstring("Return the variable value.")] HRESULT getValue([out, retval] double *pValue);		
+		
+	};
+	[
+		object,
+		uuid(3761F15D-E3AC-43D5-AA4A-333B4F7136D9),
+		dual,
+		helpstring("IMTDate Interface"),
+		pointer_default(unique)
+	]
+	interface IMTDate : IDispatch
+	{
+		[id(1), helpstring("Initialize the variable")] HRESULT create([in] BSTR name);
+		[id(2), helpstring("Set the date and time from a string representation")] HRESULT parseDateTime([in] BSTR datetime);
+		[id(3), helpstring("Set the date only")] HRESULT setDate([in] int year, [in] int month, [in] int day);
+		[id(4), helpstring("Set the time only")] HRESULT setTime([in] int hour, [in] int minute, [in] int second);
+		[propget, id(5), helpstring("Variable's name")] HRESULT name([out, retval] BSTR *pVal);
+		[propget, id(6), helpstring("Variable double value")] HRESULT value([out, retval] double *pVal);
+		[propput, id(6), helpstring("Variable double value")] HRESULT value([in] double newVal);
+		[id(7), helpstring("Format the variable's value into a date string")] HRESULT format([out, retval] BSTR *pDateStr);
+		[id(8), helpstring("Change the variable value.")] HRESULT setValue([in] double value);
+		[id(9), helpstring("Return the variable value.")] HRESULT getValue([out, retval] double *pValue);		
+		
+	};
+	
+
+[
+	object,
+	uuid(138338B4-B343-43C6-B4BB-2A6172875E47),
+	dual,
+	nonextensible,
+	helpstring("IMTParserLocalizer Interface"),
+	pointer_default(unique)
+]
+interface IMTParserLocalizer : IDispatch{
+	[id(1), helpstring("method registerLibrary")] HRESULT registerLibrary([in] BSTR infoFile);
+	[id(2), helpstring("method setLocale")] HRESULT setLocale([in] BSTR locale);
+	[id(3), helpstring("method getNbFuncs")] HRESULT getNbFuncs([out,retval] int* pNbFuncs);
+	[id(4), helpstring("method getNbOps")] HRESULT getNbOps([out,retval] int* pNbOps);
+	[id(5), helpstring("method getNbConsts")] HRESULT getNbConsts([out,retval] int* pNbConsts);	
+	[id(6), helpstring("method getFuncInfo")] HRESULT getFuncInfo([in] BSTR ID, [in] SMTSyntax *pSyntax, [out,retval] SMTFunction* pInfo);
+	[id(7), helpstring("method getOpInfo")] HRESULT getOpInfo([in] BSTR ID, [out,retval] SMTOperator* pInfo);
+	[id(8), helpstring("method getConstInfo")] HRESULT getConstInfo([in] BSTR symbol, [out,retval] SMTConstant* pInfo);
+	[id(9), helpstring("method formatExcep")] HRESULT formatExcep([in] IMTExcepData *pE, [in] BSTR* msg, [out,retval] BSTR *formattedMsg);	
+	[id(10), helpstring("method registerAllLibraries")] HRESULT registerAllLibraries([in] BSTR directory, [in] BSTR searchPattern);
+	[id(11), helpstring("method getExcep")] HRESULT getExcep([in] IMTExcepData* pExcepData, [out,retval] BSTR* pMsg);
+	[id(12), helpstring("method getLastExcep")] HRESULT getLastExcep([in] IMTExcepData* pExcep);	
+	[propget, id(13), helpstring("property locale")] HRESULT locale([out, retval] BSTR* pVal);
+	[propput, id(13), helpstring("property locale")] HRESULT locale([in] BSTR newVal);
+};
+[
+	object,
+	uuid(B75B4C3F-E77A-42DF-8F25-A368DEC37309),
+	dual,
+	nonextensible,
+	helpstring("IMTExcepData Interface"),
+	pointer_default(unique)
+]
+interface IMTExcepData : IDispatch{
+	[id(1), helpstring("Internal use only")] HRESULT setNativeData([in] int pData);
+	[id(2), helpstring("Internal use only")] HRESULT getNativeData([out,retval] int* pData);
+	[id(3), helpstring("Get the exception identifier")] HRESULT getID([out,retval] BSTR* pID);
+	[id(4), helpstring("Get the number of arguments")] HRESULT getNbArgs([out,retval] LONG* nbArgs);
+	[id(5), helpstring("Get the the name of an argument")] HRESULT getArgName([in] LONG arg, [out,retval] BSTR* pName);
+	[id(6), helpstring("Get the value of an argument")] HRESULT getArgVal([in] LONG arg, [out,retval] BSTR* pVal);
+	[id(7), helpstring("Get a textual description of the exception")] HRESULT getDescription([out,retval] BSTR* pDesc);
+	[id(8), helpstring("Set the textual description of the exception")] HRESULT setDescription([in] BSTR desc);
+};
+[
+	object,
+	uuid(604EB4A2-9CB1-49CC-8AAD-FC33F48A78F4),
+	dual,
+	nonextensible,
+	helpstring("IMTDoubleVector Interface"),
+	pointer_default(unique)
+]
+interface IMTDoubleVector : IDispatch{
+	[id(1), helpstring("Set values")] HRESULT setValueVector([in, out] SAFEARRAY(double) pValues);	
+	[id(2), helpstring("Set values")] HRESULT setValueVectorVB6([in, out] SAFEARRAY(double) *pValues);	
+	[id(3), helpstring("Create the variable")] HRESULT create([in] BSTR name);
+	[id(4), helpstring("Internal use only")] HRESULT registerListener([in] int pListener);
+	[id(5), helpstring("Internal use only")] HRESULT unregisterListener([in] int pListener);
+};
+[
+	uuid(3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3),
+	version(1.0),
+	helpstring("MTParserCOM 1.0 Type Library")
+]
+library MTPARSERCOMLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(8C49E58A-FFEA-48F0-A42D-68D2FBE14603),
+		helpstring("MTParser: Evaluate math expressions")
+	]
+	coclass MTParser
+	{
+		[default] interface IMTParser;
+		interface IMTVariable;
+	};
+	[
+		uuid(0146FD58-5279-4F3F-A70B-77845A2E7B75),
+		helpstring("Double variable type.  Can be used as a IMTVariable object.")
+	]
+	coclass MTDouble
+	{
+		[default] interface IMTDouble;
+	};	
+	[
+		uuid(39726397-B802-4AB7-90B4-16572007027F),
+		helpstring("Date variable type.  Can be used as a IMTVariable object.")
+	]
+	coclass MTDate
+	{
+		[default] interface IMTDate;
+	};
+	[
+		uuid(766FBDFE-9EBB-43BD-BA47-4667B00DD3F9),
+		helpstring("MTParserLocalizer Class")
+	]
+	coclass MTParserLocalizer
+	{
+		[default] interface IMTParserLocalizer;
+	};
+	[
+		uuid(2B8F32EE-6861-442E-9071-312E93CC4CF0),
+		helpstring("MTExcepData Class")
+	]
+	coclass MTExcepData
+	{
+		[default] interface IMTExcepData;
+	};
+	[
+		uuid(16E097BF-2BC4-4377-9DA1-E2806ACA81C4),
+		helpstring("MTDoubleVector Class")
+	]
+	coclass MTDoubleVector
+	{
+		[default] interface IMTDoubleVector;
+	};
+};

@@ -1,0 +1,26 @@
+HKCR
+{
+	MTParserCOM.MTDoubleVector.1 = s 'MTDoubleVector Class'
+	{
+		CLSID = s '{16E097BF-2BC4-4377-9DA1-E2806ACA81C4}'
+	}
+	MTParserCOM.MTDoubleVector = s 'MTDoubleVector Class'
+	{
+		CLSID = s '{16E097BF-2BC4-4377-9DA1-E2806ACA81C4}'
+		CurVer = s 'MTParserCOM.MTDoubleVector.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {16E097BF-2BC4-4377-9DA1-E2806ACA81C4} = s 'MTDoubleVector Class'
+		{
+			ProgID = s 'MTParserCOM.MTDoubleVector.1'
+			VersionIndependentProgID = s 'MTParserCOM.MTDoubleVector'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			'TypeLib' = s '{3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3}'
+		}
+	}
+}

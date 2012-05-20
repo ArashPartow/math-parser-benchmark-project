@@ -1,0 +1,302 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// French (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "A propos de MathExpr"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "MathExpr version 1.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Mathieu Jacques matjacques@hotmail.com",IDC_STATIC,40,
+                    25,160,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_MATHEXPR_DIALOG DIALOGEX 0, 0, 282, 169
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "MTParserCOM: C++ client demo"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EXPR,13,29,255,15,ES_AUTOHSCROLL
+    GROUPBOX        "Mathematical Expression",IDC_STATIC,7,7,268,114
+    LTEXT           "Variables:",IDC_STATIC,14,55,35,16
+    LTEXT           "x =",IDC_STATIC,34,68,13,10
+    LTEXT           "y =",IDC_STATIC,34,82,17,10
+    LTEXT           "z =",IDC_STATIC,34,96,16,10
+    EDITTEXT        IDC_VARX,55,67,45,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_VARY,55,81,45,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_VARZ,55,95,45,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Evaluate",IDC_EVALUATE,106,58,54,23
+    EDITTEXT        IDC_MSG,7,123,181,39,ES_MULTILINE | ES_READONLY | 
+                    ES_WANTRETURN | NOT WS_BORDER
+    GROUPBOX        "Result",IDC_STATIC,165,67,100,38
+    EDITTEXT        IDC_RESULT,167,82,93,12,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Index",IDC_INDEX,212,124,63,15
+    PUSHBUTTON      "BenchMark",IDC_BENCHMARK,106,84,54,23
+    PUSHBUTTON      "Define Macro",IDC_DEFINEMACRO,212,147,63,15
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040C04B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "Application MFC MathExpr\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "MathExpr\0"
+            VALUE "LegalCopyright", "Copyright (C) 2004\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "MathExpr.EXE\0"
+            VALUE "ProductName", "Application MathExpr\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x40c, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_MATHEXPR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 275
+        VERTGUIDE, 34
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 162
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&A propos de MathExpr..."
+END
+
+#endif    // French (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// French (Canada) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRC)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH_CANADIAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_INDEXDLG DIALOG DISCARDABLE  0, 0, 363, 366
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Operator, Function and Constant Index"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,306,337,50,14
+    GROUPBOX        "Defined Operators",IDC_STATIC,7,7,349,83
+    EDITTEXT        IDC_DEFINEDOPS,14,18,335,65,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | 
+                    WS_VSCROLL | WS_HSCROLL
+    GROUPBOX        "Defined Functions",IDC_STATIC,7,95,349,146
+    EDITTEXT        IDC_DEFINEDFUNCS,14,105,334,126,ES_MULTILINE | 
+                    ES_READONLY | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    GROUPBOX        "Defined Constants",IDC_STATIC,7,245,349,82
+    EDITTEXT        IDC_DEFINEDCONSTS,14,256,334,65,ES_MULTILINE | 
+                    ES_READONLY | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+END
+
+IDD_DEFINEMACRO DIALOG DISCARDABLE  0, 0, 329, 119
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Define Macro"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Macro",IDC_STATIC,7,7,315,81
+    LTEXT           "Macro's symbol",IDC_STATIC,31,23,55,10
+    LTEXT           "Macro's function",IDC_STATIC,105,22,55,10
+    EDITTEXT        IDC_MACROSYMBOL,31,33,55,13,ES_AUTOHSCROLL
+    LTEXT           "=",IDC_STATIC,91,35,9,9
+    EDITTEXT        IDC_MACROFUNCTION,105,33,209,13,ES_AUTOHSCROLL
+    LTEXT           "Macro's description",IDC_STATIC,32,55,79,10
+    EDITTEXT        IDC_MACRODESC,31,65,282,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "Define",IDC_DEFINEMACRO,245,92,60,13
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_INDEXDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 356
+        VERTGUIDE, 14
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 359
+    END
+
+    IDD_DEFINEMACRO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 322
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 12, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\MathExpr.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.fra\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\MathExpr.ico"
+#endif    // French (Canada) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE 12, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\MathExpr.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.fra\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

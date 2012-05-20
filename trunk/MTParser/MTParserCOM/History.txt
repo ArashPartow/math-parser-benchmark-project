@@ -1,0 +1,59 @@
+/**************************************************
+	MTParser COM library
+	
+	By Mathieu Jacques, 2005	
+
+	####################################################################
+	COPYRIGHT NOTICE:
+
+	Free to use for non-commercial purpose.  If you want to use it in
+	a commercial product, please contact me to get my permission.
+
+	####################################################################
+
+
+  History
+______________________________________________
+  Date				Author			Description
+______________________________________________
+
+  January 10, 2005	M.J.			First version
+  
+  January 18, 2005	M.J.			- New Feature: Automatic variable definition feature added.
+  
+  January 20, 2005	M.J.			- New Feature: Detailled error reporting to allow message translation.  Use the getLastExcep method.
+									- New Feature: Shared variable.  Variables can be defined as COM objects and thus can be shared between
+									multiple parser objects.
+
+  January 30, 2005	M.J.			- New Feature: Date variable type.
+									- New Feature: Conversion function enumeration.
+
+  January 31, 2005	M.J.			- New Feature: NaN test.
+									- New Feature: Macro function.
+
+  February 1, 2005	M.J.			- Bug Fix: Null strings caused the parser to crash.  Now all BSTR are validated.
+
+  June 13, 2005		M.J.			- New Feature: New method to get the variables' value - getVarVal.
+									- New Feature: Layered exceptions are now supported.  To get all exceptions, call the getLastExcep method until
+									you got the no error exception.
+									
+  June 14, 2005		M.J.			- Update: com_MTDefExcep_MacroProtoSyntax exception added.
+  
+  July 26, 2005		M.J.			- Enhancement - Performance: Batch evaluate to avoid COM calls.  This yields a 20 fold speed improvement factor under the .Net
+									framework.  So now using the parser in c# is almost as fast as in native c++!
+									
+  August 17, 2005	M.J.			- New Feature: Attributes added.  Helpful to see the parser state in VB or .Net.
+  
+  April 25, 2007	M.J.			- Fix: Return copy of internal variable in defineVar using the spawn method since the 
+										registrar own them afterward.
+										
+  May 17, 2007		M.J.			- Fix: MTParser.h modified to allow side-by-side assembly to work properly.  Some old code was
+										causing problems.  So now, using a manifest, no need to register any COM objects!
+									- New Feature: User-defined function!  Implement the IMTFunction interface. 
+									
+  July 5, 2007		M.J.			- Enhancement: VB6 methods for batch evaluate.
+  
+  November 5, 2007	M.J.			- Fix: Return copy of internal variable in redefineVar using the spawn method since the 
+										registrar own them afterward.
+
+  March 5, 2008		M.J.			- New Feature: User-defined COM functions now support undefined number of arguments
