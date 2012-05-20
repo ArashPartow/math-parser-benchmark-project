@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=us-ascii"><title></title>
+
+<meta name="GENERATOR" content="LibreOffice 3.4 (Unix)">
+<meta name="CREATED" content="0;0">
+<meta name="CHANGED" content="20111205;19583200">
+<meta name="" content=""></head><body dir="ltr" lang="de-DE">
+<p style="margin-bottom: 0cm;"><font size="4"><b>1. A Tiny Mathematical Speed Parser</b></font><br>
+<br></p>ATMSP is a portable C++ parser for mathematical expressions like "sin(x)+y^2" e.g.
+These may contain arbitrary numbers of functions, variables and
+constants. Major design goal was minimalistic size
+and maximum speed.<br>
+<br>
+Tiny 324 code-lines offer a parser plus bytecode-generator, 26 mathematical functions and 17 supported base-types including
+complex and arbitrary MPFR-multiprecision. Both parser and bytecode may run in threads.<br>
+<br>The usage of ATMSP is most simple - just include a single header in
+your own code and go. Reasonably experienced coders may implement other base-types
+like bool, SSE2, rationals or bigint's with a few changes.<br>
+<br>
+<p style="margin-bottom: 0cm;"></p>
+<font size="4"><b>2. Compiling</b></font><br>
+<br>
+All prerequisites for basic compilation is a fairly decent C++ compiler
+- even Microsoft would suffice. ATMSP should run on most systems&nbsp;
+and CPU's around. Using GCC
+this includes PowerPC, Sparc, Mips, S390 or ARM just to
+name a few. 32/64-Bit makes no difference. When using advanced MPFR
+multiprecision, this library has to be installed of course.<br>
+<br>
+2.1. *NIX/MAC/MISC: the compilation for main.cpp and the types general/complex/MPFR is simple:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp; g++ -Wall -O3 main.cpp<br>
+&nbsp;&nbsp;&nbsp; g++ -Wall -O3 main.cpp -DCOMPLEX<br>
+&nbsp;&nbsp;&nbsp; g++ -Wall -O3 main.cpp -DMPFR -lmpfr<br>
+<br>
+Or simply use the supplied
+Makefile. Here "make help" shows a list of additional options, target platforms and compilers.<br>
+<br>
+2.2. MSVC: create a project or use the command line like this e.g:<br>
+<br>
+&nbsp;&nbsp;&nbsp; cl /Ox /D "WIN32" /EHsc main.cpp<br>
+&nbsp;&nbsp;&nbsp; cl /Ox /D "WIN32" /EHsc /D COMPLEX&nbsp; main.cpp<br>
+<br>With more recent MSVC versions MPFR multiprecision should work too. When you have no clue
+how to compile this, please consult the web or your Microsoft support.<br>
+
+<p style="margin-bottom: 0cm;"><br>
+<font size="4"><b>3. Usage in your own programs</b></font><br>
+<br></p>
+3.1. The most simple usage is achieved with this minimal code
+sequence:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp; // Include the definition-file and create both parser/bytecode instances with the SAME type<br>
+&nbsp;&nbsp;&nbsp; #include "atmsp.h"<br>&nbsp;&nbsp;&nbsp; ATMSP&lt;double&gt; parser;<br>
+
+&nbsp;&nbsp;&nbsp; ATMSB&lt;double&gt; byteCode;<br>
+<br>
+&nbsp;&nbsp;&nbsp; // Parse and calculate a raw numeric expression with an empty variables-list<br>
+&nbsp;&nbsp;&nbsp; parser.parse(byteCode, "1+2+3", "");<br>
+&nbsp; &nbsp; std::cout &lt;&lt; "Result: " &lt;&lt; byteCode.run() &lt;&lt; std::endl;<br>
+&nbsp;<br>
+3.2. Pretty easy, but normally you want constants, variables and/or error handling too. The way to go:<br><br>
+
+&nbsp;&nbsp;&nbsp; // Include the definition-file and create both parser/bytecode instances with the SAME type<br>
+
+&nbsp;&nbsp;&nbsp; #include "atmsp.h"<br>
+&nbsp;&nbsp;&nbsp; ATMSP&lt;double&gt; parser;<br>
+
+
+&nbsp;&nbsp;&nbsp; ATMSB&lt;double&gt; byteCode;<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp; // Need constants besides predfined $pi and
+$e (and $i in case of complex type) ?<br>
+&nbsp;&nbsp;&nbsp; // Then declare additional constants BEFORE parsing<br>
+&nbsp;&nbsp;&nbsp; if&nbsp; ( parser.addConstant("$myConst", 123.456 ) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::cerr &lt;&lt; "Adding constant failed" &lt;&lt;&nbsp; std::endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp; // Parse your expression with a variables list AFTER constant declarations<br>
+&nbsp;&nbsp;&nbsp; // Both the expression and the variables list are case sensitive and may contain blanks<br>
+&nbsp;&nbsp;&nbsp; size_t err =  parser.parse(byteCode, "y * sin($pi*x)^2 + $myConst", "x,
+y");<br>
+&nbsp;&nbsp;&nbsp; if ( err&nbsp; )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::cout &lt;&lt; "Parsing
+failed with: " &lt;&lt; parser.errMessage(err) &lt;&lt; std::endl;<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; // Set variable values BEFORE final
+bytecode execution. Same principle for more variables<br>
+&nbsp;&nbsp;&nbsp; byteCode.var[0] = 3.0;&nbsp;&nbsp; // x is 1st in the
+above variables list, so it has index 0<br>
+&nbsp;&nbsp;&nbsp; byteCode.var[1] = 7.0;&nbsp;&nbsp; // y is 2nd in the
+above variables list, so it has index 1<br>
+<br>
+&nbsp;&nbsp;&nbsp; // And execute the bytecode with the
+variable/constant values set above<br>
+&nbsp;&nbsp;&nbsp; double result = byteCode.run();<br>
+<br>
+&nbsp;&nbsp;&nbsp; // In need to check float errors like division by zero or negative roots e.g?<br>
+&nbsp;&nbsp;&nbsp; if ( byteCode.fltErr )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::cerr &lt;&lt; "Faced a NaN/inf error" &lt;&lt;&nbsp; std::endl;<br><br>
+Besides main.cpp the programs in the directory ./test are fairly well
+commented and may be instructive too. At the top of each file you find
+the switches used to compile. <br>
+<br>
+<br>
+<font size="4"><b>4. Self-test</b></font><br>
+<br>
+It may be a good idea to verify that ATMSP works correctly on
+your machine. For this purpose a self-test is included:<br>
+<br>
+&nbsp; &nbsp; cd tests<br>
+&nbsp;&nbsp;&nbsp; g++ -Wall -O3 selftest.cpp<br>
+&nbsp;&nbsp;&nbsp; ./a.out<br>
+
+<p style="margin-bottom: 0cm;">The code in selftest.cpp may serve as additional example for how
+things work.<br></p>
+<br>
+<br>
+<font size="4"><b>5. Thread safety</b></font><br>
+<br>
+Whilst the recursive parser back-end is thread safe, the bytecode
+is not. At least when you change variable values somewhen.
+Locking mechanisms would slow down execution terribly. However
+there is an easy way to achieve thread safety without speed
+penalties. Create one bytecode-instance per thread:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp; // Create one parser and a set of
+bytecode-instances<br>
+&nbsp;&nbsp;&nbsp; ATMSP&lt;double&gt; parser;<br>
+&nbsp;&nbsp;&nbsp; ATMSB&lt;double&gt; byteCode[numThreads];<br>
+&nbsp;&nbsp;&nbsp; for (int i=0; i&lt;numThreads; i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parser.parse(byteCode[i], "1+x",
+"x");<br><br>
+&nbsp;&nbsp;&nbsp; // Now we have thread safe bytecode-instances.
+Proceed as needed. E.g:<br>
+&nbsp;&nbsp;&nbsp; for (int i=0; i&lt;numThreads; i++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; byteCode[i].var[0] = yourValueWanted;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; std::cout &lt;&lt; byteCode[i].run() &lt;&lt; std::endl;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;<br>Lucky users having POSIX-compatible pthreads may try out a multithreaded
+version of the self-test. Compile/run it with:<br>
+<br>
+&nbsp; &nbsp; cd tests<br>
+&nbsp;&nbsp;&nbsp; g++ -Wall -O3 -lpthread selftest_mt.cpp<br>
+&nbsp;&nbsp;&nbsp; ./a.out 5 30000<br>
+
+<p style="margin-bottom: 0cm;">Here each test will be performed 5 times
+in parallel 30000 threads. But beware, this is heating up your system a
+bit - and may serve to find out the limits of your system. In practice
+choose more moderate arguments. Final hint: when using external libs, these must be thread-safe too of course.<br></p>
+
+<br>
+<br>
+<font size="4"><b>6. Default operators, functions and constants</b></font><br>
+
+<br>Regardless of the float/integer/MPFR type used these are the operators/functions you have out of the box:<br>
+<br>
+Basic: +, -, *, /, ^ (the latter for powers)<br>Standard: abs, acos, asin, atan, atan2, cos, cosh, exp, log, log10, sin, sinh, sqrt, tan, tanh<br>
+Miscellaneous:&nbsp; floor, round, min, max, sig, log2<br>
+<br>
+As default constants you have $e, $pi (plus $i for complex enabled).
+Note: when using complex, some operators are not senseful and hence not
+available.<br>
+<br>
+<br>
+<font size="4"><b>7. Customizing hints</b></font><br>
+<br>Unlikely that you ever get an "Out of
+memory" error when parsing. For really huge expressions (or more
+variables and constants) simply adjust the constants in the
+file atmsp.base.h according to your needs and re-compile. The other
+way round: when fighting for bytes of memory and you are
+using "normal" expressions only, you may shrink sizes
+down.<br>
+<br>
+When you have a set of constants used regularly, you may wish to
+make them default. To achieve this, simply add them in
+the init() function near the top of the file atmsp.cpp. This
+should be self explanatory even for programming novices.<br>
+<br>
+<br>
+<font size="4"><b>8. ATMSP in comparison</b></font><br>
+<br>
+A reason for ATMSP may be speed, where just a few products like the excellent Open Source
+parsers <a href="http://warp.povusers.org/FunctionParser/">FParser</a> and <a href="http://muparser.sourceforge.net/mup_features.html">muParser</a>
+are playing in the same league. ATMSP tends to be the speed-king at short expressions. FParser at longer ones, when it's
+genius optimization finds a target. And muParser scores at long nested
+function chains. When working with specific expression sets and counting cycles, a direct comparison maybe a
+good idea.<br>
+<br>
+A word of caution: especially the Windows universe tends to advertise
+parser-products as "extremely fast". When in serious need for
+speed, a reality check is advised.<br>
+&nbsp;<br>
+Another reason for ATMSP may be the "footprint". The sources, memory
+consumption and executable size of ATMSP are truly minimalistic. So it
+may achieve nice results on tiny equipped systems. ATMSP consequently
+follows the KISS-appoach. Hence you may miss functionality like
+arbitrary function
+definitions, degree conversion, unit-support or UTF8. Both FParser and
+muParser offer a plethora of fancy features. When you need these as
+well as speed, one of the two parsers may be your first choice.<br>
+<br>
+<br>
+<font size="4"><b>9. License</b></font><br>
+<br>
+This program may be used under the terms of the GNU General Public
+License version 3 as published by the Free Software Foundation and
+appearing in the file license.gpl included in this package.<br>
+<br>
+This program is provided AS IS with NO WARRANTY OF ANY KIND,
+INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE.<br>
+<br>
+(C) 1989-2012 Heinz van Saanen
+
+</body></html>
