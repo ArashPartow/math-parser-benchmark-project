@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LibraryInfo schema="2" type="static" data1="" data2="" version="3">
+	<Resource LCID="en">
+		<library title="Default items" description="Default functions and operators provided with MTParser" />
+		<function id="sin" symbol="sin" args="x" argDescs="" description="Sine" />
+		<function id="asin" symbol="asin" args="x" argDescs="" description="Arcsine" />
+		<function id="sinh" symbol="sinh" args="x" argDescs="" description="Hyperbolic sine" />
+		<function id="cos" symbol="cos" args="x" argDescs="" description="Cosine" />
+		<function id="acos" symbol="acos" args="x" argDescs="" description="Arccosine" />
+		<function id="cosh" symbol="cosh" args="x" argDescs="" description="Hyperbolic cosine" />
+		<function id="tan" symbol="tan" args="x" argDescs="" description="Tangent" />
+		<function id="atan" symbol="atan" args="x" argDescs="" description="Arctangent" />
+		<function id="tanh" symbol="tanh" args="x" argDescs="" description="Hyperbolic tangent" />
+		<function id="sqrt" symbol="sqrt" args="x" argDescs="" description="Square root" />
+		<function id="min2" symbol="min" args="x,y" argDescs="" description="Minimum of two values" />
+		<function id="min3" symbol="min" args="x,y,z" argDescs="" description="Minimum of three values" />
+		<function id="minUndef" symbol="min" args="x,y,z,..." argDescs="" description="Minimum of a set of values" />
+		<function id="max2" symbol="max" args="x,y" argDescs="" description="Maximum of two values" />
+		<function id="max3" symbol="max" args="x,y,z" argDescs="" description="Maximum of three values" />
+		<function id="maxUndef" symbol="max" args="x,y,z,..." argDescs="" description="Maximum of a set of values" />
+		<function id="abs" symbol="abs" args="x" argDescs="" description="Absolute value" />
+		<function id="rand0" symbol="rand" args="" argDescs="" description="Random value between 0 and 1" />
+		<function id="rand2" symbol="rand" args="min,max" argDescs="lower bound,upper bound" description="Random value between min and max" />
+		<function id="log" symbol="log" args="x" argDescs="" description="Natural logarithm" />
+		<function id="log10" symbol="log10" args="x" argDescs="" description="Base-10 logarithm" />
+		<function id="ceil" symbol="ceil" args="x" argDescs="" description="Round up to the nearest integer" />
+		<function id="floor" symbol="floor" args="x" argDescs="" description="Round to the bottom" />
+		<function id="avg" symbol="avg" args="x,y,z,..." argDescs="" description="Average of a set of values" />
+		<function id="sum" symbol="sum" args="x,y,z,..." argDescs="" description="Sum all values" />
+		<function id="fact" symbol="fact" args="x" argDescs="" description="Factorial of x: x*(x-1)*(x-2)*...(x-x+1)" />
+		<function id="if" symbol="if" args="condition, val1, val2" argDescs="the condition to be tested,returned value if true,returned value if false" description="If the condition is true, returns val1 else returns val2" />
+		<function id="round" symbol="round" args="x" argDescs="" description="Round to the nearest integer" />
+		<function id="isNaN" symbol="isNaN" args="x" argDescs="" description="Returns 1 if the number is a NaN value" />
+		<function id="isFinite" symbol="isFinite" args="x" argDescs="" description="Returns 1 if the number is finite.  A NaN value is not finite." />
+		<function id="bin" symbol="bin" args="n" argDescs="binary number" description="Converts a binary number to a decimal number" />
+		<function id="hex" symbol="hex" args="n" argDescs="hexadecimal number" description="Converts an hexadecimal number to a decimal number" />
+		
+		<operator id="+" symbol="+" args="x,y" description="Add two numbers" />
+    <operator id="unaryAdd" symbol="+" args="x" description="Unary addition" />
+		<operator id="minus" symbol="-" args="x,y" description="Substract two numbers" />
+		<operator id="unaryMinus" symbol="-" args="x" description="Unary minus" />
+		<operator id="*" symbol="*" args="x,y" description="Multiply two numbers" />
+		<operator id="/" symbol="/" args="x,y" description="Divide two numbers" />
+		<operator id="^" symbol="^" args="x,y" description="Raise x to the power of y" />
+		<operator id="%" symbol="%" args="x,y" description="Modulo; find remainder of the division of x by y" />
+		<operator id=">" symbol=">" args="x,y" description="Greater than logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="&lt;" symbol="&lt;" args="x,y" description="Lesser than logical operator.  Returns 1 if true, 0 if false." />
+		<operator id=">=" symbol=">=" args="x,y" description="Greater than or equal logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="&lt;=" symbol="&lt;=" args="x,y" description="Lesser than or equal logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="!=" symbol="!=" args="x,y" description="Not equal logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="==" symbol="==" args="x,y" description="Equal logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="&amp;" symbol="&amp;" args="x,y" description="And logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="|" symbol="|" args="x,y" description="Or logical operator.  Returns 1 if true, 0 if false." />
+		<operator id="!" symbol="!" args="x" description="Not logical operator. Returns 1 if x is 0, else returns 1" />
+		
+		<constant symbol="NaN" description="Special value indicating an error.  (Not A Number)" />
+		
+		
+		<exception id="MTDEFEXCEP_OpAlreadyDefined" description="Operator already defined: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_OpNameNull" description="Operator name cannot be null"/>
+		<exception id="MTDEFEXCEP_OpNameSpace" description="This operator's name contains space characters: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_OpNameSyntaxConflict" description="Operator name '%itemName' conflicts with the syntax element character: '%conflictItemName'."/>		
+		<exception id="MTDEFEXCEP_OpPrecedence" description="Operator: '%itemName'; invalid precedence."/>			
+		<exception id="MTDEFEXCEP_FuncAlreadyDefined" description="Function already defined: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_FuncNameNull" description="Function name cannot be null"/>
+		<exception id="MTDEFEXCEP_FuncNameSpace" description="This function's name contains space characters: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_FuncNameSyntaxConflict" description="Function name '%itemName' conflicts with the syntax element character: '%conflictItemName'"/>		
+		<exception id="MTDEFEXCEP_FuncNameOpConflict" description="Function name '%itemName' conflicts with the operator '%conflictItemName'"/>
+		<exception id="MTDEFEXCEP_ItemNotFound" description="Cannot find the specified item: id = %itemName"/>		
+		<exception id="MTDEFEXCEP_VarAlreadyDefined" description="Variable already defined: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_VarNameNull" description="Variable name cannot be null"/>
+		<exception id="MTDEFEXCEP_VarNameSpace" description="This variable's name contains space characters: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_VarNameOnlyNum" description="Invalid variable name: '%itemName'.  Cannot be composed only of numbers"/>		
+		<exception id="MTDEFEXCEP_VarNameConstConflict" description="Variable name '%itemName' conflicts with the constant of the same name."/>	
+		<exception id="MTDEFEXCEP_VarNameOpConflict" description="Operator already uses the name: '%itemName' "/>
+		<exception id="MTDEFEXCEP_VarNameSyntaxConflict" description="The variable name '%itemName' contains a reserved syntax character: '%conflictItemName'"/>		
+		<exception id="MTDEFEXCEP_ConstAlreadyDefined" description="Constant already defined: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_ConstNameNull" description="Constant name cannot be null"/>
+		<exception id="MTDEFEXCEP_ConstNameSpace" description="This constant's name contains space characters: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_ConstNameOnlyNum" description="Invalid constant name: '%itemName'.  Cannot be composed only of numbers."/>		
+		<exception id="MTDEFEXCEP_ConstNameSyntaxConflict" description="Constant name '%itemName' conflicts with the syntax element character: '%conflictItemName'"/>
+		<exception id="MTDEFEXCEP_ConstNameOpConflict" description="Constant name '%itemName' conflicts with the operator '%conflictItemName'"/>		
+		<exception id="MTDEFEXCEP_ConstNameVarConflict" description="Constant name '%itemName' conflicts with the variable of the same name"/>		
+		<exception id="MTDEFEXCEP_PluginVersion" description="The plug-in's version is incompatible with this library.  CLSID = %itemName.  Requested version: %conflictItemName.  Plug-in's version: %param1"/>
+		<exception id="MTDEFEXCEP_PluginNotFound" description="The plug-in cannot be found.  Make sure the plug-in is properly registered. CLSID = %itemName"/>
+		<exception id="MTDEFEXCEP_PluginTypeLibNotFound" description="The plug-in type lib file cannot be found: '%itemName'.  This file describes the plug-in interface."/>
+		<exception id="MTDEFEXCEP_PluginDefConflict" description="The plug-in cannot be loaded because of a conflict with an already defined item.  Plug-in CLSID = %itemName"/>
+		<exception id="MTDEFEXCEP_MacroProtoSyntax" description="The macro's prototype syntax is incorrect: '%itemName' at position %pos. The proper syntax is: macro(arg1, arg2, arg3...)."/>		
+		<exception id="MTPARSINGEXCEP_InvalidOpSyntax" description="Invalid operator syntax: '%itemName', at position %pos"/>		
+		<exception id="MTPARSINGEXCEP_InvalidFuncSyntax" description="Invalid function's argument syntax. Function's name: '%itemName', argument %param1, at position %pos"/>		
+		<exception id="MTPARSINGEXCEP_UnexpectedBeginVarName" description="Unexpected begin variable name character at position: %pos"/>					
+		<exception id="MTPARSINGEXCEP_UnexpectedEndVarName" description="Unexpected end variable name character at position: %pos"/>					
+		<exception id="MTPARSINGEXCEP_UnexpectedOp" description="Unexpected operator near position: %pos"/>		
+		<exception id="MTPARSINGEXCEP_MissingOpenBracket" description="Missing opening bracket to macth closing bracket at position: %pos"/>					
+		<exception id="MTPARSINGEXCEP_InvalidArgSeparator" description="Invalid use of an argument separator outside a function at position: %pos"/>
+		<exception id="MTPARSINGEXCEP_MissingCloseBracket" description="Missing closing bracket to match opening bracket at position: %pos"/>
+		<exception id="MTPARSINGEXCEP_OverloadedFuncNotFound" description="Function: '%itemName', position %pos. No overloaded function takes %param1 arguments"/>
+		<exception id="MTPARSINGEXCEP_InvalidSyntax" description="Invalid syntax near position: %pos"/>				
+		<exception id="MTPARSINGEXCEP_MissingOp" description="Missing operator before: '%itemName', at position: %pos"/>		
+		<exception id="MTPARSINGEXCEP_UndefinedFunc" description="Undefined function: '%itemName', at position: %pos"/>		
+		<exception id="MTPARSINGEXCEP_UndefinedVar" description="Undefined variable: '%itemName', at position %pos"/>		
+		<exception id="MTPARSINGEXCEP_UselessArgSeparator" description="Invalid use of an argument separator at position: %pos"/>		
+		<exception id="MTPARSINGEXCEP_InternalError" description="Internal error at position: %pos"/>		
+		<exception id="MTLOCEXCEP_MTParserInfoObjectNotFound" description="The MTParserInfo COM object cannot be instanciated.	Make sure it is registered."/>
+		<exception id="MTLOCEXCEP_InfoFileOpenFailed" description="Unable to OPEN the library info file: '%itemName'. Make sure the file exists and that the schema and xml syntax are valids."/>		
+		<exception id="MTLOCEXCEP_InfoFileLoadFailed" description="Unable to LOAD the library info file: '%itemName'. Make sure no xml attribute is missing."/>		
+		<exception id="MTLOCEXCEP_InfoFileLocaleFailed" description="Locale information not available for the library info file: '%itemName'.  Locale: %conflictItemName"/>		
+		<exception id="MTLOCEXCEP_InfoFileBadVersion" description="The library info file version is incorrect.  File: '%itemName'"/>		
+		
+		
+	</Resource>
+	<Resource LCID="fr">
+		<library title="Items par défaut" description="Fonctions, opérateurs et constantes définis par défaut" />
+		<function id="sin" symbol="sin" args="x" argDescs="" description="Sinus" />
+		<function id="asin" symbol="asin" args="x" argDescs="" description="Arc sinus" />
+		<function id="sinh" symbol="sinh" args="x" argDescs="" description="Hyperbolique sinus" />
+		<function id="cos" symbol="cos" args="x" argDescs="" description="Cosinus" />
+		<function id="acos" symbol="acos" args="x" argDescs="" description="Arc cosinus" />
+		<function id="cosh" symbol="cosh" args="x" argDescs="" description="Hyperbolique cosinus" />
+		<function id="tan" symbol="tan" args="x" argDescs="" description="Tangente" />
+		<function id="atan" symbol="atan" args="x" argDescs="" description="Arc tangente" />
+		<function id="tanh" symbol="tanh" args="x" argDescs="" description="Hyperbolique tangente" />
+		<function id="sqrt" symbol="sqrt" args="x" argDescs="" description="Racine carré" />
+		<function id="min2" symbol="min" args="x,y" argDescs="" description="Minimum de deux nombres" />
+		<function id="min3" symbol="min" args="x,y,z" argDescs="" description="Minimum de trois nombres" />
+		<function id="minUndef" symbol="min" args="x,y,z,..." argDescs="" description="Minimum d'un ensemble de nombres" />
+		<function id="max2" symbol="max" args="x,y" argDescs="" description="Maximum de deux nombres" />
+		<function id="max3" symbol="max" args="x,y,z" argDescs="" description="Maximum de trois nombres" />
+		<function id="maxUndef" symbol="max" args="x,y,z,..." argDescs="" description="Maximum d'un ensemble de nombres" />
+		<function id="abs" symbol="abs" args="x" argDescs="" description="Valeur absolue" />
+		<function id="rand0" symbol="rand" args="" argDescs="" description="Nombre aléatoire entre 0 et 1" />
+		<function id="rand2" symbol="rand" args="min,max" argDescs="borne inférieure,borne supérieure" description="Nombre aléatoire entre la borne inférieure et supérieure" />
+		<function id="log" symbol="log" args="x" argDescs="" description="Logarithme naturel" />
+		<function id="log10" symbol="log10" args="x" argDescs="" description="Logarithme en base 10" />
+		<function id="ceil" symbol="ceil" args="x" argDescs="" description="Arrondie à l'entier le plus près vers le haut" />
+		<function id="floor" symbol="floor" args="x" argDescs="" description="Tronque la partie décimale" />
+		<function id="avg" symbol="avg" args="x,y,z,..." argDescs="" description="Moyenne d'un ensemble de nombres" />
+		<function id="sum" symbol="sum" args="x,y,z,..." argDescs="" description="Somme d'un ensemble de nombres" />
+		<function id="fact" symbol="fact" args="x" argDescs="" description="Factoriel: x*(x-1)*(x-2)*...(x-x+1)" />
+		<function id="if" symbol="if" args="condition, val1, val2" argDescs="la condition à vérifier,valeur retourné si condition vraie,valeur retourné si condition fausse" description="Si la condition est vrai retourne val1 sinon retourne val2" />
+		<function id="round" symbol="round" args="x" argDescs="" description="Arrondie à l'entier le plus près" />
+		<function id="isNaN" symbol="isNaN" args="x" argDescs="" description="Retourne 1 si la valeur est un NaN sinon retourne 0" />
+		<function id="isFinite" symbol="isFinite" args="x" argDescs="" description="Retourne 1 si la valeur est fini sinon retourne 0.  Un NaN est non fini." />
+		<function id="bin" symbol="bin" args="n" argDescs="nombre binaire" description="Convertie un nombre binaire en nombre décimal" />
+		<function id="hex" symbol="hex" args="n" argDescs="nombre hexadécimal" description="Convertie un nombre hexadécimal en nombre décimal" />
+		
+		<operator id="+" symbol="+" args="x,y" description="Additionne deux nombres" />
+    <operator id="unaryAdd" symbol="+" args="x" description="Addition unaire" />
+		<operator id="minus" symbol="-" args="x,y" description="Soustrait deux nombres" />
+		<operator id="unaryMinus" symbol="-" args="x" description="Soustraction unaire" />
+		<operator id="*" symbol="*" args="x,y" description="Multiplie deux nombres" />
+		<operator id="/" symbol="/" args="x,y" description="Divise deux nombres" />
+		<operator id="^" symbol="^" args="x,y" description="x exposant y" />
+		<operator id="%" symbol="%" args="x,y" description="Trouve le restant de la division entière de x par y" />
+		<operator id=">" symbol=">" args="x,y" description="Plus grand que.  Retourne 1 si vrai sinon 0" />
+		<operator id="&lt;" symbol="&lt;" args="x,y" description="Plus petit que. Retourne 1 si vrai sinon 0" />
+		<operator id=">=" symbol=">=" args="x,y" description="Plus grand ou égal.  Retourne 1 si vrai sinon 0" />
+		<operator id="&lt;=" symbol="&lt;=" args="x,y" description="Plus petit ou égal. Retourne 1 si vrai sinon 0" />
+		<operator id="!=" symbol="!=" args="x,y" description="Différent de" />
+		<operator id="==" symbol="==" args="x,y" description="Égalité.  Retourne 1 si vrai sinon 0" />
+		<operator id="&amp;" symbol="&amp;" args="x,y" description="Et logique" />
+		<operator id="|" symbol="|" args="x,y" description="Ou logique" />
+		<operator id="!" symbol="!" args="x" description="Négation" />
+		
+		<constant symbol="NaN" description="Valeur spéciale indiquant une erreur  (Not A Number)" />
+		
+		
+		<exception id="MTDEFEXCEP_OpAlreadyDefined" description="Opérateur déjà définie: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_OpNameNull" description="Le nom d'un opérateur ne peut pas être vide"/>
+		<exception id="MTDEFEXCEP_OpNameSpace" description="Le nom de l'opérateur contient un caractère espace: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_OpNameSyntaxConflict" description="Le nom de l'opérateur '%itemName' est en conflit avec un caractère réservé: '%conflictItemName'."/>		
+		<exception id="MTDEFEXCEP_OpPrecedence" description="La priorité de l'opérateur '%itemName' est invalide"/>			
+		<exception id="MTDEFEXCEP_FuncAlreadyDefined" description="Une fonction du même nom est déjà définie: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_FuncNameNull" description="Le nom d'une fonction ne peut pas être vide"/>
+		<exception id="MTDEFEXCEP_FuncNameSpace" description="Le nom de la fonction contien le caractère espace: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_FuncNameSyntaxConflict" description="Le nom de la fonction '%itemName' entre en conflit avec un caractère réservé: '%conflictItemName'"/>		
+		<exception id="MTDEFEXCEP_FuncNameOpConflict" description="Le nom de la fonction '%itemName' entre en conflit avec l'opérateur '%conflictItemName'"/>
+		<exception id="MTDEFEXCEP_ItemNotFound" description="Item introuvable: id = %itemName"/>		
+		<exception id="MTDEFEXCEP_VarAlreadyDefined" description="Variable déjà définie: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_VarNameNull" description="Le nom d'une variable ne peut pas être vide"/>
+		<exception id="MTDEFEXCEP_VarNameSpace" description="Le nom de la variable contient le caractère espace: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_VarNameOnlyNum" description="Nom de variable invalide: '%itemName'.  Le nom est composé de nombres seulement."/>		
+		<exception id="MTDEFEXCEP_VarNameConstConflict" description="Une constante utilise déjà le nom de la variable '%itemName' "/>	
+		<exception id="MTDEFEXCEP_VarNameOpConflict" description="Un opérateur utilise déjà le nom de la variable '%itemName' "/>
+		<exception id="MTDEFEXCEP_VarNameSyntaxConflict" description="Le nom de la variable '%itemName' entre en conflit avec un caractère réservé: '%conflictItemName'"/>		
+		<exception id="MTDEFEXCEP_ConstAlreadyDefined" description="Constante déjà définie: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_ConstNameNull" description="Le nom d'une contante ne peut pas être vide"/>
+		<exception id="MTDEFEXCEP_ConstNameSpace" description="Le nom de la constante contient le caractère espace: '%itemName'"/>		
+		<exception id="MTDEFEXCEP_ConstNameOnlyNum" description="Nom de constante invalide: '%itemName'.  Le nom est composé de nombres seulement"/>		
+		<exception id="MTDEFEXCEP_ConstNameSyntaxConflict" description="Le nom de la constante '%itemName' est en conflit avec le caractère réservé '%conflictItemName'"/>
+		<exception id="MTDEFEXCEP_ConstNameOpConflict" description="Le nom de la constante '%itemName' est en conflit avec l'opérateur '%conflictItemName'"/>		
+		<exception id="MTDEFEXCEP_ConstNameVarConflict" description="Une variable utilise déjà le nom de la constante '%itemName'"/>		
+		<exception id="MTDEFEXCEP_PluginVersion" description="La version du plug-in est incompatible avec la librairie.  CLSID = %itemName.  Version demandée: %conflictItemName.  Version du plug-in: %param1"/>
+		<exception id="MTDEFEXCEP_PluginNotFound" description="Impossible de trouver le plug-in.  Vérifiez qu'il est bien enregistré.  CLSID = %itemName"/>
+		<exception id="MTDEFEXCEP_PluginTypeLibNotFound" description="Le fichier de définition de librarie est introuvable: '%itemName'"/>
+		<exception id="MTDEFEXCEP_PluginDefConflict" description="Le plug-in ne peut être chargé car il y a un élément en conflit. CLSID = %itemName"/>
+		<exception id="MTDEFEXCEP_MacroProtoSyntax" description="La syntaxe du prototype de la macro est incorrecte: '%itemName' à la position %pos"/>		
+		<exception id="MTPARSINGEXCEP_InvalidOpSyntax" description="Syntaxe de l'opérateur incorrecte: '%itemName', position %pos"/>		
+		<exception id="MTPARSINGEXCEP_InvalidFuncSyntax" description="Syntaxe de l'argument de la fonction invalide. Fonction: '%itemName', argument %param1, à la position %pos"/>		
+		<exception id="MTPARSINGEXCEP_UnexpectedBeginVarName" description="Mauvais usage du délimiteur de début de nom de variable à la position %pos"/>					
+		<exception id="MTPARSINGEXCEP_UnexpectedEndVarName" description="Mauvais usage du délimiteur de fin de nom de variable à la position %pos"/>					
+		<exception id="MTPARSINGEXCEP_UnexpectedOp" description="Mauvais usage de l'opérateur à la position %pos"/>		
+		<exception id="MTPARSINGEXCEP_MissingOpenBracket" description="Parenthèse ouverte manquante pour balancer la parenthèse fermante à la position %pos"/>					
+		<exception id="MTPARSINGEXCEP_InvalidArgSeparator" description="Mauvaise utilisation d'un délimiteur d'argument en dehors d'une fonction à la position %pos"/>
+		<exception id="MTPARSINGEXCEP_MissingCloseBracket" description="Parenthèse fermante manquante pour balancer la parenthèse ouvrante à la position %pos"/>
+		<exception id="MTPARSINGEXCEP_OverloadedFuncNotFound" description="Fonction '%itemName', position %pos.  Aucune fonction ne prend %param1 arguments"/>
+		<exception id="MTPARSINGEXCEP_InvalidSyntax" description="Syntaxe invalide près de la position %pos"/>				
+		<exception id="MTPARSINGEXCEP_MissingOp" description="Opérateur manquant avant '%itemName', à la position %pos"/>		
+		<exception id="MTPARSINGEXCEP_UndefinedFunc" description="Fonction non définie: '%itemName',  position: %pos"/>		
+		<exception id="MTPARSINGEXCEP_UndefinedVar" description="Variable non définie: '%itemName', position %pos"/>		
+		<exception id="MTPARSINGEXCEP_UselessArgSeparator" description="Caractère délimiteur d'argument superflu à la position %pos"/>		
+		<exception id="MTPARSINGEXCEP_InternalError" description="Erreur interne à la position %pos"/>		
+		<exception id="MTLOCEXCEP_MTParserInfoObjectNotFound" description="L'objet MTParserInfo COM ne peut pas être instancié.  Assurez-vous qu'il est enregistré."/>
+		<exception id="MTLOCEXCEP_InfoFileOpenFailed" description="Impossible d'ouvrir le fichier d'information: '%itemName'. Vérifiez que le fichier existe et que le schéma xml est valide."/>		
+		<exception id="MTLOCEXCEP_InfoFileLoadFailed" description="Impossible de charger le fichier d'information: '%itemName'. Vérifiez que tous les attributs xml sont présents."/>		
+		<exception id="MTLOCEXCEP_InfoFileLocaleFailed" description="Le fichier d'information '%itemName' ne contient pas les données pour la langue %conflictItemName"/>		
+		<exception id="MTLOCEXCEP_InfoFileBadVersion" description="La version du fichier d'information '%itemName' est incorrecte"/>		
+		
+	</Resource>
+</LibraryInfo>

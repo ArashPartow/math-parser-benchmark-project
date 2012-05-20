@@ -1,0 +1,26 @@
+HKCR
+{
+	MTParserCOM.MTParser.1 = s 'MTParser Class'
+	{
+		CLSID = s '{8C49E58A-FFEA-48F0-A42D-68D2FBE14603}'
+	}
+	MTParserCOM.MTParser = s 'MTParser Class'
+	{
+		CLSID = s '{8C49E58A-FFEA-48F0-A42D-68D2FBE14603}'
+		CurVer = s 'MTParserCOM.MTParser.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {8C49E58A-FFEA-48F0-A42D-68D2FBE14603} = s 'MTParser Class'
+		{
+			ProgID = s 'MTParserCOM.MTParser.1'
+			VersionIndependentProgID = s 'MTParserCOM.MTParser'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			'TypeLib' = s '{3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3}'
+		}
+	}
+}

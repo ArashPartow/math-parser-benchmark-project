@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'MTParserInfoFile'
+		'MTParserInfoFile.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+}

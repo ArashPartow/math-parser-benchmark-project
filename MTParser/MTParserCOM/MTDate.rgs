@@ -1,0 +1,26 @@
+HKCR
+{
+	MTParserCOM.MTDate.1 = s 'MTDate Class'
+	{
+		CLSID = s '{39726397-B802-4AB7-90B4-16572007027F}'
+	}
+	MTParserCOM.MTDate = s 'MTDate Class'
+	{
+		CLSID = s '{39726397-B802-4AB7-90B4-16572007027F}'
+		CurVer = s 'MTParserCOM.MTDate.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {39726397-B802-4AB7-90B4-16572007027F} = s 'MTDate Class'
+		{
+			ProgID = s 'MTParserCOM.MTDate.1'
+			VersionIndependentProgID = s 'MTParserCOM.MTDate'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			'TypeLib' = s '{3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3}'
+		}
+	}
+}

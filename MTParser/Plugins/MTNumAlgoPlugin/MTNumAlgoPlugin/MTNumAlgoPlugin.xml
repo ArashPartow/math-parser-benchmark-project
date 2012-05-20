@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LibraryInfo schema="1" type="plugin" data1="MTNumAlgoPlugin.dll" data2="{1F6C2D74-1023-4E0F-8A6B-DBA19E6585E3}" version="1">
+	<Resource LCID="en">
+		<library title="Numerical algorithms" description="Various numerical algorithms" />
+		
+		<function symbol="derivate" args="expression,var,point" argDescs="the math expression to differenciate,a variable in the expression,the variable's value where the expression will be differenciated" description="Differentiate the expression with respect to one variable at the specified point" />
+		<function symbol="trapezoid" args="expression,var,a,b,[step=0.1]" argDescs="the math expression to integrate,a variable in the expression,the lower bound,the upper bound,numerical step for the integration (optional)" description="Compute a numerical approximation to the integral between a and b" />
+		<function symbol="solve" args="expression,var,result,[v0=0],[tol=0.01],[maxIter=100]" argDescs="the math expression to solve,a variable in the expression,the expected result,an initial guess for the variable's value (optional),the error tolerance (optional),the maximum number of iterations before abording (optional)" description="Finds the variable's value that yields the desired result using the Newton's numerical approximation method" />
+				
+	</Resource>
+	<Resource LCID="fr">
+		<library title="Général" description="allo" />
+		<function symbol="abs" args="x" argDescs="Un nombre" description="Absolue" />
+		<function symbol="sin" args="x" argDescs="Un nombre" description="Sinus" />
+		<function symbol="rand" args="a,b" argDescs="borne inférieure, borne supérieure" description="Génère un nombre aléatoire entre les borenes a et b" />
+		<operator symbol="+" args="x,y" description="Aditionne deux nombres" />
+	</Resource>
+</LibraryInfo>

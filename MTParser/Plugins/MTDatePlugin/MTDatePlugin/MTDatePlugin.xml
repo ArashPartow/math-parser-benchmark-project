@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LibraryInfo schema="1" type="plugin" data1="MTDateCOMPlugin.dll" data2="{4C639DCD-2043-42DC-9132-4B5C730855D6}" version="1">
+	<Resource LCID="en">
+		<library title="Date/Time" description="Date and time manipulation functions" />
+		
+		<function symbol="datevalue" args="date_text" argDescs="a date string" description="Converts a date string to a decimal number (a data value)" />
+		<function symbol="timevalue" args="time_text" argDescs="a time string" description="Converts a time string to a decimal number (a data value)" />
+		<function symbol="date" args="year,month,day" argDescs="" description="Returns a number representing this date" />
+		<function symbol="time" args="hour,minute,second" argDescs="" description="Returns a number representing this time" />
+		<function symbol="day" args="date_value" argDescs="a number representing a date" description="Returns the day of the month portion of this date value" />
+		<function symbol="hour" args="date_value" argDescs="a number representing a date" description="Returns the hour portion of this date value" />
+		<function symbol="minute" args="date_value" argDescs="a number representing a date" description="Returns the minute portion of this date value" />
+		<function symbol="second" args="date_value" argDescs="a number representing a date" description="Returns the second portion of this date value" />
+		<function symbol="year" args="date_value" argDescs="a number representing a date" description="Returns the year portion of this date value" />
+		<function symbol="month" args="date_value" argDescs="a number representing a date" description="Returns the month portion of this date value" />
+		<function symbol="weekday" args="date_value" argDescs="a number representing a date" description="Returns the day of the week (1..7) corresponding to this date value" />
+		<function symbol="yearday" args="date_value" argDescs="a number representing a date" description="Returns the day of the year (January 1 = 1) corresponding to this date value" />
+		<function symbol="nowdate" args="" argDescs="" description="Returns today's date" />		
+		<function symbol="nowtime" args="" argDescs="" description="Returns actual time" />				
+		
+	</Resource>
+	<Resource LCID="fr">
+		<library title="Général" description="allo" />
+		<function symbol="abs" args="x" argDescs="Un nombre" description="Absolue" />
+		<function symbol="sin" args="x" argDescs="Un nombre" description="Sinus" />
+		<function symbol="rand" args="a,b" argDescs="borne inférieure, borne supérieure" description="Génère un nombre aléatoire entre les borenes a et b" />
+		<operator symbol="+" args="x,y" description="Aditionne deux nombres" />
+	</Resource>
+</LibraryInfo>

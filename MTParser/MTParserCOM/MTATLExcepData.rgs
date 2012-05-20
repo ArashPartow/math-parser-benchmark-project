@@ -1,0 +1,26 @@
+HKCR
+{
+	MTParserCOM.MTExcepData.1 = s 'MTExcepData Class'
+	{
+		CLSID = s '{2B8F32EE-6861-442E-9071-312E93CC4CF0}'
+	}
+	MTParserCOM.MTExcepData = s 'MTExcepData Class'
+	{
+		CLSID = s '{2B8F32EE-6861-442E-9071-312E93CC4CF0}'
+		CurVer = s 'MTParserCOM.MTExcepData.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {2B8F32EE-6861-442E-9071-312E93CC4CF0} = s 'MTExcepData Class'
+		{
+			ProgID = s 'MTParserCOM.MTExcepData.1'
+			VersionIndependentProgID = s 'MTParserCOM.MTExcepData'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3}'
+		}
+	}
+}

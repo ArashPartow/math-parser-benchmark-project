@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LibraryInfo schema="2" type="plugin" data1="MTNumAlgoPlugin.dll" data2="{1F6C2D74-1023-4E0F-8A6B-DBA19E6585E3}" version="1">
+	<Resource LCID="en">
+		<library title="Numerical algorithms" description="Various numerical algorithms" />
+		
+		<function symbol="derivate" args="expression,var,point" argDescs="the math expression to differenciate,a variable in the expression,the variable's value where the expression will be differenciated" description="Differentiate the expression with respect to one variable at the specified point" />
+		<function symbol="trapezoid" args="expression,var,a,b,[step=0.1]" argDescs="the math expression to integrate,a variable in the expression,the lower bound,the upper bound,numerical step for the integration (optional)" description="Compute a numerical approximation to the integral between a and b" />
+		<function symbol="solve" args="expression,var,result,[v0=0],[tol=0.01],[maxIter=100]" argDescs="the math expression to solve,a variable in the expression,the expected result,an initial guess for the variable's value (optional),the error tolerance (optional),the maximum number of iterations before abording (optional)" description="Finds the variable's value that yields the desired result using the Newton's numerical approximation method" />
+				
+	</Resource>
+	<Resource LCID="fr">
+		<library title="Algorithmes numriques" description="Algorithmes d'approximation num�riques" />
+		
+		<function symbol="derivate" args="expression,var,point" argDescs="la fonction à dériver,la variable selon laquelle la fonction sera dérivée,le point où la fonction sera dérivée" description="Calcule la dérivée de la fonction en un point selon une variable" />
+		<function symbol="trapezoid" args="expression,var,a,b,[delta=0.1]" argDescs="la fonction à intégrer,la variable selon laquelle la fonction sera intégrée,la borne inférieure,la borne supérieure,résolution de l'intégration (optionnel)" description="Calcule l'intégrale de la fonction selon une variable dans l'intervalle a et b" />
+		<function symbol="solve" args="expression,var,resultat,[v0=0],[tol=0.01],[maxIter=100]" argDescs="la fonction à résoudre,la variable pour laquelle on doit résoudre la fonction,le résultat attendu,valeur initiale de la variable (optionnel),la tolérance d'erreur (optionnel),le nombre maximum d'itération avant d'arrêter (optionnel)" description="Trouve la valeur de la variable qui donne le résultat attendu" />
+		
+	</Resource>
+</LibraryInfo>

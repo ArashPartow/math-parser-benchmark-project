@@ -1,0 +1,452 @@
+/** @file Mainpage.txt
+
+	@brief MTParserLib General Documentation
+*/
+
+/**************************************************
+	MTParser C++ library
+	
+	By Mathieu Jacques, (c) 2005	
+	matjacques@hotmail.com
+
+	####################################################################
+	COPYRIGHT NOTICE:
+
+	Free to use for non-commercial purpose.  If you want to use it in
+	a commercial product, please contact me to get my permission.
+
+	####################################################################	
+*/
+
+/** @mainpage
+
+<center><b>C++ Mathematical Expression Evaluator Library</b></center>
+<center><b>By Mathieu Jacques</b></center>
+<center><b>matjacques@hotmail.com</b></center>
+
+
+@section Introduction Introduction
+
+Mathematical expressions are used by almost all applications. In fact, they are the 
+foundation of programming languages. Actually when you type a program, 
+you are actually writing tons of math formulas. A program is static by nature, 
+that is, it cannot be changed while executing. For example a program written in C++ 
+must be recompiled each time you change a single line of code. Hence, imagine that one 
+math formula has to be modified in order to accommodate to a change in the user 
+environment. Do you like the idea of recompiling all your code just for one little 
+formula change? There lies the usefulness of a math expression evaluator since it allows 
+runtime formula evaluations and thus modifications without the need to change one line 
+of code. The trick is to treat math formulas like data instead of program instructions. 
+The evaluator takes formulas as strings, compiles them on the fly, and computes the 
+results that can be used transparently by your application.
+
+@section Features Features
+
+- Custom operators and functions: 
+	- Compile-time C++ operator and function class extensions. 
+	- Run-time COM plug-in extensions that can contain constants, operators and functions, all in the same plug-in. 
+	- Run-time Macro function definition.
+- Can handle a huge number of user defined variables efficiently. 
+- Custom variable data sources (memory, database). 
+- Functions can have any number of arguments, and an undefined number of arguments, like: average(v1,v2,v3...). 
+- Operator and function overloading. 
+- Operator and function names can be of any length. 
+- International considerations: 
+	- Unicode and ANSI strings are supported. 
+	- Configurable decimal and function argument separators. 
+	- Easy hook to format error messages in the desired language. 
+- Many predefined operators and functions. 
+- Packaged as a static library for optimum performance with C++ applications. 
+- Informative error messages (Yes!). 
+- Extensive validations (language definition and expression syntax validations). 
+- Fast (Bonus!): 
+	- Fast algorithms. 
+	- Constant expression optimizations. 
+	- Variable values as pointer. 
+	- Preprocessing to speed up multiple evaluations. 
+
+
+@section MainFiles Main Files
+
+The parser's interface file is MTParser.h.  The main class is MTParser.
+
+@section LimitEnhan Limitations/Enhancements
+
+Limitations:
+
+- Only the Windows platform is supported. 
+- No implicit syntax like: x(2+3). The multiplication operator must be specified. 
+
+Suggested to-do list:
+
+- Extension modules: pretty-printing, numerical analysis algorithm package...
+- Plug-ins: stats, financial, engineering... 
+- Performance benchmarking with different types of expressions. 
+- Unit support (for example, 32k = 32000). 
+- Typed arguments (i.e., string, integer, date...). 
+
+@section License License
+
+	Free to use for non-commercial purpose.  If you want to use it in
+	a commercial product, please contact me to get my permission.
+
+
+@section History History
+
+
+  
+  June 1, 2004		M.J.			
+									- First version
+									
+
+  June 16, 2004		M.J.			
+									- Performance optimization: suppression of the
+										unnessary function parameters, in order to reduce
+										the call time of highly called functions like
+										"evaluate".  Suppression of the unnessary uses of
+										vector[] accessor.  Instead, the item is accessed once and put in
+										a temp variable.
+										NOTE on performance: I tried a non-recursive method for the evaluation, but the
+											performance has decreased in release mode.  In debug, performance is really better,
+											but it seems that the compiler can better optimize the recursive version...
+									- Bug fix: when poping the remaining operators at the end of the parsing step,
+										the precedence was wrong.  This was an index problem.
+									- Enhancement: Functions and operators usage validation have been put in the parsing step.  
+										getHelpString is now more helpful.
+									- Portability enhancement: all CComBSTR replaced by std::wstring and const wchar_t*
+
+  July 11, 2004		M.J.			
+									- New feature: Support for the unary minus operator : expressions ¯x, x-¯y and x+¯y are now supported.
+									The unary minus operator use a different symbol than the minus operator.  So, no special
+									preprocessing code has been needed, only a new operator called UnaryMinusOp.
+									- Performance optimization: constant expressions are not reevaluated at each evaluate call.
+									The result is computed only once during the parsing step and cached.									
+									- Performance optimization: validation code removed from the evaluate method.  All validations
+									should have been done during the parsing step.
+									- Parsing Error message enhancement: the position in the expression string of the bad item has been added
+									to the error message.
+									- Bug fix minor: the isOnlyNum method used the isalpha API function to validate that there was
+									no alpha character.  So the character '!' was considered as a numeric character.  Now isOnlyNum use the
+									iswdigit API.
+									- Bug fix trivial: if the function separator character ',' was used outside a function then the parser crash.  Proper
+									validations have been added.
+									- Bug fix minor in the parsing validation logic
+ 
+  July 18, 2004		M.J.			
+									- New feature: Configurable syntax-> decimal point character and function argument separator character.
+									- New feature: Repackaged as a static library
+									- Enhancement validation: the number of function arguments is now validated.
+									- Enhancement validation: don't allow things like : cos(x)sin(x).  The * operator is not implicit.
+									- Enhancement error report: new method "getDescription" to return a short description of functions and operators.
+									- Enhancement validation: validate that an operator symbol or that a function symbol is not already used when
+									defining a new operator or a new function.
+
+  July 22, 2004		M.J.			
+									- New feature: Operator symbols can be more than one character long.
+									- Enhancement: New logical operators; >, <, >=, <=
+
+  July 29, 2004		M.J.			
+									- Enhancement: Operator overloading; Operators can have only one argument (no left argument).  
+									This allows the unary minus operator to use the same symbol as the minus operator.  Other operators
+									like the not (!x) operator could be added.
+
+  July 31, 2004		M.J.			
+									- New feature: function overloading.  
+									- New feature: function with an undefined number of arguments.  You can now define
+									functions like average(v1, v2, v3,...).
+									- Refactoring: the evaluate method now takes an argument array and doesn't need to pop 
+									values from the parser anymore.  This make the code more robust and ease the validation.
+									The IMathExprEvaluator interface has been removed.  Operators and functions don't need to query the parser
+									for argument value anymore, so this interface was useless.  Hopefully, this simplify the code.
+									- Enhancement: Unicode is no more mandatory.  If UNICODE is not defined, the std::string
+									will be used instead of the std::wstring.
+									- Enhancement: Test cases created!  With so many special cases to take care of for the parsing
+									I want to make sure to not break anything when modifying the code. So, when an expression that breaks
+									the code is found, I will add a test case for it to make sure it will never happen again.
+									- Performance optimization: use of vector::iterator instead of the [] operator during the evaluation
+									step.  The code is less clear but this saves some CPU.
+									- Enhancement: all error strings have been moved outside of the parser.  This will ease the internationalization task.
+									Now there are exception ids with parameters and you format the error messages as you want, in the language you want.
+									- New feature: Constants are now supported.  So instead of using variables to represent constant values, there are specific
+									methods to handle constants and to optimize the evaluation speed.
+									- New feature: The variables used in the expression can be retrived via the getExpressionVars method.  This can be useful for
+									example when solving equations; you must know the variables.
+
+
+ August 2, 2004		M.J.			
+									- Huge! Performance optimization: Iterative evaluation algorithm instead of the recursive one.  Not only that, but the item values
+									are automatically put in the parent arguments.  So, there is no more loop needed to place all argument values in the
+									item argument buffer.
+
+
+ August 3, 2004		M.J.			
+									- Bug fix parsing: Problem with supplementary brackets like: sin(((1))).  Fixed.
+									- Enhancement validation: don't allow syntax like: "avg(x,,1,)".  The argument separators are useless and confusing.
+									 
+		
+ August 6, 2004		M.J.			
+									- Enhancement: Undefined number of argument functions are handled like "default" functions when no other overloaded functions
+									macth the number of arguments.   
+									- Enhancement: Undefined number of argument functions need to have more than one argument.  This avoid, in most cases, having to handle
+									the special case of 0 argument. 
+									- New functions: overloaded functions->min, max.  The goal is to provide fixed argument number functions for the
+									most common cases, because fixed argument functions are faster than function with an undefined number of arguments (no loop).						
+
+ August 8, 2004		M.J.			
+									- Enhancement validation: language consistency check when adding operators, functions, variables and constants.  Validation is also done
+									when setting the syntax. Creation of a new type of exception to handle definition errors. (8h)
+									- Enchancement validation: catch invalid numbers like "5.2.3".  If there are more than one decimal character points then
+									this is not a number. 
+
+ August 19, 2004	M.J				
+									- New feature: COM PLUGINS!  A plugin can contain constants, operators and functions: all in the same COM object.  This is to minimize the
+									number of plugin DLLs to distribute, because it is hard to manage.  The parser has not been modified: COM operator and function adaptors have been
+									created and a plugin loader.  That's all!
+
+ September 1, 2004	M.J.			
+									- Bug fix: Thank to Mikie for reporting this bug.  In the MathExpression constructor, the setSyntax method
+									must be called before defining functions and operators.  Else, the syntax structure is uninitialized and 
+									the syntax validation can fail wrongly.
+
+ September 10, 2004 M.J.			
+									- New feature (requested by Mikie, thanx!): variable name begin and end delimiter characters.  For example: [varName].  This allows
+									a variable name to contain reserved characters like operator names and syntax characters.  Thus, there is no more
+									validation for conflict with operator names and syntax elements.  If you think there is a chance that conflicts occur, then
+									always use the delimiter characters.  The rationale to add this feature is that your application doesn't know which operators and syntax
+									the user will use.  So when the user loads a plugin, there is a chance for conflicts with application defined variables.   
+									- Performance Enhancement: variable list is now handled with a map.  This speed up the parsing step when using thousands of variables.  Using maps
+									for other items (operators, functions and constants) is not necessary since these other items will not come in thousands. 
+
+ September 24, 2004	M.J.			
+									- Enhancement validation: Validate that constant, operator and function names don't contain braket characters.
+
+ October 4, 2004	M.J.			
+									- New feature (requested by Randall Parker, thanx): Undefining variables.  The new method undefineVar allows to undefine a defined variable by specifying its name. (1h)
+									- New operators: The equal(==), not equal(!=), and (&), or (|), not (!) logical operators have been added. (1h)
+									- New feature (requested by Randall Parker, thanx): variable autodefinition.  When a variable is not defined, the parser can automatically define it instead of
+									throwing a parsing exception.  When having a lot of variables, this allows not defining all variables up front, but defining only the variables used in
+									the expression.  This feature is turned off by default.  It can be activated by using the new setConfig method.  The rationale to include this feature is to continue
+									the support of a huge amount of user defined variables.  Hence, this capability can distinguish this parser. (3h)
+									- Refactoring: renaming of MATHEXPRESSIONSYNTAX to MTSyntax.  This is more in line with the library name.
+									- Refactoring: renaming of the getExpressionVars method to getExpVars to be consistent with the new method getExpUndefinedVars
+									- Refactoring: the getExpVars returns a pointer on a vector containing the used variable names in the current expression instead of
+									a copy of a vector.  This can save some CPU when there are many variables used.
+  
+ October 5, 2004	M.J.			
+									- Refactoring: Because the parser class was becoming too large, it has been splitted in two classes: a compiler and a registrar.  These are two differents responsabilities
+									and the division will allow the substitution of different compiling and registration behaviours easily.  The MathExpression class is now a facade that delegates the work to a compiler
+									and a registrar. (4h)
+									- Refactoring: signed/unsigned mismatch warnings removed by using the "unsigned int" type instead of "int".  This has introduced some subtle bugs because there were inverse
+									loops like "for(int t=n-1; t>=0;t--)" that use the fact that 0-1 = -1, but with unsigned int, 0-1 = 2^32-1...!  Unit tests caught it! (1h)
+									-New feature (Inspired by Stephen Lundmark. Thanx!): Custom variable evaluator interface to allow variable values to be gotten from various sources like database or memory. (2h)
+									-New feature: Variable factory.  Used with the variable autodefinition feature, this allows a custom variable factory to be provided to create the proper variable object type. (1h)
+
+ October 7, 2004	M.J.			
+									- Bug fix (reported by Randall Parker, thank you!): When declaring a variable in a for loop, with Microsoft compiler the scope of the variable doesn't stop after the loop.  
+									This is not compliant with the compiler standard.  All usages of this MS specific property have been removed.
+									- Enhancement validation: variable names can contain all syntax elements but variable delimiters.  If a variable name would contain a delimiter, the parser would interpret it wrongly.
+									 
+
+ November 12, 2004	M.J.			
+									- Usability improvement based on the usability inspection result: (5h)							
+										- MTParser.h file reordered based on the task frequencies
+										- Item sharing feature removed (can't share function, operator and variable objects anymore).
+										This feature was not used.
+										- Renaming:
+											- MathExpression to MTParser
+											- IMathFunction, IMathOperator and IMathVariable to MTxxxI
+											- getExpVars to getUsedVars
+											- getExpUndefinedVars to getUndefinedVars
+											- oneArgumentOp to isUnaryOp
+											- EXPR_VALTYPE to MTDOUBLE
+											- const std::vector<MTSTRING>* to LPCMTSTRINGVECT
+										- New method to ease the evaluation of an expression only once
+										- New method to ease the use of the locale settings
+										- MTCONFIG structure removed and replaced by a specific method to enable the autoVarDef feature
+										- New method to configure a parser object using an existing object
+										- Default error message provided with all exceptions
+										- Exception hierarchy created with a simple text exception at its top to allow simple
+										error management when no more details are needed
+
+ December 20, 2004	M.J.			
+									- New feature: Variable access key to allow direct access to variable objects, without having to lookup a map. 
+
+ January 6, 2005	M.J.			
+									- Bug Fix: Positions reported in exceptions were wrong because it didn't count space characters.									 
+									
+ January 17, 2005	M.J.			
+									- Bug Fix: In the compiler, if the automatic variable definition feature was on, the used variable list was wrong. Side-effect of
+									 adding variable keys. :( 
+
+ January 25, 2005	M.J.			
+									- Enhancement: Test cases added and restructured.
+									- New Feature: New conditional function 'if(condition, val1, val2)'.
+ 
+ January 30, 2005	M.J.			
+									- Refactoring: Compiler splitted into states.  This eases the addition of new items and avoids the use of a big-big
+									parsing function.
+									- New Feature: Conversion Functions are now supported.  These functions can convert a string to a double value.
+
+ January 31, 2005	M.J.			
+									- New Feature: NaN test.  Allows to test for "null" values.	 This can be used to mark uninitialized variables.
+									- New Feature: Macro function.  	
+									
+ February 1, 2005	M.J.			
+									- Bug Fix: The compiler crashed when the expression was null.  
+									- Enhancement: Clean debug compilation without warning.
+
+ February 10, 2005	M.J				
+									- Enhancement: Comments formating according to the DOxygen syntax.  All public interfaces documented.
+									- Refactoring: Creation of an abstract compiler and registrar to clean up the public interfaces.
+									Now there are clear compiler and registrar public interfaces, which can be implemented to create custom
+									compilers and registrars.
+									- Refactoring: COM plug-in's interface cleaned.  The number of methods has been diminished by using structures
+									to give item' descriptions instead of one method per information.
+									- Enhancement performance: In the evaluation method, the evaluation loop has been expanded to avoid using a for loop
+									for the most common cases.  
+ 
+ March 3, 2005		M.J.			- Enhancement - performance: Macro function evaluation optimized.  Variable objects are cached thus avoiding to get them
+									using their keys.
+									- Enhancement - portability (Thanks to Don Clugston and Randall Parker): NaN generation now use a portable code instead of using "sqrt(-1)" which doesn't give
+									the correct result on all platforms/compilers.
+ 
+ March 10, 2005		M.J.			
+									- Enhancement - compilation (Thanks to Randall Parker): To enable the code to be compiled under the Borland compiler.
+ 
+ March 19, 2005		M.J.			
+									- Bug Fix: Plug-in adapters had problem with ANSI strings.  A string convertion function for Unicode to ANSI has been created.
+									- Refactoring: The LPCMTVarKeyVECT getUsedVars() method has been replaced by two methods.  One to get the number of used variables and
+									another to get the used variable's keys.  Returning a constant pointer to the variable's keys vector was an unnecessary
+									optimization.  Moreover, the syntax was very ugly and not user-friendly.  
+
+ March 31, 2005		M.J.			
+									- Bug fix: Memory Leak. Thanks to the Dan Moulding's Visual Leak Detector at CodeProject! 
+
+ April 10, 2005		M.J.			
+									- New Feature: Functions can have their own compiler.  This allows a broad new range of functions to be defined, using special syntax.  
+									Conversion functions are no more special entities but now have a special compiler.  This generalization simplifies the code and opens 
+									the door for many kinds of new functions.
+									- Refactoring: The plug-in design now follows the abstract factory pattern. Developing a plug-in is now easier.   
+									- Enhancement - performance: Plug-in items are now as fast as native c++ items.  Instead of calling a COM method
+									to evaluate an item, an item's instance is returned by the COM plug-in and used directly.
+									- Enhancement - exception: Two new exceptions related to plug-ins: MTDEFEXCEP_PluginVersion and MTDEFEXCEP_PluginNotFound. The
+									MTDEFEXCEP_ConvFuncSyntax exception has been replaced by MTPARSINGEXCEP_InvalidFuncSyntax that is more generic.
+									
+ April 19, 2005		M.J.			
+									- Bug fix (Thanks to mgampi!):  Problem with the expression "(2,2)". Now validate that argument separators are used inside functions.
+									- Enhancement - Compiler Performance: The compiling step is now faster.  The main problem was the use of strings instead of simple 
+									character pointers.
+									- New Feature: Numerical Approximation functions.  Derivative, integral and solve functions have been implemented using the new custom
+									compiler feature.  These functions show what can be done and are provided for demonstration purposes.
+
+ April 21, 2005		M.J.			
+									- Refactoring: The two exception types MTDefException and MTParsingException have been merged
+									into MTParserException. Two exception types were not justified.  The MTException still exists.
+									- Enhancement - Validation: Space characters are no more allowed in the names of functions, operators, variables and constants.
+									
+ April 25, 2005		M.J.			
+									- Bug Fix: Problem with recursive functions like trapezoid(2*x,x,trapezoid(2*x,x,0,5),0, 0.001). The arguments are now
+									passed by values instead of by references. 
+
+
+ May 3, 2005		M.J.			
+									- Enhancement - error: Conversion functions allow no more missing closing bracket. 
+
+ June 10, 2005		M.J.		
+									- Bug Fix (Thanks to Martin Gamperl):  Problem when using the auto-var definition feature with the begin-end var delimiters.  The var 
+									compiler state didn't respect the auto-var feature enabled state.  Test case added.
+									
+ June 13, 2005		M.J.		
+									- Refactoring: The getSymbol method is now in the MTExprItemEvaluatorI interface.  Before there were differences between the symbol format
+									of concrete classes (functions, operators and variables) but now the format is the same for all.
+									- New Feature: New function added "isFinite" to allow handling evaluation errors like division by zero.
+									- Enhancement - validation: Now validate functions, operators and constants ID when calling the getFunc, getOp and getConst methods.  When
+									the ID is out of range, an error is thrown instead of terminating the application completly.
+									- Bug Fix (Thanks to Visual Studio.Net!): There was a problem with void expressions (again).  The program attempted to read an invalid memory space.
+									- Enhancement - Performance: The VS.Net compiler provides a 15% speed improvement.
+ 
+ June 14, 2005		M.J.	
+									- New Feature (Inspired by Eamonn McGrath): Macros' arguments can now be ordered and have not to follow the order of apperance of the macro's function.  Now you
+									provide the macro's prototype like: macro(arg1, arg2, arg3...) instead of only its name.   
+ 
+ June 15, 2005		M.J.			
+									- Enhancement - Memory (Thanks to Eamonn McGrath): Macros now use much less memory.  Using the late initialization technique, macros are only created when actually used in the expression.  
+									New method added to the MTFunctionI interface to allow late initialization and avoid wasting resource if the function is not used.												
+									
+ June 24, 2005		M.J.		
+									- New feature: Localizer object to allow localized item information.  XML files are used to store localized information.  Use the MTParserLocalizer object
+									to obtain localized information about defined items.  A COM object is used to parser XML files and use the .Net framework XML functions.
+									- Refactoring: Naming conventions: TestCases.* renamed to MTParserTestCases.*, UnicodeANSIDefs.* renamed to MTUnicodeANSIDefs.*							
+ June 27, 2005		M.J.
+									- Refactoring: MTExprItemEvaluator renamed to MTParserItem which is more meaningful.
+									- Enhancement: The plug-in method "getMTParserVersion" now returns a string instead of a number.  This allows to differenciate
+									between the debug, release and unicode versions and avoids plug-in incompatibility.  								
+									- Refactoring: Numerical algorithms moved in a plug-in.  These are specialized functions. 
+							
+ June 30, 2005		M.J.			
+									- Enhancement - Robustness: STL objects removed from the interface between plug-ins and the parser.  MTCHAR* is now used instead of MTSTRING& and where strings need to
+									be stored, the MTGlobalString class is used.  Also the exception classes no more use vectors.  These modifications allow VC7 plug-ins to be used in the VC6 environment and
+									vice-versa.
+									- Enhancement - Robustness: Now catch out of memory conditions.  When out of memory, an exception is thrown.
+
+ July 5, 2005		M.J.			
+									- New Feature: Exception message formatter to allow parameterized message to be formatted.			
+									- Refactoring: EXCEP and REEXCEP renamed to MTTHROW and MTRETHROW.  The exception type parameter has been removed since there is only one type now.  Constants like CLOSE_BRAKET renamed to MTCLOSE_BRACKET.
+									- Bug Fix: (Potential bug) The plug-in's typelib file is now automatically registered and must be released along with the library in order to be able to instanciate plug-ins.
+									- Refactoring: Exception framework refactored.  Exception identifiers now strings instead of numbers and runtime configurable exception data.  This allows new exceptions to be added without conflict. 
+									So, plug-in can define their own exceptions and put localized text in their xml files.
+									
+ July 11, 2005		M.J.		
+									- Enhancement - Performance: In the registrar: Hash table for operators, multimap for functions and map for constants.  Now searching functions are very performant.  The end-result
+									is better compilation time.
+									- Refactoring: Now use references instead of pointers to return item's ids (methods like findFunction).  This avoids passing invalid pointers.  
+						
+ July 20, 2005		M.J.			
+									- New Feature: Now able to search for all plug-in and load them automatically.  The loadAllPlugins takes a search pattern to locate all info files and extract clsid strings.
+									- New Feature: Batch evaluate.  Allow an expression to be evaluted multiple times in the same call and automatically pulls variable values at each evaluation.
+									- Refactoring: Variable key removed.  This was an unnecessary optimization and somehow ugly.  Now only use variable's names. 
+									- Refactoring: All access id renamed to index.  For example, getFunc(unsigned int funcID) renamed to getFunc(unsigned int index).  Since a function has a string id, this was
+									confusing.
+
+ August 12, 2005	M.J.			
+									- New Feature: Redefine variable.  This eases the use of the automatic variable definition feature since a variable factory is no more needed.  You can
+									compile an expression and redefine automatically defined variable using the proper variable type.
+									
+ July 23, 2006		M.J.			- Bug Fix: Expressions like "2,2" crashed the parser.  Compiler method getCurItemType fixed.
+									- Enhancement (Thanks to udvranto): VS.NET 2005 ready.
+									- Bug Fix (Thanks to tux512): The log10 function now uses the log10 math function instead of the log function!
+									- Bug Fix (Thanks to tux512): Expressions like 1+() crashed the parser.  The () syntax is now invalid.  Test case added.
+									- New Feature (Thanks to Bidoy): Unary addition operator added.  Syntax like +2 is now valid.
+									- Feature Removed(Thanks to iberg): No more checking for out of memory exception.  It is up to the application to handle the system exception.  Historically, this feature was 
+									required when the new operator returned null instead of throwing an exception.
+									- New Feature (Thanks to Eldon Zacek and bastet69): Undefine constants, functions and operators
+									- New Feature (Thanks to claude_kouakou): Enumerate defined variables.  getNbDefinedVars and getVar methods added.
+									- Enhancement (Thanks to Jamie Riell): Operator precedences revisited.  Now use the c++ operator precedence values.
+									- Enhancement (Thanks to ABuenger): Can now compile without the plug-in and localization features.
+									
+December 8, 2006	M.J.			- Enhancement: Automatically wrap value position of vector variable.   
+
+March 5, 2008		M.J.			- Enhancement (Thanks to Rohallah Tavakoli): Method throw clauses added to ease portability.
+									- Fix (Thanks to Romy): The not operator now has the unary operator precedence. Test case added.
+									
+March 8, 2008		M.J.			- Feature removed: Variable name delimiter characters. Useless feature and allowed strange syntax. Better to
+									avoid variable name to contain special characters since it confuses the users.
+									- Enhancement: Function, constant, operator and variable names may contain the decimal point character. Since 
+									this character isn't used to split formula parts, it can be used in token names.
+									
+March 9, 2008		M.J.			- Enhancement: Now use the pow(double, int) function when the exponent is an integer since it is really faster (2x).
+									For example, x^2. 
+
+TODO:
+
+- undefine all
+- create an empty parser
+- create a parser without variable
+ 
+										
+*/
+
+
+
+
+

@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserCOM", "MTParserCOM.vcproj", "{76361579-646A-45A7-9A0D-1495D04C0CF7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB} = {5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserLib", "..\MTParserLib\MTParserLib.vcproj", "{5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug_Unicode = Debug_Unicode
+		Release_Unicode = Release_Unicode
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{76361579-646A-45A7-9A0D-1495D04C0CF7}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{76361579-646A-45A7-9A0D-1495D04C0CF7}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{76361579-646A-45A7-9A0D-1495D04C0CF7}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{76361579-646A-45A7-9A0D-1495D04C0CF7}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{5E5886A6-CBAB-4DD0-A0B8-78F21CD0D0BB}.Release_Unicode.Build.0 = Release_Unicode|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

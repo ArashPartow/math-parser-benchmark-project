@@ -1,0 +1,26 @@
+HKCR
+{
+	MTParserCOM.MTParserLocalizer.1 = s 'MTParserLocalizer Class'
+	{
+		CLSID = s '{766FBDFE-9EBB-43BD-BA47-4667B00DD3F9}'
+	}
+	MTParserCOM.MTParserLocalizer = s 'MTParserLocalizer Class'
+	{
+		CLSID = s '{766FBDFE-9EBB-43BD-BA47-4667B00DD3F9}'
+		CurVer = s 'MTParserCOM.MTParserLocalizer.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {766FBDFE-9EBB-43BD-BA47-4667B00DD3F9} = s 'MTParserLocalizer Class'
+		{
+			ProgID = s 'MTParserCOM.MTParserLocalizer.1'
+			VersionIndependentProgID = s 'MTParserCOM.MTParserLocalizer'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			'TypeLib' = s '{3A10DDB0-09C0-4C59-AFC5-71C3EF082DC3}'
+		}
+	}
+}

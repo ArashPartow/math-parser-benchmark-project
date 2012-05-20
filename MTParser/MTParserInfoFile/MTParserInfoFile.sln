@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserInfoFile", "MTParserInfoFile\MTParserInfoFile.vcproj", "{84B6D90E-2B1E-4497-B38A-DE52A31D77FA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserInfoFilePS", "MTParserInfoFile\MTParserInfoFilePS.vcproj", "{B9E367A5-BDB3-4BD1-A94B-F455C2AF6EAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{84B6D90E-2B1E-4497-B38A-DE52A31D77FA} = {84B6D90E-2B1E-4497-B38A-DE52A31D77FA}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcproj", "{0965AC2D-9F4C-4936-A9B6-A58B48CBE353}"
+	ProjectSection(ProjectDependencies) = postProject
+		{84B6D90E-2B1E-4497-B38A-DE52A31D77FA} = {84B6D90E-2B1E-4497-B38A-DE52A31D77FA}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84B6D90E-2B1E-4497-B38A-DE52A31D77FA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{84B6D90E-2B1E-4497-B38A-DE52A31D77FA}.Debug|Win32.Build.0 = Debug|Win32
+		{84B6D90E-2B1E-4497-B38A-DE52A31D77FA}.Release|Win32.ActiveCfg = Release|Win32
+		{84B6D90E-2B1E-4497-B38A-DE52A31D77FA}.Release|Win32.Build.0 = Release|Win32
+		{B9E367A5-BDB3-4BD1-A94B-F455C2AF6EAA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B9E367A5-BDB3-4BD1-A94B-F455C2AF6EAA}.Release|Win32.ActiveCfg = Release|Win32
+		{0965AC2D-9F4C-4936-A9B6-A58B48CBE353}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0965AC2D-9F4C-4936-A9B6-A58B48CBE353}.Debug|Win32.Build.0 = Debug|Win32
+		{0965AC2D-9F4C-4936-A9B6-A58B48CBE353}.Release|Win32.ActiveCfg = Release|Win32
+		{0965AC2D-9F4C-4936-A9B6-A58B48CBE353}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,40 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserLib", "..\..\..\MTParserLib\MTParserLib.vcproj", "{4E0C15D5-4415-4462-8641-5700613F9F0B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathExpr", "MathExpr.vcproj", "{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E0C15D5-4415-4462-8641-5700613F9F0B} = {4E0C15D5-4415-4462-8641-5700613F9F0B}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug_Unicode = Debug_Unicode
+		Release = Release
+		Release_Unicode = Release_Unicode
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Debug.ActiveCfg = Debug|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Debug.Build.0 = Debug|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Release.ActiveCfg = Release|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Release.Build.0 = Release|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{4E0C15D5-4415-4462-8641-5700613F9F0B}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Debug.ActiveCfg = Debug|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Debug.Build.0 = Debug|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Release.ActiveCfg = Release|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Release.Build.0 = Release|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{FCCC31F4-9FEC-426D-BCCA-FFDF8A020C0F}.Release_Unicode.Build.0 = Release_Unicode|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

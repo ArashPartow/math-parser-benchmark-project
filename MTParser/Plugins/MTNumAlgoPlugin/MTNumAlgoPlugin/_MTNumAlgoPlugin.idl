@@ -1,0 +1,38 @@
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\prsht.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\mshtml.idl";
+import "c:\program files\microsoft visual studio .net 2003\vc7\platformsdk\include\dimm.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\mshtmhst.idl";
+import "c:\program files\microsoft visual studio .net 2003\vc7\platformsdk\include\docobj.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\exdisp.idl";
+import "c:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\PlatformSDK\include\objsafe.idl";
+
+[
+	object,
+	uuid(E47FB6D5-A248-48F5-885E-214702CE6A20),
+	dual,
+	helpstring("IMTNumAlgoPlugin Interface"),
+	pointer_default(unique)
+] 
+#line 14 "e:\\temp\\mtparser_src\\plugins\\mtnumalgoplugin\\mtnumalgoplugin\\mtnumalgocomplugin.h"
+interface IMTNumAlgoPlugin : IDispatch {
+};
+
+
+[ version(1.0), uuid(13E58E27-F8C9-49FB-AA3F-7F270EB1AE78), helpstring("MTNumAlgoPlugin 1.0 Type Library") ]
+library MTNumAlgoPlugin
+{
+	importlib("stdole2.tlb");
+	importlib("olepro32.dll");
+
+	[
+		version(1.0),
+		uuid(1F6C2D74-1023-4E0F-8A6B-DBA19E6585E3),
+		helpstring("MTNumAlgoPlugin Class")
+	] 
+#line 32 "e:\\temp\\mtparser_src\\plugins\\mtnumalgoplugin\\mtnumalgoplugin\\mtnumalgocomplugin.h"
+	coclass CMTNumAlgoPlugin {
+		interface IMTNumAlgoPlugin;
+	};
+
+}
+

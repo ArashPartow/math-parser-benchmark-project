@@ -1,0 +1,40 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTParserLib", "..\..\MTParserLib\MTParserLib.vcproj", "{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MTNumAlgoPlugin", "MTNumAlgoPlugin\MTNumAlgoPlugin.vcproj", "{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40} = {BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug_Unicode = Debug_Unicode
+		Release = Release
+		Release_Unicode = Release_Unicode
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug.ActiveCfg = Debug|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug.Build.0 = Debug|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release.ActiveCfg = Release|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release.Build.0 = Release|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{BCDC0368-FFE3-4DDF-92A6-4681D40BFA40}.Release_Unicode.Build.0 = Release_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug.ActiveCfg = Debug|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug.Build.0 = Debug|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug_Unicode.ActiveCfg = Debug_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Debug_Unicode.Build.0 = Debug_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release.ActiveCfg = Release|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release.Build.0 = Release|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release_Unicode.ActiveCfg = Release_Unicode|Win32
+		{F69BF985-8909-4EE3-AEE9-0BDA1AAAEA87}.Release_Unicode.Build.0 = Release_Unicode|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
