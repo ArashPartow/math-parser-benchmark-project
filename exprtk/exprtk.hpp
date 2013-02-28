@@ -45,27 +45,7 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
-
-
-#ifndef exprtk_enable_all_optimizations
-#  define exprtk_lean_and_mean
-#  ifdef exprtk_lean_and_mean_numeric_only
-#     ifndef exprtk_lean_and_mean
-#        define exprtk_lean_and_mean
-#     endif
-#     ifndef exprtk_disable_string_capabilities
-#        define exprtk_disable_string_capabilities
-#     endif
-#  endif
-#  ifdef exprtk_lean_and_mean
-#     ifndef exprtk_disable_extended_operator_optimizations
-#        define exprtk_disable_extended_operator_optimizations
-#     endif
-#     ifndef exprtk_disable_extended_optimisations
-#        define exprtk_disable_extended_optimisations
-#     endif
-#  endif
-#endif
+#include <utility>
 
 
 namespace exprtk
@@ -177,7 +157,6 @@ namespace exprtk
          if (0 == i)
             return std::string("0");
          std::string result;
-         result.reserve(10);
          bool negative = (i < 0);
          if (negative) i *= -1;
          while (i)
@@ -191,12 +170,46 @@ namespace exprtk
          return result;
       }
 
+      class build_string
+      {
+      public:
+
+         build_string(const std::size_t& initial_size = 64)
+         {
+            data_.reserve(initial_size);
+         }
+
+         inline build_string& operator << (const std::string& s)
+         {
+            data_ += s;
+            return (*this);
+         }
+
+         inline operator std::string () const
+         {
+            return data_;
+         }
+
+         inline std::string as_string() const
+         {
+            return data_;
+         }
+
+         inline operator const char* () const
+         {
+            return data_.data();
+         }
+
+      private:
+
+         std::string data_;
+      };
+
       struct ilesscompare
       {
          inline bool operator()(const std::string& s1, const std::string& s2) const
          {
             const std::size_t length = std::min(s1.size(),s2.size());
-
             for (std::size_t i = 0; i < length;  ++i)
             {
                if (std::tolower(s1[i]) > std::tolower(s2[i]))
@@ -204,7 +217,6 @@ namespace exprtk
                else if (std::tolower(s1[i]) < std::tolower(s2[i]))
                   return true;
             }
-
             return s1.size() < s2.size();
          }
       };
@@ -221,11 +233,11 @@ namespace exprtk
                                   {
                                      "abs", "acos", "and", "asin", "atan", "atan2", "avg", "ceil", "clamp",
                                      "cos", "cosh", "cot", "csc", "deg2grad", "deg2rad", "equal", "erf", "erfc",
-                                     "exp", "false", "floor", "for", "frac", "grad2deg", "hyp", "if", "ilike", "in",
-                                     "inrange", "like", "log", "log10", "logn", "max", "min", "mod", "mul",
+                                     "exp", "false", "floor", "for", "frac", "grad2deg", "hyp", "if", "ilike",
+                                     "in", "inrange", "like", "log", "log10", "logn", "max", "min", "mod", "mul",
                                      "nand", "nor", "not", "not_equal", "or", "pow", "rad2deg", "root", "round",
-                                     "roundn", "sec", "sgn", "shl", "shr", "sin", "sinh", "sqrt", "sum",
-                                     "tan", "tanh", "true", "trunc", "while", "xor"
+                                     "roundn", "sec", "sgn", "shl", "shr", "sin", "sinh", "sqrt", "sum", "tan",
+                                     "tanh", "true", "trunc", "while", "xor"
                                   };
 
       static const std::size_t reserved_symbols_size = sizeof(reserved_symbols) / sizeof(std::string);
@@ -239,7 +251,6 @@ namespace exprtk
                return true;
             }
          }
-
          return false;
       }
 
@@ -252,7 +263,6 @@ namespace exprtk
                return true;
             }
          }
-
          return false;
       }
 
@@ -268,20 +278,16 @@ namespace exprtk
                              const typename std::iterator_traits<Iterator>::value_type& zero_or_one)
       {
          if (0 == std::distance(data_begin,data_end)) return false;
-
          Iterator d_itr = data_begin;
          Iterator p_itr = pattern_begin;
          Iterator c_itr = data_begin;
          Iterator m_itr = data_begin;
-
          while ((data_end != d_itr) && (zero_or_more != (*p_itr)))
          {
-
             if ((!Compare::cmp((*p_itr),(*d_itr))) && (zero_or_one != (*p_itr)))
             {
                return false;
             }
-
             ++p_itr;
             ++d_itr;
          }
@@ -294,7 +300,6 @@ namespace exprtk
                {
                   return true;
                }
-
                m_itr = p_itr;
                c_itr = d_itr;
                ++c_itr;
@@ -310,9 +315,7 @@ namespace exprtk
                d_itr = c_itr++;
             }
          }
-
          while ((p_itr != pattern_end) && (zero_or_more == (*p_itr))) ++p_itr;
-
          return (p_itr == pattern_end);
       }
 
@@ -401,141 +404,141 @@ namespace exprtk
             #undef exprtk_register_int_type_tag
 
             template <typename T>
-            inline T equal_impl(const T& v0, const T& v1, real_type_tag)
+            inline T equal_impl(const T v0, const T v1, real_type_tag)
             {
                static const T epsilon = T(0.00000000001);
                return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? T(1) : T(0);
             }
 
             template <typename T>
-            inline T equal_impl(const T& v0, const T& v1, int_type_tag)
+            inline T equal_impl(const T v0, const T v1, int_type_tag)
             {
                return (v0 == v1) ? 1 : 0;
             }
 
             template <typename T>
-            inline T nequal_impl(const T& v0, const T& v1, real_type_tag)
+            inline T nequal_impl(const T v0, const T v1, real_type_tag)
             {
                static const T epsilon = T(0.0000000001);
                return (std::abs(v0 - v1) > (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? T(1) : T(0);
             }
 
             template <typename T>
-            inline T nequal_impl(const T& v0, const T& v1, int_type_tag)
+            inline T nequal_impl(const T v0, const T v1, int_type_tag)
             {
                return (v0 != v1) ? 1 : 0;
             }
 
             template <typename T>
-            inline T modulus_impl(const T& v0, const T& v1, real_type_tag)
+            inline T modulus_impl(const T v0, const T v1, real_type_tag)
             {
                return std::fmod(v0,v1);
             }
 
             template <typename T>
-            inline T modulus_impl(const T& v0, const T& v1, int_type_tag)
+            inline T modulus_impl(const T v0, const T v1, int_type_tag)
             {
                return v0 % v1;
             }
 
             template <typename T>
-            inline T pow_impl(const T& v0, const T& v1, real_type_tag)
+            inline T pow_impl(const T v0, const T v1, real_type_tag)
             {
                return std::pow(v0,v1);
             }
 
             template <typename T>
-            inline T pow_impl(const T& v0, const T& v1, int_type_tag)
+            inline T pow_impl(const T v0, const T v1, int_type_tag)
             {
                return std::pow(static_cast<double>(v0),static_cast<double>(v1));
             }
 
             template <typename T>
-            inline T logn_impl(const T& v0, const T& v1, real_type_tag)
+            inline T logn_impl(const T v0, const T v1, real_type_tag)
             {
                return std::log(v0) / std::log(v1);
             }
 
             template <typename T>
-            inline T logn_impl(const T& v0, const T& v1, int_type_tag)
+            inline T logn_impl(const T v0, const T v1, int_type_tag)
             {
                return static_cast<T>(logn_impl<double>(static_cast<double>(v0),static_cast<double>(v1),real_type_tag()));
             }
 
             template <typename T>
-            inline T root_impl(const T& v0, const T& v1, real_type_tag)
+            inline T root_impl(const T v0, const T v1, real_type_tag)
             {
                return std::pow(v0,T(1)/v1);
             }
 
             template <typename T>
-            inline T root_impl(const T& v0, const T& v1, int_type_tag)
+            inline T root_impl(const T v0, const T v1, int_type_tag)
             {
                return root_impl<double>(static_cast<double>(v0),static_cast<double>(v1),real_type_tag());
             }
 
             template <typename T>
-            inline T roundn_impl(const T& v0, const T& v1, real_type_tag)
+            inline T roundn_impl(const T v0, const T v1, real_type_tag)
             {
                return T(std::floor((v0 * pow10[(int)std::floor(v1)]) + T(0.5)) / T(pow10[(int)std::floor(v1)]));
             }
 
             template <typename T>
-            inline T roundn_impl(const T& v0, const T&, int_type_tag)
+            inline T roundn_impl(const T v0, const T, int_type_tag)
             {
                return v0;
             }
 
             template <typename T>
-            inline T hyp_impl(const T& v0, const T& v1, real_type_tag)
+            inline T hyp_impl(const T v0, const T v1, real_type_tag)
             {
                return std::sqrt((v0 * v0) + (v1 * v1));
             }
 
             template <typename T>
-            inline T hyp_impl(const T& v0, const T& v1, int_type_tag)
+            inline T hyp_impl(const T v0, const T v1, int_type_tag)
             {
                return static_cast<T>(std::sqrt(static_cast<double>((v0 * v0) + (v1 * v1))));
             }
 
             template <typename T>
-            inline T atan2_impl(const T& v0, const T& v1, real_type_tag)
+            inline T atan2_impl(const T v0, const T v1, real_type_tag)
             {
                return std::atan2(v0,v1);
             }
 
             template <typename T>
-            inline T atan2_impl(const T&, const T&, int_type_tag)
+            inline T atan2_impl(const T, const T, int_type_tag)
             {
                return 0;
             }
 
             template <typename T>
-            inline T shr_impl(const T& v0, const T& v1, real_type_tag)
+            inline T shr_impl(const T v0, const T v1, real_type_tag)
             {
                return v0 * (T(1) / std::pow(T(2),static_cast<T>(static_cast<int>(v1))));
             }
 
             template <typename T>
-            inline T shr_impl(const T& v0, const T& v1, int_type_tag)
+            inline T shr_impl(const T v0, const T v1, int_type_tag)
             {
                return v0 >> v1;
             }
 
             template <typename T>
-            inline T shl_impl(const T& v0, const T& v1, real_type_tag)
+            inline T shl_impl(const T v0, const T v1, real_type_tag)
             {
                return v0 * std::pow(T(2),static_cast<T>(static_cast<int>(v1)));
             }
 
             template <typename T>
-            inline T shl_impl(const T& v0, const T& v1, int_type_tag)
+            inline T shl_impl(const T v0, const T v1, int_type_tag)
             {
                return v0 << v1;
             }
 
             template <typename T>
-            inline T sgn_impl(const T& v, real_type_tag)
+            inline T sgn_impl(const T v, real_type_tag)
             {
                     if (v > T(0.0)) return T(+1.0);
                else if (v < T(0.0)) return T(-1.0);
@@ -543,7 +546,7 @@ namespace exprtk
             }
 
             template <typename T>
-            inline T sgn_impl(const T& v, int_type_tag)
+            inline T sgn_impl(const T v, int_type_tag)
             {
                     if (v > T(0)) return T(+1);
                else if (v < T(0)) return T(-1);
@@ -551,13 +554,13 @@ namespace exprtk
             }
 
             template <typename T>
-            inline T xor_impl(const T& v0, const T& v1, real_type_tag)
+            inline T xor_impl(const T v0, const T& v1, real_type_tag)
             {
                return v0 != v1;
             }
 
             template <typename T>
-            inline T xor_impl(const T& v0, const T& v1, int_type_tag)
+            inline T xor_impl(const T v0, const T& v1, int_type_tag)
             {
                return v0 ^ v1;
             }
@@ -653,7 +656,7 @@ namespace exprtk
             template <typename T> inline T round_impl(const T v, int_type_tag) { return v;             }
             template <typename T> inline T  notl_impl(const T v, int_type_tag) { return !v;            }
             template <typename T> inline T  sqrt_impl(const T v, int_type_tag) { return std::sqrt (v); }
-            template <typename T> inline T  frac_impl(const T v, int_type_tag) { return T(0);          }
+            template <typename T> inline T  frac_impl(const T  , int_type_tag) { return T(0);          }
             template <typename T> inline T trunc_impl(const T v, int_type_tag) { return v;             }
             template <typename T> inline T  acos_impl(const T  , int_type_tag) { return std::numeric_limits<T>::quiet_NaN(); }
             template <typename T> inline T  asin_impl(const T  , int_type_tag) { return std::numeric_limits<T>::quiet_NaN(); }
@@ -889,7 +892,6 @@ namespace exprtk
                return_result = false;
                break;
             }
-
             if ((++digit_count) <= numeric::numeric_info<Type>::bound_length)
             {
                t *= 10;
@@ -900,9 +902,7 @@ namespace exprtk
                typedef unsigned long long int base_type;
                static const base_type max_limit = +std::numeric_limits<Type>::max();
                static const base_type min_limit = -std::numeric_limits<Type>::min();
-
                base_type tmp = static_cast<base_type>(t) * 10 + digit;
-
                if (negative && static_cast<base_type>(tmp) > min_limit)
                   return_result = false;
                else if (static_cast<base_type>(tmp) > max_limit)
@@ -911,9 +911,7 @@ namespace exprtk
             }
             ++itr;
          }
-
          result = static_cast<Type>((negative) ? -t : t);
-
          return return_result;
       }
 
@@ -922,10 +920,8 @@ namespace exprtk
       {
          typedef typename std::iterator_traits<Iterator>::value_type type;
          static const std::size_t nan_length = 3;
-
          if (std::distance(itr,end) != static_cast<int>(nan_length))
             return false;
-
          if (static_cast<type>('n') == (*itr))
          {
             if ((static_cast<type>('a') != *(itr + 1)) || (static_cast<type>('n') != *(itr + 2)))
@@ -937,9 +933,7 @@ namespace exprtk
          {
             return false;
          }
-
          t = std::numeric_limits<T>::quiet_NaN();
-
          return true;
       }
 
@@ -950,12 +944,9 @@ namespace exprtk
          static const char inf_lc[] = "infinity";
          static const std::size_t inf_length = 8;
          const std::size_t length = std::distance(itr,end);
-
          if ((3 != length) && (inf_length != length))
             return false;
-
          const char* inf_itr = ('i' == (*itr)) ? inf_lc : inf_uc;
-
          while (end != itr)
          {
             if (*inf_itr == static_cast<char>(*itr))
@@ -967,12 +958,10 @@ namespace exprtk
             else
                return false;
          }
-
          if (negative)
             t = -std::numeric_limits<T>::infinity();
          else
             t =  std::numeric_limits<T>::infinity();
-
          return true;
       }
 
@@ -1040,7 +1029,6 @@ namespace exprtk
             }
             #undef parse_digit_1
             #undef parse_digit_2
-
             if (curr != itr) instate = true;
             pre_decimal = static_cast<int>(std::distance(post_zero_cull_itr,itr));
          }
@@ -1074,7 +1062,6 @@ namespace exprtk
                }
                #undef parse_digit_1
                #undef parse_digit_2
-
                if (curr != itr) instate = true;
                exponent -= static_cast<int>(std::distance(curr,itr));
             }
@@ -1100,7 +1087,6 @@ namespace exprtk
                         (numeric::numeric_info<T>::max_exp < exp)
                      )
                      return false;
-
                   exponent += exp;
                }
 
@@ -1133,12 +1119,11 @@ namespace exprtk
 
          if ((end != itr) || (!instate))
             return false;
-
          if (0 != exponent)
          {
             if (
-               (std::numeric_limits<T>::max_exponent10 < (exponent + pre_decimal)) ||
-               (std::numeric_limits<T>::min_exponent10 > (exponent + pre_decimal))
+                (std::numeric_limits<T>::max_exponent10 < (exponent + pre_decimal)) ||
+                (std::numeric_limits<T>::min_exponent10 > (exponent + pre_decimal))
                )
             {
                return false;
@@ -1195,9 +1180,7 @@ namespace exprtk
                   d *= std::pow(10.0, 1.0 * exponent);
             }
          }
-
          t = static_cast<T>((negative) ? -d : d);
-
          return true;
       }
 
@@ -1272,10 +1255,8 @@ namespace exprtk
          {
             type = tt;
             value.assign(begin,end);
-
             if (base_begin)
                position = std::distance(base_begin,begin);
-
             return *this;
          }
 
@@ -1284,10 +1265,8 @@ namespace exprtk
          {
             type = e_symbol;
             value.assign(begin,end);
-
             if (base_begin)
                position = std::distance(base_begin,begin);
-
             return *this;
          }
 
@@ -1296,10 +1275,8 @@ namespace exprtk
          {
             type = e_number;
             value.assign(begin,end);
-
             if (base_begin)
                position = std::distance(base_begin,begin);
-
             return *this;
          }
 
@@ -1308,10 +1285,8 @@ namespace exprtk
          {
             type = e_string;
             value.assign(begin,end);
-
             if (base_begin)
                position = std::distance(base_begin,begin);
-
             return *this;
          }
 
@@ -1330,12 +1305,9 @@ namespace exprtk
             }
             else
                type = e_error;
-
             value.assign(begin,end);
-
             if (base_begin)
                position = std::distance(base_begin,begin);
-
             return *this;
          }
 
@@ -1428,7 +1400,6 @@ namespace exprtk
             s_end_    = str.data() + str.size();
             eof_token_.set_operator(token_t::e_eof,s_end_,s_end_,base_itr_);
             token_list_.clear();
-
             while (s_end_ != s_itr_)
             {
                scan_token();
@@ -1437,7 +1408,6 @@ namespace exprtk
                   return false;
                }
             }
-
             return true;
          }
 
@@ -1501,7 +1471,6 @@ namespace exprtk
          inline void scan_token()
          {
             skip_whitespace();
-
             if (s_end_ == s_itr_)
             {
                return;
@@ -1549,10 +1518,8 @@ namespace exprtk
             if ((s_itr_ + 1) != s_end_)
             {
                token_t::token_type ttype = token_t::e_none;
-
                char c0 = s_itr_[0];
                char c1 = s_itr_[1];
-
                     if ((c0 == '<') && (c1 == '=')) ttype = token_t::e_lte;
                else if ((c0 == '>') && (c1 == '=')) ttype = token_t::e_gte;
                else if ((c0 == '<') && (c1 == '>')) ttype = token_t::e_ne;
@@ -1567,18 +1534,15 @@ namespace exprtk
                   t.set_operator(ttype,s_itr_,s_itr_ + 2,base_itr_);
                   token_list_.push_back(t);
                   s_itr_ += 2;
-
                   return;
                }
             }
-
             if ('<' == *s_itr_)
                t.set_operator(token_t::e_lt,s_itr_,s_itr_ + 1,base_itr_);
             else if ('>' == *s_itr_)
                t.set_operator(token_t::e_gt,s_itr_,s_itr_ + 1,base_itr_);
             else
                t.set_operator(token_t::token_type(*s_itr_),s_itr_,s_itr_ + 1,base_itr_);
-
             token_list_.push_back(t);
             ++s_itr_;
          }
@@ -1593,7 +1557,6 @@ namespace exprtk
             {
                ++s_itr_;
             }
-
             token_t t;
             t.set_symbol(begin,s_itr_,base_itr_);
             token_list_.push_back(t);
@@ -1626,10 +1589,8 @@ namespace exprtk
                   {
                      t.set_error(token::e_err_number,begin,s_itr_,base_itr_);
                      token_list_.push_back(t);
-
                      return;
                   }
-
                   dot_found = true;
                   ++s_itr_;
                   continue;
@@ -1642,7 +1603,6 @@ namespace exprtk
                   {
                      t.set_error(token::e_err_number,begin,s_itr_,base_itr_);
                      token_list_.push_back(t);
-
                      return;
                   }
                   else if (
@@ -1653,7 +1613,6 @@ namespace exprtk
                   {
                      t.set_error(token::e_err_number,begin,s_itr_,base_itr_);
                      token_list_.push_back(t);
-
                      return;
                   }
 
@@ -1667,7 +1626,6 @@ namespace exprtk
                   {
                      t.set_error(token::e_err_number,begin,s_itr_,base_itr_);
                      token_list_.push_back(t);
-
                      return;
                   }
 
@@ -1726,7 +1684,6 @@ namespace exprtk
          {
             const char* begin = s_itr_ + 1;
             token_t t;
-
             if (std::distance(s_itr_,s_end_) < 2)
             {
                t.set_error(token::e_err_string,begin,s_itr_,base_itr_);
@@ -1734,7 +1691,6 @@ namespace exprtk
 
                return;
             }
-
             ++s_itr_;
 
             bool escaped = false;
@@ -1762,13 +1718,10 @@ namespace exprtk
             {
                t.set_error(token::e_err_string,begin,s_itr_,base_itr_);
                token_list_.push_back(t);
-
                return;
             }
-
             t.set_string(begin,s_itr_,base_itr_);
             token_list_.push_back(t);
-
             ++s_itr_;
             return;
          }
@@ -1989,7 +1942,6 @@ namespace exprtk
          inline std::size_t process(generator& g)
          {
             std::size_t changes = 0;
-
             for (std::size_t i = 0; i < g.token_list_.size() - 1; ++i)
             {
                token t;
@@ -2000,7 +1952,6 @@ namespace exprtk
                   ++changes;
                }
             }
-
             return changes;
          }
 
@@ -2062,7 +2013,6 @@ namespace exprtk
                      return -1;
                   }
                }
-
                     if ((t0.type == lexer::token::e_number     ) && (t1.type == lexer::token::e_symbol     )) match = true;
                else if ((t0.type == lexer::token::e_number     ) && (t1.type == lexer::token::e_lbracket   )) match = true;
                else if ((t0.type == lexer::token::e_number     ) && (t1.type == lexer::token::e_lcrlbracket)) match = true;
@@ -2074,7 +2024,6 @@ namespace exprtk
                else if ((t0.type == lexer::token::e_rbracket   ) && (t1.type == lexer::token::e_symbol     )) match = true;
                else if ((t0.type == lexer::token::e_rcrlbracket) && (t1.type == lexer::token::e_symbol     )) match = true;
                else if ((t0.type == lexer::token::e_rsqrbracket) && (t1.type == lexer::token::e_symbol     )) match = true;
-
                return (match) ? 1 : -1;
             }
 
@@ -2239,9 +2188,7 @@ namespace exprtk
                      error_list_.push_back(current_index_);
                   }
                }
-
                ++current_index_;
-
                return true;
             }
 
@@ -2277,14 +2224,11 @@ namespace exprtk
                              const lexer::token::token_type token_type = lexer::token::e_symbol)
             {
                replace_map_t::iterator itr = replace_map_.find(target_symbol);
-
                if (replace_map_.end() != itr)
                {
                   return false;
                }
-
                replace_map_[target_symbol] = std::make_pair(replace_symbol,token_type);
-
                return true;
             }
 
@@ -2301,9 +2245,7 @@ namespace exprtk
                {
                   if (replace_map_.empty())
                      return false;
-
                   replace_map_t::iterator itr = replace_map_.find(t.value);
-
                   if (replace_map_.end() != itr)
                   {
                      t.value = itr->second.first;
@@ -2311,7 +2253,6 @@ namespace exprtk
                      return true;
                   }
                }
-
                return false;
             }
 
@@ -2332,18 +2273,14 @@ namespace exprtk
             {
                add_invalid(lexer::token::e_number,lexer::token::e_number);
                add_invalid(lexer::token::e_string,lexer::token::e_string);
-
                add_invalid(lexer::token::e_number,lexer::token::e_string);
                add_invalid(lexer::token::e_string,lexer::token::e_number);
-
                add_invalid(lexer::token::e_number,lexer::token::e_colon);
                add_invalid(lexer::token::e_symbol,lexer::token::e_colon);
                add_invalid(lexer::token::e_string,lexer::token::e_colon);
-
                add_invalid(lexer::token::e_colon,lexer::token::e_number);
                add_invalid(lexer::token::e_colon,lexer::token::e_symbol);
                add_invalid(lexer::token::e_colon,lexer::token::e_string);
-
                add_invalid_set1(lexer::token::e_assign);
                add_invalid_set1(lexer::token::e_shr);
                add_invalid_set1(lexer::token::e_shl);
@@ -2506,7 +2443,6 @@ namespace exprtk
                {
                   return false;
                }
-
                token_scanner_list.push_back(scanner);
                return true;
             }
@@ -2519,7 +2455,6 @@ namespace exprtk
                {
                   return false;
                }
-
                token_modifier_list.push_back(modifier);
                return true;
             }
@@ -2532,7 +2467,6 @@ namespace exprtk
                {
                   return false;
                }
-
                token_joiner_list.push_back(joiner);
                return true;
             }
@@ -2545,7 +2479,6 @@ namespace exprtk
                {
                   return false;
                }
-
                token_inserter_list.push_back(inserter);
                return true;
             }
@@ -2554,20 +2487,17 @@ namespace exprtk
             {
                error_token_modifier = reinterpret_cast<lexer::token_modifier*>(0);
                bool result = true;
-
                for (std::size_t i = 0; i < token_modifier_list.size(); ++i)
                {
                   lexer::token_modifier& modifier = (*token_modifier_list[i]);
                   modifier.reset();
                   modifier.process(g);
-
                   if (!modifier.result())
                   {
                      error_token_modifier = token_modifier_list[i];
                      return false;
                   }
                }
-
                return result;
             }
 
@@ -2575,20 +2505,17 @@ namespace exprtk
             {
                error_token_joiner = reinterpret_cast<lexer::token_joiner*>(0);
                bool result = true;
-
                for (std::size_t i = 0; i < token_joiner_list.size(); ++i)
                {
                   lexer::token_joiner& joiner = (*token_joiner_list[i]);
                   joiner.reset();
                   joiner.process(g);
-
                   if (!joiner.result())
                   {
                      error_token_joiner = token_joiner_list[i];
                      return false;
                   }
                }
-
                return result;
             }
 
@@ -2596,20 +2523,17 @@ namespace exprtk
             {
                error_token_inserter = reinterpret_cast<lexer::token_inserter*>(0);
                bool result = true;
-
                for (std::size_t i = 0; i < token_inserter_list.size(); ++i)
                {
                   lexer::token_inserter& inserter = (*token_inserter_list[i]);
                   inserter.reset();
                   inserter.process(g);
-
                   if (!inserter.result())
                   {
                      error_token_inserter = token_inserter_list[i];
                      return false;
                   }
                }
-
                return result;
             }
 
@@ -2617,20 +2541,17 @@ namespace exprtk
             {
                error_token_scanner = reinterpret_cast<lexer::token_scanner*>(0);
                bool result = true;
-
                for (std::size_t i = 0; i < token_scanner_list.size(); ++i)
                {
                   lexer::token_scanner& scanner = (*token_scanner_list[i]);
                   scanner.reset();
                   scanner.process(g);
-
                   if (!scanner.result())
                   {
                      error_token_scanner = token_scanner_list[i];
                      return false;
                   }
                }
-
                return result;
             }
 
@@ -2745,7 +2666,11 @@ namespace exprtk
          e_sf68 = 1068, e_sf69 = 1069, e_sf70 = 1070, e_sf71 = 1071,
          e_sf72 = 1072, e_sf73 = 1073, e_sf74 = 1074, e_sf75 = 1075,
          e_sf76 = 1076, e_sf77 = 1077, e_sf78 = 1078, e_sf79 = 1079,
-         e_sf80 = 1080, e_sf81 = 1081, e_sf82 = 1082
+         e_sf80 = 1080, e_sf81 = 1081, e_sf82 = 1082, e_sf83 = 1083,
+         e_sf84 = 1084, e_sf85 = 1085, e_sf86 = 1086, e_sf87 = 1087,
+         e_sf88 = 1088, e_sf89 = 1089, e_sf90 = 1090, e_sf91 = 1091,
+         e_sf92 = 1092, e_sf93 = 1093, e_sf94 = 1094,
+         e_sffinal = 1095
       };
 
       struct base_operation_t
@@ -2927,6 +2852,7 @@ namespace exprtk
             e_constant    ,
             e_unary       ,
             e_binary      ,
+            e_binary_ext  ,
             e_trinary     ,
             e_quaternary  ,
             e_quinary     ,
@@ -2960,7 +2886,6 @@ namespace exprtk
             e_inranges    ,
             e_ipow        ,
             e_ipowinv     ,
-            e_vov         ,
             e_abs         ,
             e_acos        ,
             e_asin        ,
@@ -2992,7 +2917,29 @@ namespace exprtk
             e_erf         ,
             e_erfc        ,
             e_frac        ,
-            e_trunc
+            e_trunc       ,
+            e_uvouv       ,
+            e_vov         ,
+            e_cov         ,
+            e_voc         ,
+            e_vob         ,
+            e_bov         ,
+            e_cob         ,
+            e_boc         ,
+            e_vovov       ,
+            e_vovoc       ,
+            e_vocov       ,
+            e_covov       ,
+            e_covoc       ,
+            e_vovovov     ,
+            e_vovovoc     ,
+            e_vovocov     ,
+            e_vocovov     ,
+            e_covovov     ,
+            e_covocov     ,
+            e_vocovoc     ,
+            e_covovoc     ,
+            e_vococov
          };
 
          typedef T value_type;
@@ -3020,6 +2967,7 @@ namespace exprtk
          {
             return e_none;
          }
+
       };
 
       inline bool is_true(const double v)
@@ -3115,14 +3063,17 @@ namespace exprtk
             return expression_node<T>::e_constant;
          }
 
-         inline expression_node<T>* branch(const std::size_t& index = 0) const
+         inline expression_node<T>* branch(const std::size_t&) const
          {
-            return reinterpret_cast<expression_node<T>*>(index * 0);
+            return reinterpret_cast<expression_node<T>*>(0);
          }
 
       private:
 
-         T value_;
+         literal_node(literal_node<T>&) {}
+         literal_node<T>& operator=(literal_node<T>&) { return *this; }
+
+         const T value_;
       };
 
       template <typename T>
@@ -3144,9 +3095,9 @@ namespace exprtk
             return expression_node<T>::e_stringconst;
          }
 
-         inline expression_node<T>* branch(const std::size_t& index = 0) const
+         inline expression_node<T>* branch(const std::size_t&) const
          {
-            return reinterpret_cast<expression_node<T>*>(index * 0);
+            return reinterpret_cast<expression_node<T>*>(0);
          }
 
          inline std::string str()
@@ -3311,7 +3262,7 @@ namespace exprtk
             return expression_node<T>::e_binary;
          }
 
-         inline operator_type operation() const
+         inline operator_type operation()
          {
             return operation_;
          }
@@ -3329,6 +3280,56 @@ namespace exprtk
       protected:
 
          operator_type operation_;
+         branch_t branch_[2];
+      };
+
+      template <typename T, typename Operation>
+      class binary_ext_node : public expression_node<T>
+      {
+      public:
+
+         typedef expression_node<T>* expression_ptr;
+         typedef std::pair<expression_ptr,bool> branch_t;
+
+         binary_ext_node(expression_ptr branch0, expression_ptr branch1)
+         {
+            init_branches<2>(branch_,branch0,branch1);
+         }
+
+        ~binary_ext_node()
+         {
+            cleanup_branches<T,2>::execute(branch_);
+         }
+
+         inline T value() const
+         {
+            const T arg0 = branch_[0].first->value();
+            const T arg1 = branch_[1].first->value();
+            return Operation::process(arg0,arg1);
+         }
+
+         inline typename expression_node<T>::node_type type() const
+         {
+            return expression_node<T>::e_binary_ext;
+         }
+
+         inline operator_type operation()
+         {
+            return Operation::operation();
+         }
+
+         inline expression_node<T>* branch(const std::size_t& index = 0) const
+         {
+            if (0 == index)
+               return branch_[0].first;
+            else if (1 == index)
+               return branch_[1].first;
+            else
+               return reinterpret_cast<expression_ptr>(0);
+         }
+
+      protected:
+
          branch_t branch_[2];
       };
 
@@ -3359,7 +3360,6 @@ namespace exprtk
             const T arg0 = branch_[0].first->value();
             const T arg1 = branch_[1].first->value();
             const T arg2 = branch_[2].first->value();
-
             switch (operation_)
             {
                case e_clamp   : return (arg1 < arg0) ? arg0 : (arg1 > arg2 ? arg2 : arg1);
@@ -3413,7 +3413,6 @@ namespace exprtk
             const T arg1 = branch_[1].first->value();
             const T arg2 = branch_[2].first->value();
             const T arg3 = branch_[3].first->value();
-
             switch (operation_)
             {
                case e_min  : return std::min<T>(std::min<T>(arg0,arg1),std::min<T>(arg2,arg3));
@@ -3523,7 +3522,6 @@ namespace exprtk
             const T arg3 = branch_[3].first->value();
             const T arg4 = branch_[4].first->value();
             const T arg5 = branch_[5].first->value();
-
             switch (operation_)
             {
                case e_min     : return std::min<T>(std::min<T>(std::min<T>(arg0,arg1),std::min<T>(arg2,arg3)),std::min<T>(arg4,arg5));
@@ -3747,87 +3745,99 @@ namespace exprtk
 
       template <typename T> struct sf00_op { static inline T process(const T x, const T y, const T z) { return (x + y) / z; } };
       template <typename T> struct sf01_op { static inline T process(const T x, const T y, const T z) { return (x + y) * z; } };
-      template <typename T> struct sf02_op { static inline T process(const T x, const T y, const T z) { return (x - y) / z; } };
-      template <typename T> struct sf03_op { static inline T process(const T x, const T y, const T z) { return (x - y) * z; } };
-      template <typename T> struct sf04_op { static inline T process(const T x, const T y, const T z) { return (x * y) + z; } };
-      template <typename T> struct sf05_op { static inline T process(const T x, const T y, const T z) { return (x * y) - z; } };
-      template <typename T> struct sf06_op { static inline T process(const T x, const T y, const T z) { return (x * y) / z; } };
-      template <typename T> struct sf07_op { static inline T process(const T x, const T y, const T z) { return (x * y) * z; } };
-      template <typename T> struct sf08_op { static inline T process(const T x, const T y, const T z) { return (x / y) + z; } };
-      template <typename T> struct sf09_op { static inline T process(const T x, const T y, const T z) { return (x / y) - z; } };
-      template <typename T> struct sf10_op { static inline T process(const T x, const T y, const T z) { return (x / y) / z; } };
-      template <typename T> struct sf11_op { static inline T process(const T x, const T y, const T z) { return (x / y) * z; } };
-      template <typename T> struct sf12_op { static inline T process(const T x, const T y, const T z) { return x / (y + z); } };
-      template <typename T> struct sf13_op { static inline T process(const T x, const T y, const T z) { return x / (y - z); } };
-      template <typename T> struct sf14_op { static inline T process(const T x, const T y, const T z) { return x / (y * z); } };
-      template <typename T> struct sf15_op { static inline T process(const T x, const T y, const T z) { return x / (y / z); } };
-      template <typename T> struct sf16_op { static inline T process(const T x, const T y, const T z) { return x - (y / z); } };
-      template <typename T> struct sf17_op { static inline T process(const T x, const T y, const T z) { return x - (y / z); } };
-      template <typename T> struct sf18_op { static inline T process(const T x, const T y, const T z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
-      template <typename T> struct sf19_op { static inline T process(const T x, const T y, const T z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
-      template <typename T> struct sf20_op { static inline T process(const T x, const T y, const T z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
-      template <typename T> struct sf21_op { static inline T process(const T x, const T y, const T z) { return axnb<T,5>(x,y,z); } }; //x * y^5 + z
-      template <typename T> struct sf22_op { static inline T process(const T x, const T y, const T z) { return axnb<T,6>(x,y,z); } }; //x * y^6 + z
-      template <typename T> struct sf23_op { static inline T process(const T x, const T y, const T z) { return axnb<T,7>(x,y,z); } }; //x * y^7 + z
-      template <typename T> struct sf24_op { static inline T process(const T x, const T y, const T z) { return axnb<T,8>(x,y,z); } }; //x * y^8 + z
-      template <typename T> struct sf25_op { static inline T process(const T x, const T y, const T z) { return axnb<T,9>(x,y,z); } }; //x * y^9 + z
-      template <typename T> struct sf26_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log(y)   + z; } };
-      template <typename T> struct sf27_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log(y)   - z; } };
-      template <typename T> struct sf28_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log10(y) + z; } };
-      template <typename T> struct sf29_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log10(y) - z; } };
-      template <typename T> struct sf30_op { static inline T process(const T x, const T y, const T z) { return x * numeric::sin(y) + z; } };
-      template <typename T> struct sf31_op { static inline T process(const T x, const T y, const T z) { return x * numeric::sin(y) - z; } };
-      template <typename T> struct sf32_op { static inline T process(const T x, const T y, const T z) { return x * numeric::cos(y) + z; } };
-      template <typename T> struct sf33_op { static inline T process(const T x, const T y, const T z) { return x * numeric::cos(y) - z; } };
-      template <typename T> struct sf34_op { static inline T process(const T x, const T y, const T z) { return is_true(x) ? y : z;      } };
-      template <typename T> struct sf35_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y + z) / w); } };
-      template <typename T> struct sf36_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y + z) * w); } };
-      template <typename T> struct sf37_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y - z) / w); } };
-      template <typename T> struct sf38_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y - z) * w); } };
-      template <typename T> struct sf39_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y * z) / w); } };
-      template <typename T> struct sf40_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y * z) * w); } };
-      template <typename T> struct sf41_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) + w); } };
-      template <typename T> struct sf42_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) / w); } };
-      template <typename T> struct sf43_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) * w); } };
-      template <typename T> struct sf44_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y + z) / w); } };
-      template <typename T> struct sf45_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y + z) * w); } };
-      template <typename T> struct sf46_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y - z) / w); } };
-      template <typename T> struct sf47_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y - z) * w); } };
-      template <typename T> struct sf48_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y * z) / w); } };
-      template <typename T> struct sf49_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y * z) * w); } };
-      template <typename T> struct sf50_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y / z) / w); } };
-      template <typename T> struct sf51_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y / z) * w); } };
-      template <typename T> struct sf52_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x + y) * z) - w; } };
-      template <typename T> struct sf53_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x - y) * z) - w; } };
-      template <typename T> struct sf54_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x * y) * z) - w; } };
-      template <typename T> struct sf55_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x / y) * z) - w; } };
-      template <typename T> struct sf56_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x + y) / z) - w; } };
-      template <typename T> struct sf57_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x - y) / z) - w; } };
-      template <typename T> struct sf58_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x * y) / z) - w; } };
-      template <typename T> struct sf59_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x / y) / z) - w; } };
-      template <typename T> struct sf60_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) + (z * w); } };
-      template <typename T> struct sf61_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) - (z * w); } };
-      template <typename T> struct sf62_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) + (z / w); } };
-      template <typename T> struct sf63_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) - (z / w); } };
-      template <typename T> struct sf64_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) + (z / w); } };
-      template <typename T> struct sf65_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) - (z / w); } };
-      template <typename T> struct sf66_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) - (z * w); } };
-      template <typename T> struct sf67_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
-      template <typename T> struct sf68_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
-      template <typename T> struct sf69_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
-      template <typename T> struct sf70_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,5>(x,y) + axn<T,5>(z,w); } }; //x*y^5+z*w^5
-      template <typename T> struct sf71_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,6>(x,y) + axn<T,6>(z,w); } }; //x*y^6+z*w^6
-      template <typename T> struct sf72_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,7>(x,y) + axn<T,7>(z,w); } }; //x*y^7+z*w^7
-      template <typename T> struct sf73_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,8>(x,y) + axn<T,8>(z,w); } }; //x*y^8+z*w^8
-      template <typename T> struct sf74_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,9>(x,y) + axn<T,9>(z,w); } }; //x*y^9+z*w^9
-      template <typename T> struct sf75_op { static inline T process(const T x, const T y, const T z, const T w) { return (is_true(x) && is_true(y)) ? z : w; } };
-      template <typename T> struct sf76_op { static inline T process(const T x, const T y, const T z, const T w) { return (is_true(x) || is_true(y)) ? z : w; } };
-      template <typename T> struct sf77_op { static inline T process(const T x, const T y, const T z, const T w) { return (x <  y) ? z : w; } };
-      template <typename T> struct sf78_op { static inline T process(const T x, const T y, const T z, const T w) { return (x <= y) ? z : w; } };
-      template <typename T> struct sf79_op { static inline T process(const T x, const T y, const T z, const T w) { return (x >  y) ? z : w; } };
-      template <typename T> struct sf80_op { static inline T process(const T x, const T y, const T z, const T w) { return (x >= y) ? z : w; } };
-      template <typename T> struct sf81_op { static inline T process(const T x, const T y, const T z, const T w) { return numeric::equal(x,y) ? z : w; } };
-      template <typename T> struct sf82_op { static inline T process(const T x, const T y, const T z, const T w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
+      template <typename T> struct sf02_op { static inline T process(const T x, const T y, const T z) { return (x + y) - z; } };
+      template <typename T> struct sf03_op { static inline T process(const T x, const T y, const T z) { return (x + y) + z; } };
+      template <typename T> struct sf04_op { static inline T process(const T x, const T y, const T z) { return (x - y) / z; } };
+      template <typename T> struct sf05_op { static inline T process(const T x, const T y, const T z) { return (x - y) * z; } };
+      template <typename T> struct sf06_op { static inline T process(const T x, const T y, const T z) { return (x * y) + z; } };
+      template <typename T> struct sf07_op { static inline T process(const T x, const T y, const T z) { return (x * y) - z; } };
+      template <typename T> struct sf08_op { static inline T process(const T x, const T y, const T z) { return (x * y) / z; } };
+      template <typename T> struct sf09_op { static inline T process(const T x, const T y, const T z) { return (x * y) * z; } };
+      template <typename T> struct sf10_op { static inline T process(const T x, const T y, const T z) { return (x / y) + z; } };
+      template <typename T> struct sf11_op { static inline T process(const T x, const T y, const T z) { return (x / y) - z; } };
+      template <typename T> struct sf12_op { static inline T process(const T x, const T y, const T z) { return (x / y) / z; } };
+      template <typename T> struct sf13_op { static inline T process(const T x, const T y, const T z) { return (x / y) * z; } };
+      template <typename T> struct sf14_op { static inline T process(const T x, const T y, const T z) { return x / (y + z); } };
+      template <typename T> struct sf15_op { static inline T process(const T x, const T y, const T z) { return x / (y - z); } };
+      template <typename T> struct sf16_op { static inline T process(const T x, const T y, const T z) { return x / (y * z); } };
+      template <typename T> struct sf17_op { static inline T process(const T x, const T y, const T z) { return x / (y / z); } };
+      template <typename T> struct sf18_op { static inline T process(const T x, const T y, const T z) { return x / (y / z); } };
+      template <typename T> struct sf19_op { static inline T process(const T x, const T y, const T z) { return x - (y / z); } };
+      template <typename T> struct sf20_op { static inline T process(const T x, const T y, const T z) { return x - (y / z); } };
+      template <typename T> struct sf21_op { static inline T process(const T x, const T y, const T z) { return x - (y * z); } };
+      template <typename T> struct sf22_op { static inline T process(const T x, const T y, const T z) { return x + (y * z); } };
+      template <typename T> struct sf23_op { static inline T process(const T x, const T y, const T z) { return x + (y / z); } };
+      template <typename T> struct sf24_op { static inline T process(const T x, const T y, const T z) { return x + (y + z); } };
+      template <typename T> struct sf25_op { static inline T process(const T x, const T y, const T z) { return x + (y - z); } };
+      template <typename T> struct sf26_op { static inline T process(const T x, const T y, const T z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
+      template <typename T> struct sf27_op { static inline T process(const T x, const T y, const T z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
+      template <typename T> struct sf28_op { static inline T process(const T x, const T y, const T z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
+      template <typename T> struct sf29_op { static inline T process(const T x, const T y, const T z) { return axnb<T,5>(x,y,z); } }; //x * y^5 + z
+      template <typename T> struct sf30_op { static inline T process(const T x, const T y, const T z) { return axnb<T,6>(x,y,z); } }; //x * y^6 + z
+      template <typename T> struct sf31_op { static inline T process(const T x, const T y, const T z) { return axnb<T,7>(x,y,z); } }; //x * y^7 + z
+      template <typename T> struct sf32_op { static inline T process(const T x, const T y, const T z) { return axnb<T,8>(x,y,z); } }; //x * y^8 + z
+      template <typename T> struct sf33_op { static inline T process(const T x, const T y, const T z) { return axnb<T,9>(x,y,z); } }; //x * y^9 + z
+      template <typename T> struct sf34_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log(y)   + z; } };
+      template <typename T> struct sf35_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log(y)   - z; } };
+      template <typename T> struct sf36_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log10(y) + z; } };
+      template <typename T> struct sf37_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log10(y) - z; } };
+      template <typename T> struct sf38_op { static inline T process(const T x, const T y, const T z) { return x * numeric::sin(y) + z; } };
+      template <typename T> struct sf39_op { static inline T process(const T x, const T y, const T z) { return x * numeric::sin(y) - z; } };
+      template <typename T> struct sf40_op { static inline T process(const T x, const T y, const T z) { return x * numeric::cos(y) + z; } };
+      template <typename T> struct sf41_op { static inline T process(const T x, const T y, const T z) { return x * numeric::cos(y) - z; } };
+      template <typename T> struct sf42_op { static inline T process(const T x, const T y, const T z) { return is_true(x) ? y : z;      } };
+      template <typename T> struct sf43_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y + z) / w); } };
+      template <typename T> struct sf44_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y + z) * w); } };
+      template <typename T> struct sf45_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y - z) / w); } };
+      template <typename T> struct sf46_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y - z) * w); } };
+      template <typename T> struct sf47_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y * z) / w); } };
+      template <typename T> struct sf48_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y * z) * w); } };
+      template <typename T> struct sf49_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) + w); } };
+      template <typename T> struct sf50_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) / w); } };
+      template <typename T> struct sf51_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) * w); } };
+      template <typename T> struct sf52_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y + z) / w); } };
+      template <typename T> struct sf53_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y + z) * w); } };
+      template <typename T> struct sf54_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y - z) / w); } };
+      template <typename T> struct sf55_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y - z) * w); } };
+      template <typename T> struct sf56_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y * z) / w); } };
+      template <typename T> struct sf57_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y * z) * w); } };
+      template <typename T> struct sf58_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y / z) / w); } };
+      template <typename T> struct sf59_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y / z) * w); } };
+      template <typename T> struct sf60_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x + y) * z) - w; } };
+      template <typename T> struct sf61_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x - y) * z) - w; } };
+      template <typename T> struct sf62_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x * y) * z) - w; } };
+      template <typename T> struct sf63_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x / y) * z) - w; } };
+      template <typename T> struct sf64_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x + y) / z) - w; } };
+      template <typename T> struct sf65_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x - y) / z) - w; } };
+      template <typename T> struct sf66_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x * y) / z) - w; } };
+      template <typename T> struct sf67_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x / y) / z) - w; } };
+      template <typename T> struct sf68_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) + (z * w); } };
+      template <typename T> struct sf69_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) - (z * w); } };
+      template <typename T> struct sf70_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) + (z / w); } };
+      template <typename T> struct sf71_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) - (z / w); } };
+      template <typename T> struct sf72_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) + (z / w); } };
+      template <typename T> struct sf73_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) - (z / w); } };
+      template <typename T> struct sf74_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) - (z * w); } };
+      template <typename T> struct sf75_op { static inline T process(const T x, const T y, const T z, const T w) { return x / (y + (z * w)); } };
+      template <typename T> struct sf76_op { static inline T process(const T x, const T y, const T z, const T w) { return x / (y - (z * w)); } };
+      template <typename T> struct sf77_op { static inline T process(const T x, const T y, const T z, const T w) { return x * (y + (z * w)); } };
+      template <typename T> struct sf78_op { static inline T process(const T x, const T y, const T z, const T w) { return x * (y - (z * w)); } };
+      template <typename T> struct sf79_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
+      template <typename T> struct sf80_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
+      template <typename T> struct sf81_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
+      template <typename T> struct sf82_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,5>(x,y) + axn<T,5>(z,w); } }; //x*y^5+z*w^5
+      template <typename T> struct sf83_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,6>(x,y) + axn<T,6>(z,w); } }; //x*y^6+z*w^6
+      template <typename T> struct sf84_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,7>(x,y) + axn<T,7>(z,w); } }; //x*y^7+z*w^7
+      template <typename T> struct sf85_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,8>(x,y) + axn<T,8>(z,w); } }; //x*y^8+z*w^8
+      template <typename T> struct sf86_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,9>(x,y) + axn<T,9>(z,w); } }; //x*y^9+z*w^9
+      template <typename T> struct sf87_op { static inline T process(const T x, const T y, const T z, const T w) { return (is_true(x) && is_true(y)) ? z : w; } };
+      template <typename T> struct sf88_op { static inline T process(const T x, const T y, const T z, const T w) { return (is_true(x) || is_true(y)) ? z : w; } };
+      template <typename T> struct sf89_op { static inline T process(const T x, const T y, const T z, const T w) { return (x <  y) ? z : w; } };
+      template <typename T> struct sf90_op { static inline T process(const T x, const T y, const T z, const T w) { return (x <= y) ? z : w; } };
+      template <typename T> struct sf91_op { static inline T process(const T x, const T y, const T z, const T w) { return (x >  y) ? z : w; } };
+      template <typename T> struct sf92_op { static inline T process(const T x, const T y, const T z, const T w) { return (x >= y) ? z : w; } };
+      template <typename T> struct sf93_op { static inline T process(const T x, const T y, const T z, const T w) { return numeric::equal(x,y) ? z : w; } };
+      template <typename T> struct sf94_op { static inline T process(const T x, const T y, const T z, const T w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
 
       template <typename T, typename SpecialFunction>
       class sf3_node : public trinary_node<T>
@@ -3848,7 +3858,6 @@ namespace exprtk
             const T x = trinary_node<T>::branch_[0].first->value();
             const T y = trinary_node<T>::branch_[1].first->value();
             const T z = trinary_node<T>::branch_[2].first->value();
-
             return SpecialFunction::process(x,y,z);
          }
       };
@@ -3874,7 +3883,6 @@ namespace exprtk
             const T y = quaternary_node<T>::branch_[1].first->value();
             const T z = quaternary_node<T>::branch_[2].first->value();
             const T w = quaternary_node<T>::branch_[3].first->value();
-
             return SpecialFunction::process(x,y,z,w);
          }
       };
@@ -3965,7 +3973,6 @@ namespace exprtk
             if (is_variable_node(binary_node<T>::branch_[0].first))
             {
                variable_node<T>* var_node_ptr = dynamic_cast<variable_node<T>*>(binary_node<T>::branch_[0].first);
-
                if (var_node_ptr)
                {
                   T& result = var_node_ptr->ref();
@@ -3983,7 +3990,7 @@ namespace exprtk
       {
       public:
 
-         //function of N paramters.
+         // Function of N paramters.
          typedef expression_node<T>* expression_ptr;
          typedef std::pair<expression_ptr,bool> branch_t;
          typedef IFunction ifunction;
@@ -4001,7 +4008,7 @@ namespace exprtk
          template <std::size_t NumBranches>
          bool init_branches(expression_ptr (&b)[NumBranches])
          {
-            //Needed for incompetent and broken msvc compiler versions
+            // Needed for incompetent and broken msvc compiler versions
             #ifdef _MSC_VER
              #pragma warning(push)
              #pragma warning(disable: 4127)
@@ -4017,7 +4024,6 @@ namespace exprtk
                   else
                      return false;
                }
-
                return true;
             }
             #ifdef _MSC_VER
@@ -4032,7 +4038,7 @@ namespace exprtk
 
          inline T value() const
          {
-            //Needed for incompetent and broken msvc compiler versions
+            // Needed for incompetent and broken msvc compiler versions
             #ifdef _MSC_VER
              #pragma warning(push)
              #pragma warning(disable: 4127)
@@ -4212,9 +4218,9 @@ namespace exprtk
          };
 
          template <typename T_>
-         struct invoke<T_, 7>
+         struct invoke<T_,7>
          {
-            static inline T_ execute(ifunction& f, T_ (&v)[ 7])
+            static inline T_ execute(ifunction& f, T_ (&v)[7])
             { return f(v[0],v[1],v[2],v[3],v[4],v[5],v[6]); }
          };
 
@@ -4406,7 +4412,7 @@ namespace exprtk
       template <typename T>
       struct lt_op
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 < t2) ? T(1) : T(0)); }
+         static inline T process(const T t1, const T t2) { return ((t1 < t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 < t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_lt; }
          static inline details::operator_type operation() { return details::e_lt; }
@@ -4415,7 +4421,7 @@ namespace exprtk
       template <typename T>
       struct lte_op
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 <= t2) ? T(1) : T(0)); }
+         static inline T process(const T t1, const T t2) { return ((t1 <= t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 <= t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_lte; }
          static inline details::operator_type operation() { return details::e_lte; }
@@ -4424,7 +4430,7 @@ namespace exprtk
       template <typename T>
       struct gt_op
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 > t2) ? T(1) : T(0)); }
+         static inline T process(const T t1, const T t2) { return ((t1 > t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 > t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_gt; }
          static inline details::operator_type operation() { return details::e_gt; }
@@ -4433,7 +4439,7 @@ namespace exprtk
       template <typename T>
       struct gte_op
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 >= t2) ? T(1) : T(0)); }
+         static inline T process(const T t1, const T t2) { return ((t1 >= t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 >= t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_gte; }
          static inline details::operator_type operation() { return details::e_gte; }
@@ -4442,7 +4448,7 @@ namespace exprtk
       template <typename T>
       struct eq_op
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 == t2) ? T(1) : T(0)); }
+         static inline T process(const T t1, const T t2) { return ((t1 == t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 == t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_eq; }
          static inline details::operator_type operation() { return details::e_eq; }
@@ -4451,7 +4457,7 @@ namespace exprtk
       template <typename T>
       struct ne_op
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 != t2) ? T(1) : T(0)); }
+         static inline T process(const T t1, const T t2) { return ((t1 != t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 != t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_ne; }
          static inline details::operator_type operation() { return details::e_ne; }
@@ -4460,7 +4466,7 @@ namespace exprtk
       template <typename T>
       struct and_op
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(1) : T(0); }
+         static inline T process(const T t1, const T t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(1) : T(0); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_and; }
          static inline details::operator_type operation() { return details::e_and; }
       };
@@ -4468,7 +4474,7 @@ namespace exprtk
       template <typename T>
       struct nand_op
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(0) : T(1); }
+         static inline T process(const T t1, const T t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(0) : T(1); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nand; }
          static inline details::operator_type operation() { return details::e_nand; }
       };
@@ -4476,7 +4482,7 @@ namespace exprtk
       template <typename T>
       struct or_op
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(1) : T(0); }
+         static inline T process(const T t1, const T t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(1) : T(0); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_or; }
          static inline details::operator_type operation() { return details::e_or; }
       };
@@ -4484,7 +4490,7 @@ namespace exprtk
       template <typename T>
       struct nor_op
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(0) : T(1); }
+         static inline T process(const T t1, const T t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(0) : T(1); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nor; }
          static inline details::operator_type operation() { return details::e_nor; }
       };
@@ -4492,7 +4498,7 @@ namespace exprtk
       template <typename T>
       struct xor_op
       {
-         static inline T process(const T& t1, const T& t2) { return numeric::xor_opr<T>(t1,t2); }
+         static inline T process(const T t1, const T t2) { return numeric::xor_opr<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nor; }
          static inline details::operator_type operation() { return details::e_xor; }
       };
@@ -4536,8 +4542,150 @@ namespace exprtk
          static inline details::operator_type operation() { return details::e_ilike; }
       };
 
+      template <typename T>
+      class vov_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+
+         virtual const T& v0() const = 0;
+
+         virtual const T& v1() const = 0;
+      };
+
+      template <typename T>
+      class cov_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+
+         virtual const T c() const = 0;
+
+         virtual const T& v() const = 0;
+      };
+
+      template <typename T>
+      class voc_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+
+         virtual const T c() const = 0;
+
+         virtual const T& v() const = 0;
+      };
+
+      template <typename T>
+      class vob_base_node : public expression_node<T>
+      {
+      public:
+
+         virtual const T& v() const = 0;
+      };
+
+      template <typename T>
+      class bov_base_node : public expression_node<T>
+      {
+      public:
+
+         virtual const T& v() const = 0;
+      };
+
+      template <typename T>
+      class cob_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+
+         virtual const T c() const = 0;
+
+         virtual void set_c(const T) = 0;
+      };
+
+      template <typename T>
+      class boc_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+
+         virtual const T c() const = 0;
+
+         virtual void set_c(const T) = 0;
+      };
+
+      template <typename T>
+      class uv_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+
+         virtual const T& v() const = 0;
+      };
+
+      template <typename T>
+      class sos_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+      };
+
+      template <typename T>
+      class sosos_base_node : public expression_node<T>
+      {
+      public:
+
+         inline virtual operator_type operation() const
+         {
+            return details::e_default;
+         }
+      };
+
+      template <typename T>
+      class T0oT1oT2_base_node : public expression_node<T>
+      {
+      public:
+
+         virtual std::string type_id() const = 0;
+      };
+
+      template <typename T>
+      class T0oT1oT2oT3_base_node : public expression_node<T>
+      {
+      public:
+
+         virtual std::string type_id() const = 0;
+      };
+
       template <typename T, typename Operation>
-      class unary_variable_node : public expression_node<T>
+      class unary_variable_node : public uv_base_node<T>
       {
       public:
 
@@ -4563,7 +4711,7 @@ namespace exprtk
             return Operation::operation();
          }
 
-         inline const T& v()
+         inline const T& v() const
          {
             return v_;
          }
@@ -4576,7 +4724,7 @@ namespace exprtk
          const T& v_;
       };
 
-      template <typename T, typename UOpr1, typename Operation, typename UOpr2>
+      template <typename T>
       class uvouv_node : public expression_node<T>
       {
       public:
@@ -4584,28 +4732,30 @@ namespace exprtk
          // UOpr1(v0) Op UOpr2(v1)
 
          typedef expression_node<T>* expression_ptr;
-         typedef UOpr1 opr1_t;
-         typedef UOpr2 opr2_t;
-         typedef Operation op_t;
+         typedef T (*bfunc_t)(const T t0, const T t1);
+         typedef T (*ufunc_t)(const T t0);
 
-         explicit uvouv_node(const T& v0,const T& v1)
+         explicit uvouv_node(const T& v0,const T& v1, ufunc_t u0, ufunc_t u1, bfunc_t f)
          : v0_(v0),
-           v1_(v1)
+           v1_(v1),
+           u0_(u0),
+           u1_(u1),
+           f_ (f )
          {}
 
          inline T value() const
          {
-            return Operation::process(UOpr1::process(v0_),UOpr2::process(v1_));
+            return f_(u0_(v0_),u1_(v1_));
          }
 
          inline typename expression_node<T>::node_type type() const
          {
-            return Operation::type();
+            return expression_node<T>::e_uvouv;
          }
 
          inline operator_type operation() const
          {
-            return Operation::operation();
+            return details::e_default;
          }
 
          inline const T& v0()
@@ -4618,13 +4768,31 @@ namespace exprtk
             return v1_;
          }
 
+         inline ufunc_t u0()
+         {
+            return u0_;
+         }
+
+         inline ufunc_t u1()
+         {
+            return u1_;
+         }
+
+         inline ufunc_t f()
+         {
+            return f_;
+         }
+
       private:
 
-         uvouv_node(uvouv_node<T,UOpr1,Operation,UOpr2>&);
-         uvouv_node<T,UOpr1,Operation,UOpr2>& operator=(uvouv_node<T,UOpr1,Operation,UOpr2>&);
+         uvouv_node(uvouv_node<T>&);
+         uvouv_node<T>& operator=(uvouv_node<T>&);
 
          const T& v0_;
          const T& v1_;
+         const ufunc_t u0_;
+         const ufunc_t u1_;
+         const bfunc_t f_;
       };
 
       template <typename T, typename Operation>
@@ -4673,59 +4841,666 @@ namespace exprtk
          bool           branch_deletable_;
       };
 
-      template <typename T>
-      class vov_base_node : public expression_node<T>
-      {
-      public:
+      template <typename T> struct is_const                { enum {result = 0}; };
+      template <typename T> struct is_const <const T>      { enum {result = 1}; };
+      template <typename T> struct is_const_ref            { enum {result = 0}; };
+      template <typename T> struct is_const_ref <const T&> { enum {result = 1}; };
+      template <typename T> struct is_ref                  { enum {result = 0}; };
+      template <typename T> struct is_ref<T&>              { enum {result = 1}; };
+      template <typename T> struct is_ref<const T&>        { enum {result = 0}; };
 
-         inline virtual operator_type operation() const
+      template <std::size_t State>
+      struct param_to_str { static std::string result() { static const std::string r("v"); return r; } };
+
+      template <>
+      struct param_to_str<0> { static std::string result() { static const std::string r("c"); return r; } };
+
+      template <typename T>
+      struct T0oT1oT2process
+      {
+         typedef T (*bfunc_t)(const T t0, const T t1);
+
+         struct mode0
          {
-            return details::e_default;
-         }
+            static inline T process(const T t0, const T t1, const T t2, const bfunc_t bf0, const bfunc_t bf1)
+            {
+               // (T0 o0 T1) o1 T2
+               return bf1(bf0(t0,t1),t2);
+            }
+
+            template <typename T0, typename T1, typename T2>
+            static inline std::string id()
+            {
+               static const std::string result = "(" + param_to_str<is_const_ref<T0>::result>::result() + "o"   +
+                                                       param_to_str<is_const_ref<T1>::result>::result() + ")o(" +
+                                                       param_to_str<is_const_ref<T2>::result>::result() + ")"   ;
+               return result;
+            }
+         };
+
+         struct mode1
+         {
+            static inline T process(const T t0, const T t1, const T t2, const bfunc_t bf0, const bfunc_t bf1)
+            {
+               // T0 o0 (T1 o1 T2)
+               return bf0(t0,bf1(t1,t2));
+            }
+
+            template <typename T0, typename T1, typename T2>
+            static inline std::string id()
+            {
+               static const std::string result = "(" + param_to_str<is_const_ref<T0>::result>::result() + ")o(" +
+                                                       param_to_str<is_const_ref<T1>::result>::result() + "o"   +
+                                                       param_to_str<is_const_ref<T2>::result>::result() + ")"   ;
+               return result;
+            }
+         };
       };
 
       template <typename T>
-      class cov_base_node : public expression_node<T>
+      struct T0oT1oT20T3process
       {
-      public:
+         typedef T (*bfunc_t)(const T t0, const T t1);
 
-         inline virtual operator_type operation() const
+         struct mode0
          {
-            return details::e_default;
-         }
+            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            {
+               // (T0 o0 T1) o1 (T2 o2 T3)
+               return bf1(bf0(t0,t1),bf2(t2,t3));
+            }
+
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline std::string id()
+            {
+               static const std::string result = "(" + param_to_str<is_const_ref<T0>::result>::result() + "o"  +
+                                                       param_to_str<is_const_ref<T1>::result>::result() + ")o" +
+                                                 "(" + param_to_str<is_const_ref<T2>::result>::result() + "o"  +
+                                                       param_to_str<is_const_ref<T3>::result>::result() + ")"  ;
+               return result;
+            }
+         };
+
+         struct mode1
+         {
+            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            {
+               // (T0 o0 (T1 o1 (T2 o2 T3))
+               return bf0(t0,bf1(t1,bf2(t2,t3)));
+            }
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline std::string id()
+            {
+               static const std::string result = "(" + param_to_str<is_const_ref<T0>::result>::result() +  ")o((" +
+                                                       param_to_str<is_const_ref<T1>::result>::result() +  ")o("  +
+                                                       param_to_str<is_const_ref<T2>::result>::result() +  "o"    +
+                                                       param_to_str<is_const_ref<T3>::result>::result() +  "))"   ;
+               return result;
+            }
+         };
+
+         struct mode2
+         {
+            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            {
+               // (T0 o0 ((T1 o1 T2) o2 T3)
+               return bf0(t0,bf2(bf1(t1,t2),t3));
+            }
+
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline std::string id()
+            {
+               static const std::string result = "(" + param_to_str<is_const_ref<T0>::result>::result() + ")o((" +
+                                                       param_to_str<is_const_ref<T1>::result>::result() + "o"    +
+                                                       param_to_str<is_const_ref<T2>::result>::result() + ")o("  +
+                                                       param_to_str<is_const_ref<T3>::result>::result() + "))"   ;
+               return result;
+            }
+         };
+
+         struct mode3
+         {
+            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            {
+               // (((T0 o0 T1) o1 T2) o2 T3)
+               return bf2(bf1(bf0(t0,t1),t2),t3);
+            }
+
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline std::string id()
+            {
+               static const std::string result = "((" + param_to_str<is_const_ref<T0>::result>::result() + "o"    +
+                                                        param_to_str<is_const_ref<T1>::result>::result() + ")o("  +
+                                                        param_to_str<is_const_ref<T2>::result>::result() + "))o(" +
+                                                        param_to_str<is_const_ref<T3>::result>::result() + ")";
+               return result;
+            }
+         };
+
+         struct mode4
+         {
+            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            {
+               // ((T0 o0 (T1 o1 T2)) o2 T3
+               return bf2(bf0(t0,bf1(t1,t2)),t3);
+            }
+
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline std::string id()
+            {
+               static const std::string result = "((" + param_to_str<is_const_ref<T0>::result>::result() + ")o("  +
+                                                        param_to_str<is_const_ref<T1>::result>::result() + "o"    +
+                                                        param_to_str<is_const_ref<T2>::result>::result() + "))o(" +
+                                                        param_to_str<is_const_ref<T3>::result>::result() + ")"    ;
+               return result;
+            }
+         };
       };
 
-      template <typename T>
-      class voc_base_node : public expression_node<T>
+      template <typename T, typename T0, typename T1>
+      struct nodetype_T0oT1 { static const typename expression_node<T>::node_type result; };
+      template <typename T, typename T0, typename T1>
+      const typename expression_node<T>::node_type nodetype_T0oT1<T,T0,T1>::result = expression_node<T>::e_none;
+
+      #define synthnode_type_def(T0_,T1_,v_) \
+      template <typename T, typename T0, typename T1> \
+      struct nodetype_T0oT1<T,T0_,T1_> { static const typename expression_node<T>::node_type result; }; \
+      template <typename T, typename T0, typename T1> \
+      const typename expression_node<T>::node_type nodetype_T0oT1<T,T0_,T1_>::result = expression_node<T>:: v_; \
+
+      synthnode_type_def(const T0&,const T1&, e_vov)
+      synthnode_type_def(const T0&,const T1 , e_voc)
+      synthnode_type_def(const T0 ,const T1&, e_cov)
+      synthnode_type_def(      T0&,      T1&,e_none)
+      synthnode_type_def(const T0 ,const T1 ,e_none)
+      synthnode_type_def(      T0&,const T1 ,e_none)
+      synthnode_type_def(const T0 ,      T1&,e_none)
+      synthnode_type_def(const T0&,      T1&,e_none)
+      synthnode_type_def(      T0&,const T1&,e_none)
+      #undef synthnode_type_def
+
+      template <typename T, typename T0, typename T1, typename T2>
+      struct nodetype_T0oT1oT2 { static const typename expression_node<T>::node_type result; };
+      template <typename T, typename T0, typename T1, typename T2>
+      const typename expression_node<T>::node_type nodetype_T0oT1oT2<T,T0,T1,T2>::result = expression_node<T>::e_none;
+
+      #define synthnode_type_def(T0_,T1_,T2_,v_) \
+      template <typename T, typename T0, typename T1, typename T2> \
+      struct nodetype_T0oT1oT2<T,T0_,T1_,T2_> { static const typename expression_node<T>::node_type result; }; \
+      template <typename T, typename T0, typename T1, typename T2> \
+      const typename expression_node<T>::node_type nodetype_T0oT1oT2<T,T0_,T1_,T2_>::result = expression_node<T>:: v_; \
+
+      synthnode_type_def(const T0&,const T1&,const T2&, e_vovov)
+      synthnode_type_def(const T0&,const T1&,const T2 , e_vovoc)
+      synthnode_type_def(const T0&,const T1 ,const T2&, e_vocov)
+      synthnode_type_def(const T0 ,const T1&,const T2&, e_covov)
+      synthnode_type_def(const T0 ,const T1&,const T2 , e_covoc)
+      synthnode_type_def(const T0 ,const T1 ,const T2 , e_none )
+      synthnode_type_def(const T0 ,const T1 ,const T2&, e_none )
+      synthnode_type_def(const T0&,const T1 ,const T2 , e_none )
+      synthnode_type_def(      T0&,      T1&,      T2&, e_none )
+      #undef synthnode_type_def
+
+      template <typename T, typename T0, typename T1, typename T2, typename T3>
+      struct nodetype_T0oT1oT2oT3 { static const typename expression_node<T>::node_type result; };
+      template <typename T, typename T0, typename T1, typename T2, typename T3>
+      const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0,T1,T2,T3>::result = expression_node<T>::e_none;
+
+      #define synthnode_type_def(T0_,T1_,T2_,T3_,v_) \
+      template <typename T, typename T0, typename T1, typename T2, typename T3> \
+      struct nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,T3_> { static const typename expression_node<T>::node_type result; }; \
+      template <typename T, typename T0, typename T1, typename T2, typename T3> \
+      const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,T3_>::result = expression_node<T>:: v_; \
+
+      synthnode_type_def(const T0&,const T1&,const T2&, const T3&,e_vovovov)
+      synthnode_type_def(const T0&,const T1&,const T2&, const T3 ,e_vovovoc)
+      synthnode_type_def(const T0&,const T1&,const T2 , const T3&,e_vovocov)
+      synthnode_type_def(const T0&,const T1 ,const T2&, const T3&,e_vocovov)
+      synthnode_type_def(const T0 ,const T1&,const T2&, const T3&,e_covovov)
+      synthnode_type_def(const T0 ,const T1&,const T2 , const T3&,e_covocov)
+      synthnode_type_def(const T0&,const T1 ,const T2&, const T3 ,e_vocovoc)
+      synthnode_type_def(const T0 ,const T1&,const T2&, const T3 ,e_covovoc)
+      synthnode_type_def(const T0&,const T1 ,const T2 , const T3&,e_vococov)
+      synthnode_type_def(const T0 ,const T1 ,const T2 , const T3 ,e_none   )
+      synthnode_type_def(const T0 ,const T1 ,const T2 , const T3&,e_none   )
+      synthnode_type_def(const T0 ,const T1 ,const T2&, const T3 ,e_none   )
+      synthnode_type_def(const T0 ,const T1&,const T2 , const T3 ,e_none   )
+      synthnode_type_def(const T0&,const T1 ,const T2 , const T3 ,e_none   )
+      synthnode_type_def(const T0 ,const T1 ,const T2&, const T3&,e_none   )
+      synthnode_type_def(const T0&,const T1&,const T2 , const T3 ,e_none   )
+      #undef synthnode_type_def
+
+      template <typename T, typename T0, typename T1>
+      class T0oT1 : public expression_node<T>
       {
       public:
 
-         inline virtual operator_type operation() const
+         typedef T (*bfunc_t)(const T v0, const T v1);
+         typedef T value_type;
+         typedef T0oT1<T,T0,T1> node_type;
+
+         T0oT1(T0 t0, T1 t1, const bfunc_t f)
+         : t0_(t0),
+           t1_(t1),
+           f_(f)
+         {}
+
+         inline typename expression_node<T>::node_type type() const
          {
-            return details::e_default;
+            static const typename expression_node<T>::node_type result = nodetype_T0oT1<T,T0,T1>::result;
+            return result;
          }
+
+         inline operator_type operation() const
+         {
+            return e_default;
+         }
+
+         inline T value() const
+         {
+            return f_(t0_,t1_);
+         }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline bfunc_t f() const
+         {
+            return f_;
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator,
+                                                    T0 t0, T1 t1,
+                                                    bfunc_t f)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,bfunc_t&>(t0,t1,f);
+         }
+
+      private:
+
+         T0oT1(T0oT1<T,T0,T1>&) {}
+         T0oT1<T,T0,T1>& operator=(T0oT1<T,T0,T1>&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         const bfunc_t f_;
       };
 
-      template <typename T>
-      class sos_base_node : public expression_node<T>
+      template <typename T, typename T0, typename T1, typename T2, typename ProcessMode>
+      class T0oT1oT2 : public T0oT1oT2_base_node<T>
       {
       public:
 
-         inline virtual operator_type operation() const
+         typedef T (*bfunc_t)(const T v0, const T v1);
+         typedef T value_type;
+         typedef T0oT1oT2<T,T0,T1,T2,ProcessMode> node_type;
+         typedef ProcessMode process_mode_t;
+
+         T0oT1oT2(T0 t0, T1 t1, T2 t2, const bfunc_t f0, const bfunc_t f1)
+         : t0_(t0),
+           t1_(t1),
+           t2_(t2),
+           f0_(f0),
+           f1_(f1)
+         {}
+
+         inline typename expression_node<T>::node_type type() const
          {
-            return details::e_default;
+            static const typename expression_node<T>::node_type result = nodetype_T0oT1oT2<T,T0,T1,T2>::result;
+            return result;
          }
+
+         inline operator_type operation() const
+         {
+            return e_default;
+         }
+
+         inline T value() const
+         {
+            return ProcessMode::process(t0_,t1_,t2_,f0_,f1_);
+         }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline T2 t2() const
+         {
+            return t2_;
+         }
+
+         bfunc_t f0() const
+         {
+            return f0_;
+         }
+
+         bfunc_t f1() const
+         {
+            return f1_;
+         }
+
+         std::string type_id() const
+         {
+            return id();
+         }
+
+         static inline std::string id()
+         {
+            return process_mode_t::template id<T0,T1,T2>();
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator, T0 t0, T1 t1, T2 t2, bfunc_t f0, bfunc_t f1)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,T2,bfunc_t,bfunc_t>(t0,t1,t2,f0,f1);
+         }
+
+      private:
+
+         T0oT1oT2(node_type&) {}
+         node_type& operator=(node_type&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         T2 t2_;
+         const bfunc_t f0_;
+         const bfunc_t f1_;
       };
 
-      template <typename T>
-      class sosos_base_node : public expression_node<T>
+      template <typename T, typename T0, typename T1, typename T2, typename T3, typename ProcessMode>
+      class T0oT1oT2oT3 : public T0oT1oT2_base_node<T>
       {
       public:
 
-         inline virtual operator_type operation() const
+         typedef T (*bfunc_t)(const T v0, const T v1);
+         typedef T value_type;
+         typedef T0oT1oT2oT3<T,T0,T1,T2,T3,ProcessMode> node_type;
+         typedef ProcessMode process_mode_t;
+
+         T0oT1oT2oT3(T0 t0, T1 t1, T2 t2, T3 t3, bfunc_t f0, bfunc_t f1, bfunc_t f2)
+         : t0_(t0),
+           t1_(t1),
+           t2_(t2),
+           t3_(t3),
+           f0_(f0),
+           f1_(f1),
+           f2_(f2)
+         {}
+
+         inline T value() const
          {
-            return details::e_default;
+            return ProcessMode::process(t0_,t1_,t2_,t3_,f0_,f1_,f2_);
          }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline T2 t2() const
+         {
+            return t2_;
+         }
+
+         inline T3 t3() const
+         {
+            return t3_;
+         }
+
+         inline bfunc_t f0() const
+         {
+            return f0_;
+         }
+
+         inline bfunc_t f1() const
+         {
+            return f1_;
+         }
+
+         inline bfunc_t f2() const
+         {
+            return f2_;
+         }
+
+         inline std::string type_id() const
+         {
+            return id();
+         }
+
+         static inline std::string id()
+         {
+            return process_mode_t::template id<T0,T1,T2,T3>();
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator,
+                                                    T0 t0, T1 t1, T2 t2, T3 t3,
+                                                    bfunc_t f0, bfunc_t f1, bfunc_t f2)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,T2,T3,bfunc_t,bfunc_t>(t0,t1,t2,t3,f0,f1,f2);
+         }
+
+      private:
+
+         T0oT1oT2oT3(node_type&) {}
+         node_type& operator=(node_type&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         T2 t2_;
+         T3 t3_;
+         const bfunc_t f0_;
+         const bfunc_t f1_;
+         const bfunc_t f2_;
+      };
+
+      template <typename T, typename T0, typename T1, typename T2>
+      class T0oT1oT2_sf3 : public T0oT1oT2_base_node<T>
+      {
+      public:
+
+         typedef T (*tfunc_t)(const T v0, const T v1, const T v2);
+         typedef T value_type;
+         typedef T0oT1oT2_sf3<T,T0,T1,T2> node_type;
+
+         T0oT1oT2_sf3(T0 t0, T1 t1, T2 t2, const tfunc_t f)
+         : t0_(t0),
+           t1_(t1),
+           t2_(t2),
+           f_(f)
+         {}
+
+         inline typename expression_node<T>::node_type type() const
+         {
+            static const typename expression_node<T>::node_type result = nodetype_T0oT1oT2<T,T0,T1,T2>::result;
+            return result;
+         }
+
+         inline operator_type operation() const
+         {
+            return e_default;
+         }
+
+         inline T value() const
+         {
+            return f_(t0_,t1_,t2_);
+         }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline T2 t2() const
+         {
+            return t2_;
+         }
+
+         tfunc_t f() const
+         {
+            return f_;
+         }
+
+         std::string type_id() const
+         {
+            return id();
+         }
+
+         static inline std::string id()
+         {
+            return "sf3";
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator, T0 t0, T1 t1, T2 t2, tfunc_t f)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,T2,tfunc_t>(t0,t1,t2,f);
+         }
+
+      private:
+
+         T0oT1oT2_sf3(node_type&) {}
+         node_type& operator=(node_type&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         T2 t2_;
+         const tfunc_t f_;
+      };
+
+      template <typename T, typename T0, typename T1, typename T2, typename T3>
+      class T0oT1oT2oT3_sf4 : public T0oT1oT2_base_node<T>
+      {
+      public:
+
+         typedef T (*qfunc_t)(const T v0, const T v1, const T v2, const T v3);
+         typedef T value_type;
+         typedef T0oT1oT2oT3_sf4<T,T0,T1,T2,T3> node_type;
+
+         T0oT1oT2oT3_sf4(T0 t0, T1 t1, T2 t2, T3 t3, const qfunc_t f)
+         : t0_(t0),
+           t1_(t1),
+           t2_(t2),
+           t3_(t3),
+           f_(f)
+         {}
+
+         inline typename expression_node<T>::node_type type() const
+         {
+            static const typename expression_node<T>::node_type result = nodetype_T0oT1oT2oT3<T,T0,T1,T2,T3>::result;
+            return result;
+         }
+
+         inline operator_type operation() const
+         {
+            return e_default;
+         }
+
+         inline T value() const
+         {
+            return f_(t0_,t1_,t2_,t3_);
+         }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline T2 t2() const
+         {
+            return t2_;
+         }
+
+         inline T3 t3() const
+         {
+            return t3_;
+         }
+
+         qfunc_t f() const
+         {
+            return f_;
+         }
+
+         std::string type_id() const
+         {
+            return id();
+         }
+
+         static inline std::string id()
+         {
+            return "sf4";
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator, T0 t0, T1 t1, T2 t2, T3 t3, qfunc_t f)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,T2,T3,qfunc_t>(t0,t1,t2,t3,f);
+         }
+
+      private:
+
+         T0oT1oT2oT3_sf4(node_type&) {}
+         node_type& operator=(node_type&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         T2 t2_;
+         T3 t3_;
+         const qfunc_t f_;
+      };
+
+      template <typename T, typename T0, typename T1>
+      struct T0oT1_define
+      {
+         typedef details::T0oT1<T,T0,T1> type0;
+      };
+
+      template <typename T, typename T0, typename T1, typename T2>
+      struct T0oT1oT2_define
+      {
+         typedef details::T0oT1oT2<T,T0,T1,T2,typename T0oT1oT2process<T>::mode0> type0;
+         typedef details::T0oT1oT2<T,T0,T1,T2,typename T0oT1oT2process<T>::mode1> type1;
+         typedef details::T0oT1oT2_sf3<T,T0,T1,T2> sf3_type;
+      };
+
+      template <typename T, typename T0, typename T1, typename T2, typename T3>
+      struct T0oT1oT2oT3_define
+      {
+         typedef details::T0oT1oT2oT3<T,T0,T1,T2,T3,typename T0oT1oT20T3process<T>::mode0> type0;
+         typedef details::T0oT1oT2oT3<T,T0,T1,T2,T3,typename T0oT1oT20T3process<T>::mode1> type1;
+         typedef details::T0oT1oT2oT3<T,T0,T1,T2,T3,typename T0oT1oT20T3process<T>::mode2> type2;
+         typedef details::T0oT1oT2oT3<T,T0,T1,T2,T3,typename T0oT1oT20T3process<T>::mode3> type3;
+         typedef details::T0oT1oT2oT3<T,T0,T1,T2,T3,typename T0oT1oT20T3process<T>::mode4> type4;
+         typedef details::T0oT1oT2oT3_sf4<T,T0,T1,T2,T3> sf4_type;
       };
 
       template <typename T, typename Operation>
@@ -4736,7 +5511,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef Operation operation_t;
 
-         //variable op variable node
+         // variable op variable node
          explicit vov_node(const T& v0, const T& v1)
          : v0_(v0),
            v1_(v1)
@@ -4786,7 +5561,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef Operation operation_t;
 
-         //constant op variable node
+         // constant op variable node
          explicit cov_node(const T& c, const T& v)
          : c_(c),
            v_(v)
@@ -4807,7 +5582,7 @@ namespace exprtk
             return Operation::operation();
          }
 
-         inline T c()
+         inline const T c() const
          {
             return c_;
          }
@@ -4836,7 +5611,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef Operation operation_t;
 
-         //variable op constant node
+         // variable op constant node
          explicit voc_node(const T& v, const T& c)
          : v_(v),
            c_(c)
@@ -4852,7 +5627,7 @@ namespace exprtk
             return Operation::operation();
          }
 
-         inline T c()
+         inline const T c() const
          {
             return c_;
          }
@@ -4873,523 +5648,214 @@ namespace exprtk
          voc_node<T,Operation>& operator=(const voc_node<T,Operation>&);
       };
 
-      template <typename T, typename Operation1, typename Operation2>
-      class vovov1_node : public expression_node<T>
+      template <typename T, typename Operation>
+      class vob_node : public vob_base_node<T>
       {
       public:
 
          typedef expression_node<T>* expression_ptr;
          typedef std::pair<expression_ptr,bool> branch_t;
+         typedef Operation operation_t;
 
-         //variable0 op1 (variable1 op2 variable2) node
-         explicit vovov1_node(const T& v0, vov_node<T,Operation2>& vn)
-         : v0_(v0),
-           v1_(vn.v0()),
-           v2_(vn.v1())
-         {}
+         // variable op constant node
+         explicit vob_node(const T& v, const expression_ptr branch)
+         : v_(v)
+         {
+            init_branches<1>(branch_,branch);
+         }
+
+        ~vob_node()
+         {
+            cleanup_branches<T,1>::execute(branch_);
+         }
 
          inline T value() const
          {
-            return Operation1::process(v0_,Operation2::process(v1_,v2_));
+            return Operation::process(v_,branch_[0].first->value());
          }
 
-         inline typename expression_node<T>::node_type type() const
+         inline operator_type operation() const
          {
-            return expression_node<T>::e_none;
+            return Operation::operation();
          }
 
-         inline typename expression_node<T>::node_type type1() const
+         inline const T& v() const
          {
-            return Operation1::type();
+            return v_;
          }
 
-         inline typename expression_node<T>::node_type type2() const
+         inline expression_node<T>* branch(const std::size_t&) const
          {
-            return Operation2::type();
+            return branch_[0].first;
          }
-
-      protected:
-
-         const T& v0_;
-         const T& v1_;
-         const T& v2_;
 
       private:
 
-         vovov1_node(const vovov1_node<T,Operation1,Operation2>&);
-         vovov1_node<T,Operation1,Operation2>& operator=(const vovov1_node<T,Operation1,Operation2>&);
+         vob_node(const vob_node<T,Operation>&);
+         vob_node<T,Operation>& operator=(const vob_node<T,Operation>&);
+
+         const T& v_;
+         branch_t branch_[1];
       };
 
-      template <typename T, typename Operation1, typename Operation2>
-      class vovov2_node : public expression_node<T>
+      template <typename T, typename Operation>
+      class bov_node : public bov_base_node<T>
       {
       public:
 
          typedef expression_node<T>* expression_ptr;
          typedef std::pair<expression_ptr,bool> branch_t;
+         typedef Operation operation_t;
 
-         //(variable0 op1 variable1) op2 variable2 node
-         explicit vovov2_node(vov_node<T,Operation1>& vn, const T& v2)
-         : v0_(vn.v0()),
-           v1_(vn.v1()),
-           v2_(v2)
-         {}
+         // variable op constant node
+         explicit bov_node(const expression_ptr branch, const T& v)
+         : v_(v)
+         {
+            init_branches<1>(branch_,branch);
+         }
+
+        ~bov_node()
+         {
+            cleanup_branches<T,1>::execute(branch_);
+         }
 
          inline T value() const
          {
-            return Operation2::process(Operation1::process(v0_,v1_),v2_);
+            return Operation::process(branch_[0].first->value(),v_);
          }
 
-         inline typename expression_node<T>::node_type type() const
+         inline operator_type operation() const
          {
-            return expression_node<T>::e_none;
+            return Operation::operation();
          }
 
-         inline typename expression_node<T>::node_type type1() const
+         inline const T& v() const
          {
-            return Operation1::type();
+            return v_;
          }
 
-         inline typename expression_node<T>::node_type type2() const
+         inline expression_node<T>* branch(const std::size_t&) const
          {
-            return Operation2::type();
+            return branch_[0].first;
          }
-
-      protected:
-
-         const T& v0_;
-         const T& v1_;
-         const T& v2_;
 
       private:
 
-         vovov2_node(const vovov2_node<T,Operation1,Operation2>&);
-         vovov2_node<T,Operation1,Operation2>& operator=(const vovov2_node<T,Operation1,Operation2>&);
+         bov_node(const bov_node<T,Operation>&);
+         bov_node<T,Operation>& operator=(const bov_node<T,Operation>&);
+
+         const T& v_;
+         branch_t branch_[1];
       };
 
-      template <typename T, typename Operation1, typename Operation2>
-      class covov1_node : public expression_node<T>
+      template <typename T, typename Operation>
+      class cob_node : public cob_base_node<T>
       {
       public:
 
          typedef expression_node<T>* expression_ptr;
          typedef std::pair<expression_ptr,bool> branch_t;
+         typedef Operation operation_t;
 
-         //constant op1 (variable0 op2 variable1) node
-         explicit covov1_node(const T& c, vov_node<T,Operation2>& vn)
-         : c_ (c),
-           v0_(vn.v0()),
-           v1_(vn.v1())
-         {}
+         // variable op constant node
+         explicit cob_node(const T c, const expression_ptr branch)
+         : c_(c)
+         {
+            init_branches<1>(branch_,branch);
+         }
+
+        ~cob_node()
+         {
+            cleanup_branches<T,1>::execute(branch_);
+         }
 
          inline T value() const
          {
-            return Operation1::process(c_,Operation2::process(v0_,v1_));
+            return Operation::process(c_,branch_[0].first->value());
          }
 
-         inline typename expression_node<T>::node_type type() const
+         inline operator_type operation() const
          {
-            return expression_node<T>::e_none;
+            return Operation::operation();
          }
 
-         inline typename expression_node<T>::node_type type1() const
+         inline const T c() const
          {
-            return Operation1::type();
+            return c_;
          }
 
-         inline typename expression_node<T>::node_type type2() const
+         inline void set_c(const T new_c)
          {
-            return Operation2::type();
+            (*const_cast<T*>(&c_)) = new_c;
          }
 
-      protected:
-
-         const T   c_;
-         const T& v0_;
-         const T& v1_;
+         inline expression_node<T>* branch(const std::size_t&) const
+         {
+            return branch_[0].first;
+         }
 
       private:
 
-         covov1_node(const covov1_node<T,Operation1,Operation2>&);
-         covov1_node<T,Operation1,Operation2>& operator=(const covov1_node<T,Operation1,Operation2>&);
+         cob_node(const cob_node<T,Operation>&);
+         cob_node<T,Operation>& operator=(const cob_node<T,Operation>&);
+
+         const T c_;
+         branch_t branch_[1];
       };
 
-      template <typename T, typename Operation1, typename Operation2>
-      class covov2_node : public expression_node<T>
+      template <typename T, typename Operation>
+      class boc_node : public boc_base_node<T>
       {
       public:
 
          typedef expression_node<T>* expression_ptr;
          typedef std::pair<expression_ptr,bool> branch_t;
+         typedef Operation operation_t;
 
-         //(constant op1 variable0) op2 variable1 node
-         explicit covov2_node(cov_node<T,Operation1>& cvn, const T& v1)
-         : c_ (cvn.c()),
-           v0_(cvn.v()),
-           v1_(v1)
-         {}
+         // variable op constant node
+         explicit boc_node(const expression_ptr branch, const T c)
+         : c_(c)
+         {
+            init_branches<1>(branch_,branch);
+         }
+
+        ~boc_node()
+         {
+            cleanup_branches<T,1>::execute(branch_);
+         }
 
          inline T value() const
          {
-            return Operation2::process(Operation1::process(c_,v0_),v1_);
+            return Operation::process(branch_[0].first->value(),c_);
          }
 
-         inline typename expression_node<T>::node_type type() const
+         inline operator_type operation() const
          {
-            return expression_node<T>::e_none;
+            return Operation::operation();
          }
 
-         inline typename expression_node<T>::node_type type1() const
+         inline const T c() const
          {
-            return Operation1::type();
+            return c_;
          }
 
-         inline typename expression_node<T>::node_type type2() const
+         inline void set_c(const T new_c)
          {
-            return Operation2::type();
+            (*const_cast<T*>(&c_)) = new_c;
          }
 
-      protected:
-
-         const T   c_;
-         const T& v0_;
-         const T& v1_;
+         inline expression_node<T>* branch(const std::size_t&) const
+         {
+            return branch_[0].first;
+         }
 
       private:
 
-         covov2_node(covov2_node<T,Operation1,Operation2>&);
-         covov2_node<T,Operation1,Operation2>& operator=(covov2_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2>
-      class vovoc1_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //variable0 op1 (variable1 op2 constant) node
-         explicit vovoc1_node(const T& v0, voc_node<T,Operation2>& vcn)
-         : v0_(v0),
-           v1_(vcn.v()),
-           c_ (vcn.c())
-         {}
-
-         inline T value() const
-         {
-            return Operation1::process(v0_,Operation2::process(v1_,c_));
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T& v0_;
-         const T& v1_;
-         const T   c_;
-
-      private:
-
-         vovoc1_node(const vovoc1_node<T,Operation1,Operation2>&);
-         vovoc1_node<T,Operation1,Operation2>& operator=(const vovoc1_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2>
-      class vovoc2_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //(variable0 op1 variable1) op2 constant node
-         explicit vovoc2_node(vov_node<T,Operation1>& vvn, const T& c)
-         : v0_(vvn.v0()),
-           v1_(vvn.v1()),
-           c_ (c)
-         {}
-
-         inline T value() const
-         {
-            return Operation2::process(Operation1::process(v0_,v1_),c_);
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T& v0_;
-         const T& v1_;
-         const T   c_;
-
-      private:
-
-         vovoc2_node(vovoc2_node<T,Operation1,Operation2>&);
-         vovoc2_node<T,Operation1,Operation2>& operator=(vovoc2_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2>
-      class covoc1_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //const0 op1 (variable op2 const1) node
-         explicit covoc1_node(const T& c0, voc_node<T,Operation2>& vcn)
-         : c0_(c0),
-           v_ (vcn.v()),
-           c1_(vcn.c())
-         {}
-
-         inline T value() const
-         {
-            return Operation1::process(c0_,Operation2::process(v_,c1_));
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T  c0_;
-         const T&  v_;
-         const T  c1_;
-
-      private:
-
-         covoc1_node(const covoc1_node<T,Operation1,Operation2>&);
-         covoc1_node<T,Operation1,Operation2>& operator=(const covoc1_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2>
-      class covoc2_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //(const0 op1 variable) op2 const1 node
-         explicit covoc2_node(cov_node<T,Operation1>& cvn, const T& c1)
-         : c0_(cvn.c()),
-           v_ (cvn.v()),
-           c1_(c1)
-         {}
-
-         inline T value() const
-         {
-            return Operation2::process(Operation1::process(c0_,v_),c1_);
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T  c0_;
-         const T&  v_;
-         const T  c1_;
-
-      private:
-
-         covoc2_node(const covoc2_node<T,Operation1,Operation2>&);
-         covoc2_node<T,Operation1,Operation2>& operator=(const covoc2_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2>
-      class vocov1_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //variable0 op1 (const op2 variable1) node
-         explicit vocov1_node(const T& v0, cov_node<T,Operation2>& cvn)
-         : v0_(v0),
-           c_ (cvn.c()),
-           v1_(cvn.v())
-         {}
-
-         inline T value() const
-         {
-            return Operation1::process(v0_,Operation2::process(c_,v1_));
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T& v0_;
-         const T   c_;
-         const T& v1_;
-
-      private:
-
-         vocov1_node(const vocov1_node<T,Operation1,Operation2>&);
-         vocov1_node<T,Operation1,Operation2>& operator=(const vocov1_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2>
-      class vocov2_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //(variable0 op1 constant) op2 variable1 node
-         explicit vocov2_node(voc_node<T,Operation1>& vcn, const T& v1)
-         : v0_(vcn.v()),
-           c_ (vcn.c()),
-           v1_(v1)
-         {}
-
-         inline T value() const
-         {
-            return Operation2::process(Operation1::process(v0_,c_),v1_);
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T& v0_;
-         const T   c_;
-         const T& v1_;
-
-      private:
-
-         vocov2_node(const vocov2_node<T,Operation1,Operation2>&);
-         vocov2_node<T,Operation1,Operation2>& operator=(const vocov2_node<T,Operation1,Operation2>&);
-      };
-
-      template <typename T, typename Operation1, typename Operation2, typename Operation3>
-      class vovovov_node : public expression_node<T>
-      {
-      public:
-
-         typedef expression_node<T>* expression_ptr;
-         typedef std::pair<expression_ptr,bool> branch_t;
-
-         //(variable0 op1 variable1) op2 (variable2 op3 variable3) node
-         explicit vovovov_node(vov_node<T,Operation1>& vn0, vov_node<T,Operation3>& vn1)
-         : v0_(vn0.v0()),
-           v1_(vn0.v1()),
-           v2_(vn1.v0()),
-           v3_(vn1.v1())
-         {}
-
-         inline T value() const
-         {
-            return Operation2::process(Operation1::process(v0_,v1_),Operation3::process(v2_,v3_));
-         }
-
-         inline typename expression_node<T>::node_type type() const
-         {
-            return expression_node<T>::e_none;
-         }
-
-         inline typename expression_node<T>::node_type type1() const
-         {
-            return Operation1::type();
-         }
-
-         inline typename expression_node<T>::node_type type2() const
-         {
-            return Operation2::type();
-         }
-
-      protected:
-
-         const T& v0_;
-         const T& v1_;
-         const T& v2_;
-         const T& v3_;
-
-      private:
-
-         vovovov_node(vovovov_node<T,Operation1,Operation2,Operation3>&);
-         vovovov_node<T,Operation1,Operation2,Operation3>& operator=(const vovovov_node<T,Operation1,Operation2,Operation3>&);
+         boc_node(const boc_node<T,Operation>&);
+         boc_node<T,Operation>& operator=(const boc_node<T,Operation>&);
+
+         const T c_;
+         branch_t branch_[1];
       };
 
       #ifndef exprtk_disable_string_capabilities
@@ -5401,7 +5867,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef Operation operation_t;
 
-         //variable op variable node
+         // variable op variable node
          explicit sos_node(SType0 s0, SType1 s1)
          : s0_(s0),
            s1_(s1)
@@ -5451,7 +5917,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef Operation operation_t;
 
-         //variable op variable node
+         // variable op variable node
          explicit sosos_node(SType0 s0, SType1 s1, SType2 s2)
          : s0_(s0),
            s1_(s1),
@@ -5509,7 +5975,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef PowOp operation_t;
 
-         explicit ipow_node(T& v)
+         explicit ipow_node(const T& v)
          : v_(v)
          {}
 
@@ -5539,7 +6005,7 @@ namespace exprtk
          typedef expression_node<T>* expression_ptr;
          typedef PowOp operation_t;
 
-         explicit ipowinv_node(T& v)
+         explicit ipowinv_node(const T& v)
          : v_(v)
          {}
 
@@ -5577,6 +6043,36 @@ namespace exprtk
       inline bool is_voc_node(const expression_node<T>* node)
       {
          return (0 != dynamic_cast<const voc_base_node<T>*>(node));
+      }
+
+      template <typename T>
+      inline bool is_cob_node(const expression_node<T>* node)
+      {
+         return (0 != dynamic_cast<const cob_base_node<T>*>(node));
+      }
+
+      template <typename T>
+      inline bool is_boc_node(const expression_node<T>* node)
+      {
+         return (0 != dynamic_cast<const boc_base_node<T>*>(node));
+      }
+
+      template <typename T>
+      inline bool is_t0ot1ot2_node(const expression_node<T>* node)
+      {
+         return (0 != dynamic_cast<const T0oT1oT2_base_node<T>*>(node));
+      }
+
+      template <typename T>
+      inline bool is_t0ot1ot2ot3_node(const expression_node<T>* node)
+      {
+         return (0 != dynamic_cast<const T0oT1oT2oT3_base_node<T>*>(node));
+      }
+
+      template <typename T>
+      inline bool is_uv_node(const expression_node<T>* node)
+      {
+         return (0 != dynamic_cast<const uv_base_node<T>*>(node));
       }
 
       template <typename T>
@@ -5693,10 +6189,10 @@ namespace exprtk
          }
 
          template <typename node_type,
-                   typename T1, typename T2, typename T3>
-         inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2, T3 t3) const
+            typename T1, typename T2, typename T3, typename T4, typename T5>
+            inline expression_node<typename node_type::value_type>* allocate_rrrrr(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5) const
          {
-            return new node_type(t1,t2,t3);
+            return new node_type(t1,t2,t3,t4,t5);
          }
 
          template <typename node_type,
@@ -5790,6 +6286,45 @@ namespace exprtk
             return new node_type(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
          }
 
+         template <typename node_type,
+                   typename T1, typename T2, typename T3>
+         inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2, T3 t3) const
+         {
+            return new node_type(t1,t2,t3);
+         }
+
+         template <typename node_type,
+                   typename T1, typename T2,
+                   typename T3, typename T4>
+         inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2,
+                                                                               T3 t3, T4 t4) const
+         {
+            return new node_type(t1,t2,t3,t4);
+         }
+
+         template <typename node_type,
+                   typename T1, typename T2,
+                   typename T3, typename T4,
+                   typename T5>
+         inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2,
+                                                                               T3 t3, T4 t4,
+                                                                               T5 t5) const
+         {
+            return new node_type(t1,t2,t3,t4,t5);
+         }
+
+         template <typename node_type,
+                   typename T1, typename T2,
+                   typename T3, typename T4,
+                   typename T5, typename T6, typename T7>
+         inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2,
+                                                                               T3 t3, T4 t4,
+                                                                               T5 t5, T6 t6,
+                                                                               T7 t7) const
+         {
+            return new node_type(t1,t2,t3,t4,t5,t6,t7);
+         }
+
          template <typename T>
          void inline free(expression_node<T>*& e) const
          {
@@ -5797,7 +6332,6 @@ namespace exprtk
             e = 0;
          }
       };
-
 
       inline void load_operations_map(std::multimap<std::string,details::base_operation_t,details::ilesscompare>& m)
       {
@@ -6058,7 +6592,6 @@ namespace exprtk
             else
             {
                tm_const_itr_t itr = map.find(symbol_name);
-
                if (map.end() == itr)
                   return false;
                else
@@ -6102,16 +6635,13 @@ namespace exprtk
                      return false;
                   }
                }
-
                tm_itr_t itr = map.find(symbol_name);
-
                if (map.end() == itr)
                {
                   map[symbol_name] = tie::make(t,is_constant);
                   ++size;
                }
             }
-
             return true;
          }
 
@@ -6140,10 +6670,8 @@ namespace exprtk
             if (1 == symbol_name.size())
             {
                type_pair_t& tp = short_type_lut[static_cast<std::size_t>(std::tolower(symbol_name[0]))];
-
                if (0 == tp.second)
                   return false;
-
                struct deleter
                {
                   static inline void process(std::pair<bool,variable_node_t*>& n)  { delete n.second; }
@@ -6152,18 +6680,15 @@ namespace exprtk
                   #endif
                   static inline void process(std::pair<bool,function_t*>&)         {                  }
                };
-
                deleter::process(tp);
                tp.first = false;
                tp.second = 0;
                --size;
-
                return true;
             }
             else
             {
                tm_itr_t itr = map.find(symbol_name);
-
                if (map.end() != itr)
                {
                   struct deleter
@@ -6174,11 +6699,9 @@ namespace exprtk
                      #endif
                      static inline void process(std::pair<bool,function_t*>&)         {                  }
                   };
-
                   deleter::process((*itr).second);
                   map.erase(itr);
                   --size;
-
                   return true;
                }
                else
@@ -6200,7 +6723,6 @@ namespace exprtk
             if (1 == symbol_name.size())
             {
                type_pair_t& tp = short_type_lut[static_cast<std::size_t>(std::tolower(symbol_name[0]))];
-
                if (tp.second)
                   return tp->second.ref();
                else
@@ -6209,7 +6731,6 @@ namespace exprtk
             else
             {
                tm_const_itr_t itr = map.find(symbol_name);
-
                if (map.end() == itr)
                   return null_type;
                else
@@ -6233,7 +6754,6 @@ namespace exprtk
             {
                tm_itr_t itr = map.begin();
                tm_itr_t end = map.end();
-
                while (end != itr)
                {
                   struct deleter
@@ -6248,7 +6768,6 @@ namespace exprtk
                   deleter::process((*itr).second);
                   ++itr;
                }
-
                map.clear();
             }
          }
@@ -6258,23 +6777,19 @@ namespace exprtk
          inline std::size_t get_list(Sequence<std::pair<std::string,RawType>,Allocator>& list) const
          {
             std::size_t count = 0;
-
             for (std::size_t i = 0; i < lut_size; ++i)
             {
                const type_pair_t& tp = short_type_lut[static_cast<std::size_t>(i)];
-
                if (0 != tp.second)
                {
                   list.push_back(std::make_pair(std::string("") + static_cast<char>(i),tp.second->ref()));
                   ++count;
                }
             }
-
             if (!map.empty())
             {
                tm_const_itr_t itr = map.begin();
                tm_const_itr_t end = map.end();
-
                while (end != itr)
                {
                   list.push_back(std::make_pair((*itr).first,itr->second.second->ref()));
@@ -6282,7 +6797,6 @@ namespace exprtk
                   ++count;
                }
             }
-
             return count;
          }
 
@@ -6291,23 +6805,19 @@ namespace exprtk
          inline std::size_t get_list(Sequence<std::string,Allocator>& vlist) const
          {
             std::size_t count = 0;
-
             for (std::size_t i = 0; i < lut_size; ++i)
             {
                const type_pair_t& tp = short_type_lut[static_cast<std::size_t>(i)];
-
                if (0 != tp.second)
                {
                   vlist.push_back(std::string("") + static_cast<char>(i));
                   ++count;
                }
             }
-
             if (!map.empty())
             {
                tm_const_itr_t itr = map.begin();
                tm_const_itr_t end = map.end();
-
                while (end != itr)
                {
                   vlist.push_back((*itr).first);
@@ -6315,10 +6825,8 @@ namespace exprtk
                   ++count;
                }
             }
-
             return count;
          }
-
       };
 
       typedef typename details::variable_node<T> variable_t;
@@ -6349,7 +6857,6 @@ namespace exprtk
                {
                   reserved_symbol_table_.insert(details::reserved_words[i]);
                }
-
                for (std::size_t i = 0; i < details::reserved_symbols_size; ++i)
                {
                   reserved_symbol_table_.insert(details::reserved_symbols[i]);
@@ -6423,13 +6930,10 @@ namespace exprtk
             {
                delete holder_;
             }
-
             holder_ = 0;
          }
-
          holder_ = st.holder_;
          holder_->ref_count++;
-
          return *this;
       }
 
@@ -6880,12 +7384,10 @@ namespace exprtk
 
                expression_holder_ = 0;
             }
-
             expression_holder_ = e.expression_holder_;
             expression_holder_->ref_count++;
             symbol_table_ = e.symbol_table_;
          }
-
          return *this;
       }
 
@@ -6907,10 +7409,8 @@ namespace exprtk
             {
                delete expression_holder_;
             }
-
             expression_holder_ = 0;
          }
-
          return *this;
       }
 
@@ -6973,7 +7473,6 @@ namespace exprtk
                   delete expression_holder_;
                }
             }
-
             expression_holder_ = new expression_holder(expr);
          }
       }
@@ -7102,6 +7601,8 @@ namespace exprtk
          e_level13
       };
 
+      typedef const T&                                       cref_t;
+      typedef const T                                       const_t;
       typedef ifunction                <T>                        F;
       typedef ifunction                <T>              ifunction_t;
       typedef details::expression_node <T>        expression_node_t;
@@ -7123,16 +7624,42 @@ namespace exprtk
       typedef lexer::token                                  token_t;
       typedef expression_node_t*                expression_node_ptr;
 
-   public:
+      typedef T (*unary_functor_t)(const T v);
+      typedef T (*binary_functor_t)(const T v0, const T v1);
+      typedef T (*trinary_functor_t)(const T v0, const T v1, const T v2);
+      typedef T (*quaternary_functor_t)(const T v0, const T v1, const T v2, const T v3);
+      typedef std::map<details::operator_type,unary_functor_t> unary_op_map_t;
+      typedef std::map<details::operator_type,binary_functor_t> binary_op_map_t;
+      typedef std::map<details::operator_type,trinary_functor_t> trinary_op_map_t;
+      typedef std::map<std::string,trinary_functor_t> sf3_map_t;
+      typedef std::map<std::string,quaternary_functor_t> sf4_map_t;
+      typedef std::map<binary_functor_t,details::operator_type> inv_binary_op_map_t;
+      typedef std::multimap<std::string,details::base_operation_t,details::ilesscompare> base_ops_map_t;
 
-      enum optimization_level
-      {
-         e_none   = 0,
-         e_level1 = 1,
-         e_level2 = 2,
-         e_level3 = 4,
-         e_all    = 7
-      };
+      typedef details::T0oT1_define<T, cref_t, cref_t> vov_t;
+      typedef details::T0oT1_define<T,const_t, cref_t> cov_t;
+      typedef details::T0oT1_define<T, cref_t,const_t> voc_t;
+
+      typedef details::T0oT1oT2_define<T, cref_t, cref_t, cref_t> vovov_t;
+      typedef details::T0oT1oT2_define<T, cref_t, cref_t,const_t> vovoc_t;
+      typedef details::T0oT1oT2_define<T, cref_t,const_t, cref_t> vocov_t;
+      typedef details::T0oT1oT2_define<T,const_t, cref_t, cref_t> covov_t;
+      typedef details::T0oT1oT2_define<T,const_t, cref_t,const_t> covoc_t;
+      typedef details::T0oT1oT2_define<T,const_t,const_t, cref_t> cocov_t;
+      typedef details::T0oT1oT2_define<T,cref_t,const_t, const_t> vococ_t;
+
+      typedef details::T0oT1oT2oT3_define<T, cref_t, cref_t, cref_t, cref_t> vovovov_t;
+      typedef details::T0oT1oT2oT3_define<T, cref_t, cref_t, cref_t,const_t> vovovoc_t;
+      typedef details::T0oT1oT2oT3_define<T, cref_t, cref_t,const_t, cref_t> vovocov_t;
+      typedef details::T0oT1oT2oT3_define<T, cref_t,const_t, cref_t, cref_t> vocovov_t;
+      typedef details::T0oT1oT2oT3_define<T,const_t, cref_t, cref_t, cref_t> covovov_t;
+
+      typedef details::T0oT1oT2oT3_define<T,const_t, cref_t,const_t, cref_t> covocov_t;
+      typedef details::T0oT1oT2oT3_define<T, cref_t,const_t, cref_t,const_t> vocovoc_t;
+      typedef details::T0oT1oT2oT3_define<T,const_t, cref_t, cref_t,const_t> covovoc_t;
+      typedef details::T0oT1oT2oT3_define<T, cref_t,const_t,const_t, cref_t> vococov_t;
+
+   public:
 
       enum precompilation_step
       {
@@ -7158,6 +7685,17 @@ namespace exprtk
       {
          init_precompilation();
          load_operations_map(base_ops_map_);
+         load_unary_operations_map(unary_op_map_);
+         load_binary_operations_map(binary_op_map_);
+         load_inv_binary_operations_map(inv_binary_op_map_);
+         load_sf3_map(sf3_map_);
+         load_sf4_map(sf4_map_);
+         expression_generator_.init_synthesize_map();
+         expression_generator_.set_uom(unary_op_map_);
+         expression_generator_.set_bom(binary_op_map_);
+         expression_generator_.set_ibom(inv_binary_op_map_);
+         expression_generator_.set_sf3m(sf3_map_);
+         expression_generator_.set_sf4m(sf4_map_);
       }
 
       inline void init_precompilation()
@@ -7177,7 +7715,6 @@ namespace exprtk
             {
                commutative_inserter_.ignore_symbol(details::reserved_words[i]);
             }
-
             helper_assembly_.token_inserter_list.clear();
             helper_assembly_.register_inserter(&commutative_inserter_);
          }
@@ -7194,7 +7731,6 @@ namespace exprtk
                sequence_check_enabled()
             )
          {
-
             helper_assembly_.token_scanner_list.clear();
 
             if (numeric_check_enabled())
@@ -7214,10 +7750,9 @@ namespace exprtk
          }
       }
 
-      inline bool compile(const std::string& expression_string, expression<T>& expr, const optimization_level& opt_level = e_all)
+      inline bool compile(const std::string& expression_string, expression<T>& expr)
       {
          error_list_.clear();
-         expression_generator_.set_optimization_level(opt_level);
          expression_generator_.set_allocator(node_allocator_);
 
          if (!lexer_.process(expression_string))
@@ -7264,23 +7799,17 @@ namespace exprtk
                {
                   case lexer::token::e_error      : diagnostic + "General token error";
                                                     break;
-
                   case lexer::token::e_err_symbol : diagnostic + "Symbol error";
                                                     break;
-
                   case lexer::token::e_err_number : diagnostic + "Invalid numeric token";
                                                     break;
-
                   case lexer::token::e_err_string : diagnostic + "Invalid string token";
                                                     break;
-
                   case lexer::token::e_err_sfunc  : diagnostic + "Invalid special function token";
                                                     break;
-
                   default                         : diagnostic + "Unknown compiler error";
                                                     break;
                }
-
                set_error(make_error(parser_error::e_lexer,lexer_[i],diagnostic + ": " + lexer_[i].value));
             }
          }
@@ -7379,7 +7908,6 @@ namespace exprtk
                      }
                   }
                }
-
                return false;
             }
          }
@@ -7645,7 +8173,7 @@ namespace exprtk
       };
 
       template <std::size_t NumberofParameters>
-      inline expression_node_ptr parse_function_call(const details::operator_type& opt_type)
+      inline expression_node_ptr parse_function_call(const details::operator_type& opt_type, bool& internal_error)
       {
          expression_node_ptr branch[NumberofParameters];
          expression_node_ptr result  = 0;
@@ -7653,7 +8181,6 @@ namespace exprtk
          std::fill_n(branch,NumberofParameters,reinterpret_cast<expression_node_ptr>(0));
          scoped_delete<expression_node_t,NumberofParameters> sd(*this,branch);
 
-         store_token();
          next_token();
 
          if (!token_is(token_t::e_lbracket))
@@ -7664,9 +8191,9 @@ namespace exprtk
          for (int i = 0; i < static_cast<int>(NumberofParameters); ++i)
          {
             branch[i] = parse_expression();
-
             if (0 == branch[i])
             {
+               internal_error = true;
                return error_node();
             }
             else if (i < static_cast<int>(NumberofParameters - 1))
@@ -7684,9 +8211,7 @@ namespace exprtk
          }
          else
             result = expression_generator_(opt_type,branch);
-
          sd.delete_ptr = false;
-
          return result;
       }
 
@@ -7695,33 +8220,27 @@ namespace exprtk
       {
          expression_node_ptr branch[NumberofParameters];
          expression_node_ptr result  = 0;
-
          std::fill_n(branch,NumberofParameters,reinterpret_cast<expression_node_ptr>(0));
          scoped_delete<expression_node_t,NumberofParameters> sd(*this,branch);
-
          next_token();
-
          if (!token_is(token_t::e_lbracket))
          {
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR06 - Expecting argument list for function: '" + function_name + "'"));
-
             return error_node();
          }
 
          for (int i = 0; i < static_cast<int>(NumberofParameters); ++i)
          {
             branch[i] = parse_expression();
-
             if (0 == branch[i])
             {
                set_error(
                   make_error(parser_error::e_syntax,
                              current_token_,
                              "ERR07 - Failed to parse argument " + details::to_str(i) + " for function: '" + function_name + "'"));
-
                return error_node();
             }
             else if (i < static_cast<int>(NumberofParameters - 1))
@@ -7732,7 +8251,6 @@ namespace exprtk
                      make_error(parser_error::e_syntax,
                                 current_token_,
                                 "ERR08 - Invalid number of arguments for function: '" + function_name + "'"));
-
                   return error_node();
                }
             }
@@ -7744,51 +8262,43 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR09 - Invalid number of arguments for function: '" + function_name + "'"));
-
             return error_node();
          }
          else
             result = expression_generator_.function(function,branch);
 
          sd.delete_ptr = false;
-
          return result;
       }
 
       inline expression_node_ptr parse_base_operation()
       {
-         typedef std::multimap<std::string,details::base_operation_t,details::ilesscompare> map_t;
-         typedef std::pair<map_t::iterator,map_t::iterator> map_range_t;
-
+         typedef std::pair<base_ops_map_t::iterator,base_ops_map_t::iterator> map_range_t;
          const std::string operation_name = current_token_.value;
-
          map_range_t itr_range = base_ops_map_.equal_range(operation_name);
-
          if (0 == std::distance(itr_range.first,itr_range.second))
          {
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR10 - No entries found for base operation: " + operation_name));
-
             return error_node();
          }
 
-         for (map_t::iterator itr = itr_range.first; itr != itr_range.second; ++itr)
+         for (base_ops_map_t::iterator itr = itr_range.first; itr != itr_range.second; ++itr)
          {
             store_token();
-
             expression_node_ptr branch = reinterpret_cast<expression_node_ptr>(0);
             details::base_operation_t& operation = itr->second;
-
+            bool internal_error = false; // Any error other than incorrect number of params.
             switch (operation.num_params)
             {
-               case 1  : branch = parse_function_call<1>(operation.type); break;
-               case 2  : branch = parse_function_call<2>(operation.type); break;
-               case 3  : branch = parse_function_call<3>(operation.type); break;
-               case 4  : branch = parse_function_call<4>(operation.type); break;
-               case 5  : branch = parse_function_call<5>(operation.type); break;
-               case 6  : branch = parse_function_call<6>(operation.type); break;
+               case 1  : branch = parse_function_call<1>(operation.type,internal_error); break;
+               case 2  : branch = parse_function_call<2>(operation.type,internal_error); break;
+               case 3  : branch = parse_function_call<3>(operation.type,internal_error); break;
+               case 4  : branch = parse_function_call<4>(operation.type,internal_error); break;
+               case 5  : branch = parse_function_call<5>(operation.type,internal_error); break;
+               case 6  : branch = parse_function_call<6>(operation.type,internal_error); break;
                default :
                         {
                            set_error(
@@ -7804,7 +8314,10 @@ namespace exprtk
             {
                return branch;
             }
-
+            else if (internal_error)
+            {
+               return error_node();
+            }
             remove_last_error();
             restore_token();
          }
@@ -7813,13 +8326,12 @@ namespace exprtk
             make_error(parser_error::e_syntax,
                        current_token_,
                        "ERR12 - Invalid parameter count for function: " + operation_name));
-
          return error_node();
       }
 
       inline expression_node_ptr parse_conditional_statement()
       {
-         //Parse: [if][(][condition][,][consequent][,][alternative][)]
+         // Parse: [if][(][condition][,][consequent][,][alternative][)]
          expression_node_ptr condition   = 0;
          expression_node_ptr consequent  = 0;
          expression_node_ptr alternative = 0;
@@ -7834,7 +8346,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR13 - Failed to parse condition for if-statement"));
-
             return error_node();
          }
          else if (!token_is(token_t::e_comma))
@@ -7845,7 +8356,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR14 - Failed to parse consequent for if-statement"));
-
             return error_node();
          }
          else if (!token_is(token_t::e_comma))
@@ -7856,7 +8366,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR15 - Failed to parse alternative for if-statement"));
-
             return error_node();
          }
          else if (!token_is(token_t::e_rbracket))
@@ -7867,12 +8376,10 @@ namespace exprtk
 
       inline expression_node_ptr parse_while_loop()
       {
-         //Parse: [while][(][test expr][)][{][expression][}]
+         // Parse: [while][(][test expr][)][{][expression][}]
          expression_node_ptr condition = 0;
          expression_node_ptr branch    = 0;
-
          next_token();
-
          if (!token_is(token_t::e_lbracket))
             return error_node();
          else if (0 == (condition = parse_expression()))
@@ -7881,7 +8388,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR16 - Failed to parse condition for while-loop"));
-
             return error_node();
          }
          else if (!token_is(token_t::e_rbracket))
@@ -7894,7 +8400,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR17 - Failed to parse branch for while-loop"));
-
             return error_node();
          }
          else if (!token_is(token_t::e_rcrlbracket))
@@ -7903,29 +8408,23 @@ namespace exprtk
             return expression_generator_.while_loop(condition,branch);
       }
 
-      template<typename Type, std::size_t NumberOfParameters>
+      template <typename Type, std::size_t NumberOfParameters>
       struct parse_special_function_impl
       {
          static inline expression_node_ptr process(parser<Type>& p,const details::operator_type opt_type)
          {
             expression_node_ptr branch[NumberOfParameters];
             expression_node_ptr result  = 0;
-
             std::fill_n(branch,NumberOfParameters,reinterpret_cast<expression_node_ptr>(0));
-
             scoped_delete<expression_node_t,NumberOfParameters> sd(p,branch);
-
             p.next_token();
-
             if (!p.token_is(token_t::e_lbracket))
             {
                return error_node();
             }
-
             for (std::size_t i = 0; i < NumberOfParameters; ++i)
             {
                branch[i] = p.parse_expression();
-
                if (0 == branch[i])
                {
                   return p.error_node();
@@ -7943,16 +8442,14 @@ namespace exprtk
                return p.error_node();
             else
                result = p.expression_generator_.special_function(opt_type,branch);
-
             sd.delete_ptr = false;
-
             return result;
          }
       };
 
       inline expression_node_ptr parse_special_function()
       {
-         //Expect: $fDD(expr0,expr1,expr2) or $fDD(expr0,expr1,expr2,expr3)
+         // Expect: $fDD(expr0,expr1,expr2) or $fDD(expr0,expr1,expr2,expr3)
          if (
              !details::is_digit(current_token_.value[2]) ||
              !details::is_digit(current_token_.value[3])
@@ -7962,23 +8459,21 @@ namespace exprtk
                make_error(parser_error::e_token,
                           current_token_,
                           "ERR18 - Invalid special function[1]: " + current_token_.value));
-
             return error_node();
          }
 
          const unsigned int id = (current_token_.value[2] - '0') * 10 + (current_token_.value[3] - '0');
 
-         if (id > 82)
+         if (id >= details::e_sffinal)
          {
             set_error(
                make_error(parser_error::e_token,
                           current_token_,
                           "ERR19 - Invalid special function[2]: " + current_token_.value));
-
             return error_node();
          }
 
-         const std::size_t sf_3_to_4 = details::e_sf35;
+         const std::size_t sf_3_to_4 = details::e_sf43;
          const details::operator_type opt_type = details::operator_type(id + 1000);
          const std::size_t NumberOfParameters = (id < (sf_3_to_4 - 1000)) ? 3 : 4;
 
@@ -7993,56 +8488,46 @@ namespace exprtk
       inline expression_node_ptr parse_symtab_symbol()
       {
          const std::string symbol = current_token_.value;
-
-         //Are we dealing with a variable or a special constant?
+         // Are we dealing with a variable or a special constant?
          expression_node_ptr variable = symbol_table_.get_variable(symbol);
-
          if (variable)
          {
             if (symbol_name_caching_)
             {
                symbol_name_cache_.push_back(symbol);
             }
-
             if (symbol_table_.is_constant_node(symbol))
             {
                variable = expression_generator_(variable->value());
             }
-
             next_token();
-
             return variable;
          }
 
          #ifndef exprtk_disable_string_capabilities
-         //Are we dealing with a string variable?
+         // Are we dealing with a string variable?
          variable = symbol_table_.get_stringvar(symbol);
-
          if (variable)
          {
             if (symbol_name_caching_)
             {
                symbol_name_cache_.push_back(symbol);
             }
-
             if (symbol_table_.is_constant_node(symbol))
             {
                variable = expression_generator_(dynamic_cast<details::string_literal_node<T>*>(variable)->str());
             }
-
             next_token();
-
             return variable;
          }
          #endif
 
-         //Are we dealing with a function?
+         // Are we dealing with a function?
          ifunction<T>* function = symbol_table_.get_function(symbol);
 
          if (function)
          {
             expression_node_ptr func_node = reinterpret_cast<expression_node_ptr>(0);
-
             switch (function->param_count)
             {
                case  0 : func_node = expression_generator_.function(function); break;
@@ -8071,8 +8556,7 @@ namespace exprtk
                               make_error(parser_error::e_syntax,
                                          current_token_,
                                          "ERR20 - Invalid number of parameters for function: " + symbol));
-
-                           return expression_node_ptr(0);
+                           return error_node();
                          }
             }
 
@@ -8084,7 +8568,6 @@ namespace exprtk
                   make_error(parser_error::e_syntax,
                              current_token_,
                              "ERR21 - Failed to generate node for function: '" + symbol + "'"));
-
                return error_node();
             }
          }
@@ -8094,7 +8577,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR22 - Undefined variable or function: '" + symbol + "'"));
-
             return error_node();
          }
       }
@@ -8232,7 +8714,6 @@ namespace exprtk
                   make_error(parser_error::e_token,
                              current_token_,
                              std::string("ERR26 - Expected token: '") + static_cast<char>(ttype) + "'"));
-
                return false;
             }
          }
@@ -8247,15 +8728,131 @@ namespace exprtk
       public:
 
          typedef details::expression_node<Type>* expression_node_ptr;
+         typedef expression_node_ptr (*synthesize_functor_t)(expression_generator<T>&, const details::operator_type& operation, expression_node_ptr (&branch)[2]);
+         typedef std::map<std::string,synthesize_functor_t> synthesize_map_t;
 
-         inline void set_optimization_level(const optimization_level& optimization_level)
+         inline void init_synthesize_map()
          {
-            optimization_level_ = optimization_level;
+            synthesize_map_["(v)o(v)"] = synthesize_vov_expression::process;
+            synthesize_map_["(c)o(v)"] = synthesize_cov_expression::process;
+            synthesize_map_["(v)o(c)"] = synthesize_voc_expression::process;
+
+            #define register_synthezier(S) \
+            synthesize_map_[S ::node_type::id()] = S ::process;\
+
+            register_synthezier(synthesize_vovov_expression0)
+            register_synthezier(synthesize_vovov_expression1)
+            register_synthezier(synthesize_vovoc_expression0)
+            register_synthezier(synthesize_vovoc_expression1)
+            register_synthezier(synthesize_vocov_expression0)
+            register_synthezier(synthesize_vocov_expression1)
+            register_synthezier(synthesize_covov_expression0)
+            register_synthezier(synthesize_covov_expression1)
+            register_synthezier(synthesize_covoc_expression0)
+            register_synthezier(synthesize_covoc_expression1)
+            register_synthezier(synthesize_cocov_expression1)
+            register_synthezier(synthesize_vococ_expression0)
+
+            register_synthezier(synthesize_vovovov_expression0)
+            register_synthezier(synthesize_vovovoc_expression0)
+            register_synthezier(synthesize_vovocov_expression0)
+            register_synthezier(synthesize_vocovov_expression0)
+            register_synthezier(synthesize_covovov_expression0)
+            register_synthezier(synthesize_covocov_expression0)
+            register_synthezier(synthesize_vocovoc_expression0)
+            register_synthezier(synthesize_covovoc_expression0)
+            register_synthezier(synthesize_vococov_expression0)
+
+            register_synthezier(synthesize_vovovov_expression1)
+            register_synthezier(synthesize_vovovoc_expression1)
+            register_synthezier(synthesize_vovocov_expression1)
+            register_synthezier(synthesize_vocovov_expression1)
+            register_synthezier(synthesize_covovov_expression1)
+            register_synthezier(synthesize_covocov_expression1)
+            register_synthezier(synthesize_vocovoc_expression1)
+            register_synthezier(synthesize_covovoc_expression1)
+            register_synthezier(synthesize_vococov_expression1)
+
+            register_synthezier(synthesize_vovovov_expression2)
+            register_synthezier(synthesize_vovovoc_expression2)
+            register_synthezier(synthesize_vovocov_expression2)
+            register_synthezier(synthesize_vocovov_expression2)
+            register_synthezier(synthesize_covovov_expression2)
+            register_synthezier(synthesize_covocov_expression2)
+            register_synthezier(synthesize_vocovoc_expression2)
+            register_synthezier(synthesize_covovoc_expression2)
+
+            register_synthezier(synthesize_vovovov_expression3)
+            register_synthezier(synthesize_vovovoc_expression3)
+            register_synthezier(synthesize_vovocov_expression3)
+            register_synthezier(synthesize_vocovov_expression3)
+            register_synthezier(synthesize_covovov_expression3)
+            register_synthezier(synthesize_covocov_expression3)
+            register_synthezier(synthesize_vocovoc_expression3)
+            register_synthezier(synthesize_covovoc_expression3)
+            register_synthezier(synthesize_vococov_expression3)
+
+            register_synthezier(synthesize_vovovov_expression4)
+            register_synthezier(synthesize_vovovoc_expression4)
+            register_synthezier(synthesize_vovocov_expression4)
+            register_synthezier(synthesize_vocovov_expression4)
+            register_synthezier(synthesize_covovov_expression4)
+            register_synthezier(synthesize_covocov_expression4)
+            register_synthezier(synthesize_vocovoc_expression4)
+            register_synthezier(synthesize_covovoc_expression4)
+         }
+
+         inline void set_uom(unary_op_map_t& unary_op_map)
+         {
+            unary_op_map_ = &unary_op_map;
+         }
+
+         inline void set_bom(binary_op_map_t& binary_op_map)
+         {
+            binary_op_map_ = &binary_op_map;
+         }
+
+         inline void set_ibom(inv_binary_op_map_t& inv_binary_op_map)
+         {
+            inv_binary_op_map_ = &inv_binary_op_map;
+         }
+
+         inline void set_sf3m(sf3_map_t& sf3_map)
+         {
+            sf3_map_ = &sf3_map;
+         }
+
+         inline void set_sf4m(sf4_map_t& sf4_map)
+         {
+            sf4_map_ = &sf4_map;
          }
 
          inline void set_allocator(details::node_allocator& na)
          {
             node_allocator_ = &na;
+         }
+
+         inline bool valid_operator(const details::operator_type& operation, binary_functor_t& bop)
+         {
+            typename binary_op_map_t::iterator bop_itr = binary_op_map_->find(operation);
+            if ((*binary_op_map_).end() == bop_itr)
+               return false;
+            bop = bop_itr->second;
+            return true;
+         }
+
+         inline bool valid_operator(const details::operator_type& operation, unary_functor_t& uop)
+         {
+            typename unary_op_map_t::iterator uop_itr = unary_op_map_->find(operation);
+            if ((*unary_op_map_).end() == uop_itr)
+               return false;
+            uop = uop_itr->second;
+            return true;
+         }
+
+         inline details::operator_type get_operator(const binary_functor_t& bop)
+         {
+            return (*inv_binary_op_map_).find(bop)->second;
          }
 
          inline expression_node_ptr operator()(const Type& v) const
@@ -8286,6 +8883,26 @@ namespace exprtk
                    (details::e_notl  == operation) || (details::e_sgn   == operation) ||
                    (details::e_erf   == operation) || (details::e_erfc  == operation) ||
                    (details::e_frac  == operation) || (details::e_trunc == operation);
+         }
+
+         inline bool sf3_optimizable(const std::string sf3id, trinary_functor_t& tfunc)
+         {
+            typename sf3_map_t::iterator itr = sf3_map_->find(sf3id);
+            if (sf3_map_->end() == itr)
+               return false;
+            else
+               tfunc = itr->second;
+            return true;
+         }
+
+         inline bool sf4_optimizable(const std::string sf4id, quaternary_functor_t& qfunc)
+         {
+            typename sf4_map_t::iterator itr = sf4_map_->find(sf4id);
+            if (sf4_map_->end() == itr)
+               return false;
+            else
+               qfunc = itr->second;
+            return true;
          }
 
          inline expression_node_ptr operator()(const details::operator_type& operation, expression_node_ptr (&branch)[1])
@@ -8321,6 +8938,31 @@ namespace exprtk
          }
          #endif
 
+         inline std::string to_str(const details::operator_type& operation) const
+         {
+            switch (operation)
+            {
+               case details::e_add  : return "+";
+               case details::e_sub  : return "-";
+               case details::e_mul  : return "*";
+               case details::e_div  : return "/";
+               case details::e_mod  : return "%";
+               case details::e_pow  : return "^";
+               case details::e_lt   : return "<";
+               case details::e_lte  : return "<=";
+               case details::e_gt   : return ">";
+               case details::e_gte  : return ">=";
+               case details::e_eq   : return "==";
+               case details::e_ne   : return "!=";
+               case details::e_and  : return "and";
+               case details::e_nand : return "nand";
+               case details::e_or   : return "or";
+               case details::e_nor  : return "nor";
+               case details::e_xor  : return "xor";
+               default              : return "UNKNOWN";
+            }
+         }
+
          inline bool operation_optimizable(const details::operator_type& operation) const
          {
             return (details::e_add  == operation) ||
@@ -8329,7 +8971,6 @@ namespace exprtk
                    (details::e_div  == operation) ||
                    (details::e_mod  == operation) ||
                    (details::e_pow  == operation) ||
-                   #ifndef exprtk_disable_extended_operator_optimizations
                    (details::e_lt   == operation) ||
                    (details::e_lte  == operation) ||
                    (details::e_gt   == operation) ||
@@ -8341,27 +8982,41 @@ namespace exprtk
                    (details::e_or   == operation) ||
                    (details::e_nor  == operation) ||
                    (details::e_xor  == operation) ||
-                   #endif
                    false;
          }
 
-         inline bool is_level_optimizable(const std::size_t& level = 0) const
+         inline std::string branch_to_id(expression_node_ptr branch)
          {
-            switch (level)
-            {
-               case 1  : return (e_level1 == (optimization_level_ & e_level1));
-               case 2  : return (e_level2 == (optimization_level_ & e_level2)) && is_level_optimizable(1);
-               case 3  : return (e_level3 == (optimization_level_ & e_level3)) && is_level_optimizable(2);
-               case 0  : return (e_all    == (optimization_level_ &    e_all));
-               default : return false;
-            }
+            if (details::is_constant_node(branch))
+               return "(c)";
+            else if (details::is_variable_node(branch))
+               return "(v)";
+            else if (details::is_vov_node(branch))
+               return "(vov)";
+            else if (details::is_cov_node(branch))
+               return "(cov)";
+            else if (details::is_voc_node(branch))
+               return "(voc)";
+            else if (details::is_string_node(branch))
+               return "(s)";
+            else if (details::is_const_string_node(branch))
+               return "(cs)";
+            else if (details::is_t0ot1ot2_node(branch))
+               return "(" + dynamic_cast<details::T0oT1oT2_base_node<T>*>(branch)->type_id() + ")";
+            else if (details::is_t0ot1ot2ot3_node(branch))
+               return "(" + dynamic_cast<details::T0oT1oT2oT3_base_node<T>*>(branch)->type_id() + ")";
+            else
+               return "ERROR";
+         }
+
+         inline std::string branch_to_id(expression_node_ptr (&branch)[2])
+         {
+            return branch_to_id(branch[0]) + std::string("o") + branch_to_id(branch[1]);
          }
 
          inline bool cov_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
-               return false;
-            else if (!is_level_optimizable(1))
                return false;
             else
                return (details::is_constant_node(branch[0]) && details::is_variable_node(branch[1]));
@@ -8371,8 +9026,6 @@ namespace exprtk
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(1))
-               return false;
             else
                return (details::is_variable_node(branch[0]) && details::is_constant_node(branch[1]));
          }
@@ -8381,117 +9034,62 @@ namespace exprtk
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(1))
-               return false;
             else
                return (details::is_variable_node(branch[0]) && details::is_variable_node(branch[1]));
          }
 
-         inline bool vovov1_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
+         inline bool cob_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(2))
-               return false;
             else
-               return (details::is_variable_node(branch[0]) && details::is_vov_node(branch[1]));
+               return (details::is_constant_node(branch[0]) && !details::is_constant_node(branch[1]));
          }
 
-         inline bool vovov2_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
+         inline bool boc_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(2))
-               return false;
             else
-               return (details::is_vov_node(branch[0]) && details::is_variable_node(branch[1]));
+               return (!details::is_constant_node(branch[0]) && details::is_constant_node(branch[1]));
          }
 
-         inline bool covov1_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
+         inline bool uvouv_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(2))
-               return false;
             else
-               return (details::is_constant_node(branch[0]) && details::is_vov_node(branch[1]));
+               return (details::is_uv_node(branch[0]) && details::is_uv_node(branch[1]));
          }
 
-         inline bool covov2_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
+         inline bool vob_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(2))
-               return false;
             else
-               return (details::is_cov_node(branch[0]) && details::is_variable_node(branch[1]));
+               return (details::is_variable_node(branch[0]) && !details::is_variable_node(branch[1]));
          }
 
-         inline bool vovoc1_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
+         inline bool bov_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(2))
-               return false;
             else
-               return (details::is_variable_node(branch[0]) && details::is_voc_node(branch[1]));
+               return (!details::is_variable_node(branch[0]) && details::is_variable_node(branch[1]));
          }
 
-         inline bool vovoc2_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
+         inline bool binext_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
          {
             if (!operation_optimizable(operation))
                return false;
-            else if (!is_level_optimizable(2))
-               return false;
             else
-               return (details::is_vov_node(branch[0]) && details::is_constant_node(branch[1]));
-         }
-
-         inline bool covoc1_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
-         {
-            if (!operation_optimizable(operation))
-               return false;
-            else if (!is_level_optimizable(2))
-               return false;
-            else
-               return (details::is_constant_node(branch[0]) && details::is_voc_node(branch[1]));
-         }
-
-         inline bool covoc2_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
-         {
-            if (!operation_optimizable(operation))
-               return false;
-            else if (!is_level_optimizable(2))
-               return false;
-            else
-               return (details::is_cov_node(branch[0]) && details::is_constant_node(branch[1]));
-         }
-
-         inline bool vocov1_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
-         {
-            if (!operation_optimizable(operation))
-               return false;
-            else if (!is_level_optimizable(2))
-               return false;
-            else
-               return (details::is_variable_node(branch[0]) && details::is_cov_node(branch[1]));
-         }
-
-         inline bool vocov2_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
-         {
-            if (!operation_optimizable(operation))
-               return false;
-            else if (!is_level_optimizable(2))
-               return false;
-            else
-               return (details::is_voc_node(branch[0]) && details::is_variable_node(branch[1]));
+               return (!details::is_constant_node(branch[0]) || !details::is_constant_node(branch[1]));
          }
 
          inline bool is_invalid_string_op(const details::operator_type& operation, expression_node_ptr (&branch)[2])
          {
             const bool b0_string = details::is_string_node(branch[0]) || details::is_const_string_node(branch[0]);
             const bool b1_string = details::is_string_node(branch[1]) || details::is_const_string_node(branch[1]);
-
             if ((b0_string || b1_string) && !(b0_string && b1_string))
                return true;
             if (!valid_string_operation(operation) && b0_string && b1_string)
@@ -8502,10 +9100,9 @@ namespace exprtk
 
          inline bool is_invalid_string_op(const details::operator_type& operation, expression_node_ptr (&branch)[3])
          {
-            bool b0_string = details::is_string_node(branch[0]) || details::is_const_string_node(branch[0]);
-            bool b1_string = details::is_string_node(branch[1]) || details::is_const_string_node(branch[1]);
-            bool b2_string = details::is_string_node(branch[2]) || details::is_const_string_node(branch[2]);
-
+            const bool b0_string = details::is_string_node(branch[0]) || details::is_const_string_node(branch[0]);
+            const bool b1_string = details::is_string_node(branch[1]) || details::is_const_string_node(branch[1]);
+            const bool b2_string = details::is_string_node(branch[2]) || details::is_const_string_node(branch[2]);
             if ((b0_string || b1_string || b2_string) && !(b0_string && b1_string && b2_string))
                return true;
             if ((details::e_inrange != operation) && b0_string && b1_string && b2_string)
@@ -8518,7 +9115,6 @@ namespace exprtk
          {
             const bool b0_string = details::is_string_node(branch[0]) || details::is_const_string_node(branch[0]);
             const bool b1_string = details::is_string_node(branch[1]) || details::is_const_string_node(branch[1]);
-
             return (b0_string && b1_string && valid_string_operation(operation));
          }
 
@@ -8527,38 +9123,8 @@ namespace exprtk
             const bool b0_string = details::is_string_node(branch[0]) || details::is_const_string_node(branch[0]);
             const bool b1_string = details::is_string_node(branch[1]) || details::is_const_string_node(branch[1]);
             const bool b2_string = details::is_string_node(branch[2]) || details::is_const_string_node(branch[2]);
-
             return (b0_string && b1_string && b2_string && (details::e_inrange == operation));
          }
-
-         // Note: Extended Optimisations
-         // When using older C++ compilers due to the large number of type instantiations
-         // required by the extended optimisations the compiler may crash or not be able
-         // to compile this translation unit properly.
-         #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
-            #if (defined(_MSC_VER) && (_MSC_VER <= 1400))
-               #ifndef exprtk_disable_extended_optimisations
-                  #define exprtk_disable_extended_optimisations
-               #endif
-            #endif
-         #endif
-
-         #ifndef exprtk_disable_extended_optimisations
-         inline bool vovovov_optimizable(const details::operator_type& operation, expression_node_ptr (&branch)[2]) const
-         {
-            if (!operation_optimizable(operation))
-               return false;
-            else if (!is_level_optimizable(3))
-               return false;
-            else
-               return (details::is_vov_node(branch[0]) && details::is_vov_node(branch[1]));
-         }
-         #else
-         inline bool vovovov_optimizable(const details::operator_type&, expression_node_ptr (&)[2]) const
-         {
-            return false;
-         }
-         #endif
 
          inline expression_node_ptr operator()(const details::operator_type& operation, expression_node_ptr (&branch)[2])
          {
@@ -8570,34 +9136,23 @@ namespace exprtk
                return synthesize_assignment_expression(operation,branch);
             else if (is_string_operation(operation,branch))
                return synthesize_string_expression(operation,branch);
+            expression_node_ptr result = error_node();
+            if (synthesize_expression(operation,branch,result))
+               return result;
+            else if (uvouv_optimizable(operation,branch))
+               return synthesize_uvouv_expression(operation,branch);
+            else if (vob_optimizable(operation,branch))
+               return synthesize_vob_expression::process(*this,operation,branch);
+            else if (bov_optimizable(operation,branch))
+               return synthesize_bov_expression::process(*this,operation,branch);
+            else if (cob_optimizable(operation,branch))
+               return synthesize_cob_expression::process(*this,operation,branch);
+            else if (boc_optimizable(operation,branch))
+               return synthesize_boc_expression::process(*this,operation,branch);
             else if (cov_optimizable(operation,branch))
-               return synthesize_cov_expression(operation,branch);
-            else if (voc_optimizable(operation,branch))
-               return synthesize_voc_expression(operation,branch);
-            else if (vov_optimizable(operation,branch))
-               return synthesize_vov_expression(operation,branch);
-            else if (vovov1_optimizable(operation,branch))
-               return synthesize_vovov1_expression(operation,branch);
-            else if (vovov2_optimizable(operation,branch))
-               return synthesize_vovov2_expression(operation,branch);
-            else if (covov1_optimizable(operation,branch))
-               return synthesize_covov1_expression(operation,branch);
-            else if (covov2_optimizable(operation,branch))
-               return synthesize_covov2_expression(operation,branch);
-            else if (vovoc1_optimizable(operation,branch))
-               return synthesize_vovoc1_expression(operation,branch);
-            else if (vovoc2_optimizable(operation,branch))
-               return synthesize_vovoc2_expression(operation,branch);
-            else if (covoc1_optimizable(operation,branch))
-               return synthesize_covoc1_expression(operation,branch);
-            else if (covoc2_optimizable(operation,branch))
-               return synthesize_covoc2_expression(operation,branch);
-            else if (vocov1_optimizable(operation,branch))
-               return synthesize_vocov1_expression(operation,branch);
-            else if (vocov2_optimizable(operation,branch))
-               return synthesize_vocov2_expression(operation,branch);
-            else if (vovovov_optimizable(operation,branch))
-               return synthesize_vovovov_expression(operation,branch);
+               return synthesize_cov_expression::process(*this,operation,branch);
+            else if (binext_optimizable(operation,branch))
+               return synthesize_binary_ext_expression::process(*this,operation,branch);
             else
                return synthesize_expression<binary_node_t,2>(operation,branch);
          }
@@ -8652,7 +9207,7 @@ namespace exprtk
          {
             if ((0 == condition) || (0 == consequent) || (0 == alternative))
                return error_node();
-            //Can the condition be immediately evaluated? if so optimize.
+            // Can the condition be immediately evaluated? if so optimize.
             else if (details::is_constant_node(condition))
             {
                // True branch
@@ -8680,45 +9235,47 @@ namespace exprtk
             return node_allocator_->allocate<while_loop_node_t>(condition,branch);
          }
 
+         #define unary_opr_switch_statements \
+         case_stmt(details::  e_abs,details::  abs_op) \
+         case_stmt(details:: e_acos,details:: acos_op) \
+         case_stmt(details:: e_asin,details:: asin_op) \
+         case_stmt(details:: e_atan,details:: atan_op) \
+         case_stmt(details:: e_ceil,details:: ceil_op) \
+         case_stmt(details::  e_cos,details::  cos_op) \
+         case_stmt(details:: e_cosh,details:: cosh_op) \
+         case_stmt(details::  e_exp,details::  exp_op) \
+         case_stmt(details::e_floor,details::floor_op) \
+         case_stmt(details::  e_log,details::  log_op) \
+         case_stmt(details::e_log10,details::log10_op) \
+         case_stmt(details::  e_neg,details::  neg_op) \
+         case_stmt(details::  e_pos,details::  pos_op) \
+         case_stmt(details::e_round,details::round_op) \
+         case_stmt(details::  e_sin,details::  sin_op) \
+         case_stmt(details:: e_sinh,details:: sinh_op) \
+         case_stmt(details:: e_sqrt,details:: sqrt_op) \
+         case_stmt(details::  e_tan,details::  tan_op) \
+         case_stmt(details:: e_tanh,details:: tanh_op) \
+         case_stmt(details::  e_cot,details::  cot_op) \
+         case_stmt(details::  e_sec,details::  sec_op) \
+         case_stmt(details::  e_csc,details::  csc_op) \
+         case_stmt(details::  e_r2d,details::  r2d_op) \
+         case_stmt(details::  e_d2r,details::  d2r_op) \
+         case_stmt(details::  e_d2g,details::  d2g_op) \
+         case_stmt(details::  e_g2d,details::  g2d_op) \
+         case_stmt(details:: e_notl,details:: notl_op) \
+         case_stmt(details::  e_sgn,details::  sgn_op) \
+         case_stmt(details::  e_erf,details::  erf_op) \
+         case_stmt(details:: e_erfc,details:: erfc_op) \
+         case_stmt(details:: e_frac,details:: frac_op) \
+         case_stmt(details::e_trunc,details::trunc_op) \
+
          inline expression_node_ptr synthesize_uv_expression(const details::operator_type& operation, expression_node_ptr (&branch)[1])
          {
             T& v = dynamic_cast<details::variable_node<T>*>(branch[0])->ref();
-
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate<typename details::unary_variable_node<Type,op1<Type> > >(v);
-               case_stmt(details::  e_abs,details::  abs_op)
-               case_stmt(details:: e_acos,details:: acos_op)
-               case_stmt(details:: e_asin,details:: asin_op)
-               case_stmt(details:: e_atan,details:: atan_op)
-               case_stmt(details:: e_ceil,details:: ceil_op)
-               case_stmt(details::  e_cos,details::  cos_op)
-               case_stmt(details:: e_cosh,details:: cosh_op)
-               case_stmt(details::  e_exp,details::  exp_op)
-               case_stmt(details::e_floor,details::floor_op)
-               case_stmt(details::  e_log,details::  log_op)
-               case_stmt(details::e_log10,details::log10_op)
-               case_stmt(details::  e_neg,details::  neg_op)
-               case_stmt(details::  e_pos,details::  pos_op)
-               case_stmt(details::e_round,details::round_op)
-               case_stmt(details::  e_sin,details::  sin_op)
-               case_stmt(details:: e_sinh,details:: sinh_op)
-               case_stmt(details:: e_sqrt,details:: sqrt_op)
-               case_stmt(details::  e_tan,details::  tan_op)
-               case_stmt(details:: e_tanh,details:: tanh_op)
-               case_stmt(details::  e_cot,details::  cot_op)
-               case_stmt(details::  e_sec,details::  sec_op)
-               case_stmt(details::  e_csc,details::  csc_op)
-               case_stmt(details::  e_r2d,details::  r2d_op)
-               case_stmt(details::  e_d2r,details::  d2r_op)
-               case_stmt(details::  e_d2g,details::  d2g_op)
-               case_stmt(details::  e_g2d,details::  g2d_op)
-               case_stmt(details:: e_notl,details:: notl_op)
-               case_stmt(details::  e_sgn,details::  sgn_op)
-               case_stmt(details::  e_erf,details::  erf_op)
-               case_stmt(details:: e_erfc,details:: erfc_op)
-               case_stmt(details:: e_frac,details:: frac_op)
-               case_stmt(details::e_trunc,details::trunc_op)
+               unary_opr_switch_statements
                #undef case_stmt
                default : return error_node();
             }
@@ -8729,38 +9286,7 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate<typename details::unary_branch_node<Type,op1<Type> > >(branch[0]);
-               case_stmt(details::  e_abs,details::  abs_op)
-               case_stmt(details:: e_acos,details:: acos_op)
-               case_stmt(details:: e_asin,details:: asin_op)
-               case_stmt(details:: e_atan,details:: atan_op)
-               case_stmt(details:: e_ceil,details:: ceil_op)
-               case_stmt(details::  e_cos,details::  cos_op)
-               case_stmt(details:: e_cosh,details:: cosh_op)
-               case_stmt(details::  e_exp,details::  exp_op)
-               case_stmt(details::e_floor,details::floor_op)
-               case_stmt(details::  e_log,details::  log_op)
-               case_stmt(details::e_log10,details::log10_op)
-               case_stmt(details::  e_neg,details::  neg_op)
-               case_stmt(details::  e_pos,details::  pos_op)
-               case_stmt(details::e_round,details::round_op)
-               case_stmt(details::  e_sin,details::  sin_op)
-               case_stmt(details:: e_sinh,details:: sinh_op)
-               case_stmt(details:: e_sqrt,details:: sqrt_op)
-               case_stmt(details::  e_tan,details::  tan_op)
-               case_stmt(details:: e_tanh,details:: tanh_op)
-               case_stmt(details::  e_cot,details::  cot_op)
-               case_stmt(details::  e_sec,details::  sec_op)
-               case_stmt(details::  e_csc,details::  csc_op)
-               case_stmt(details::  e_r2d,details::  r2d_op)
-               case_stmt(details::  e_d2r,details::  d2r_op)
-               case_stmt(details::  e_d2g,details::  d2g_op)
-               case_stmt(details::  e_g2d,details::  g2d_op)
-               case_stmt(details:: e_notl,details:: notl_op)
-               case_stmt(details::  e_sgn,details::  sgn_op)
-               case_stmt(details::  e_erf,details::  erf_op)
-               case_stmt(details:: e_erfc,details:: erfc_op)
-               case_stmt(details:: e_frac,details:: frac_op)
-               case_stmt(details::e_trunc,details::trunc_op)
+               unary_opr_switch_statements
                #undef case_stmt
                default : return error_node();
             }
@@ -8769,7 +9295,6 @@ namespace exprtk
          inline expression_node_ptr const_optimize_sf3(const details::operator_type& operation, expression_node_ptr (&branch)[3])
          {
             expression_node_ptr temp_node = error_node();
-
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : temp_node = node_allocator_->allocate<details::sf3_node<Type,op1<Type> > >(operation,branch); break;
@@ -8808,22 +9333,27 @@ namespace exprtk
                case_stmt(details::e_sf32,details::sf32_op)
                case_stmt(details::e_sf33,details::sf33_op)
                case_stmt(details::e_sf34,details::sf34_op)
+               case_stmt(details::e_sf35,details::sf35_op)
+               case_stmt(details::e_sf36,details::sf36_op)
+               case_stmt(details::e_sf37,details::sf37_op)
+               case_stmt(details::e_sf38,details::sf38_op)
+               case_stmt(details::e_sf39,details::sf39_op)
+               case_stmt(details::e_sf40,details::sf40_op)
+               case_stmt(details::e_sf41,details::sf41_op)
+               case_stmt(details::e_sf42,details::sf42_op)
                #undef case_stmt
                default : return error_node();
             }
-
             T v = temp_node->value();
             node_allocator_->free(temp_node);
-
             return node_allocator_->allocate<literal_node_t>(v);
          }
 
          inline expression_node_ptr varnode_optimize_sf3(const details::operator_type& operation, expression_node_ptr (&branch)[3])
          {
-            Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
-            Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
-            Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[2])->ref();
-
+            const Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+            const Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+            const Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[2])->ref();
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rrr<details::sf3_var_node<Type,op1<Type> > >(v0,v1,v2);
@@ -8862,6 +9392,14 @@ namespace exprtk
                case_stmt(details::e_sf32,details::sf32_op)
                case_stmt(details::e_sf33,details::sf33_op)
                case_stmt(details::e_sf34,details::sf34_op)
+               case_stmt(details::e_sf35,details::sf35_op)
+               case_stmt(details::e_sf36,details::sf36_op)
+               case_stmt(details::e_sf37,details::sf37_op)
+               case_stmt(details::e_sf38,details::sf38_op)
+               case_stmt(details::e_sf39,details::sf39_op)
+               case_stmt(details::e_sf40,details::sf40_op)
+               case_stmt(details::e_sf41,details::sf41_op)
+               case_stmt(details::e_sf42,details::sf42_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -8914,6 +9452,14 @@ namespace exprtk
                   case_stmt(details::e_sf32,details::sf32_op)
                   case_stmt(details::e_sf33,details::sf33_op)
                   case_stmt(details::e_sf34,details::sf34_op)
+                  case_stmt(details::e_sf35,details::sf35_op)
+                  case_stmt(details::e_sf36,details::sf36_op)
+                  case_stmt(details::e_sf37,details::sf37_op)
+                  case_stmt(details::e_sf38,details::sf38_op)
+                  case_stmt(details::e_sf39,details::sf39_op)
+                  case_stmt(details::e_sf40,details::sf40_op)
+                  case_stmt(details::e_sf41,details::sf41_op)
+                  case_stmt(details::e_sf42,details::sf42_op)
                   #undef case_stmt
                   default : return error_node();
                }
@@ -8926,14 +9472,6 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : temp_node = node_allocator_->allocate<details::sf4_node<Type,op1<Type> > >(operation,branch); break;
-               case_stmt(details::e_sf35,details::sf35_op)
-               case_stmt(details::e_sf36,details::sf36_op)
-               case_stmt(details::e_sf37,details::sf37_op)
-               case_stmt(details::e_sf38,details::sf38_op)
-               case_stmt(details::e_sf39,details::sf39_op)
-               case_stmt(details::e_sf40,details::sf40_op)
-               case_stmt(details::e_sf41,details::sf41_op)
-               case_stmt(details::e_sf42,details::sf42_op)
                case_stmt(details::e_sf43,details::sf43_op)
                case_stmt(details::e_sf44,details::sf44_op)
                case_stmt(details::e_sf45,details::sf45_op)
@@ -8974,34 +9512,35 @@ namespace exprtk
                case_stmt(details::e_sf80,details::sf80_op)
                case_stmt(details::e_sf81,details::sf81_op)
                case_stmt(details::e_sf82,details::sf82_op)
+               case_stmt(details::e_sf83,details::sf83_op)
+               case_stmt(details::e_sf84,details::sf84_op)
+               case_stmt(details::e_sf85,details::sf85_op)
+               case_stmt(details::e_sf86,details::sf86_op)
+               case_stmt(details::e_sf87,details::sf87_op)
+               case_stmt(details::e_sf88,details::sf88_op)
+               case_stmt(details::e_sf89,details::sf89_op)
+               case_stmt(details::e_sf90,details::sf90_op)
+               case_stmt(details::e_sf91,details::sf91_op)
+               case_stmt(details::e_sf92,details::sf92_op)
+               case_stmt(details::e_sf93,details::sf93_op)
+               case_stmt(details::e_sf94,details::sf94_op)
                #undef case_stmt
                default : return error_node();
             }
-
             T v = temp_node->value();
             node_allocator_->free(temp_node);
-
             return node_allocator_->allocate<literal_node_t>(v);
          }
 
          inline expression_node_ptr varnode_optimize_sf4(const details::operator_type& operation, expression_node_ptr (&branch)[4])
          {
-            Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
-            Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
-            Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[2])->ref();
-            Type& v3 = dynamic_cast<details::variable_node<Type>*>(branch[3])->ref();
-
+            const Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+            const Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+            const Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[2])->ref();
+            const Type& v3 = dynamic_cast<details::variable_node<Type>*>(branch[3])->ref();
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rrrr<details::sf4_var_node<Type,op1<Type> > >(v0,v1,v2,v3);
-               case_stmt(details::e_sf35,details::sf35_op)
-               case_stmt(details::e_sf36,details::sf36_op)
-               case_stmt(details::e_sf37,details::sf37_op)
-               case_stmt(details::e_sf38,details::sf38_op)
-               case_stmt(details::e_sf39,details::sf39_op)
-               case_stmt(details::e_sf40,details::sf40_op)
-               case_stmt(details::e_sf41,details::sf41_op)
-               case_stmt(details::e_sf42,details::sf42_op)
                case_stmt(details::e_sf43,details::sf43_op)
                case_stmt(details::e_sf44,details::sf44_op)
                case_stmt(details::e_sf45,details::sf45_op)
@@ -9042,6 +9581,18 @@ namespace exprtk
                case_stmt(details::e_sf80,details::sf80_op)
                case_stmt(details::e_sf81,details::sf81_op)
                case_stmt(details::e_sf82,details::sf82_op)
+               case_stmt(details::e_sf83,details::sf83_op)
+               case_stmt(details::e_sf84,details::sf84_op)
+               case_stmt(details::e_sf85,details::sf85_op)
+               case_stmt(details::e_sf86,details::sf86_op)
+               case_stmt(details::e_sf87,details::sf87_op)
+               case_stmt(details::e_sf88,details::sf88_op)
+               case_stmt(details::e_sf89,details::sf89_op)
+               case_stmt(details::e_sf90,details::sf90_op)
+               case_stmt(details::e_sf91,details::sf91_op)
+               case_stmt(details::e_sf92,details::sf92_op)
+               case_stmt(details::e_sf93,details::sf93_op)
+               case_stmt(details::e_sf94,details::sf94_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9058,14 +9609,6 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate<details::sf4_node<Type,op1<Type> > >(operation,branch);
-               case_stmt(details::e_sf35,details::sf35_op)
-               case_stmt(details::e_sf36,details::sf36_op)
-               case_stmt(details::e_sf37,details::sf37_op)
-               case_stmt(details::e_sf38,details::sf38_op)
-               case_stmt(details::e_sf39,details::sf39_op)
-               case_stmt(details::e_sf40,details::sf40_op)
-               case_stmt(details::e_sf41,details::sf41_op)
-               case_stmt(details::e_sf42,details::sf42_op)
                case_stmt(details::e_sf43,details::sf43_op)
                case_stmt(details::e_sf44,details::sf44_op)
                case_stmt(details::e_sf45,details::sf45_op)
@@ -9106,6 +9649,10 @@ namespace exprtk
                case_stmt(details::e_sf80,details::sf80_op)
                case_stmt(details::e_sf81,details::sf81_op)
                case_stmt(details::e_sf82,details::sf82_op)
+               case_stmt(details::e_sf83,details::sf83_op)
+               case_stmt(details::e_sf84,details::sf84_op)
+               case_stmt(details::e_sf85,details::sf85_op)
+               case_stmt(details::e_sf86,details::sf86_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9115,14 +9662,12 @@ namespace exprtk
          inline expression_node_ptr function(ifunction_t* f, expression_node_ptr (&b)[N])
          {
             typedef typename details::function_N_node<T,ifunction_t,N> function_N_node_t;
-
             expression_node_ptr result = synthesize_expression<function_N_node_t,N>(f,b);
-
             if (0 == result)
                return error_node();
             else
             {
-               //has the function call been completely optimized?
+               // Has the function call been completely optimized?
                if (details::is_constant_node(result))
                   return result;
                else if (!all_nodes_valid(b))
@@ -9160,7 +9705,6 @@ namespace exprtk
                else if (!details::is_constant_node(b[i]))
                   return false;
             }
-
             return true;
          }
 
@@ -9171,7 +9715,6 @@ namespace exprtk
             {
                if (0 == b[i]) return false;
             }
-
             return true;
          }
 
@@ -9217,29 +9760,9 @@ namespace exprtk
          case_stmt(details:: e_nor,details:: nor_op) \
          case_stmt(details:: e_xor,details:: xor_op) \
 
-         inline expression_node_ptr synthesize_cov_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            T  c = dynamic_cast<details::literal_node<T>* >(branch[0])->value();
-            T& v = dynamic_cast<details::variable_node<T>*>(branch[1])->ref();
-
-            node_allocator_->free(branch[0]);
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_cr<typename details::cov_node<Type,op1<Type> > >(c,v);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
          #ifndef exprtk_disable_cardinal_pow_optimisation
-
          template <template <typename,typename> class IPowNode>
-         inline expression_node_ptr cardinal_pow_optimization_impl(T& v, const unsigned int& p)
+         inline expression_node_ptr cardinal_pow_optimization_impl(const T& v, const unsigned int& p)
          {
             switch(p)
             {
@@ -9264,7 +9787,7 @@ namespace exprtk
             }
          }
 
-         inline expression_node_ptr cardinal_pow_optimization(T& v, const T& c)
+         inline expression_node_ptr cardinal_pow_optimization(const T& v, const T& c)
          {
             const bool not_recipricol = (c >= T(0.0));
             const unsigned int p = static_cast<unsigned int>(std::abs(c));
@@ -9295,528 +9818,2019 @@ namespace exprtk
          }
          #endif
 
-         inline expression_node_ptr synthesize_voc_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
+         struct synthesize_binary_ext_expression
          {
-            T& v = dynamic_cast<details::variable_node<T>*>(branch[0])->ref();
-            T  c = dynamic_cast<details::literal_node<T>* >(branch[1])->value();
-            node_allocator_->free(branch[1]);
-
-            if (cardinal_pow_optimizable(operation,c))
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
             {
-               return cardinal_pow_optimization(v,c);
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate<typename details::binary_ext_node<Type,op1<Type> > >(branch[0],branch[1]);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
             }
+         };
 
-            switch (operation)
+         struct synthesize_vob_expression
+         {
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
             {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rc<typename details::voc_node<Type,op1<Type> > >(v,c);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
+               const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_rc<typename details::vob_node<Type,op1<Type> > >(v,branch[1]);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
             }
+         };
+
+         struct synthesize_bov_expression
+         {
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_cr<typename details::bov_node<Type,op1<Type> > >(branch[0],v);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
+            }
+         };
+
+         struct synthesize_cob_expression
+         {
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               const Type c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               expr_gen.node_allocator_->free(branch[0]);
+               if (details::is_cob_node(branch[1]))
+               {
+                  // Simplify expressions of the form:
+                  // 1. (1 * (2 * (3 * (4 * (5 * (6 * (7 * (8 * (9 + x)))))))))
+                  // 2. (1 + (2 + (3 + (4 + (5 + (6 + (7 + (8 + (9 + x)))))))))
+                  if (
+                      (operation == details::e_mul) ||
+                      (operation == details::e_add)
+                     )
+                  {
+                     details::cob_base_node<Type>* cobnode = dynamic_cast<details::cob_base_node<Type>*>(branch[1]);
+                     if (operation == cobnode->operation())
+                     {
+                        switch (operation)
+                        {
+                           case details::e_add : cobnode->set_c(c + cobnode->c()); break;
+                           case details::e_mul : cobnode->set_c(c * cobnode->c()); break;
+                           default             : return error_node();
+                        }
+                        return cobnode;
+                     }
+                  }
+               }
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_rc<typename details::cob_node<Type,op1<Type> > >(c,branch[1]);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
+            }
+         };
+
+         struct synthesize_boc_expression
+         {
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               const Type c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               expr_gen.node_allocator_->free(branch[1]);
+               if (details::is_boc_node(branch[0]))
+               {
+                  // Simplify expressions of the form:
+                  // 1. (((((((((x + 9) * 8) * 7) * 6) * 5) * 4) * 3) * 2) * 1)
+                  // 2. (((((((((x + 9) + 8) + 7) + 6) + 5) + 4) + 3) + 2) + 1)
+                  if (
+                      (operation == details::e_mul) ||
+                      (operation == details::e_add)
+                     )
+                  {
+                     details::boc_base_node<Type>* bocnode = dynamic_cast<details::boc_base_node<Type>*>(branch[0]);
+                     if (operation == bocnode->operation())
+                     {
+                        switch (operation)
+                        {
+                           case details::e_add : bocnode->set_c(c + bocnode->c()); break;
+                           case details::e_mul : bocnode->set_c(c * bocnode->c()); break;
+                           default             : return error_node();
+                        }
+                        return bocnode;
+                     }
+                  }
+               }
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_cr<typename details::boc_node<Type,op1<Type> > >(branch[0],c);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
+            }
+         };
+
+         inline bool synthesize_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2], expression_node_ptr& result)
+         {
+            result = error_node();
+            if (!operation_optimizable(operation))
+               return false;
+            const std::string node_id = branch_to_id(branch);
+            typename synthesize_map_t::iterator itr = synthesize_map_.find(node_id);
+            if (synthesize_map_.end() != itr)
+            {
+               result = itr->second(*this,operation,branch);
+               return true;
+            }
+            else
+               return false;
          }
 
-         inline expression_node_ptr synthesize_vov_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
+         struct synthesize_vov_expression
          {
-            Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
-            Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
-
-            switch (operation)
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
             {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vov_node<Type,op1<Type> > >(v1,v2);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
+               const Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_rr<typename details::vov_node<Type,op1<Type> > >(v1,v2);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
             }
-         }
+         };
 
-         template <typename Operation1>
-         inline expression_node_ptr synthesize_vovov1_expression_impl(Type& v0, expression_node_ptr node)
+         struct synthesize_cov_expression
          {
-            details::operator_type op = dynamic_cast<details::vov_base_node<Type>*>(node)->operation();
-
-            switch (op)
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
             {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vovov1_node<Type,Operation1,op1<Type> > >(v0,(*dynamic_cast<details::vov_node<T,op1<Type> >*>(node)));
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
+               const Type  c = dynamic_cast<details::literal_node<Type>* >(branch[0])->value();
+               const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               expr_gen.node_allocator_->free(branch[0]);
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_cr<typename details::cov_node<Type,op1<Type> > >(c,v);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
             }
-         }
+         };
 
-         inline expression_node_ptr synthesize_vovov1_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
+         struct synthesize_voc_expression
          {
-            T& v0 = dynamic_cast<details::variable_node<T>*>(branch[0])->ref();
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const Type  c = dynamic_cast<details::literal_node<Type>* >(branch[1])->value();
+               expr_gen.node_allocator_->free(branch[1]);
+               if (expr_gen.cardinal_pow_optimizable(operation,c))
+               {
+                  return expr_gen.cardinal_pow_optimization(v,c);
+               }
+               switch (operation)
+               {
+                  #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_rc<typename details::voc_node<Type,op1<Type> > >(v,c);
+                  basic_opr_switch_statements
+                  extended_opr_switch_statements
+                  #undef case_stmt
+                  default : return error_node();
+               }
+            }
+         };
+
+         struct synthesize_vovov_expression0
+         {
+            typedef typename vovov_t::type0 node_type;
+            typedef typename vovov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 v1) o1 (v2)
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
+               const Type& v0 = vov->v0();
+               const Type& v1 = vov->v1();
+               const Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = vov->operation();
+               const details::operator_type o1 = operation;
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,sf3);
+               else if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,f0,f1);
+            }
+         };
+
+         struct synthesize_vovov_expression1
+         {
+            typedef typename vovov_t::type1 node_type;
+            typedef typename vovov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0) o0 (v1 o1 v2)
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
+               const Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const Type& v1 = vov->v0();
+               const Type& v2 = vov->v1();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = vov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,f0,f1);
+            }
+         };
+
+         struct synthesize_vovoc_expression0
+         {
+            typedef typename vovoc_t::type0 node_type;
+            typedef typename vovoc_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 v1) o1 (c)
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
+               const Type& v0 = vov->v0();
+               const Type& v1 = vov->v1();
+               const Type   c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = vov->operation();
+               const details::operator_type o1 = operation;
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,f0,f1);
+            }
+         };
+
+         struct synthesize_vovoc_expression1
+         {
+            typedef typename vovoc_t::type1 node_type;
+            typedef typename vovoc_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0) o0 (v1 o1 c)
+               const details::voc_base_node<Type>* voc = dynamic_cast<const details::voc_base_node<Type>*>(branch[1]);
+               const Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const Type& v1 = voc->v();
+               const Type   c = voc->c();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = voc->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,f0,f1);
+            }
+         };
+
+         struct synthesize_vocov_expression0
+         {
+            typedef typename vocov_t::type0 node_type;
+            typedef typename vocov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 c) o1 (v1)
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
+               const Type& v0 = voc->v();
+               const Type   c = voc->c();
+               const Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = voc->operation();
+               const details::operator_type o1 = operation;
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,f0,f1);
+            }
+         };
+
+         struct synthesize_vocov_expression1
+         {
+            typedef typename vocov_t::type1 node_type;
+            typedef typename vocov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0) o0 (c o1 v1)
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
+               const Type& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const Type   c = cov->c();
+               const Type& v1 = cov->v();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = cov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,f0,f1);
+            }
+         };
+
+         struct synthesize_covov_expression0
+         {
+            typedef typename covov_t::type0 node_type;
+            typedef typename covov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c o0 v0) o1 (v1)
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
+               const Type   c = cov->c();
+               const Type& v0 = cov->v();
+               const Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = cov->operation();
+               const details::operator_type o1 = operation;
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,f0,f1);
+            }
+         };
+
+         struct synthesize_covov_expression1
+         {
+            typedef typename covov_t::type1 node_type;
+            typedef typename covov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c) o0 (v0 o1 v1)
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
+               const Type& v0 = vov->v0();
+               const Type& v1 = vov->v1();
+               const Type   c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = vov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,f0,f1);
+            }
+         };
+
+         struct synthesize_covoc_expression0
+         {
+            typedef typename covoc_t::type0 node_type;
+            typedef typename covoc_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c0 o0 v) o1 (c1)
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
+               const Type  c0 = cov->c();
+               const Type&  v = cov->v();
+               const Type  c1 = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = cov->operation();
+               const details::operator_type o1 = operation;
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,f0,f1);
+            }
+         };
+
+         struct synthesize_covoc_expression1
+         {
+            typedef typename covoc_t::type1 node_type;
+            typedef typename covoc_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c0) o0 (v o1 c1)
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[1]);
+               const Type&  v = voc->v();
+               const Type  c1 = voc->c();
+               const Type  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = voc->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,f0,f1);
+            }
+         };
+
+         struct synthesize_cocov_expression0
+         {
+            typedef typename cocov_t::type0 node_type;
+            static inline expression_node_ptr process(expression_generator<Type>& , const details::operator_type&, expression_node_ptr (&)[2])
+            {
+               // (c0 o0 c1) o1 (v) - Not possible.
+               return error_node();
+            }
+         };
+
+         struct synthesize_cocov_expression1
+         {
+            typedef typename cocov_t::type1 node_type;
+            typedef typename cocov_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c0) o0 (c1 o1 v)
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
+               const Type  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const Type  c1 = cov->c();
+               const Type&  v = cov->v();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = cov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),c0,c1,v,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,c1,v,f0,f1);
+            }
+         };
+
+         struct synthesize_vococ_expression0
+         {
+            typedef typename vococ_t::type0 node_type;
+            typedef typename vococ_t::sf3_type sf3_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v o0 c0) o1 (c1)
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
+               const Type&  v = voc->v();
+               const Type& c0 = voc->c();
+               const Type& c1 = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = voc->operation();
+               const details::operator_type o1 = operation;
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
+               if (expr_gen.sf3_optimizable(sf3id,sf3))
+                  return sf3_type::allocate(*(expr_gen.node_allocator_),v,c0,c1,sf3);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v,c0,c1,f0,f1);
+            }
+         };
+
+         struct synthesize_vococ_expression1
+         {
+            typedef typename vococ_t::type0 node_type;
+            static inline expression_node_ptr process(expression_generator<Type>&, const details::operator_type&, expression_node_ptr (&)[2])
+            {
+               // (v) o0 (c0 o1 c1) - Not possible.
+               return error_node();
+            }
+         };
+
+         struct synthesize_vovovov_expression0
+         {
+            typedef typename vovovov_t::type0 node_type;
+            typedef typename vovovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 v1) o1 (v2 o2 v3)
+               const details::vov_base_node<Type>* vov0 = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
+               const details::vov_base_node<Type>* vov1 = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
+               const Type& v0 = vov0->v0();
+               const Type& v1 = vov0->v1();
+               const Type& v2 = vov1->v0();
+               const Type& v3 = vov1->v1();
+               const details::operator_type o0 = vov0->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = vov1->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovoc_expression0
+         {
+            typedef typename vovovoc_t::type0 node_type;
+            typedef typename vovovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 v1) o1 (v2 o2 c)
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[1]);
+               const Type& v0 = vov->v0();
+               const Type& v1 = vov->v1();
+               const Type& v2 = voc->v ();
+               const Type   c = voc->c ();
+               const details::operator_type o0 = vov->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = voc->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovocov_expression0
+         {
+            typedef typename vovocov_t::type0 node_type;
+            typedef typename vovocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 v1) o1 (c o2 v2)
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
+               const Type& v0 = vov->v0();
+               const Type& v1 = vov->v1();
+               const Type& v2 = cov->v ();
+               const Type   c = cov->c ();
+               const details::operator_type o0 = vov->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = cov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovov_expression0
+         {
+            typedef typename vocovov_t::type0 node_type;
+            typedef typename vocovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 c) o1 (v1 o2 v2)
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
+               const Type   c = voc->c ();
+               const Type& v0 = voc->v ();
+               const Type& v1 = vov->v0();
+               const Type& v2 = vov->v1();
+               const details::operator_type o0 = voc->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = vov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovov_expression0
+         {
+            typedef typename covovov_t::type0 node_type;
+            typedef typename covovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c o0 v0) o1 (v1 o2 v2)
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
+               const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
+               const Type   c = cov->c ();
+               const Type& v0 = cov->v ();
+               const Type& v1 = vov->v0();
+               const Type& v2 = vov->v1();
+               const details::operator_type o0 = cov->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = vov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covocov_expression0
+         {
+            typedef typename covocov_t::type0 node_type;
+            typedef typename covocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c0 o0 v0) o1 (c1 o2 v1)
+               const details::cov_base_node<Type>* cov0 = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
+               const details::cov_base_node<Type>* cov1 = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
+               const Type  c0 = cov0->c();
+               const Type& v0 = cov0->v();
+               const Type  c1 = cov1->c();
+               const Type& v1 = cov1->v();
+               const details::operator_type o0 = cov0->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = cov1->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovoc_expression0
+         {
+            typedef typename vocovoc_t::type0 node_type;
+            typedef typename vocovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 c0) o1 (v1 o2 c1)
+               const details::voc_base_node<Type>* voc0 = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
+               const details::voc_base_node<Type>* voc1 = dynamic_cast<details::voc_base_node<Type>*>(branch[1]);
+               const Type  c0 = voc0->c();
+               const Type& v0 = voc0->v();
+               const Type  c1 = voc1->c();
+               const Type& v1 = voc1->v();
+               const details::operator_type o0 = voc0->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = voc1->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovoc_expression0
+         {
+            typedef typename covovoc_t::type0 node_type;
+            typedef typename covovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (c0 o0 v0) o1 (v1 o2 c1)
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[1]);
+               const Type  c0 = cov->c();
+               const Type& v0 = cov->v();
+               const Type  c1 = voc->c();
+               const Type& v1 = voc->v();
+               const details::operator_type o0 = cov->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = voc->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vococov_expression0
+         {
+            typedef typename vococov_t::type0 node_type;
+            typedef typename vococov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 c0) o1 (c1 o2 v1)
+               const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
+               const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
+               const T  c0 = voc->c();
+               const T& v0 = voc->v();
+               const T  c1 = cov->c();
+               const T& v1 = cov->v();
+               const details::operator_type o0 = voc->operation();
+               const details::operator_type o1 = operation;
+               const details::operator_type o2 = cov->operation();
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o1,f1))
+                  return error_node();
+               else if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovov_expression1
+         {
+            typedef typename vovovov_t::type1 node_type;
+            typedef typename vovovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 (v1 o1 (v2 o2 v3))
+               typedef typename synthesize_vovov_expression1::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& v1 = vovov->t0();
+               const T& v2 = vovov->t1();
+               const T& v3 = vovov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovov->f0();
+               binary_functor_t f2 = vovov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovoc_expression1
+         {
+            typedef typename vovovoc_t::type1 node_type;
+            typedef typename vovovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 (v1 o1 (v2 o2 c))
+               typedef typename synthesize_vovoc_expression1::node_type vovoc_t;
+               const vovoc_t* vovoc = dynamic_cast<const vovoc_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& v1 = vovoc->t0();
+               const T& v2 = vovoc->t1();
+               const T   c = vovoc->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovoc->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovoc->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovoc->f0();
+               binary_functor_t f2 = vovoc->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovocov_expression1
+         {
+            typedef typename vovocov_t::type1 node_type;
+            typedef typename vovocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 (v1 o1 (c o2 v2))
+               typedef typename synthesize_vocov_expression1::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& v1 = vocov->t0();
+               const T   c = vocov->t1();
+               const T& v2 = vocov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vocov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vocov->f0();
+               binary_functor_t f2 = vocov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovov_expression1
+         {
+            typedef typename vocovov_t::type1 node_type;
+            typedef typename vocovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 (c o1 (v1 o2 v2))
+               typedef typename synthesize_covov_expression1::node_type covov_t;
+               const covov_t* covov = dynamic_cast<const covov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T&  c = covov->t0();
+               const T& v1 = covov->t1();
+               const T& v2 = covov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(covov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(covov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = covov->f0();
+               binary_functor_t f2 = covov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovov_expression1
+         {
+            typedef typename covovov_t::type1 node_type;
+            typedef typename covovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // c o0 (v0 o1 (v1 o2 v2))
+               typedef typename synthesize_vovov_expression1::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[1]);
+               const T&  c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const T& v0 = vovov->t0();
+               const T& v1 = vovov->t1();
+               const T& v2 = vovov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovov->f0();
+               binary_functor_t f2 = vovov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covocov_expression1
+         {
+            typedef typename covocov_t::type1 node_type;
+            typedef typename covocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // c0 o0 (v0 o1 (c1 o2 v1))
+               typedef typename synthesize_vocov_expression1::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[1]);
+               const T  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const T& v0 = vocov->t0();
+               const T  c1 = vocov->t1();
+               const T& v1 = vocov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vocov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vocov->f0();
+               binary_functor_t f2 = vocov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovoc_expression1
+         {
+            typedef typename vocovoc_t::type1 node_type;
+            typedef typename vocovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 (c0 o1 (v1 o2 c2))
+               typedef typename synthesize_covoc_expression1::node_type covoc_t;
+               const covoc_t* covoc = dynamic_cast<const covoc_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T  c0 = covoc->t0();
+               const T& v1 = covoc->t1();
+               const T  c1 = covoc->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(covoc->f0());
+               const details::operator_type o2 = expr_gen.get_operator(covoc->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = covoc->f0();
+               binary_functor_t f2 = covoc->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovoc_expression1
+         {
+            typedef typename covovoc_t::type1 node_type;
+            typedef typename covovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // c0 o0 (v0 o1 (v1 o2 c1))
+               typedef typename synthesize_vovoc_expression1::node_type vovoc_t;
+               const vovoc_t* vovoc = dynamic_cast<const vovoc_t*>(branch[1]);
+               const T  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const T& v0 = vovoc->t0();
+               const T& v1 = vovoc->t1();
+               const T  c1 = vovoc->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovoc->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovoc->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovoc->f0();
+               binary_functor_t f2 = vovoc->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vococov_expression1
+         {
+            typedef typename vococov_t::type1 node_type;
+            typedef typename vococov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 (c0 o1 (c1 o2 v1))
+               typedef typename synthesize_cocov_expression1::node_type cocov_t;
+               const cocov_t* cocov = dynamic_cast<const cocov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T  c0 = cocov->t0();
+               const T  c1 = cocov->t1();
+               const T& v1 = cocov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(cocov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(cocov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = cocov->f0();
+               binary_functor_t f2 = cocov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovov_expression2
+         {
+            typedef typename vovovov_t::type2 node_type;
+            typedef typename vovovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 ((v1 o1 v2) o2 v3)
+               typedef typename synthesize_vovov_expression0::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& v1 = vovov->t0();
+               const T& v2 = vovov->t1();
+               const T& v3 = vovov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovov->f0();
+               binary_functor_t f2 = vovov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovoc_expression2
+         {
+            typedef typename vovovoc_t::type2 node_type;
+            typedef typename vovovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 ((v1 o1 v2) o2 c)
+               typedef typename synthesize_vovoc_expression0::node_type vovoc_t;
+               const vovoc_t* vovoc = dynamic_cast<const vovoc_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& v1 = vovoc->t0();
+               const T& v2 = vovoc->t1();
+               const T   c = vovoc->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovoc->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovoc->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovoc->f0();
+               binary_functor_t f2 = vovoc->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovocov_expression2
+         {
+            typedef typename vovocov_t::type2 node_type;
+            typedef typename vovocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 ((v1 o1 c) o2 v2)
+               typedef typename synthesize_vocov_expression0::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& v1 = vocov->t0();
+               const T   c = vocov->t1();
+               const T& v2 = vocov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vocov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vocov->f0();
+               binary_functor_t f2 = vocov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovov_expression2
+         {
+            typedef typename vocovov_t::type2 node_type;
+            typedef typename vocovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 ((c o1 v1) o2 v2)
+               typedef typename synthesize_covov_expression0::node_type covov_t;
+               const covov_t* covov = dynamic_cast<const covov_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T   c = covov->t0();
+               const T& v1 = covov->t1();
+               const T& v2 = covov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(covov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(covov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = covov->f0();
+               binary_functor_t f2 = covov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovov_expression2
+         {
+            typedef typename covovov_t::type2 node_type;
+            typedef typename covovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // c o0 ((v1 o1 v2) o2 v3)
+               typedef typename synthesize_vovov_expression0::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[1]);
+               const T   c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const T& v0 = vovov->t0();
+               const T& v1 = vovov->t1();
+               const T& v2 = vovov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovov->f0();
+               binary_functor_t f2 = vovov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covocov_expression2
+         {
+            typedef typename covocov_t::type2 node_type;
+            typedef typename covocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // c0 o0 ((v0 o1 c1) o2 v1)
+               typedef typename synthesize_vocov_expression0::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[1]);
+               const T  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const T& v0 = vocov->t0();
+               const T  c1 = vocov->t1();
+               const T& v1 = vocov->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vocov->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vocov->f0();
+               binary_functor_t f2 = vocov->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovoc_expression2
+         {
+            typedef typename vocovoc_t::type2 node_type;
+            typedef typename vocovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // v0 o0 ((c0 o1 v1) o2 c1)
+               typedef typename synthesize_covoc_expression0::node_type covoc_t;
+               const covoc_t* covoc = dynamic_cast<const covoc_t*>(branch[1]);
+               const T& v0 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
+               const T& c0 = covoc->t0();
+               const T& v1 = covoc->t1();
+               const T& c1 = covoc->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(covoc->f0());
+               const details::operator_type o2 = expr_gen.get_operator(covoc->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = covoc->f0();
+               binary_functor_t f2 = covoc->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovoc_expression2
+         {
+            typedef typename covovoc_t::type2 node_type;
+            typedef typename covovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // c0 o0 ((v0 o1 v1) o2 c1)
+               typedef typename synthesize_vovoc_expression0::node_type vovoc_t;
+               const vovoc_t* vovoc = dynamic_cast<const vovoc_t*>(branch[1]);
+               const T  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
+               const T& v0 = vovoc->t0();
+               const T& v1 = vovoc->t1();
+               const T  c1 = vovoc->t2();
+               const details::operator_type o0 = operation;
+               const details::operator_type o1 = expr_gen.get_operator(vovoc->f0());
+               const details::operator_type o2 = expr_gen.get_operator(vovoc->f1());
+               binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
+               binary_functor_t f1 = vovoc->f0();
+               binary_functor_t f2 = vovoc->f1();
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o0,f0))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vococov_expression2
+         {
+            typedef typename vococov_t::type2 node_type;
+            static inline expression_node_ptr process(expression_generator<Type>&, const details::operator_type&, expression_node_ptr (&)[2])
+            {
+               // v0 o0 ((c0 o1 c1) o2 v1) - Not possible
+               return error_node();
+            }
+         };
+
+         struct synthesize_vovovov_expression3
+         {
+            typedef typename vovovov_t::type3 node_type;
+            typedef typename vovovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 v1) o1 v2) o2 v3
+               typedef typename synthesize_vovov_expression0::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[0]);
+               const T& v0 = vovov->t0();
+               const T& v1 = vovov->t1();
+               const T& v2 = vovov->t2();
+               const T& v3 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vovov->f0();
+               binary_functor_t f1 = vovov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovoc_expression3
+         {
+            typedef typename vovovoc_t::type3 node_type;
+            typedef typename vovovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 v1) o1 v2) o2 c
+               typedef typename synthesize_vovov_expression0::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[0]);
+               const T& v0 = vovov->t0();
+               const T& v1 = vovov->t1();
+               const T& v2 = vovov->t2();
+               const T   c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vovov->f0();
+               binary_functor_t f1 = vovov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovocov_expression3
+         {
+            typedef typename vovocov_t::type3 node_type;
+            typedef typename vovocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 v1) o1 c) o2 v2
+               typedef typename synthesize_vovoc_expression0::node_type vovoc_t;
+               const vovoc_t* vovoc = dynamic_cast<const vovoc_t*>(branch[0]);
+               const T& v0 = vovoc->t0();
+               const T& v1 = vovoc->t1();
+               const T   c = vovoc->t2();
+               const T& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vovoc->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vovoc->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vovoc->f0();
+               binary_functor_t f1 = vovoc->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovov_expression3
+         {
+            typedef typename vocovov_t::type3 node_type;
+            typedef typename vocovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 c) o1 v1) o2 v2
+               typedef typename synthesize_vocov_expression0::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[0]);
+               const T& v0 = vocov->t0();
+               const T&  c = vocov->t1();
+               const T& v1 = vocov->t2();
+               const T& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vocov->f0();
+               binary_functor_t f1 = vocov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovov_expression3
+         {
+            typedef typename covovov_t::type3 node_type;
+            typedef typename covovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((c o0 v0) o1 v1) o2 v2
+               typedef typename synthesize_covov_expression0::node_type covov_t;
+               const covov_t* covov = dynamic_cast<const covov_t*>(branch[0]);
+               const T   c = covov->t0();
+               const T& v0 = covov->t1();
+               const T& v1 = covov->t2();
+               const T& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(covov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(covov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = covov->f0();
+               binary_functor_t f1 = covov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covocov_expression3
+         {
+            typedef typename covocov_t::type3 node_type;
+            typedef typename covocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((c0 o0 v0) o1 c1) o2 v1
+               typedef typename synthesize_covoc_expression0::node_type covoc_t;
+               const covoc_t* covoc = dynamic_cast<const covoc_t*>(branch[0]);
+               const T  c0 = covoc->t0();
+               const T& v0 = covoc->t1();
+               const T  c1 = covoc->t2();
+               const T& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(covoc->f0());
+               const details::operator_type o1 = expr_gen.get_operator(covoc->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = covoc->f0();
+               binary_functor_t f1 = covoc->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovoc_expression3
+         {
+            typedef typename vocovoc_t::type3 node_type;
+            typedef typename vocovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 c0) o1 v1) o2 c1
+               typedef typename synthesize_vocov_expression0::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[0]);
+               const T& v0 = vocov->t0();
+               const T  c0 = vocov->t1();
+               const T& v1 = vocov->t2();
+               const T  c1 = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vocov->f0();
+               binary_functor_t f1 = vocov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovoc_expression3
+         {
+            typedef typename covovoc_t::type3 node_type;
+            typedef typename covovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((c0 o0 v0) o1 v1) o2 c1
+               typedef typename synthesize_covov_expression0::node_type covov_t;
+               const covov_t* covov = dynamic_cast<const covov_t*>(branch[0]);
+               const T  c0 = covov->t0();
+               const T& v0 = covov->t1();
+               const T& v1 = covov->t2();
+               const T  c1 = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = expr_gen.get_operator(covov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(covov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = covov->f0();
+               binary_functor_t f1 = covov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vococov_expression3
+         {
+            typedef typename vococov_t::type3 node_type;
+            typedef typename vococov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 c0) o1 c1) o2 v1
+               typedef typename synthesize_vococ_expression0::node_type vococ_t;
+               const vococ_t* vococ = dynamic_cast<const vococ_t*>(branch[0]);
+               const T& v0 = vococ->t0();
+               const T  c0 = vococ->t1();
+               const T  c1 = vococ->t2();
+               const T& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vococ->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vococ->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vococ->f0();
+               binary_functor_t f1 = vococ->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovov_expression4
+         {
+            typedef typename vovovov_t::type4 node_type;
+            typedef typename vovovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // (v0 o0 (v1 o1 v2)) o2 v3
+               typedef typename synthesize_vovov_expression1::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[0]);
+               const T& v0 = vovov->t0();
+               const T& v1 = vovov->t1();
+               const T& v2 = vovov->t2();
+               const T& v3 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vovov->f0();
+               binary_functor_t f1 = vovov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovovoc_expression4
+         {
+            typedef typename vovovoc_t::type4 node_type;
+            typedef typename vovovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 (v1 o1 v2)) o2 c)
+               typedef typename synthesize_vovov_expression1::node_type vovov_t;
+               const vovov_t* vovov = dynamic_cast<const vovov_t*>(branch[0]);
+               const T& v0 = vovov->t0();
+               const T& v1 = vovov->t1();
+               const T& v2 = vovov->t2();
+               const T   c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = expr_gen.get_operator(vovov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vovov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vovov->f0();
+               binary_functor_t f1 = vovov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vovocov_expression4
+         {
+            typedef typename vovocov_t::type4 node_type;
+            typedef typename vovocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 (v1 o1 c)) o2 v1)
+               typedef typename synthesize_vovoc_expression1::node_type vovoc_t;
+               const vovoc_t* vovoc = dynamic_cast<const vovoc_t*>(branch[0]);
+               const T& v0 = vovoc->t0();
+               const T& v1 = vovoc->t1();
+               const T   c = vovoc->t2();
+               const T& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vovoc->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vovoc->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vovoc->f0();
+               binary_functor_t f1 = vovoc->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovov_expression4
+         {
+            typedef typename vocovov_t::type4 node_type;
+            typedef typename vocovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 (c o1 v1)) o2 v2)
+               typedef typename synthesize_vocov_expression1::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[0]);
+               const T& v0 = vocov->t0();
+               const T   c = vocov->t1();
+               const T& v1 = vocov->t2();
+               const T& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vocov->f0();
+               binary_functor_t f1 = vocov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovov_expression4
+         {
+            typedef typename covovov_t::type4 node_type;
+            typedef typename covovov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((c o0 (v0 o1 v1)) o2 v2)
+               typedef typename synthesize_covov_expression1::node_type covov_t;
+               const covov_t* covov = dynamic_cast<const covov_t*>(branch[0]);
+               const T   c = covov->t0();
+               const T& v0 = covov->t1();
+               const T& v1 = covov->t2();
+               const T& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(covov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(covov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = covov->f0();
+               binary_functor_t f1 = covov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covocov_expression4
+         {
+            typedef typename covocov_t::type4 node_type;
+            typedef typename covocov_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((c0 o0 (v0 o1 c1)) o2 v1)
+               typedef typename synthesize_covoc_expression1::node_type covoc_t;
+               const covoc_t* covoc = dynamic_cast<const covoc_t*>(branch[0]);
+               const T  c0 = covoc->t0();
+               const T& v0 = covoc->t1();
+               const T  c1 = covoc->t2();
+               const T& v1 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
+               const details::operator_type o0 = expr_gen.get_operator(covoc->f0());
+               const details::operator_type o1 = expr_gen.get_operator(covoc->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = covoc->f0();
+               binary_functor_t f1 = covoc->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vocovoc_expression4
+         {
+            typedef typename vocovoc_t::type4 node_type;
+            typedef typename vocovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((v0 o0 (c0 o1 v1)) o2 c1)
+               typedef typename synthesize_vocov_expression1::node_type vocov_t;
+               const vocov_t* vocov = dynamic_cast<const vocov_t*>(branch[0]);
+               const T& v0 = vocov->t0();
+               const T  c0 = vocov->t1();
+               const T& v1 = vocov->t2();
+               const T  c1 = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = expr_gen.get_operator(vocov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(vocov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = vocov->f0();
+               binary_functor_t f1 = vocov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_covovoc_expression4
+         {
+            typedef typename covovoc_t::type4 node_type;
+            typedef typename covovoc_t::sf4_type sf4_type;
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            {
+               // ((c0 o0 (v0 o1 v1)) o2 c1)
+               typedef typename synthesize_covov_expression1::node_type covov_t;
+               const covov_t* covov = dynamic_cast<const covov_t*>(branch[0]);
+               const T  c0 = covov->t0();
+               const T& v0 = covov->t1();
+               const T& v1 = covov->t2();
+               const T  c1 = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
+               const details::operator_type o0 = expr_gen.get_operator(covov->f0());
+               const details::operator_type o1 = expr_gen.get_operator(covov->f1());
+               const details::operator_type o2 = operation;
+               binary_functor_t f0 = covov->f0();
+               binary_functor_t f1 = covov->f1();
+               binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
+               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
+               expr_gen.node_allocator_->free(branch[0]);
+               expr_gen.node_allocator_->free(branch[1]);
+               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
+               if (expr_gen.sf4_optimizable(sf4id,sf4))
+                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               if (!expr_gen.valid_operator(o2,f2))
+                  return error_node();
+               else
+                  return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+         };
+
+         struct synthesize_vococov_expression4
+         {
+            typedef typename vococov_t::type4 node_type;
+            static inline expression_node_ptr process(expression_generator<Type>&, const details::operator_type&, expression_node_ptr (&)[2])
+            {
+               // ((v0 o0 (c0 o1 c1)) o2 v1) - Not possible
+               return error_node();
+            }
+         };
+
+         inline expression_node_ptr synthesize_uvouv_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
+         {
+            // Definition: uv o uv
+            details::operator_type o0 = dynamic_cast<details::uv_base_node<Type>*>(branch[0])->operation();
+            details::operator_type o1 = dynamic_cast<details::uv_base_node<Type>*>(branch[1])->operation();
+            const Type& v0 = dynamic_cast<details::uv_base_node<Type>*>(branch[0])->v();
+            const Type& v1 = dynamic_cast<details::uv_base_node<Type>*>(branch[1])->v();
+            unary_functor_t u0 = reinterpret_cast<unary_functor_t>(0);
+            unary_functor_t u1 = reinterpret_cast<unary_functor_t>(0);
+            binary_functor_t f = reinterpret_cast<binary_functor_t>(0);
+
+            if (!valid_operator(o0,u0))
+               return error_node();
+            else if (!valid_operator(o1,u1))
+               return error_node();
+            else if (!valid_operator(operation,f))
+               return error_node();
 
             expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vovov1_expression_impl<op1<Type> >(v0,branch[1]); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-
-         template <typename Operation1>
-         inline expression_node_ptr synthesize_vovov2_expression_impl(T& v0, expression_node_ptr node)
-         {
-            details::operator_type op = dynamic_cast<details::vov_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vovov2_node<T,op1<T>,Operation1> >((*dynamic_cast<details::vov_node<T,op1<T> >*>(node)),v0);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_vovov2_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            T& v0 = dynamic_cast<details::variable_node<T>*>(branch[1])->ref();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vovov2_expression_impl<op1<Type> >(v0,branch[0]); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
+            result = node_allocator_->allocate_rrrrr<typename details::uvouv_node<Type> >(v0,v1,u0,u1,f);
 
             node_allocator_->free(branch[0]);
-
-            return result;
-         }
-
-         template <typename Operation1>
-         inline expression_node_ptr synthesize_covov1_expression_impl(const T& c, expression_node_ptr node)
-         {
-            details::operator_type op = dynamic_cast<details::vov_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::covov1_node<Type,Operation1,op1<Type> > >(c,(*dynamic_cast<details::vov_node<T,op1<T> >*>(node)));
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_covov1_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (c)o(vov)
-            T c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_covov1_expression_impl<op1<Type> >(c,branch[1]); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
             node_allocator_->free(branch[1]);
-
             return result;
          }
-
-         template <typename Operation2>
-         inline expression_node_ptr synthesize_covov2_expression_impl(expression_node_ptr node, T& v)
-         {
-            details::operator_type op = dynamic_cast<details::cov_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::covov2_node<Type,op1<T>,Operation2> >((*dynamic_cast<details::cov_node<T,op1<T> >*>(node)),v);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_covov2_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (cov)o(v)
-            T& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_covov2_expression_impl<op1<Type> >(branch[0],v); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
-
-            return result;
-         }
-
-         template <typename Operation1>
-         inline expression_node_ptr synthesize_vovoc1_expression_impl(const T& v, expression_node_ptr node)
-         {
-            details::operator_type op = dynamic_cast<details::voc_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vovoc1_node<Type,Operation1,op1<Type> > >(v,(*dynamic_cast<details::voc_node<T,op1<T> >*>(node)));
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_vovoc1_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (v)o(voc)
-            T& v = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vovoc1_expression_impl<op1<Type> >(v,branch[1]); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-
-         template <typename Operation2>
-         inline expression_node_ptr synthesize_vovoc2_expression_impl(expression_node_ptr node, const T& c)
-         {
-            details::operator_type op = dynamic_cast<details::vov_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vovoc2_node<Type,op1<T>,Operation2> >((*dynamic_cast<details::vov_node<T,op1<T> >*>(node)),c);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_vovoc2_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (vov)o(c)
-            T c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vovoc2_expression_impl<op1<Type> >(branch[0],c); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-
-         template <typename Operation1>
-         inline expression_node_ptr synthesize_covoc1_expression_impl(const T& c, expression_node_ptr node)
-         {
-            details::operator_type op = dynamic_cast<details::voc_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_cr<typename details::covoc1_node<Type,Operation1,op1<Type> > >(c,(*dynamic_cast<details::voc_node<T,op1<T> >*>(node)));
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_covoc1_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (c)o(voc)
-            T c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_covoc1_expression_impl<op1<Type> >(c,branch[1]); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-
-         template <typename Operation2>
-         inline expression_node_ptr synthesize_covoc2_expression_impl(expression_node_ptr node, const T& c)
-         {
-            details::operator_type op = dynamic_cast<details::cov_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::covoc2_node<Type,op1<T>,Operation2> >((*dynamic_cast<details::cov_node<T,op1<T> >*>(node)),c);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_covoc2_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (cov)o(c)
-            T c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_covoc2_expression_impl<op1<Type> >(branch[0],c); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-
-         template <typename Operation1>
-         inline expression_node_ptr synthesize_vocov1_expression_impl(const T& v, expression_node_ptr node)
-         {
-            details::operator_type op = dynamic_cast<details::cov_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vocov1_node<Type,Operation1,op1<Type> > >(v,(*dynamic_cast<details::cov_node<T,op1<T> >*>(node)));
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_vocov1_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (v)o(cov)
-            T& v = dynamic_cast<details::variable_node<T>*>(branch[0])->ref();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vocov1_expression_impl<op1<Type> >(v,branch[1]); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-
-         template <typename Operation2>
-         inline expression_node_ptr synthesize_vocov2_expression_impl(expression_node_ptr node, const T& v)
-         {
-            details::operator_type op = dynamic_cast<details::voc_base_node<T>*>(node)->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vocov2_node<Type,op1<T>,Operation2> >((*dynamic_cast<details::voc_node<T,op1<T> >*>(node)),v);
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-
-         inline expression_node_ptr synthesize_vocov2_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
-         {
-            // Definition: (voc)o(v)
-            T& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
-
-            expression_node_ptr result = error_node();
-
-            switch (operation)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vocov2_expression_impl<op1<Type> >(branch[0],v); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
-
-            return result;
-         }
-
-         #ifndef exprtk_disable_extended_optimisations
-         template <typename Op1, typename Op2>
-         inline expression_node_ptr synthesize_vovovov_expression_impl2(expression_node_ptr (&node)[2])
-         {
-            details::operator_type op = dynamic_cast<details::vov_base_node<T>*>(node[1])->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rr<typename details::vovovov_node<Type,Op1,Op2,op1<T> > >((*dynamic_cast<details::vov_node<T,Op1>*>(node[0])),(*dynamic_cast<details::vov_node<T,op1<T> >*>(node[1])));
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         #else
-         template <typename Op1, typename Op2>
-         inline expression_node_ptr synthesize_vovovov_expression_impl2(expression_node_ptr (&)[2])
-         {
-            return error_node();
-         #endif
-         }
-
-         #ifndef exprtk_disable_extended_optimisations
-         template <typename Operation2>
-         inline expression_node_ptr synthesize_vovovov_expression_impl1(expression_node_ptr (&node)[2])
-         {
-            details::operator_type op = dynamic_cast<details::vov_base_node<T>*>(node[0])->operation();
-
-            switch (op)
-            {
-               #define case_stmt(op0,op1) case op0 : return synthesize_vovovov_expression_impl2<op1<T>,Operation2>(node); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-         }
-         #else
-         template <typename Operation2>
-         inline expression_node_ptr synthesize_vovovov_expression_impl1(expression_node_ptr (&)[2])
-         {
-            return error_node();
-         }
-         #endif
-
-         #ifndef exprtk_disable_extended_optimisations
-         inline expression_node_ptr synthesize_vovovov_expression(const details::operator_type& opr, expression_node_ptr (&branch)[2])
-         {
-            //Definition: (vov)o(vov)
-            expression_node_ptr result = error_node();
-
-            switch (opr)
-            {
-               #define case_stmt(op0,op1) case op0 : result = synthesize_vovovov_expression_impl1<op1<T> >(branch); break;
-               basic_opr_switch_statements
-               #ifndef exprtk_disable_extended_operator_optimizations
-               extended_opr_switch_statements
-               #endif
-               #undef case_stmt
-               default : return error_node();
-            }
-
-            node_allocator_->free(branch[0]);
-            node_allocator_->free(branch[1]);
-
-            return result;
-         }
-         #else
-         inline expression_node_ptr synthesize_vovovov_expression(const details::operator_type&, expression_node_ptr (&)[2])
-         {
-            return error_node();
-         }
-         #endif
 
          #undef basic_opr_switch_statements
          #undef extended_opr_switch_statements
+         #undef unary_opr_switch_statements
 
          #ifndef exprtk_disable_string_capabilities
          template <typename T0, typename T1>
@@ -9843,7 +11857,6 @@ namespace exprtk
          {
             std::string& s0 = dynamic_cast<details::stringvar_node<Type>*>(branch[0])->ref();
             std::string& s1 = dynamic_cast<details::stringvar_node<Type>*>(branch[1])->ref();
-
             return synthesize_sos_expression_impl<std::string&,std::string&>(opr,s0,s1);
          }
 
@@ -9852,7 +11865,6 @@ namespace exprtk
             std::string& s0 = dynamic_cast<     details::stringvar_node<Type>*>(branch[0])->ref();
             std::string  s1 = dynamic_cast<details::string_literal_node<Type>*>(branch[1])->str();
             node_allocator_->free(branch[1]);
-
             return synthesize_sos_expression_impl<std::string&,const std::string>(opr,s0,s1);
          }
 
@@ -9861,7 +11873,6 @@ namespace exprtk
             std::string  s0 = dynamic_cast<details::string_literal_node<Type>*>(branch[0])->str();
             std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
             node_allocator_->free(branch[0]);
-
             return synthesize_sos_expression_impl<const std::string,std::string&>(opr,s0,s1);
          }
 
@@ -9886,10 +11897,8 @@ namespace exprtk
                node_allocator_->free(temp);
                result = node_allocator_->allocate<literal_node_t>(v);
             }
-
             node_allocator_->free(branch[0]);
             node_allocator_->free(branch[1]);
-
             return result;
          }
          #endif
@@ -9907,7 +11916,6 @@ namespace exprtk
                     if (details::is_string_node(branch[1]))       return synthesize_csos_expression(opr,branch);
                else if (details::is_const_string_node(branch[1])) return synthesize_csocs_expression(opr,branch);
             }
-
             return error_node();
          }
          #else
@@ -9931,13 +11939,10 @@ namespace exprtk
                const std::string s0 = dynamic_cast<details::string_literal_node<Type>*>(branch[0])->str();
                const std::string s1 = dynamic_cast<details::string_literal_node<Type>*>(branch[1])->str();
                const std::string s2 = dynamic_cast<details::string_literal_node<Type>*>(branch[2])->str();
-
                Type v = (((s0 <= s1) && (s1 <= s2)) ? Type(1) : Type(0));
-
                node_allocator_->free(branch[0]);
                node_allocator_->free(branch[1]);
                node_allocator_->free(branch[2]);
-
                return node_allocator_->allocate_c<details::literal_node<Type> >(v);
             }
             else if (
@@ -9949,9 +11954,7 @@ namespace exprtk
                std::string& s0 = dynamic_cast<details::stringvar_node<Type>*>(branch[0])->ref();
                std::string& s1 = dynamic_cast<details::stringvar_node<Type>*>(branch[1])->ref();
                std::string& s2 = dynamic_cast<details::stringvar_node<Type>*>(branch[2])->ref();
-
                typedef typename details::sosos_node<Type,std::string&,std::string&,std::string&,details::inrange_op<Type> > inrange_t;
-
                return node_allocator_->allocate_type<inrange_t,std::string&,std::string&,std::string&>(s0,s1,s2);
             }
             else if (
@@ -9963,11 +11966,9 @@ namespace exprtk
                std::string  s0 = dynamic_cast<details::string_literal_node<Type>*>(branch[0])->str();
                std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
                std::string  s2 = dynamic_cast<details::string_literal_node<Type>*>(branch[2])->str();
-
                typedef typename details::sosos_node<Type,std::string,std::string&,std::string,details::inrange_op<Type> > inrange_t;
                node_allocator_->free(branch[0]);
                node_allocator_->free(branch[2]);
-
                return node_allocator_->allocate_type<inrange_t,std::string,std::string&,std::string>(s0,s1,s2);
             }
             else if (
@@ -9979,10 +11980,8 @@ namespace exprtk
                std::string&  s0 = dynamic_cast<     details::stringvar_node<Type>*>(branch[0])->ref();
                std::string   s1 = dynamic_cast<details::string_literal_node<Type>*>(branch[1])->str();
                std::string&  s2 = dynamic_cast<     details::stringvar_node<Type>*>(branch[2])->ref();
-
                typedef typename details::sosos_node<Type,std::string&,std::string,std::string&,details::inrange_op<Type> > inrange_t;
                node_allocator_->free(branch[1]);
-
                return node_allocator_->allocate_type<inrange_t,std::string&,std::string,std::string&>(s0,s1,s2);
             }
             else if (
@@ -9994,10 +11993,8 @@ namespace exprtk
                std::string& s0 = dynamic_cast<     details::stringvar_node<Type>*>(branch[0])->ref();
                std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
                std::string  s2 = dynamic_cast<details::string_literal_node<Type>*>(branch[2])->str();
-
                typedef typename details::sosos_node<Type,std::string&,std::string&,std::string,details::inrange_op<Type> > inrange_t;
                node_allocator_->free(branch[2]);
-
                return node_allocator_->allocate_type<inrange_t,std::string&,std::string&,std::string>(s0,s1,s2);
             }
             else if (
@@ -10009,10 +12006,8 @@ namespace exprtk
                std::string  s0 = dynamic_cast<details::string_literal_node<Type>*>(branch[0])->str();
                std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
                std::string& s2 = dynamic_cast<     details::stringvar_node<Type>*>(branch[2])->ref();
-
                typedef typename details::sosos_node<Type,std::string,std::string&,std::string&,details::inrange_op<Type> > inrange_t;
                node_allocator_->free(branch[0]);
-
                return node_allocator_->allocate_type<inrange_t,std::string,std::string&,std::string&>(s0,s1,s2);
             }
             else
@@ -10032,14 +12027,12 @@ namespace exprtk
                return error_node();
             else if ((details::e_default != operation) && all_nodes_valid<N>(branch))
             {
-               //Attempt simple constant folding optimization.
+               // Attempt simple constant folding optimization.
                expression_node_ptr expression_point = node_allocator_->allocate<NodeType>(operation,branch);
-
                if (is_constant_foldable<N>(branch))
                {
                   Type v = expression_point->value();
                   node_allocator_->free(expression_point);
-
                   return node_allocator_->allocate<literal_node_t>(v);
                }
                else
@@ -10055,16 +12048,13 @@ namespace exprtk
             if (all_nodes_valid<N>(branch))
             {
                typedef typename details::function_N_node<T,ifunction_t,N> function_N_node_t;
-
-               //Attempt simple constant folding optimization.
+               // Attempt simple constant folding optimization.
                expression_node_ptr expression_point = node_allocator_->allocate<NodeType>(f);
                dynamic_cast<function_N_node_t*>(expression_point)->init_branches(branch);
-
                if (is_constant_foldable<N>(branch))
                {
                   Type v = expression_point->value();
                   node_allocator_->free(expression_point);
-
                   return node_allocator_->allocate<literal_node_t>(v);
                }
                else
@@ -10075,7 +12065,12 @@ namespace exprtk
          }
 
          details::node_allocator* node_allocator_;
-         optimization_level optimization_level_;
+         synthesize_map_t synthesize_map_;
+         unary_op_map_t* unary_op_map_;
+         binary_op_map_t* binary_op_map_;
+         inv_binary_op_map_t* inv_binary_op_map_;
+         sf3_map_t* sf3_map_;
+         sf4_map_t* sf4_map_;
       };
 
       inline void set_error(const parser_error::type& error_type)
@@ -10085,7 +12080,167 @@ namespace exprtk
 
       inline void remove_last_error()
       {
-         error_list_.pop_back();
+         if (!error_list_.empty())
+         {
+            error_list_.pop_back();
+         }
+      }
+
+      inline void load_unary_operations_map(unary_op_map_t& m)
+      {
+         #define register_unary_op(Op,UnaryFunctor) m.insert(std::make_pair(Op,UnaryFunctor<T>::process));
+
+         register_unary_op(details::  e_abs,details::  abs_op)
+         register_unary_op(details:: e_acos,details:: acos_op)
+         register_unary_op(details:: e_asin,details:: asin_op)
+         register_unary_op(details:: e_atan,details:: atan_op)
+         register_unary_op(details:: e_ceil,details:: ceil_op)
+         register_unary_op(details::  e_cos,details::  cos_op)
+         register_unary_op(details:: e_cosh,details:: cosh_op)
+         register_unary_op(details::  e_exp,details::  exp_op)
+         register_unary_op(details::e_floor,details::floor_op)
+         register_unary_op(details::  e_log,details::  log_op)
+         register_unary_op(details::e_log10,details::log10_op)
+         register_unary_op(details::  e_neg,details::  neg_op)
+         register_unary_op(details::  e_pos,details::  pos_op)
+         register_unary_op(details::e_round,details::round_op)
+         register_unary_op(details::  e_sin,details::  sin_op)
+         register_unary_op(details:: e_sinh,details:: sinh_op)
+         register_unary_op(details:: e_sqrt,details:: sqrt_op)
+         register_unary_op(details::  e_tan,details::  tan_op)
+         register_unary_op(details:: e_tanh,details:: tanh_op)
+         register_unary_op(details::  e_cot,details::  cot_op)
+         register_unary_op(details::  e_sec,details::  sec_op)
+         register_unary_op(details::  e_csc,details::  csc_op)
+         register_unary_op(details::  e_r2d,details::  r2d_op)
+         register_unary_op(details::  e_d2r,details::  d2r_op)
+         register_unary_op(details::  e_d2g,details::  d2g_op)
+         register_unary_op(details::  e_g2d,details::  g2d_op)
+         register_unary_op(details:: e_notl,details:: notl_op)
+         register_unary_op(details::  e_sgn,details::  sgn_op)
+         register_unary_op(details::  e_erf,details::  erf_op)
+         register_unary_op(details:: e_erfc,details:: erfc_op)
+         register_unary_op(details:: e_frac,details:: frac_op)
+         register_unary_op(details::e_trunc,details::trunc_op)
+         #undef register_unary_op
+      }
+
+      inline void load_binary_operations_map(binary_op_map_t& m)
+      {
+         #define register_binary_op(Op,BinaryFunctor) m.insert(typename binary_op_map_t::value_type(Op,BinaryFunctor<T>::process));
+
+         register_binary_op(details:: e_add,details:: add_op)
+         register_binary_op(details:: e_sub,details:: sub_op)
+         register_binary_op(details:: e_mul,details:: mul_op)
+         register_binary_op(details:: e_div,details:: div_op)
+         register_binary_op(details:: e_mod,details:: mod_op)
+         register_binary_op(details:: e_pow,details:: pow_op)
+         register_binary_op(details::  e_lt,details::  lt_op)
+         register_binary_op(details:: e_lte,details:: lte_op)
+         register_binary_op(details::  e_gt,details::  gt_op)
+         register_binary_op(details:: e_gte,details:: gte_op)
+         register_binary_op(details::  e_eq,details::  eq_op)
+         register_binary_op(details::  e_ne,details::  ne_op)
+         register_binary_op(details:: e_and,details:: and_op)
+         register_binary_op(details::e_nand,details::nand_op)
+         register_binary_op(details::  e_or,details::  or_op)
+         register_binary_op(details:: e_nor,details:: nor_op)
+         register_binary_op(details:: e_xor,details:: xor_op)
+         #undef register_binary_op
+      }
+
+      inline void load_inv_binary_operations_map(inv_binary_op_map_t& m)
+      {
+         #define register_binary_op(Op,BinaryFunctor) m.insert(typename inv_binary_op_map_t::value_type(BinaryFunctor<T>::process,Op));
+
+         register_binary_op(details:: e_add,details:: add_op)
+         register_binary_op(details:: e_sub,details:: sub_op)
+         register_binary_op(details:: e_mul,details:: mul_op)
+         register_binary_op(details:: e_div,details:: div_op)
+         register_binary_op(details:: e_mod,details:: mod_op)
+         register_binary_op(details:: e_pow,details:: pow_op)
+         register_binary_op(details::  e_lt,details::  lt_op)
+         register_binary_op(details:: e_lte,details:: lte_op)
+         register_binary_op(details::  e_gt,details::  gt_op)
+         register_binary_op(details:: e_gte,details:: gte_op)
+         register_binary_op(details::  e_eq,details::  eq_op)
+         register_binary_op(details::  e_ne,details::  ne_op)
+         register_binary_op(details:: e_and,details:: and_op)
+         register_binary_op(details::e_nand,details::nand_op)
+         register_binary_op(details::  e_or,details::  or_op)
+         register_binary_op(details:: e_nor,details:: nor_op)
+         register_binary_op(details:: e_xor,details:: xor_op)
+         #undef register_binary_op
+      }
+
+      inline void load_sf3_map(sf3_map_t& sf3_map)
+      {
+         sf3_map["(t+t)/t"] = details::sf00_op<T>::process;
+         sf3_map["(t+t)*t"] = details::sf01_op<T>::process;
+         sf3_map["(t+t)-t"] = details::sf02_op<T>::process;
+         sf3_map["(t+t)+t"] = details::sf03_op<T>::process;
+         sf3_map["(t-t)/t"] = details::sf04_op<T>::process;
+         sf3_map["(t-t)*t"] = details::sf05_op<T>::process;
+         sf3_map["(t*t)+t"] = details::sf06_op<T>::process;
+         sf3_map["(t*t)-t"] = details::sf07_op<T>::process;
+         sf3_map["(t*t)/t"] = details::sf08_op<T>::process;
+         sf3_map["(t*t)*t"] = details::sf09_op<T>::process;
+         sf3_map["(t/t)+t"] = details::sf10_op<T>::process;
+         sf3_map["(t/t)-t"] = details::sf11_op<T>::process;
+         sf3_map["(t/t)/t"] = details::sf12_op<T>::process;
+         sf3_map["(t/t)*t"] = details::sf13_op<T>::process;
+         sf3_map["t/(t+t)"] = details::sf14_op<T>::process;
+         sf3_map["t/(t-t)"] = details::sf15_op<T>::process;
+         sf3_map["t/(t*t)"] = details::sf16_op<T>::process;
+         sf3_map["t/(t/t)"] = details::sf17_op<T>::process;
+         sf3_map["t/(t/t)"] = details::sf18_op<T>::process;
+         sf3_map["t-(t/t)"] = details::sf19_op<T>::process;
+         sf3_map["t-(t/t)"] = details::sf20_op<T>::process;
+         sf3_map["t-(t*t)"] = details::sf21_op<T>::process;
+         sf3_map["t+(t*t)"] = details::sf22_op<T>::process;
+         sf3_map["t+(t/t)"] = details::sf23_op<T>::process;
+         sf3_map["t+(t+t)"] = details::sf24_op<T>::process;
+         sf3_map["t+(t-t)"] = details::sf25_op<T>::process;
+      }
+
+      inline void load_sf4_map(sf4_map_t& sf4_map)
+      {
+         sf4_map["t+((t+t)/t)"] = details::sf43_op<T>::process;
+         sf4_map["t+((t+t)*t)"] = details::sf44_op<T>::process;
+         sf4_map["t+((t-t)/t)"] = details::sf45_op<T>::process;
+         sf4_map["t+((t-t)*t)"] = details::sf46_op<T>::process;
+         sf4_map["t+((t*t)/t)"] = details::sf47_op<T>::process;
+         sf4_map["t+((t*t)*t)"] = details::sf48_op<T>::process;
+         sf4_map["t+((t/t)+t)"] = details::sf49_op<T>::process;
+         sf4_map["t+((t/t)/t)"] = details::sf50_op<T>::process;
+         sf4_map["t+((t/t)*t)"] = details::sf51_op<T>::process;
+         sf4_map["t-((t+t)/t)"] = details::sf52_op<T>::process;
+         sf4_map["t-((t+t)*t)"] = details::sf53_op<T>::process;
+         sf4_map["t-((t-t)/t)"] = details::sf54_op<T>::process;
+         sf4_map["t-((t-t)*t)"] = details::sf55_op<T>::process;
+         sf4_map["t-((t*t)/t)"] = details::sf56_op<T>::process;
+         sf4_map["t-((t*t)*t)"] = details::sf57_op<T>::process;
+         sf4_map["t-((t/t)/t)"] = details::sf58_op<T>::process;
+         sf4_map["t-((t/t)*t)"] = details::sf59_op<T>::process;
+         sf4_map["((t+t)*t)-t"] = details::sf60_op<T>::process;
+         sf4_map["((t-t)*t)-t"] = details::sf61_op<T>::process;
+         sf4_map["((t*t)*t)-t"] = details::sf62_op<T>::process;
+         sf4_map["((t/t)*t)-t"] = details::sf63_op<T>::process;
+         sf4_map["((t+t)/t)-t"] = details::sf64_op<T>::process;
+         sf4_map["((t-t)/t)-t"] = details::sf65_op<T>::process;
+         sf4_map["((t*t)/t)-t"] = details::sf66_op<T>::process;
+         sf4_map["((t/t)/t)-t"] = details::sf67_op<T>::process;
+         sf4_map["(t*t)+(t*t)"] = details::sf68_op<T>::process;
+         sf4_map["(t*t)-(t*t)"] = details::sf69_op<T>::process;
+         sf4_map["(t*t)+(t/t)"] = details::sf70_op<T>::process;
+         sf4_map["(t*t)-(t/t)"] = details::sf71_op<T>::process;
+         sf4_map["(t/t)+(t/t)"] = details::sf72_op<T>::process;
+         sf4_map["(t/t)-(t/t)"] = details::sf73_op<T>::process;
+         sf4_map["(t/t)-(t*t)"] = details::sf74_op<T>::process;
+         sf4_map["t/(t+(t*t))"] = details::sf75_op<T>::process;
+         sf4_map["t/(t-(t*t))"] = details::sf76_op<T>::process;
+         sf4_map["t*(t+(t*t))"] = details::sf77_op<T>::process;
+         sf4_map["t*(t-(t*t))"] = details::sf78_op<T>::process;
       }
 
    private:
@@ -10103,16 +12258,21 @@ namespace exprtk
       std::size_t precompile_options_;
       std::deque<std::string> symbol_name_cache_;
       std::deque<parser_error::type> error_list_;
-      std::multimap<std::string,details::base_operation_t,details::ilesscompare> base_ops_map_;
+      base_ops_map_t base_ops_map_;
+      unary_op_map_t unary_op_map_;
+      binary_op_map_t binary_op_map_;
+      inv_binary_op_map_t inv_binary_op_map_;
+      sf3_map_t sf3_map_;
+      sf4_map_t sf4_map_;
 
       lexer::helper::helper_assembly helper_assembly_;
 
-      lexer::helper::commutative_inserter  commutative_inserter_;
-      lexer::helper::operator_joiner       operator_joiner_;
-      lexer::helper::symbol_replacer       symbol_replacer_;
-      lexer::helper::bracket_checker       bracket_checker_;
-      lexer::helper::numeric_checker       numeric_checker_;
-      lexer::helper::sequence_validator    sequence_validator_;
+      lexer::helper::commutative_inserter commutative_inserter_;
+      lexer::helper::operator_joiner      operator_joiner_;
+      lexer::helper::symbol_replacer      symbol_replacer_;
+      lexer::helper::bracket_checker      bracket_checker_;
+      lexer::helper::numeric_checker      numeric_checker_;
+      lexer::helper::sequence_validator   sequence_validator_;
    };
 
    template <typename T>
@@ -10144,16 +12304,13 @@ namespace exprtk
       symbol_table<T>& sym_table = e.get_symbol_table();
       if (!sym_table.valid())
          return std::numeric_limits<T>::quiet_NaN();
-
       details::variable_node<T>* var = sym_table.get_variable(variable_name);
-
       if (var)
       {
          T& x = var->ref();
          T  x_original = x;
          T result = integrate(e,x,r0,r1,number_of_intervals);
          x = x_original;
-
          return result;
       }
       else
@@ -10163,7 +12320,7 @@ namespace exprtk
    template <typename T>
    inline T derivative(expression<T>& e,
                        T& x,
-                       const double& h = 0.00001)
+                       const T& h = 0.00001)
    {
       T x_init = x;
       x = x_init + T(2.0) * h;
@@ -10181,14 +12338,12 @@ namespace exprtk
    template <typename T>
    inline T derivative(expression<T>& e,
                        const std::string& variable_name,
-                       const double& h = 0.00001)
+                       const T& h = 0.00001)
    {
       symbol_table<T>& sym_table = e.get_symbol_table();
       if (!sym_table.valid())
          return std::numeric_limits<T>::quiet_NaN();
-
       details::variable_node<T>* var = sym_table.get_variable(variable_name);
-
       if (var)
       {
          T& x = var->ref();
@@ -10214,7 +12369,7 @@ namespace exprtk
    template <typename T>
    inline bool compute(const std::string& expression_string, T& result)
    {
-      //No variables
+      // No variables
       symbol_table<T> symbol_table;
       symbol_table.add_constants();
 
@@ -10235,16 +12390,13 @@ namespace exprtk
                        const T& x,
                        T& result)
    {
-      //Only 'x'
+      // Only 'x'
       static const std::string x_var("x");
-
       symbol_table<T> symbol_table;
       symbol_table.add_constants();
       symbol_table.add_variable(x_var,x);
-
       expression<T> expression;
       parser<T> parser;
-
       if (parser.compile(expression_string,expression))
       {
          result = expression.value();
@@ -10259,18 +12411,15 @@ namespace exprtk
                        const T&x, const T& y,
                        T& result)
    {
-      //Only 'x' and 'y'
+      // Only 'x' and 'y'
       static const std::string x_var("x");
       static const std::string y_var("y");
-
       symbol_table<T> symbol_table;
       symbol_table.add_constants();
       symbol_table.add_variable(x_var,x);
       symbol_table.add_variable(y_var,y);
-
       expression<T> expression;
       parser<T> parser;
-
       if (parser.compile(expression_string,expression))
       {
          result = expression.value();
@@ -10285,20 +12434,17 @@ namespace exprtk
                        const T& x, const T& y, const T& z,
                        T& result)
    {
-      //Only 'x', 'y' or 'z'
+      // Only 'x', 'y' or 'z'
       static const std::string x_var("x");
       static const std::string y_var("y");
       static const std::string z_var("z");
-
       symbol_table<T> symbol_table;
       symbol_table.add_constants();
       symbol_table.add_variable(x_var,x);
       symbol_table.add_variable(y_var,y);
       symbol_table.add_variable(z_var,z);
-
       expression<T> expression;
       parser<T> parser;
-
       if (parser.compile(expression_string,expression))
       {
          result = expression.value();
@@ -10324,7 +12470,7 @@ namespace exprtk
                                   const Type c5,  const Type c4, const Type c3, const Type c2, const Type c1,
                                   const Type c0)
          {
-            //p(x) = c_10x^10 + c_9x^9 + c_8x^8 + c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_10x^10 + c_9x^9 + c_8x^8 + c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return ((((((((((c10 * x + c9) * x + c8) * x + c7) * x + c6) * x + c5) * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10336,7 +12482,7 @@ namespace exprtk
                                   const Type c9, const Type c8, const Type c7, const Type c6, const Type c5,
                                   const Type c4, const Type c3, const Type c2, const Type c1, const Type c0)
          {
-            //p(x) = c_9x^9 + c_8x^8 + c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_9x^9 + c_8x^8 + c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return (((((((((c9 * x + c8) * x + c7) * x + c6) * x + c5) * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10348,7 +12494,7 @@ namespace exprtk
                                   const Type c8, const Type c7, const Type c6, const Type c5, const Type c4,
                                   const Type c3, const Type c2, const Type c1, const Type c0)
          {
-            //p(x) = c_8x^8 + c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_8x^8 + c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return ((((((((c8 * x + c7) * x + c6) * x + c5) * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10360,7 +12506,7 @@ namespace exprtk
                                   const Type c7, const Type c6, const Type c5, const Type c4, const Type c3,
                                   const Type c2, const Type c1, const Type c0)
          {
-            //p(x) = c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_7x^7 + c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return (((((((c7 * x + c6) * x + c5) * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10372,7 +12518,7 @@ namespace exprtk
                                   const Type c6, const Type c5, const Type c4, const Type c3, const Type c2,
                                   const Type c1, const Type c0)
          {
-            //p(x) = c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_6x^6 + c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return ((((((c6 * x + c5) * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10384,7 +12530,7 @@ namespace exprtk
                                   const Type c5, const Type c4, const Type c3, const Type c2,
                                   const Type c1, const Type c0)
          {
-            //p(x) = c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_5x^5 + c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return (((((c5 * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10394,7 +12540,7 @@ namespace exprtk
       {
          static inline T evaluate(const Type x, const Type c4, const Type c3, const Type c2, const Type c1, const Type c0)
          {
-            //p(x) = c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_4x^4 + c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return ((((c4 * x + c3) * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10404,7 +12550,7 @@ namespace exprtk
       {
          static inline T evaluate(const Type x, const Type c3, const Type c2, const Type c1, const Type c0)
          {
-            //p(x) = c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_3x^3 + c_2x^2 + c_1x^1 + c_0x^0
             return (((c3 * x + c2) * x + c1) * x + c0);
          }
       };
@@ -10414,7 +12560,7 @@ namespace exprtk
       {
          static inline T evaluate(const Type x, const Type c2, const Type c1, const Type c0)
          {
-            //p(x) = c_2x^2 + c_1x^1 + c_0x^0
+            // p(x) = c_2x^2 + c_1x^1 + c_0x^0
             return ((c2 * x + c1) * x + c0);
          }
       };
@@ -10424,7 +12570,7 @@ namespace exprtk
       {
          static inline T evaluate(const Type x, const Type c1, const Type c0)
          {
-            //p(x) = c_1x^1 + c_0x^0
+            // p(x) = c_1x^1 + c_0x^0
             return (c1 * x + c0);
          }
       };
@@ -10534,67 +12680,98 @@ namespace exprtk
                                              "clamp(-1.0, sin(2 * pi * xx) + cos(yy / 2 * pi), +1.0)",
                                              "max(3.33, min(sqrt(1 - sin(2 * xx) + cos(pi / yy) / 3), 1.11))",
                                              "if(avg(xx,yy) <= xx + yy, xx - yy, xx * yy) + 2 * pi / xx",
-                                             "1.1xx^1 + 2.2yy^2 - 3.3xx^3 + 4.4yy^4 - 5.5xx^5 + 6.6yy^6 - 7.7xx^27 + 8.8yy^55"
+                                             "1.1xx^1 + 2.2yy^2 - 3.3xx^3 + 4.4yy^4 - 5.5xx^5 + 6.6yy^6 - 7.7xx^27 + 8.8yy^55",
+                                             "(1.1*(2.2*(3.3*(4.4*(5.5*(6.6*(7.7*(8.8*(9.9+x)))))))))",
+                                             "(((((((((x+9.9)*8.8)*7.7)*6.6)*5.5)*4.4)*3.3)*2.2)*1.1)",
+                                             "(x + y) * z", "x + (y * z)", "(x + y) * 7", "x + (y * 7)",
+                                             "(x + 7) * y", "x + (7 * y)", "(7 + x) * y", "7 + (x * y)",
+                                             "(2 + x) * 3", "2 + (x * 3)", "(2 + 3) * x", "2 + (3 * x)",
+                                             "(x + 2) * 3", "x + (2 * 3)",
+                                             "(x + y) * (z / w)", "(x + y) * (z / 7)", "(x + y) * (7 / z)", "(x + 7) * (y / z)",
+                                             "(7 + x) * (y / z)", "(2 + x) * (y / z)", "(x + 2) * (y / 3)", "(2 + x) * (y / 3)",
+                                             "(x + 2) * (3 / y)", "x + (y * (z / w))", "x + (y * (z / 7))", "x + (y * (7 / z))",
+                                             "x + (7 * (y / z))", "7 + (x * (y / z))", "2 + (x * (3 / y))", "x + (2 * (y / 4))",
+                                             "2 + (x * (y / 3))", "x + (2 * (3 / y))",
+                                             "x + ((y * z) / w)", "x + ((y * z) / 7)", "x + ((y * 7) / z)", "x + ((7 * y) / z)",
+                                             "7 + ((y * z) / w)", "2 + ((x * 3) / y)", "x + ((2 * y) / 3)", "2 + ((x * y) / 3)",
+                                             "x + ((2 * 3) / y)", "(((x + y) * z) / w)",
+                                             "(((x + y) * z) / 7)", "(((x + y) * 7) / z)", "(((x + 7) * y) / z)", "(((7 + x) * y) / z)",
+                                             "(((2 + x) * 3) / y)", "(((x + 2) * y) / 3)", "(((2 + x) * y) / 3)", "(((x + 2) * 3) / y)",
+                                             "((x + (y * z)) / w)", "((x + (y * z)) / 7)", "((x + (y * 7)) / y)", "((x + (7 * y)) / z)",
+                                             "((7 + (x * y)) / z)", "((2 + (x * 3)) / y)", "((x + (2 * y)) / 3)", "((2 + (x * y)) / 3)",
+                                             "((x + (2 * 3)) / y)",
+                                             "(xx + yy) * zz", "xx + (yy * zz)",
+                                             "(xx + yy) * 7", "xx + (yy * 7)",
+                                             "(xx + 7) * yy", "xx + (7 * yy)",
+                                             "(7 + xx) * yy", "7 + (xx * yy)",
+                                             "(2 + x) * 3", "2 + (x * 3)",
+                                             "(2 + 3) * x", "2 + (3 * x)",
+                                             "(x + 2) * 3", "x + (2 * 3)",
+                                             "(xx + yy) * (zz / ww)", "(xx + yy) * (zz / 7)",
+                                             "(xx + yy) * (7 / zz)", "(xx + 7) * (yy / zz)",
+                                             "(7 + xx) * (yy / zz)", "(2 + xx) * (yy / zz)",
+                                             "(xx + 2) * (yy / 3)", "(2 + xx) * (yy / 3)",
+                                             "(xx + 2) * (3 / yy)", "xx + (yy * (zz / ww))",
+                                             "xx + (yy * (zz / 7))", "xx + (yy * (7 / zz))",
+                                             "xx + (7 * (yy / zz))", "7 + (xx * (yy / zz))",
+                                             "2 + (xx * (3 / yy))", "xx + (2 * (yy / 4))",
+                                             "2 + (xx * (yy / 3))", "xx + (2 * (3 / yy))",
+                                             "xx + ((yy * zz) / ww)", "xx + ((yy * zz) / 7)",
+                                             "xx + ((yy * 7) / zz)", "xx + ((7 * yy) / zz)",
+                                             "7 + ((yy * zz) / ww)", "2 + ((xx * 3) / yy)",
+                                             "xx + ((2 * yy) / 3)", "2 + ((xx * yy) / 3)",
+                                             "xx + ((2 * 3) / yy)", "(((xx + yy) * zz) / ww)",
+                                             "(((xx + yy) * zz) / 7)", "(((xx + yy) * 7) / zz)",
+                                             "(((xx + 7) * yy) / zz)", "(((7 + xx) * yy) / zz)",
+                                             "(((2 + xx) * 3) / yy)", "(((xx + 2) * yy) / 3)",
+                                             "(((2 + xx) * yy) / 3)", "(((xx + 2) * 3) / yy)",
+                                             "((xx + (yy * zz)) / ww)", "((xx + (yy * zz)) / 7)",
+                                             "((xx + (yy * 7)) / yy)", "((xx + (7 * yy)) / zz)",
+                                             "((7 + (xx * yy)) / zz)", "((2 + (xx * 3)) / yy)",
+                                             "((xx + (2 * yy)) / 3)", "((2 + (xx * yy)) / 3)",
+                                             "((xx + (2 * 3)) / yy)"
                                           };
       static const std::size_t expression_list_size = sizeof(expression_list) / sizeof(std::string);
 
       T  x = T(0);
       T  y = T(0);
+      T  z = T(0);
+      T  w = T(0);
       T xx = T(0);
       T yy = T(0);
+      T zz = T(0);
+      T ww = T(0);
 
       exprtk::symbol_table<T> symbol_table;
       symbol_table.add_constants();
       symbol_table.add_variable( "x", x);
       symbol_table.add_variable( "y", y);
+      symbol_table.add_variable( "z", z);
+      symbol_table.add_variable( "w", w);
       symbol_table.add_variable("xx",xx);
       symbol_table.add_variable("yy",yy);
+      symbol_table.add_variable("zz",zz);
+      symbol_table.add_variable("ww",ww);
 
       typedef typename std::deque<exprtk::expression<T> > expr_list_t;
-      expr_list_t optimized_expr_list;
-      expr_list_t unoptimized_expr_list;
+      expr_list_t expr_list;
 
-      const std::size_t rounds = 100;
+      const std::size_t rounds = 50;
 
-      //Generate optimised expressions
       {
          for (std::size_t r = 0; r < rounds; ++r)
          {
-            optimized_expr_list.clear();
-            exprtk::parser<T> parser;
-
-            for (std::size_t i = 0; i < expression_list_size; ++i)
-            {
-               exprtk::expression<T> expression;
-               expression.register_symbol_table(symbol_table);
-
-               if (!parser.compile(expression_list[i],expression,exprtk::parser<T>::e_all))
-               {
-                  return false;
-               }
-
-               optimized_expr_list.push_back(expression);
-            }
-         }
-      }
-
-      //Generate unoptimised expressions
-      {
-         for (std::size_t r = 0; r < rounds; ++r)
-         {
-            unoptimized_expr_list.clear();
+            expr_list.clear();
             exprtk::parser<T> parser;
             for (std::size_t i = 0; i < expression_list_size; ++i)
             {
                exprtk::expression<T> expression;
                expression.register_symbol_table(symbol_table);
-
-               if (!parser.compile(expression_list[i],expression,exprtk::parser<T>::e_none))
+               if (!parser.compile(expression_list[i],expression))
                {
                   return false;
                }
-
-               unoptimized_expr_list.push_back(expression);
+               expr_list.push_back(expression);
             }
          }
       }
@@ -10605,10 +12782,8 @@ namespace exprtk
          {
             static const T lower_bound = T(-20.0);
             static const T upper_bound = T(+20.0);
-
             T delta = T(0.1);
             T total = T(0.0);
-
             for (x = lower_bound; x <= upper_bound; x += delta)
             {
                for (y = lower_bound; y <= upper_bound; y += delta)
@@ -10616,17 +12791,14 @@ namespace exprtk
                   total += expression.value();
                }
             }
-
             return total;
          }
       };
 
-      for (std::size_t i = 0; i < optimized_expr_list.size(); ++i)
+      for (std::size_t i = 0; i < expr_list.size(); ++i)
       {
-         execute::process( x, y,  optimized_expr_list[i]);
-         execute::process(xx,yy,  optimized_expr_list[i]);
-         execute::process( x, y,unoptimized_expr_list[i]);
-         execute::process(xx,yy,unoptimized_expr_list[i]);
+         execute::process( x, y,  expr_list[i]);
+         execute::process(xx,yy,  expr_list[i]);
       }
 
       {

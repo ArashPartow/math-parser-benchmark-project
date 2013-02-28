@@ -49,15 +49,14 @@ static const double lower_bound_x = -100.0;
 static const double lower_bound_y = -100.0;
 static const double upper_bound_x = +100.0;
 static const double upper_bound_y = +100.0;
-static const double delta = 0.0173;
+static const double delta = 0.0127;
 
 
 template <typename T,
           typename Allocator,
           template <typename,typename> class Sequence>
 bool load_expression(exprtk::symbol_table<T>& symbol_table,
-                     Sequence<exprtk::expression<T>,Allocator>& expr_seq,
-                     const typename exprtk::parser<T>::optimization_level& opt_level)
+                     Sequence<exprtk::expression<T>,Allocator>& expr_seq)
 {
    exprtk::parser<double> parser;
    for (std::size_t i = 0; i < expression_list_size; ++i)
@@ -65,12 +64,11 @@ bool load_expression(exprtk::symbol_table<T>& symbol_table,
       exprtk::expression<double> expression;
       expression.register_symbol_table(symbol_table);
 
-      if (!parser.compile(expression_list[i],expression,opt_level))
+      if (!parser.compile(expression_list[i],expression))
       {
          printf("[load_expression] - Parser Error: %s\tExpression: %s\n",
                 parser.error().c_str(),
                 expression_list[i].c_str());
-
          return false;
       }
 
@@ -176,7 +174,6 @@ bool run_parse_benchmark(exprtk::symbol_table<T>& symbol_table)
             printf("[run_parse_benchmark] - Parser Error: %s\tExpression: %s\n",
                    parser.error().c_str(),
                    expression_list[i].c_str());
-
             return false;
          }
       }
@@ -205,27 +202,15 @@ int main()
    symbol_table.add_variable("x",x);
    symbol_table.add_variable("y",y);
 
-   std::deque<exprtk::expression<double> > optimized_expr_list;
    std::deque<exprtk::expression<double> > expr_list;
 
-   if (!load_expression(symbol_table,optimized_expr_list,exprtk::parser<double>::e_all))
-   {
-      return 1;
-   }
-
-   if (!load_expression(symbol_table,expr_list,exprtk::parser<double>::e_none))
+   if (!load_expression(symbol_table,expr_list))
    {
       return 1;
    }
 
    {
-      std::cout << "--- EXPRTK [All Optimisations] ---" << std::endl;
-      for (std::size_t i = 0; i < optimized_expr_list.size(); ++i)
-      {
-         run_exprtk_benchmark(x,y,optimized_expr_list[i],expression_list[i]);
-      }
-
-      std::cout << "--- EXPRTK [No Optimisations] ---" << std::endl;
+      std::cout << "--- EXPRTK ---" << std::endl;
       for (std::size_t i = 0; i < expr_list.size(); ++i)
       {
          run_exprtk_benchmark(x,y,expr_list[i],expression_list[i]);

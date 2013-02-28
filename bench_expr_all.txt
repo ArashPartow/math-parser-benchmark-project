@@ -4,7 +4,6 @@
 # direkte Rückgabe von Konstanten und Zusammenfassung von Konstanten
 # Alle gleichungen hier können auf eine Konstante zurückgeführt werden
 1
-#sin((1+2/2*3)*4^5)+cos(6*pi)
 
 #
 # Variablen und Variablenzusammenfassung
@@ -28,8 +27,10 @@ a*2
 1.1*a^2 + 2.2*b^3 + 3.3*c^4 + 3.3*a^5
 # hohe exponenten; zeigt ob die optimiert werden?
 1.1*a^7 + 2.2*b^8
+1.1234567*a^17 + 2.1234567*b^28 + 2.1234567*c^38
 
-# Polynome mit floating point exponenten 
+
+# Polynome mit floating point exponenten
 # (std::pow ist langsam für float typem)
 1.1*a^2.01
 1.1*a^2.01 + 2.2*b^3.01
@@ -39,7 +40,7 @@ a*2
 #
 # Optimierungen testen
 #
-# Ausnutzen des Assoziativgesetz 
+# Ausnutzen des Assoziativgesetz
 # assoziativ
 a+b+c
 a*b*c
@@ -47,7 +48,7 @@ a*b*c
 a-b-c
 a/b/c
 
-# 
+#
 a^2+1
 1+a^2
 b^2*2
@@ -56,8 +57,13 @@ b^2*2
 # Gleichungen, die Mängel in der optimierung sichtbar machen
 # -> muParserSSE beschränkte Registerzahl bremst die 2. Gleichung
 # -> muParser optimierer versagt
-(1*(2*(3*(4*(5*(6*(a+b)))))))
-(1*(2*(3*(4*(5*(6*(7*(a+b))))))))
+(1.1*(2.2*(3.3*(4.4*(5.5*(6.6*(7.7*(a+b))))))))
+(1.1*(2.2*(3.3*(4.4*(5.5*(6.6*(7.7*(a+b))))))))
+((((((((a/b)*1.1)*2.2)*3.3)*4.4)*5.5)*6.6)*7.7)
+((((((((a/b)+1.1)+2.2)+3.3)+4.4)+5.5)+6.6)+7.7)
+(2.2+(3.3+(4.4+(5.5+(((((a*b)*9.9)*8.8)*7.7)*6.6)))))
+(2.2*(3.3*(4.4*(5.5*(((((a-b)+9.9)+8.8)+7.7)+6.6)))))
+
 
 
 # Gleichungen von Garry Beenes benchmark
@@ -81,7 +87,7 @@ sqrt(a)<sin(8)
 
 (b+a/b) * (a-b/a)
 a/((a+b)*(a-b))/b
-1-((a*b)+(a/b))-3
+1.1-((a*b)+(a/b))-3.3
 a+b
 (a+b)*3
 (2 * a + 2 * a)
@@ -131,3 +137,15 @@ abs(a)
 (0.1*a+1)*a+1.1
 (0.1*a+1)*a+1.1-sin(a)
 (0.1*a+1)*a+1.1-sin(a)-log(a)/a*3/4
+
+
+#The following should all be completly optimised to a single value
+((2/3)-(3/2))*((3/2)-(2/3))
+1.1234567*(2.1234567/3.1234567)
+(1.1*(2.2/3.3))-4.4
+((7.7*(2.2/3.3))-4.4)^2.1
+(1.1*2.2*3.3*4.4*5.5*6.6*7.7)/(1.1*2.2*3.3*4.4*5.5*6.6*7.7)
+(1-2)+(2-3)+(3-4)+(4-5)+(5-6)+(6-7)
+((7-2)+(2-3)*(3-4))/((4-5)*(5-6)+(6-9))
+sin(pi/2)+cos(pi/2)
+sin((1.1+2.2/2.2*3.3)*4.4^5.5)+cos(6.6*pi)
