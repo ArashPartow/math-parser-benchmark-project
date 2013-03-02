@@ -366,16 +366,16 @@ static const test_t test_list[] =
                            test_t("1.1^(1.1 * 2.2)", 1.25941916576299080582),
                            test_t("2.2^(1.1 * 3.3)",17.49823848953534759743),
                            test_t("3.3^(1.1 * 2.2)",17.98058156638874965269),
-                           test_t("1.23^3 == (1.23 * 1.23 * 1.23)",1.0),
+                           test_t("equal(1.23^3,(1.23 * 1.23 * 1.23))",1.0),
                            test_t("equal(1.23^-3,1/(1.23 * 1.23 * 1.23))",1.0),
-                           test_t("(2.1 + 1.23^3) == (2.1 + [1.23 * 1.23 * 1.23])",1.0),
-                           test_t("(2.1 - 1.23^3) == (2.1 - [1.23 * 1.23 * 1.23])",1.0),
-                           test_t("(2.1 * 1.23^3) == (2.1 * [1.23 * 1.23 * 1.23])",1.0),
-                           test_t("(2.1 / 1.23^3) == (2.1 / [1.23 * 1.23 * 1.23])",1.0),
-                           test_t("(1.23^3 + 2.1) == ({1.23 * 1.23 * 1.23} + 2.1)",1.0),
-                           test_t("(1.23^3 - 2.1) == ({1.23 * 1.23 * 1.23} - 2.1)",1.0),
-                           test_t("(1.23^3 * 2.1) == ({1.23 * 1.23 * 1.23} * 2.1)",1.0),
-                           test_t("(1.23^3 / 2.1) == ({1.23 * 1.23 * 1.23} / 2.1)",1.0),
+                           test_t("equal((2.1 + 1.23^3),(2.1 + [1.23 * 1.23 * 1.23]))",1.0),
+                           test_t("equal((2.1 - 1.23^3),(2.1 - [1.23 * 1.23 * 1.23]))",1.0),
+                           test_t("equal((2.1 * 1.23^3),(2.1 * [1.23 * 1.23 * 1.23]))",1.0),
+                           test_t("equal((2.1 / 1.23^3),(2.1 / [1.23 * 1.23 * 1.23]))",1.0),
+                           test_t("equal((1.23^3 + 2.1),({1.23 * 1.23 * 1.23} + 2.1))",1.0),
+                           test_t("equal((1.23^3 - 2.1),({1.23 * 1.23 * 1.23} - 2.1))",1.0),
+                           test_t("equal((1.23^3 * 2.1),({1.23 * 1.23 * 1.23} * 2.1))",1.0),
+                           test_t("equal((1.23^3 / 2.1),({1.23 * 1.23 * 1.23} / 2.1))",1.0),
                            test_t("equal(1.0^(1.0/2.0),sqrt(1.0))",1.0),
                            test_t("equal(1.0^(1.0/2.0),root(1.0,2.0))",1.0),
                            test_t("equal(1.0^(1.0/3.0),root(1.0,3.0))",1.0),
@@ -771,15 +771,27 @@ static const test_t test_list[] =
 static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_t);
 
 template <typename T>
-inline bool not_equal(const T& t1,
-                      const T& t2,
-                      const T& epsilon = 0.0000000001/*std::numeric_limits<T>::epsilon()*/)
+inline bool not_equal_impl(const T& t1,
+                           const T& t2,
+                           const T& epsilon = 0.0000000001/*std::numeric_limits<T>::epsilon()*/)
 {
    if (t1 != t1) return true;
    if (t2 != t2) return true;
    T diff = std::abs(t1 - t2);
    T eps_norm = (std::max(T(1.0),std::max(std::abs(t1),std::abs(t2))) * epsilon);
    return diff > eps_norm;
+}
+
+template <typename T>
+inline bool not_equal(const T& t0, const T& t1, 
+                      const T& epsilon = T(0.0000000001))
+{
+   return not_equal_impl(t0,t1,epsilon);
+}
+                                                                               
+inline bool not_equal(const float& t0, const float& t1, const float& epsilon = 0.000001f)
+{
+   return not_equal_impl(t0,t1,epsilon);
 }
 
 template <typename T>
@@ -812,7 +824,7 @@ inline bool test_expression(const std::string& expression_string, const T& expec
 
    T result = expression.value();
 
-   if (not_equal<T>(result,expected_result))
+   if (not_equal(result,expected_result))
    {
       printf("Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
              expression_string.c_str(),
@@ -827,16 +839,17 @@ inline bool test_expression(const std::string& expression_string, const T& expec
 template <typename T>
 inline bool run_test00()
 {
-   const std::size_t rounds = 40;
+   const std::size_t rounds = 10;
    for (std::size_t r = 0; r < rounds; ++r)
    {
       for (std::size_t i = 0; i < test_list_size; ++i)
       {
          if (!test_expression<T>(test_list[i].first,T(test_list[i].second)))
+         {
             return false;
+         }
       }
    }
-
    return true;
 }
 
@@ -1053,7 +1066,7 @@ inline bool run_test01()
 
          T result = expression.value();
 
-         if (not_equal<T>(result,test.result))
+         if (not_equal(result,test.result))
          {
             printf("run_test01() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
                    test.expr.c_str(),
@@ -1187,7 +1200,7 @@ inline bool run_test02()
 
          T result = expression.value();
 
-         if (not_equal<T>(result,test.result))
+         if (not_equal(result,test.result))
          {
             printf("run_test02() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
                    test.expr.c_str(),
@@ -1320,7 +1333,7 @@ inline bool run_test04()
       T result1 = expression.value();
       T result2 = clamp<T>(-1.0,std::sin(2 * pi * x) + std::cos(y / 2 * pi),+1.0);
 
-      if (not_equal<T>(result1,result2))
+      if (not_equal(result1,result2))
       {
          printf("run_test04() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f x:%19.15f\ty:%19.15f\n",
                 expression_string.c_str(),
@@ -1385,7 +1398,7 @@ inline bool run_test05()
 
          T result = expr.value();
 
-         if (not_equal<T>(result,real_result))
+         if (not_equal(result,real_result))
          {
             printf("run_test05() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f x:%19.15f\ty:%19.15f\tIndex:%d\n",
                    expression_string.c_str(),
@@ -1433,13 +1446,13 @@ inline bool run_test06()
    T total_area2 = exprtk::integrate(expression,"x",T(-1.0),T(1.0));
    const T pi = T(3.14159265358979323846);
 
-   if (not_equal<T>(total_area1,total_area2,T(0.000001)))
+   if (not_equal(total_area1,total_area2,T(0.000001)))
    {
       printf("run_test06() - Integration Error:  area1 != area2\n");
       return false;
    }
 
-   if (not_equal<T>(total_area1,pi/T(2.0),T(0.000001)))
+   if (not_equal(total_area1,T(pi)/T(2.0),T(0.000001)))
    {
       printf("run_test06() - Integration Error:  Expected: %19.15f\tResult: %19.15f\n",
              pi/T(2.0),
@@ -1481,13 +1494,13 @@ inline bool run_test07()
       T result2 = exprtk::derivative(expression,"x");
       T real_result = T(2.0) * std::cos(T(2.0) * x + T(1.0/3.0));
 
-      if (not_equal<T>(result1,result2,T(0.000000001)))
+      if (not_equal(result1,result2,T(0.000000001)))
       {
          printf("run_test07() - Derivative Error:  result1 != result2\n");
          return false;
       }
 
-      if (not_equal<T>(result1,real_result,T(0.000000001)))
+      if (not_equal(result1,real_result,T(0.000000001)))
       {
          printf("run_test07() - Derivative Error:  x: %19.15f\tExpected: %19.15f\tResult: %19.15f\n",
                 x,
@@ -1762,7 +1775,7 @@ inline bool run_test09()
                       mf(sin(x*pi),y/T(2.0))
                    );
 
-      if (not_equal<T>(result,expected,T(0.0000001)))
+      if (not_equal(result,expected,T(0.0000001)))
       {
          printf("run_test09() - Error Expected: %19.15f\tResult: %19.15f\n",
                 expected,
@@ -1797,7 +1810,7 @@ inline bool run_test10()
       {
          exprtk::details::variable_node<T>* var = symbol_table.get_variable(variable_name);
          if (var)
-            return (!not_equal<T>(var->ref(),value));
+            return (!not_equal(var->ref(),value));
          else
             return false;
       }
@@ -2257,7 +2270,7 @@ inline bool run_test11()
          }
       }
 
-      if (not_equal<T>(expression.value(),(x + y)/T(3.0),T(0.000001)))
+      if (not_equal(expression.value(),(x + y)/T(3.0),T(0.000001)))
       {
          printf("run_test11() - Error in evaluation!(1)\n");
          return false;
@@ -2285,7 +2298,7 @@ inline bool run_test11()
 
       expression.value();
 
-      if (not_equal<T>(expression.value(),(x + y)/T(3.0),T(0.000001)))
+      if (not_equal(expression.value(),(x + y)/T(3.0),T(0.000001)))
       {
          printf("run_test11() - Error in evaluation!(3)\n");
          return false;
@@ -2471,18 +2484,20 @@ inline bool run_test13()
 
 int main()
 {
-   #define perform_test(Type,Number)\
+   #define perform_test(Type,Number) \
    { \
       exprtk::timer timer; \
       timer.start(); \
       if (!run_test##Number<Type>()) \
       { \
-      printf("run_test"#Number" ("#Type") *** FAILED! ***\n"); \
-         return 1; \
+         printf("run_test"#Number" ("#Type") *** FAILED! ***\n"); \
       } \
-      timer.stop(); \
-      printf("run_test"#Number" ("#Type") - SUCCESS Time: %8.4fsec\n",timer.time()); \
-   }
+      else \
+      { \
+         timer.stop(); \
+         printf("run_test"#Number" ("#Type") - SUCCESS Time: %8.4fsec\n",timer.time()); \
+      } \
+   } \
 
    perform_test(double,00)
    perform_test(double,01)
@@ -2498,21 +2513,6 @@ int main()
    perform_test(double,11)
    perform_test(double,12)
    perform_test(double,13)
-
-   perform_test(float,00)
-   perform_test(float,01)
-   perform_test(float,02)
-   perform_test(float,03)
-   perform_test(float,04)
-   perform_test(float,05)
-   perform_test(float,06)
-   perform_test(float,07)
-   perform_test(float,08)
-   perform_test(float,09)
-   perform_test(float,10)
-   perform_test(float,11)
-   perform_test(float,12)
-   perform_test(float,13)
 
    #undef perform_test
 

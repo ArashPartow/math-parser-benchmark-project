@@ -1,6 +1,6 @@
 /*
  ****************************************************************
- *          C++ Mathematical Expression Toolkit Library         *
+ *         C++ Mathematical Expression Toolkit Library          *
  *                                                              *
  * Author: Arash Partow (1999-2013)                             *
  * URL: http://www.partow.net/programming/exprtk/index.html     *
@@ -410,6 +410,12 @@ namespace exprtk
                return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? T(1) : T(0);
             }
 
+            inline float equal_impl(const float v0, const float v1, real_type_tag)
+            {
+               static const float epsilon = float(0.000001f);
+               return (std::abs(v0 - v1) <= (std::max(1.0f,std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? 1.0f : 0.0f;
+            }
+
             template <typename T>
             inline T equal_impl(const T v0, const T v1, int_type_tag)
             {
@@ -421,6 +427,12 @@ namespace exprtk
             {
                static const T epsilon = T(0.0000000001);
                return (std::abs(v0 - v1) > (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? T(1) : T(0);
+            }
+
+            inline float nequal_impl(const float v0, const float v1, real_type_tag)
+            {
+               static const float epsilon = float(0.000001f);
+               return (std::abs(v0 - v1) > (std::max(1.0f,std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? 1.0f : 0.0f;
             }
 
             template <typename T>
@@ -1191,6 +1203,18 @@ namespace exprtk
          const char* end   = s.data() + s.size();
          return string_to_real(begin,end,t);
       }
+
+      template <typename T>
+      struct functor_t
+      {
+         //typedef T Type
+         //typedef const T Type
+         typedef const T& Type;
+         typedef T (*qfunc_t)(Type t0, Type t1, Type t2, Type t3);
+         typedef T (*tfunc_t)(Type t0, Type t1, Type t2);
+         typedef T (*bfunc_t)(Type t0, Type t1);
+         typedef T (*ufunc_t)(Type t0);
+      };
 
    } // namespace details
 
@@ -3743,101 +3767,112 @@ namespace exprtk
       template <typename T, std::size_t N> inline T axn(T a, T x)       { return a * exprtk::details::numeric::fast_exp<T,N>::result(x); } // a*x^n
       template <typename T, std::size_t N> inline T axnb(T a, T x, T b) { return a * exprtk::details::numeric::fast_exp<T,N>::result(x) + b; } // a*x^n+b
 
-      template <typename T> struct sf00_op { static inline T process(const T x, const T y, const T z) { return (x + y) / z; } };
-      template <typename T> struct sf01_op { static inline T process(const T x, const T y, const T z) { return (x + y) * z; } };
-      template <typename T> struct sf02_op { static inline T process(const T x, const T y, const T z) { return (x + y) - z; } };
-      template <typename T> struct sf03_op { static inline T process(const T x, const T y, const T z) { return (x + y) + z; } };
-      template <typename T> struct sf04_op { static inline T process(const T x, const T y, const T z) { return (x - y) / z; } };
-      template <typename T> struct sf05_op { static inline T process(const T x, const T y, const T z) { return (x - y) * z; } };
-      template <typename T> struct sf06_op { static inline T process(const T x, const T y, const T z) { return (x * y) + z; } };
-      template <typename T> struct sf07_op { static inline T process(const T x, const T y, const T z) { return (x * y) - z; } };
-      template <typename T> struct sf08_op { static inline T process(const T x, const T y, const T z) { return (x * y) / z; } };
-      template <typename T> struct sf09_op { static inline T process(const T x, const T y, const T z) { return (x * y) * z; } };
-      template <typename T> struct sf10_op { static inline T process(const T x, const T y, const T z) { return (x / y) + z; } };
-      template <typename T> struct sf11_op { static inline T process(const T x, const T y, const T z) { return (x / y) - z; } };
-      template <typename T> struct sf12_op { static inline T process(const T x, const T y, const T z) { return (x / y) / z; } };
-      template <typename T> struct sf13_op { static inline T process(const T x, const T y, const T z) { return (x / y) * z; } };
-      template <typename T> struct sf14_op { static inline T process(const T x, const T y, const T z) { return x / (y + z); } };
-      template <typename T> struct sf15_op { static inline T process(const T x, const T y, const T z) { return x / (y - z); } };
-      template <typename T> struct sf16_op { static inline T process(const T x, const T y, const T z) { return x / (y * z); } };
-      template <typename T> struct sf17_op { static inline T process(const T x, const T y, const T z) { return x / (y / z); } };
-      template <typename T> struct sf18_op { static inline T process(const T x, const T y, const T z) { return x / (y / z); } };
-      template <typename T> struct sf19_op { static inline T process(const T x, const T y, const T z) { return x - (y / z); } };
-      template <typename T> struct sf20_op { static inline T process(const T x, const T y, const T z) { return x - (y / z); } };
-      template <typename T> struct sf21_op { static inline T process(const T x, const T y, const T z) { return x - (y * z); } };
-      template <typename T> struct sf22_op { static inline T process(const T x, const T y, const T z) { return x + (y * z); } };
-      template <typename T> struct sf23_op { static inline T process(const T x, const T y, const T z) { return x + (y / z); } };
-      template <typename T> struct sf24_op { static inline T process(const T x, const T y, const T z) { return x + (y + z); } };
-      template <typename T> struct sf25_op { static inline T process(const T x, const T y, const T z) { return x + (y - z); } };
-      template <typename T> struct sf26_op { static inline T process(const T x, const T y, const T z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
-      template <typename T> struct sf27_op { static inline T process(const T x, const T y, const T z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
-      template <typename T> struct sf28_op { static inline T process(const T x, const T y, const T z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
-      template <typename T> struct sf29_op { static inline T process(const T x, const T y, const T z) { return axnb<T,5>(x,y,z); } }; //x * y^5 + z
-      template <typename T> struct sf30_op { static inline T process(const T x, const T y, const T z) { return axnb<T,6>(x,y,z); } }; //x * y^6 + z
-      template <typename T> struct sf31_op { static inline T process(const T x, const T y, const T z) { return axnb<T,7>(x,y,z); } }; //x * y^7 + z
-      template <typename T> struct sf32_op { static inline T process(const T x, const T y, const T z) { return axnb<T,8>(x,y,z); } }; //x * y^8 + z
-      template <typename T> struct sf33_op { static inline T process(const T x, const T y, const T z) { return axnb<T,9>(x,y,z); } }; //x * y^9 + z
-      template <typename T> struct sf34_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log(y)   + z; } };
-      template <typename T> struct sf35_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log(y)   - z; } };
-      template <typename T> struct sf36_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log10(y) + z; } };
-      template <typename T> struct sf37_op { static inline T process(const T x, const T y, const T z) { return x * numeric::log10(y) - z; } };
-      template <typename T> struct sf38_op { static inline T process(const T x, const T y, const T z) { return x * numeric::sin(y) + z; } };
-      template <typename T> struct sf39_op { static inline T process(const T x, const T y, const T z) { return x * numeric::sin(y) - z; } };
-      template <typename T> struct sf40_op { static inline T process(const T x, const T y, const T z) { return x * numeric::cos(y) + z; } };
-      template <typename T> struct sf41_op { static inline T process(const T x, const T y, const T z) { return x * numeric::cos(y) - z; } };
-      template <typename T> struct sf42_op { static inline T process(const T x, const T y, const T z) { return is_true(x) ? y : z;      } };
-      template <typename T> struct sf43_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y + z) / w); } };
-      template <typename T> struct sf44_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y + z) * w); } };
-      template <typename T> struct sf45_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y - z) / w); } };
-      template <typename T> struct sf46_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y - z) * w); } };
-      template <typename T> struct sf47_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y * z) / w); } };
-      template <typename T> struct sf48_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y * z) * w); } };
-      template <typename T> struct sf49_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) + w); } };
-      template <typename T> struct sf50_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) / w); } };
-      template <typename T> struct sf51_op { static inline T process(const T x, const T y, const T z, const T w) { return x + ((y / z) * w); } };
-      template <typename T> struct sf52_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y + z) / w); } };
-      template <typename T> struct sf53_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y + z) * w); } };
-      template <typename T> struct sf54_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y - z) / w); } };
-      template <typename T> struct sf55_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y - z) * w); } };
-      template <typename T> struct sf56_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y * z) / w); } };
-      template <typename T> struct sf57_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y * z) * w); } };
-      template <typename T> struct sf58_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y / z) / w); } };
-      template <typename T> struct sf59_op { static inline T process(const T x, const T y, const T z, const T w) { return x - ((y / z) * w); } };
-      template <typename T> struct sf60_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x + y) * z) - w; } };
-      template <typename T> struct sf61_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x - y) * z) - w; } };
-      template <typename T> struct sf62_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x * y) * z) - w; } };
-      template <typename T> struct sf63_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x / y) * z) - w; } };
-      template <typename T> struct sf64_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x + y) / z) - w; } };
-      template <typename T> struct sf65_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x - y) / z) - w; } };
-      template <typename T> struct sf66_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x * y) / z) - w; } };
-      template <typename T> struct sf67_op { static inline T process(const T x, const T y, const T z, const T w) { return ((x / y) / z) - w; } };
-      template <typename T> struct sf68_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) + (z * w); } };
-      template <typename T> struct sf69_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) - (z * w); } };
-      template <typename T> struct sf70_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) + (z / w); } };
-      template <typename T> struct sf71_op { static inline T process(const T x, const T y, const T z, const T w) { return (x * y) - (z / w); } };
-      template <typename T> struct sf72_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) + (z / w); } };
-      template <typename T> struct sf73_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) - (z / w); } };
-      template <typename T> struct sf74_op { static inline T process(const T x, const T y, const T z, const T w) { return (x / y) - (z * w); } };
-      template <typename T> struct sf75_op { static inline T process(const T x, const T y, const T z, const T w) { return x / (y + (z * w)); } };
-      template <typename T> struct sf76_op { static inline T process(const T x, const T y, const T z, const T w) { return x / (y - (z * w)); } };
-      template <typename T> struct sf77_op { static inline T process(const T x, const T y, const T z, const T w) { return x * (y + (z * w)); } };
-      template <typename T> struct sf78_op { static inline T process(const T x, const T y, const T z, const T w) { return x * (y - (z * w)); } };
-      template <typename T> struct sf79_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
-      template <typename T> struct sf80_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
-      template <typename T> struct sf81_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
-      template <typename T> struct sf82_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,5>(x,y) + axn<T,5>(z,w); } }; //x*y^5+z*w^5
-      template <typename T> struct sf83_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,6>(x,y) + axn<T,6>(z,w); } }; //x*y^6+z*w^6
-      template <typename T> struct sf84_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,7>(x,y) + axn<T,7>(z,w); } }; //x*y^7+z*w^7
-      template <typename T> struct sf85_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,8>(x,y) + axn<T,8>(z,w); } }; //x*y^8+z*w^8
-      template <typename T> struct sf86_op { static inline T process(const T x, const T y, const T z, const T w) { return axn<T,9>(x,y) + axn<T,9>(z,w); } }; //x*y^9+z*w^9
-      template <typename T> struct sf87_op { static inline T process(const T x, const T y, const T z, const T w) { return (is_true(x) && is_true(y)) ? z : w; } };
-      template <typename T> struct sf88_op { static inline T process(const T x, const T y, const T z, const T w) { return (is_true(x) || is_true(y)) ? z : w; } };
-      template <typename T> struct sf89_op { static inline T process(const T x, const T y, const T z, const T w) { return (x <  y) ? z : w; } };
-      template <typename T> struct sf90_op { static inline T process(const T x, const T y, const T z, const T w) { return (x <= y) ? z : w; } };
-      template <typename T> struct sf91_op { static inline T process(const T x, const T y, const T z, const T w) { return (x >  y) ? z : w; } };
-      template <typename T> struct sf92_op { static inline T process(const T x, const T y, const T z, const T w) { return (x >= y) ? z : w; } };
-      template <typename T> struct sf93_op { static inline T process(const T x, const T y, const T z, const T w) { return numeric::equal(x,y) ? z : w; } };
-      template <typename T> struct sf94_op { static inline T process(const T x, const T y, const T z, const T w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
+      template<typename T>
+      struct sf_base
+      {
+         typedef typename details::functor_t<T>::Type Type;
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::qfunc_t quaternary_functor_t;
+         typedef typename functor_t::tfunc_t trinary_functor_t;
+         typedef typename functor_t::bfunc_t binary_functor_t;
+         typedef typename functor_t::ufunc_t unary_functor_t;
+      };
+
+      template <typename T> struct sf00_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) / z; } };
+      template <typename T> struct sf01_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) * z; } };
+      template <typename T> struct sf02_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) - z; } };
+      template <typename T> struct sf03_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) + z; } };
+      template <typename T> struct sf04_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x - y) / z; } };
+      template <typename T> struct sf05_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x - y) * z; } };
+      template <typename T> struct sf06_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) + z; } };
+      template <typename T> struct sf07_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) - z; } };
+      template <typename T> struct sf08_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) / z; } };
+      template <typename T> struct sf09_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) * z; } };
+      template <typename T> struct sf10_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) + z; } };
+      template <typename T> struct sf11_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) - z; } };
+      template <typename T> struct sf12_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) / z; } };
+      template <typename T> struct sf13_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) * z; } };
+      template <typename T> struct sf14_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y + z); } };
+      template <typename T> struct sf15_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y - z); } };
+      template <typename T> struct sf16_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y * z); } };
+      template <typename T> struct sf17_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y / z); } };
+      template <typename T> struct sf18_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y / z); } };
+      template <typename T> struct sf19_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
+      template <typename T> struct sf20_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
+      template <typename T> struct sf21_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x - (y * z); } };
+      template <typename T> struct sf22_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y * z); } };
+      template <typename T> struct sf23_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y / z); } };
+      template <typename T> struct sf24_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y + z); } };
+      template <typename T> struct sf25_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y - z); } };
+      template <typename T> struct sf26_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
+      template <typename T> struct sf27_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
+      template <typename T> struct sf28_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
+      template <typename T> struct sf29_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,5>(x,y,z); } }; //x * y^5 + z
+      template <typename T> struct sf30_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,6>(x,y,z); } }; //x * y^6 + z
+      template <typename T> struct sf31_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,7>(x,y,z); } }; //x * y^7 + z
+      template <typename T> struct sf32_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,8>(x,y,z); } }; //x * y^8 + z
+      template <typename T> struct sf33_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,9>(x,y,z); } }; //x * y^9 + z
+      template <typename T> struct sf34_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log(y)   + z; } };
+      template <typename T> struct sf35_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log(y)   - z; } };
+      template <typename T> struct sf36_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log10(y) + z; } };
+      template <typename T> struct sf37_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log10(y) - z; } };
+      template <typename T> struct sf38_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::sin(y) + z; } };
+      template <typename T> struct sf39_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::sin(y) - z; } };
+      template <typename T> struct sf40_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) + z; } };
+      template <typename T> struct sf41_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) - z; } };
+      template <typename T> struct sf42_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return is_true(x) ? y : z;      } };
+      template <typename T> struct sf43_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) / w); } };
+      template <typename T> struct sf44_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) * w); } };
+      template <typename T> struct sf45_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) / w); } };
+      template <typename T> struct sf46_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) * w); } };
+      template <typename T> struct sf47_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) / w); } };
+      template <typename T> struct sf48_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) * w); } };
+      template <typename T> struct sf49_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) + w); } };
+      template <typename T> struct sf50_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) / w); } };
+      template <typename T> struct sf51_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) * w); } };
+      template <typename T> struct sf52_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) / w); } };
+      template <typename T> struct sf53_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) * w); } };
+      template <typename T> struct sf54_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) / w); } };
+      template <typename T> struct sf55_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) * w); } };
+      template <typename T> struct sf56_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) / w); } };
+      template <typename T> struct sf57_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) * w); } };
+      template <typename T> struct sf58_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) / w); } };
+      template <typename T> struct sf59_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) * w); } };
+      template <typename T> struct sf60_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) * z) - w; } };
+      template <typename T> struct sf61_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) * z) - w; } };
+      template <typename T> struct sf62_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) * z) - w; } };
+      template <typename T> struct sf63_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) * z) - w; } };
+      template <typename T> struct sf64_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) / z) - w; } };
+      template <typename T> struct sf65_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) / z) - w; } };
+      template <typename T> struct sf66_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) / z) - w; } };
+      template <typename T> struct sf67_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) / z) - w; } };
+      template <typename T> struct sf68_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z * w); } };
+      template <typename T> struct sf69_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z * w); } };
+      template <typename T> struct sf70_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z / w); } };
+      template <typename T> struct sf71_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z / w); } };
+      template <typename T> struct sf72_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z / w); } };
+      template <typename T> struct sf73_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z / w); } };
+      template <typename T> struct sf74_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z * w); } };
+      template <typename T> struct sf75_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x / (y + (z * w)); } };
+      template <typename T> struct sf76_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x / (y - (z * w)); } };
+      template <typename T> struct sf77_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x * (y + (z * w)); } };
+      template <typename T> struct sf78_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x * (y - (z * w)); } };
+      template <typename T> struct sf79_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
+      template <typename T> struct sf80_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
+      template <typename T> struct sf81_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
+      template <typename T> struct sf82_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,5>(x,y) + axn<T,5>(z,w); } }; //x*y^5+z*w^5
+      template <typename T> struct sf83_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,6>(x,y) + axn<T,6>(z,w); } }; //x*y^6+z*w^6
+      template <typename T> struct sf84_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,7>(x,y) + axn<T,7>(z,w); } }; //x*y^7+z*w^7
+      template <typename T> struct sf85_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,8>(x,y) + axn<T,8>(z,w); } }; //x*y^8+z*w^8
+      template <typename T> struct sf86_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,9>(x,y) + axn<T,9>(z,w); } }; //x*y^9+z*w^9
+      template <typename T> struct sf87_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (is_true(x) && is_true(y)) ? z : w; } };
+      template <typename T> struct sf88_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (is_true(x) || is_true(y)) ? z : w; } };
+      template <typename T> struct sf89_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x <  y) ? z : w; } };
+      template <typename T> struct sf90_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x <= y) ? z : w; } };
+      template <typename T> struct sf91_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x >  y) ? z : w; } };
+      template <typename T> struct sf92_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x >= y) ? z : w; } };
+      template <typename T> struct sf93_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return numeric::equal(x,y) ? z : w; } };
+      template <typename T> struct sf94_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
 
       template <typename T, typename SpecialFunction>
       class sf3_node : public trinary_node<T>
@@ -4318,7 +4353,8 @@ namespace exprtk
       template <typename T> \
       struct OpName##_op \
       { \
-         static inline T process(const T v) { return numeric:: OpName (v); } \
+         typedef typename functor_t<T>::Type Type; \
+         static inline T process(Type v) { return numeric:: OpName (v); } \
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_##OpName; } \
          static inline details::operator_type operation() { return details::e_##OpName; } \
       };
@@ -4360,7 +4396,7 @@ namespace exprtk
       template <typename T>
       struct add_op
       {
-         static inline T process(const T t1, const T t2) { return t1 + t2; }
+         static inline T process(const T& t1, const T& t2) { return t1 + t2; }
          static inline T process(const T t1, const T t2, const T t3) { return t1 + t2 + t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_add; }
          static inline details::operator_type operation() { return details::e_add; }
@@ -4369,7 +4405,7 @@ namespace exprtk
       template <typename T>
       struct mul_op
       {
-         static inline T process(const T t1, const T t2) { return t1 * t2; }
+         static inline T process(const T& t1, const T& t2) { return t1 * t2; }
          static inline T process(const T t1, const T t2, const T t3) { return t1 * t2 * t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_mul; }
          static inline details::operator_type operation() { return details::e_mul; }
@@ -4378,7 +4414,7 @@ namespace exprtk
       template <typename T>
       struct sub_op
       {
-         static inline T process(const T t1, const T t2) { return t1 - t2; }
+         static inline T process(const T& t1, const T& t2) { return t1 - t2; }
          static inline T process(const T t1, const T t2, const T t3) { return t1 - t2 - t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_sub; }
          static inline details::operator_type operation() { return details::e_sub; }
@@ -4387,7 +4423,7 @@ namespace exprtk
       template <typename T>
       struct div_op
       {
-         static inline T process(const T t1, const T t2) { return t1 / t2; }
+         static inline T process(const T& t1, const T& t2) { return t1 / t2; }
          static inline T process(const T t1, const T t2, const T t3) { return t1 / t2 / t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_div; }
          static inline details::operator_type operation() { return details::e_div; }
@@ -4396,7 +4432,7 @@ namespace exprtk
       template <typename T>
       struct mod_op
       {
-         static inline T process(const T t1, const T t2) { return numeric::modulus<T>(t1,t2); }
+         static inline T process(const T& t1, const T& t2) { return numeric::modulus<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_mod; }
          static inline details::operator_type operation() { return details::e_mod; }
       };
@@ -4404,7 +4440,7 @@ namespace exprtk
       template <typename T>
       struct pow_op
       {
-         static inline T process(const T t1, const T t2) { return numeric::pow<T>(t1,t2); }
+         static inline T process(const T& t1, const T& t2) { return numeric::pow<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_pow; }
          static inline details::operator_type operation() { return details::e_pow; }
       };
@@ -4412,7 +4448,7 @@ namespace exprtk
       template <typename T>
       struct lt_op
       {
-         static inline T process(const T t1, const T t2) { return ((t1 < t2) ? T(1) : T(0)); }
+         static inline T process(const T& t1, const T& t2) { return ((t1 < t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 < t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_lt; }
          static inline details::operator_type operation() { return details::e_lt; }
@@ -4421,7 +4457,7 @@ namespace exprtk
       template <typename T>
       struct lte_op
       {
-         static inline T process(const T t1, const T t2) { return ((t1 <= t2) ? T(1) : T(0)); }
+         static inline T process(const T& t1, const T& t2) { return ((t1 <= t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 <= t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_lte; }
          static inline details::operator_type operation() { return details::e_lte; }
@@ -4430,7 +4466,7 @@ namespace exprtk
       template <typename T>
       struct gt_op
       {
-         static inline T process(const T t1, const T t2) { return ((t1 > t2) ? T(1) : T(0)); }
+         static inline T process(const T& t1, const T& t2) { return ((t1 > t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 > t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_gt; }
          static inline details::operator_type operation() { return details::e_gt; }
@@ -4439,7 +4475,7 @@ namespace exprtk
       template <typename T>
       struct gte_op
       {
-         static inline T process(const T t1, const T t2) { return ((t1 >= t2) ? T(1) : T(0)); }
+         static inline T process(const T& t1, const T& t2) { return ((t1 >= t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 >= t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_gte; }
          static inline details::operator_type operation() { return details::e_gte; }
@@ -4448,7 +4484,7 @@ namespace exprtk
       template <typename T>
       struct eq_op
       {
-         static inline T process(const T t1, const T t2) { return ((t1 == t2) ? T(1) : T(0)); }
+         static inline T process(const T& t1, const T& t2) { return ((t1 == t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 == t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_eq; }
          static inline details::operator_type operation() { return details::e_eq; }
@@ -4457,7 +4493,7 @@ namespace exprtk
       template <typename T>
       struct ne_op
       {
-         static inline T process(const T t1, const T t2) { return ((t1 != t2) ? T(1) : T(0)); }
+         static inline T process(const T& t1, const T& t2) { return ((t1 != t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 != t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_ne; }
          static inline details::operator_type operation() { return details::e_ne; }
@@ -4466,7 +4502,7 @@ namespace exprtk
       template <typename T>
       struct and_op
       {
-         static inline T process(const T t1, const T t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(1) : T(0); }
+         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(1) : T(0); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_and; }
          static inline details::operator_type operation() { return details::e_and; }
       };
@@ -4474,7 +4510,7 @@ namespace exprtk
       template <typename T>
       struct nand_op
       {
-         static inline T process(const T t1, const T t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(0) : T(1); }
+         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(0) : T(1); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nand; }
          static inline details::operator_type operation() { return details::e_nand; }
       };
@@ -4482,7 +4518,7 @@ namespace exprtk
       template <typename T>
       struct or_op
       {
-         static inline T process(const T t1, const T t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(1) : T(0); }
+         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(1) : T(0); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_or; }
          static inline details::operator_type operation() { return details::e_or; }
       };
@@ -4490,7 +4526,7 @@ namespace exprtk
       template <typename T>
       struct nor_op
       {
-         static inline T process(const T t1, const T t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(0) : T(1); }
+         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(0) : T(1); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nor; }
          static inline details::operator_type operation() { return details::e_nor; }
       };
@@ -4498,7 +4534,7 @@ namespace exprtk
       template <typename T>
       struct xor_op
       {
-         static inline T process(const T t1, const T t2) { return numeric::xor_opr<T>(t1,t2); }
+         static inline T process(const T& t1, const T& t2) { return numeric::xor_opr<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nor; }
          static inline details::operator_type operation() { return details::e_xor; }
       };
@@ -4732,8 +4768,9 @@ namespace exprtk
          // UOpr1(v0) Op UOpr2(v1)
 
          typedef expression_node<T>* expression_ptr;
-         typedef T (*bfunc_t)(const T t0, const T t1);
-         typedef T (*ufunc_t)(const T t0);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::bfunc_t bfunc_t;
+         typedef typename functor_t::ufunc_t ufunc_t;
 
          explicit uvouv_node(const T& v0,const T& v1, ufunc_t u0, ufunc_t u1, bfunc_t f)
          : v0_(v0),
@@ -4858,11 +4895,12 @@ namespace exprtk
       template <typename T>
       struct T0oT1oT2process
       {
-         typedef T (*bfunc_t)(const T t0, const T t1);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::bfunc_t bfunc_t;
 
          struct mode0
          {
-            static inline T process(const T t0, const T t1, const T t2, const bfunc_t bf0, const bfunc_t bf1)
+            static inline T process(const T& t0, const T& t1, const T& t2, const bfunc_t bf0, const bfunc_t bf1)
             {
                // (T0 o0 T1) o1 T2
                return bf1(bf0(t0,t1),t2);
@@ -4880,7 +4918,7 @@ namespace exprtk
 
          struct mode1
          {
-            static inline T process(const T t0, const T t1, const T t2, const bfunc_t bf0, const bfunc_t bf1)
+            static inline T process(const T& t0, const T& t1, const T& t2, const bfunc_t bf0, const bfunc_t bf1)
             {
                // T0 o0 (T1 o1 T2)
                return bf0(t0,bf1(t1,t2));
@@ -4900,11 +4938,12 @@ namespace exprtk
       template <typename T>
       struct T0oT1oT20T3process
       {
-         typedef T (*bfunc_t)(const T t0, const T t1);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::bfunc_t bfunc_t;
 
          struct mode0
          {
-            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            static inline T process(const T& t0, const T& t1, const T& t2, const T& t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
             {
                // (T0 o0 T1) o1 (T2 o2 T3)
                return bf1(bf0(t0,t1),bf2(t2,t3));
@@ -4923,7 +4962,7 @@ namespace exprtk
 
          struct mode1
          {
-            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            static inline T process(const T& t0, const T& t1, const T& t2, const T& t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
             {
                // (T0 o0 (T1 o1 (T2 o2 T3))
                return bf0(t0,bf1(t1,bf2(t2,t3)));
@@ -4941,7 +4980,7 @@ namespace exprtk
 
          struct mode2
          {
-            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            static inline T process(const T& t0, const T& t1, const T& t2, const T& t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
             {
                // (T0 o0 ((T1 o1 T2) o2 T3)
                return bf0(t0,bf2(bf1(t1,t2),t3));
@@ -4960,7 +4999,7 @@ namespace exprtk
 
          struct mode3
          {
-            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            static inline T process(const T& t0, const T& t1, const T& t2, const T& t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
             {
                // (((T0 o0 T1) o1 T2) o2 T3)
                return bf2(bf1(bf0(t0,t1),t2),t3);
@@ -4979,7 +5018,7 @@ namespace exprtk
 
          struct mode4
          {
-            static inline T process(const T t0, const T t1, const T t2, const T t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
+            static inline T process(const T& t0, const T& t1, const T& t2, const T& t3, const bfunc_t bf0, const bfunc_t bf1, const bfunc_t bf2)
             {
                // ((T0 o0 (T1 o1 T2)) o2 T3
                return bf2(bf0(t0,bf1(t1,t2)),t3);
@@ -5075,7 +5114,8 @@ namespace exprtk
       {
       public:
 
-         typedef T (*bfunc_t)(const T v0, const T v1);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::bfunc_t bfunc_t;
          typedef T value_type;
          typedef T0oT1<T,T0,T1> node_type;
 
@@ -5139,7 +5179,8 @@ namespace exprtk
       {
       public:
 
-         typedef T (*bfunc_t)(const T v0, const T v1);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::bfunc_t bfunc_t;
          typedef T value_type;
          typedef T0oT1oT2<T,T0,T1,T2,ProcessMode> node_type;
          typedef ProcessMode process_mode_t;
@@ -5226,7 +5267,8 @@ namespace exprtk
       {
       public:
 
-         typedef T (*bfunc_t)(const T v0, const T v1);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::bfunc_t bfunc_t;
          typedef T value_type;
          typedef T0oT1oT2oT3<T,T0,T1,T2,T3,ProcessMode> node_type;
          typedef ProcessMode process_mode_t;
@@ -5318,7 +5360,8 @@ namespace exprtk
       {
       public:
 
-         typedef T (*tfunc_t)(const T v0, const T v1, const T v2);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::tfunc_t tfunc_t;
          typedef T value_type;
          typedef T0oT1oT2_sf3<T,T0,T1,T2> node_type;
 
@@ -5397,7 +5440,8 @@ namespace exprtk
       {
       public:
 
-         typedef T (*qfunc_t)(const T v0, const T v1, const T v2, const T v3);
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::qfunc_t qfunc_t;
          typedef T value_type;
          typedef T0oT1oT2oT3_sf4<T,T0,T1,T2,T3> node_type;
 
@@ -7624,10 +7668,11 @@ namespace exprtk
       typedef lexer::token                                  token_t;
       typedef expression_node_t*                expression_node_ptr;
 
-      typedef T (*unary_functor_t)(const T v);
-      typedef T (*binary_functor_t)(const T v0, const T v1);
-      typedef T (*trinary_functor_t)(const T v0, const T v1, const T v2);
-      typedef T (*quaternary_functor_t)(const T v0, const T v1, const T v2, const T v3);
+      typedef typename details::functor_t<T> functor_t;
+      typedef typename functor_t::qfunc_t quaternary_functor_t;
+      typedef typename functor_t::tfunc_t trinary_functor_t;
+      typedef typename functor_t::bfunc_t binary_functor_t;
+      typedef typename functor_t::ufunc_t unary_functor_t;
       typedef std::map<details::operator_type,unary_functor_t> unary_op_map_t;
       typedef std::map<details::operator_type,binary_functor_t> binary_op_map_t;
       typedef std::map<details::operator_type,trinary_functor_t> trinary_op_map_t;
@@ -12320,7 +12365,7 @@ namespace exprtk
    template <typename T>
    inline T derivative(expression<T>& e,
                        T& x,
-                       const T& h = 0.00001)
+                       const T& h = T(0.00001))
    {
       T x_init = x;
       x = x_init + T(2.0) * h;
@@ -12338,7 +12383,7 @@ namespace exprtk
    template <typename T>
    inline T derivative(expression<T>& e,
                        const std::string& variable_name,
-                       const T& h = 0.00001)
+                       const T& h = T(0.00001))
    {
       symbol_table<T>& sym_table = e.get_symbol_table();
       if (!sym_table.valid())
