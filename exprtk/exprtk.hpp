@@ -1207,6 +1207,11 @@ namespace exprtk
       template <typename T>
       struct functor_t
       {
+         /*
+            Note: The following definitions for Type, may require tweaking
+                  based on the compiler and target architecture. The benchmark
+                  should provide enough information to make the right choice.
+         */
          //typedef T Type
          //typedef const T Type
          typedef const T& Type;
@@ -1220,7 +1225,6 @@ namespace exprtk
 
    namespace lexer
    {
-
       struct token
       {
 
@@ -2693,8 +2697,9 @@ namespace exprtk
          e_sf80 = 1080, e_sf81 = 1081, e_sf82 = 1082, e_sf83 = 1083,
          e_sf84 = 1084, e_sf85 = 1085, e_sf86 = 1086, e_sf87 = 1087,
          e_sf88 = 1088, e_sf89 = 1089, e_sf90 = 1090, e_sf91 = 1091,
-         e_sf92 = 1092, e_sf93 = 1093, e_sf94 = 1094,
-         e_sffinal = 1095
+         e_sf92 = 1092, e_sf93 = 1093, e_sf94 = 1094, e_sf95 = 1095,
+         e_sf96 = 1096, e_sf97 = 1097,
+         e_sffinal = 1098
       };
 
       struct base_operation_t
@@ -2873,6 +2878,7 @@ namespace exprtk
          enum node_type
          {
             e_none        ,
+            e_null        ,
             e_constant    ,
             e_unary       ,
             e_binary      ,
@@ -3064,7 +3070,7 @@ namespace exprtk
 
          inline typename expression_node<T>::node_type type() const
          {
-            return expression_node<T>::e_nul;
+            return expression_node<T>::e_null;
          }
       };
 
@@ -3778,101 +3784,104 @@ namespace exprtk
          typedef typename functor_t::ufunc_t unary_functor_t;
       };
 
-      template <typename T> struct sf00_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) / z; } };
-      template <typename T> struct sf01_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) * z; } };
-      template <typename T> struct sf02_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) - z; } };
-      template <typename T> struct sf03_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x + y) + z; } };
-      template <typename T> struct sf04_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x - y) / z; } };
-      template <typename T> struct sf05_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x - y) * z; } };
-      template <typename T> struct sf06_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) + z; } };
-      template <typename T> struct sf07_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) - z; } };
-      template <typename T> struct sf08_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) / z; } };
-      template <typename T> struct sf09_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x * y) * z; } };
-      template <typename T> struct sf10_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) + z; } };
-      template <typename T> struct sf11_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) - z; } };
-      template <typename T> struct sf12_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) / z; } };
-      template <typename T> struct sf13_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return (x / y) * z; } };
-      template <typename T> struct sf14_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y + z); } };
-      template <typename T> struct sf15_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y - z); } };
-      template <typename T> struct sf16_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y * z); } };
-      template <typename T> struct sf17_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y / z); } };
-      template <typename T> struct sf18_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x / (y / z); } };
-      template <typename T> struct sf19_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
-      template <typename T> struct sf20_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
-      template <typename T> struct sf21_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x - (y * z); } };
-      template <typename T> struct sf22_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y * z); } };
-      template <typename T> struct sf23_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y / z); } };
-      template <typename T> struct sf24_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y + z); } };
-      template <typename T> struct sf25_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x + (y - z); } };
-      template <typename T> struct sf26_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
-      template <typename T> struct sf27_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
-      template <typename T> struct sf28_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
-      template <typename T> struct sf29_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,5>(x,y,z); } }; //x * y^5 + z
-      template <typename T> struct sf30_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,6>(x,y,z); } }; //x * y^6 + z
-      template <typename T> struct sf31_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,7>(x,y,z); } }; //x * y^7 + z
-      template <typename T> struct sf32_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,8>(x,y,z); } }; //x * y^8 + z
-      template <typename T> struct sf33_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return axnb<T,9>(x,y,z); } }; //x * y^9 + z
-      template <typename T> struct sf34_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log(y)   + z; } };
-      template <typename T> struct sf35_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log(y)   - z; } };
-      template <typename T> struct sf36_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log10(y) + z; } };
-      template <typename T> struct sf37_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::log10(y) - z; } };
-      template <typename T> struct sf38_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::sin(y) + z; } };
-      template <typename T> struct sf39_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::sin(y) - z; } };
-      template <typename T> struct sf40_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) + z; } };
-      template <typename T> struct sf41_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) - z; } };
-      template <typename T> struct sf42_op : public sf_base<T> { static inline T process(Type x, Type y, Type z) { return is_true(x) ? y : z;      } };
-      template <typename T> struct sf43_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) / w); } };
-      template <typename T> struct sf44_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) * w); } };
-      template <typename T> struct sf45_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) / w); } };
-      template <typename T> struct sf46_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) * w); } };
-      template <typename T> struct sf47_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) / w); } };
-      template <typename T> struct sf48_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) * w); } };
-      template <typename T> struct sf49_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) + w); } };
-      template <typename T> struct sf50_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) / w); } };
-      template <typename T> struct sf51_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) * w); } };
-      template <typename T> struct sf52_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) / w); } };
-      template <typename T> struct sf53_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) * w); } };
-      template <typename T> struct sf54_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) / w); } };
-      template <typename T> struct sf55_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) * w); } };
-      template <typename T> struct sf56_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) / w); } };
-      template <typename T> struct sf57_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) * w); } };
-      template <typename T> struct sf58_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) / w); } };
-      template <typename T> struct sf59_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) * w); } };
-      template <typename T> struct sf60_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) * z) - w; } };
-      template <typename T> struct sf61_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) * z) - w; } };
-      template <typename T> struct sf62_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) * z) - w; } };
-      template <typename T> struct sf63_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) * z) - w; } };
-      template <typename T> struct sf64_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) / z) - w; } };
-      template <typename T> struct sf65_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) / z) - w; } };
-      template <typename T> struct sf66_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) / z) - w; } };
-      template <typename T> struct sf67_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) / z) - w; } };
-      template <typename T> struct sf68_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z * w); } };
-      template <typename T> struct sf69_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z * w); } };
-      template <typename T> struct sf70_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z / w); } };
-      template <typename T> struct sf71_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z / w); } };
-      template <typename T> struct sf72_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z / w); } };
-      template <typename T> struct sf73_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z / w); } };
-      template <typename T> struct sf74_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z * w); } };
-      template <typename T> struct sf75_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x / (y + (z * w)); } };
-      template <typename T> struct sf76_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x / (y - (z * w)); } };
-      template <typename T> struct sf77_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x * (y + (z * w)); } };
-      template <typename T> struct sf78_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x * (y - (z * w)); } };
-      template <typename T> struct sf79_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
-      template <typename T> struct sf80_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
-      template <typename T> struct sf81_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
-      template <typename T> struct sf82_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,5>(x,y) + axn<T,5>(z,w); } }; //x*y^5+z*w^5
-      template <typename T> struct sf83_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,6>(x,y) + axn<T,6>(z,w); } }; //x*y^6+z*w^6
-      template <typename T> struct sf84_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,7>(x,y) + axn<T,7>(z,w); } }; //x*y^7+z*w^7
-      template <typename T> struct sf85_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,8>(x,y) + axn<T,8>(z,w); } }; //x*y^8+z*w^8
-      template <typename T> struct sf86_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return axn<T,9>(x,y) + axn<T,9>(z,w); } }; //x*y^9+z*w^9
-      template <typename T> struct sf87_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (is_true(x) && is_true(y)) ? z : w; } };
-      template <typename T> struct sf88_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (is_true(x) || is_true(y)) ? z : w; } };
-      template <typename T> struct sf89_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x <  y) ? z : w; } };
-      template <typename T> struct sf90_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x <= y) ? z : w; } };
-      template <typename T> struct sf91_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x >  y) ? z : w; } };
-      template <typename T> struct sf92_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return (x >= y) ? z : w; } };
-      template <typename T> struct sf93_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return numeric::equal(x,y) ? z : w; } };
-      template <typename T> struct sf94_op : public sf_base<T> { static inline T process(Type x, Type y, Type z, Type w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
+      template <typename T> struct sf00_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) / z; } };
+      template <typename T> struct sf01_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) * z; } };
+      template <typename T> struct sf02_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) - z; } };
+      template <typename T> struct sf03_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) + z; } };
+      template <typename T> struct sf04_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x - y) / z; } };
+      template <typename T> struct sf05_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x - y) * z; } };
+      template <typename T> struct sf06_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) + z; } };
+      template <typename T> struct sf07_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) - z; } };
+      template <typename T> struct sf08_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) / z; } };
+      template <typename T> struct sf09_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) * z; } };
+      template <typename T> struct sf10_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) + z; } };
+      template <typename T> struct sf11_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) - z; } };
+      template <typename T> struct sf12_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) / z; } };
+      template <typename T> struct sf13_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) * z; } };
+      template <typename T> struct sf14_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y + z); } };
+      template <typename T> struct sf15_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y - z); } };
+      template <typename T> struct sf16_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y * z); } };
+      template <typename T> struct sf17_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y / z); } };
+      template <typename T> struct sf18_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y + z); } };
+      template <typename T> struct sf19_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y - z); } };
+      template <typename T> struct sf20_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y * z); } };
+      template <typename T> struct sf21_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y / z); } };
+      template <typename T> struct sf22_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
+      template <typename T> struct sf23_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
+      template <typename T> struct sf24_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y * z); } };
+      template <typename T> struct sf25_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y * z); } };
+      template <typename T> struct sf26_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y / z); } };
+      template <typename T> struct sf27_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y + z); } };
+      template <typename T> struct sf28_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y - z); } };
+      template <typename T> struct sf29_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
+      template <typename T> struct sf30_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
+      template <typename T> struct sf31_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
+      template <typename T> struct sf32_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,5>(x,y,z); } }; //x * y^5 + z
+      template <typename T> struct sf33_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,6>(x,y,z); } }; //x * y^6 + z
+      template <typename T> struct sf34_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,7>(x,y,z); } }; //x * y^7 + z
+      template <typename T> struct sf35_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,8>(x,y,z); } }; //x * y^8 + z
+      template <typename T> struct sf36_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,9>(x,y,z); } }; //x * y^9 + z
+      template <typename T> struct sf37_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::log(y)   + z; } };
+      template <typename T> struct sf38_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::log(y)   - z; } };
+      template <typename T> struct sf39_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::log10(y) + z; } };
+      template <typename T> struct sf40_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::log10(y) - z; } };
+      template <typename T> struct sf41_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::sin(y) + z; } };
+      template <typename T> struct sf42_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::sin(y) - z; } };
+      template <typename T> struct sf43_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) + z; } };
+      template <typename T> struct sf44_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) - z; } };
+      template <typename T> struct sf45_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return is_true(x) ? y : z;      } };
+      template <typename T> struct sf46_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) / w); } };
+      template <typename T> struct sf47_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) * w); } };
+      template <typename T> struct sf48_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) / w); } };
+      template <typename T> struct sf49_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) * w); } };
+      template <typename T> struct sf50_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) / w); } };
+      template <typename T> struct sf51_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) * w); } };
+      template <typename T> struct sf52_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) + w); } };
+      template <typename T> struct sf53_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) / w); } };
+      template <typename T> struct sf54_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) * w); } };
+      template <typename T> struct sf55_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) / w); } };
+      template <typename T> struct sf56_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) * w); } };
+      template <typename T> struct sf57_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) / w); } };
+      template <typename T> struct sf58_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) * w); } };
+      template <typename T> struct sf59_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) / w); } };
+      template <typename T> struct sf60_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) * w); } };
+      template <typename T> struct sf61_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) / w); } };
+      template <typename T> struct sf62_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) * w); } };
+      template <typename T> struct sf63_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) * z) - w; } };
+      template <typename T> struct sf64_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) * z) - w; } };
+      template <typename T> struct sf65_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) * z) - w; } };
+      template <typename T> struct sf66_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) * z) - w; } };
+      template <typename T> struct sf67_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) / z) - w; } };
+      template <typename T> struct sf68_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) / z) - w; } };
+      template <typename T> struct sf69_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) / z) - w; } };
+      template <typename T> struct sf70_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) / z) - w; } };
+      template <typename T> struct sf71_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z * w); } };
+      template <typename T> struct sf72_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z * w); } };
+      template <typename T> struct sf73_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z / w); } };
+      template <typename T> struct sf74_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z / w); } };
+      template <typename T> struct sf75_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z / w); } };
+      template <typename T> struct sf76_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z / w); } };
+      template <typename T> struct sf77_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z * w); } };
+      template <typename T> struct sf78_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x / (y + (z * w)); } };
+      template <typename T> struct sf79_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x / (y - (z * w)); } };
+      template <typename T> struct sf80_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * (y + (z * w)); } };
+      template <typename T> struct sf81_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * (y - (z * w)); } };
+      template <typename T> struct sf82_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
+      template <typename T> struct sf83_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
+      template <typename T> struct sf84_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
+      template <typename T> struct sf85_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,5>(x,y) + axn<T,5>(z,w); } }; //x*y^5+z*w^5
+      template <typename T> struct sf86_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,6>(x,y) + axn<T,6>(z,w); } }; //x*y^6+z*w^6
+      template <typename T> struct sf87_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,7>(x,y) + axn<T,7>(z,w); } }; //x*y^7+z*w^7
+      template <typename T> struct sf88_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,8>(x,y) + axn<T,8>(z,w); } }; //x*y^8+z*w^8
+      template <typename T> struct sf89_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,9>(x,y) + axn<T,9>(z,w); } }; //x*y^9+z*w^9
+      template <typename T> struct sf90_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (is_true(x) && is_true(y)) ? z : w; } };
+      template <typename T> struct sf91_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (is_true(x) || is_true(y)) ? z : w; } };
+      template <typename T> struct sf92_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x <  y) ? z : w; } };
+      template <typename T> struct sf93_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x <= y) ? z : w; } };
+      template <typename T> struct sf94_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x >  y) ? z : w; } };
+      template <typename T> struct sf95_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x >= y) ? z : w; } };
+      template <typename T> struct sf96_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return numeric::equal(x,y) ? z : w; } };
+      template <typename T> struct sf97_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
 
       template <typename T, typename SpecialFunction>
       class sf3_node : public trinary_node<T>
@@ -4393,155 +4402,184 @@ namespace exprtk
       exprtk_def_unary_op(trunc)
       #undef exprtk_def_unary_op
 
-      template <typename T>
-      struct add_op
+      template<typename T>
+      struct opr_base
       {
-         static inline T process(const T& t1, const T& t2) { return t1 + t2; }
-         static inline T process(const T t1, const T t2, const T t3) { return t1 + t2 + t3; }
+         typedef typename details::functor_t<T>::Type Type;
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::qfunc_t quaternary_functor_t;
+         typedef typename functor_t::tfunc_t trinary_functor_t;
+         typedef typename functor_t::bfunc_t binary_functor_t;
+         typedef typename functor_t::ufunc_t unary_functor_t;
+      };
+
+      template <typename T>
+      struct add_op : public opr_base<T>
+      {
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return t1 + t2; }
+         static inline T process(Type t1, Type t2, Type t3) { return t1 + t2 + t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_add; }
          static inline details::operator_type operation() { return details::e_add; }
       };
 
       template <typename T>
-      struct mul_op
+      struct mul_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return t1 * t2; }
-         static inline T process(const T t1, const T t2, const T t3) { return t1 * t2 * t3; }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return t1 * t2; }
+         static inline T process(Type t1, Type t2, Type t3) { return t1 * t2 * t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_mul; }
          static inline details::operator_type operation() { return details::e_mul; }
       };
 
       template <typename T>
-      struct sub_op
+      struct sub_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return t1 - t2; }
-         static inline T process(const T t1, const T t2, const T t3) { return t1 - t2 - t3; }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return t1 - t2; }
+         static inline T process(Type t1, Type t2, Type t3) { return t1 - t2 - t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_sub; }
          static inline details::operator_type operation() { return details::e_sub; }
       };
 
       template <typename T>
-      struct div_op
+      struct div_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return t1 / t2; }
-         static inline T process(const T t1, const T t2, const T t3) { return t1 / t2 / t3; }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return t1 / t2; }
+         static inline T process(Type t1, Type t2, Type t3) { return t1 / t2 / t3; }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_div; }
          static inline details::operator_type operation() { return details::e_div; }
       };
 
       template <typename T>
-      struct mod_op
+      struct mod_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return numeric::modulus<T>(t1,t2); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return numeric::modulus<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_mod; }
          static inline details::operator_type operation() { return details::e_mod; }
       };
 
       template <typename T>
-      struct pow_op
+      struct pow_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return numeric::pow<T>(t1,t2); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return numeric::pow<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_pow; }
          static inline details::operator_type operation() { return details::e_pow; }
       };
 
       template <typename T>
-      struct lt_op
+      struct lt_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 < t2) ? T(1) : T(0)); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return ((t1 < t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 < t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_lt; }
          static inline details::operator_type operation() { return details::e_lt; }
       };
 
       template <typename T>
-      struct lte_op
+      struct lte_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 <= t2) ? T(1) : T(0)); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return ((t1 <= t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 <= t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_lte; }
          static inline details::operator_type operation() { return details::e_lte; }
       };
 
       template <typename T>
-      struct gt_op
+      struct gt_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 > t2) ? T(1) : T(0)); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return ((t1 > t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 > t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_gt; }
          static inline details::operator_type operation() { return details::e_gt; }
       };
 
       template <typename T>
-      struct gte_op
+      struct gte_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 >= t2) ? T(1) : T(0)); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return ((t1 >= t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 >= t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_gte; }
          static inline details::operator_type operation() { return details::e_gte; }
       };
 
       template <typename T>
-      struct eq_op
+      struct eq_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 == t2) ? T(1) : T(0)); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return ((t1 == t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 == t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_eq; }
          static inline details::operator_type operation() { return details::e_eq; }
       };
 
       template <typename T>
-      struct ne_op
+      struct ne_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return ((t1 != t2) ? T(1) : T(0)); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return ((t1 != t2) ? T(1) : T(0)); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((t1 != t2) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_ne; }
          static inline details::operator_type operation() { return details::e_ne; }
       };
 
       template <typename T>
-      struct and_op
+      struct and_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(1) : T(0); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(1) : T(0); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_and; }
          static inline details::operator_type operation() { return details::e_and; }
       };
 
       template <typename T>
-      struct nand_op
+      struct nand_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(0) : T(1); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return (details::is_true(t1) && details::is_true(t2)) ? T(0) : T(1); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nand; }
          static inline details::operator_type operation() { return details::e_nand; }
       };
 
       template <typename T>
-      struct or_op
+      struct or_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(1) : T(0); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(1) : T(0); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_or; }
          static inline details::operator_type operation() { return details::e_or; }
       };
 
       template <typename T>
-      struct nor_op
+      struct nor_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(0) : T(1); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return (details::is_true(t1) || details::is_true(t2)) ? T(0) : T(1); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nor; }
          static inline details::operator_type operation() { return details::e_nor; }
       };
 
       template <typename T>
-      struct xor_op
+      struct xor_op : public opr_base<T>
       {
-         static inline T process(const T& t1, const T& t2) { return numeric::xor_opr<T>(t1,t2); }
+         typedef typename opr_base<T>::Type Type;
+         static inline T process(Type t1, Type t2) { return numeric::xor_opr<T>(t1,t2); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_nor; }
          static inline details::operator_type operation() { return details::e_xor; }
       };
 
       template <typename T>
-      struct in_op
+      struct in_op : public opr_base<T>
       {
+         typedef typename opr_base<T>::Type Type;
          static inline T process(const T&, const T&) { return std::numeric_limits<T>::quiet_NaN(); }
          static inline T process(const std::string& t1, const std::string& t2) { return ((std::string::npos != t2.find(t1)) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_in; }
@@ -4549,8 +4587,9 @@ namespace exprtk
       };
 
       template <typename T>
-      struct like_op
+      struct like_op : public opr_base<T>
       {
+         typedef typename opr_base<T>::Type Type;
          static inline T process(const T&, const T&) { return std::numeric_limits<T>::quiet_NaN(); }
          static inline T process(const std::string& t1, const std::string& t2) { return (details::wc_match(t2,t1) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_like; }
@@ -4558,8 +4597,9 @@ namespace exprtk
       };
 
       template <typename T>
-      struct ilike_op
+      struct ilike_op : public opr_base<T>
       {
+         typedef typename opr_base<T>::Type Type;
          static inline T process(const T&, const T&) { return std::numeric_limits<T>::quiet_NaN(); }
          static inline T process(const std::string& t1, const std::string& t2) { return (details::wc_imatch(t2,t1) ? T(1) : T(0)); }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_ilike; }
@@ -4567,15 +4607,16 @@ namespace exprtk
       };
 
       template <typename T>
-      struct inrange_op
+      struct inrange_op : public opr_base<T>
       {
+         typedef typename opr_base<T>::Type Type;
          static inline T process(const T& t0, const T& t1, const T& t2) { return ((t0 <= t1) && (t1 <= t2)) ? T(1) : T(0); }
          static inline T process(const std::string& t0, const std::string& t1, const std::string& t2)
          {
             return ((t0 <= t1) && (t1 <= t2)) ? T(1) : T(0);
          }
          static inline typename expression_node<T>::node_type type() { return expression_node<T>::e_inranges; }
-         static inline details::operator_type operation() { return details::e_ilike; }
+         static inline details::operator_type operation() { return details::e_inrange; }
       };
 
       template <typename T>
@@ -6830,6 +6871,7 @@ namespace exprtk
                   ++count;
                }
             }
+
             if (!map.empty())
             {
                tm_const_itr_t itr = map.begin();
@@ -7406,7 +7448,9 @@ namespace exprtk
 
       expression()
       : expression_holder_(0)
-      {}
+      {
+         set_expression(new details::null_node<T>());
+      }
 
       expression(const expression<T>& e)
       : expression_holder_(e.expression_holder_),
@@ -7425,7 +7469,6 @@ namespace exprtk
                {
                   delete expression_holder_;
                }
-
                expression_holder_ = 0;
             }
             expression_holder_ = e.expression_holder_;
@@ -7828,7 +7871,10 @@ namespace exprtk
          {
             set_error(parser_error::make_error(parser_error::e_syntax, "ERR01 - Incomplete expression!"));
             symbol_name_cache_.clear();
-            if (0 != e) delete e;
+            if (0 != e)
+            {
+               delete e;
+            }
             return false;
          }
       }
@@ -8264,7 +8310,7 @@ namespace exprtk
       inline expression_node_ptr parse_function_call(ifunction<T>* function, const std::string& function_name)
       {
          expression_node_ptr branch[NumberofParameters];
-         expression_node_ptr result  = 0;
+         expression_node_ptr result  = error_node();
          std::fill_n(branch,NumberofParameters,reinterpret_cast<expression_node_ptr>(0));
          scoped_delete<expression_node_t,NumberofParameters> sd(*this,branch);
          next_token();
@@ -8377,9 +8423,9 @@ namespace exprtk
       inline expression_node_ptr parse_conditional_statement()
       {
          // Parse: [if][(][condition][,][consequent][,][alternative][)]
-         expression_node_ptr condition   = 0;
-         expression_node_ptr consequent  = 0;
-         expression_node_ptr alternative = 0;
+         expression_node_ptr condition   = error_node();
+         expression_node_ptr consequent  = error_node();
+         expression_node_ptr alternative = error_node();
 
          next_token();
 
@@ -8422,8 +8468,8 @@ namespace exprtk
       inline expression_node_ptr parse_while_loop()
       {
          // Parse: [while][(][test expr][)][{][expression][}]
-         expression_node_ptr condition = 0;
-         expression_node_ptr branch    = 0;
+         expression_node_ptr condition = error_node();
+         expression_node_ptr branch    = error_node();
          next_token();
          if (!token_is(token_t::e_lbracket))
             return error_node();
@@ -8459,7 +8505,7 @@ namespace exprtk
          static inline expression_node_ptr process(parser<Type>& p,const details::operator_type opt_type)
          {
             expression_node_ptr branch[NumberOfParameters];
-            expression_node_ptr result  = 0;
+            expression_node_ptr result  = error_node();
             std::fill_n(branch,NumberOfParameters,reinterpret_cast<expression_node_ptr>(0));
             scoped_delete<expression_node_t,NumberOfParameters> sd(p,branch);
             p.next_token();
@@ -8518,7 +8564,7 @@ namespace exprtk
             return error_node();
          }
 
-         const std::size_t sf_3_to_4 = details::e_sf43;
+         const std::size_t sf_3_to_4 = details::e_sf46;
          const details::operator_type opt_type = details::operator_type(id + 1000);
          const std::size_t NumberOfParameters = (id < (sf_3_to_4 - 1000)) ? 3 : 4;
 
@@ -8657,7 +8703,6 @@ namespace exprtk
                make_error(parser_error::e_symtab,
                           current_token_,
                           "ERR23 - Variable or function detected, yet symbol-table is invalid, Symbol: " + current_token_.value));
-
             return error_node();
          }
       }
@@ -8672,7 +8717,6 @@ namespace exprtk
             {
                expression_node_ptr literal_exp = expression_generator_(numeric_value);
                next_token();
-
                return literal_exp;
             }
             else
@@ -8687,7 +8731,6 @@ namespace exprtk
          {
             expression_node_ptr literal_exp = expression_generator_(current_token_.value);
             next_token();
-
             return literal_exp;
          }
          #endif
@@ -8735,7 +8778,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR24 - Premature end of expression.[1]"));
-
             return error_node();
          }
          else
@@ -8744,7 +8786,6 @@ namespace exprtk
                make_error(parser_error::e_syntax,
                           current_token_,
                           "ERR25 - Premature end of expression.[2]"));
-
             return error_node();
          }
       }
@@ -8753,16 +8794,8 @@ namespace exprtk
       {
          if (current_token_.type != ttype)
          {
-            if (!((']' == current_token_.type) && (token_t::e_rbracket == ttype)))
-            {
-               set_error(
-                  make_error(parser_error::e_token,
-                             current_token_,
-                             std::string("ERR26 - Expected token: '") + static_cast<char>(ttype) + "'"));
-               return false;
-            }
+            return false;
          }
-
          next_token();
          return true;
       }
@@ -9174,7 +9207,11 @@ namespace exprtk
          inline expression_node_ptr operator()(const details::operator_type& operation, expression_node_ptr (&branch)[2])
          {
             if ((0 == branch[0]) || (0 == branch[1]))
+            {
+               if (0 != branch[0]) node_allocator_->free(branch[0]);
+               if (0 != branch[1]) node_allocator_->free(branch[1]);
                return error_node();
+            }
             else if (is_invalid_string_op(operation,branch))
                return error_node();
             else if (details::e_assign == operation)
@@ -9205,7 +9242,12 @@ namespace exprtk
          inline expression_node_ptr operator()(const details::operator_type& operation, expression_node_ptr (&branch)[3])
          {
             if ((0 == branch[0]) || (0 == branch[1]) || (0 == branch[2]))
+            {
+               if (0 != branch[0]) node_allocator_->free(branch[0]);
+               if (0 != branch[1]) node_allocator_->free(branch[1]);
+               if (0 != branch[2]) node_allocator_->free(branch[2]);
                return error_node();
+            }
             else if (is_invalid_string_op(operation,branch))
                return error_node();
             else if (is_string_operation(operation,branch))
@@ -9238,7 +9280,11 @@ namespace exprtk
          inline expression_node_ptr operator()(const details::operator_type& operation, expression_node_ptr b0, expression_node_ptr b1)
          {
             if ((0 == b0) || (0 == b1))
+            {
+               if (0 != b0) node_allocator_->free(b0);
+               if (0 != b1) node_allocator_->free(b1);
                return error_node();
+            }
             else
             {
                expression_node_ptr branch[2] = { b0, b1 };
@@ -9251,7 +9297,12 @@ namespace exprtk
                                                 expression_node_ptr alternative) const
          {
             if ((0 == condition) || (0 == consequent) || (0 == alternative))
+            {
+               if (0 != condition  ) node_allocator_->free(condition  );
+               if (0 != consequent ) node_allocator_->free(consequent );
+               if (0 != alternative) node_allocator_->free(alternative);
                return error_node();
+            }
             // Can the condition be immediately evaluated? if so optimize.
             else if (details::is_constant_node(condition))
             {
@@ -9386,6 +9437,9 @@ namespace exprtk
                case_stmt(details::e_sf40,details::sf40_op)
                case_stmt(details::e_sf41,details::sf41_op)
                case_stmt(details::e_sf42,details::sf42_op)
+               case_stmt(details::e_sf43,details::sf43_op)
+               case_stmt(details::e_sf44,details::sf44_op)
+               case_stmt(details::e_sf45,details::sf45_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9445,6 +9499,9 @@ namespace exprtk
                case_stmt(details::e_sf40,details::sf40_op)
                case_stmt(details::e_sf41,details::sf41_op)
                case_stmt(details::e_sf42,details::sf42_op)
+               case_stmt(details::e_sf43,details::sf43_op)
+               case_stmt(details::e_sf44,details::sf44_op)
+               case_stmt(details::e_sf45,details::sf45_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9505,6 +9562,9 @@ namespace exprtk
                   case_stmt(details::e_sf40,details::sf40_op)
                   case_stmt(details::e_sf41,details::sf41_op)
                   case_stmt(details::e_sf42,details::sf42_op)
+                  case_stmt(details::e_sf43,details::sf43_op)
+                  case_stmt(details::e_sf44,details::sf44_op)
+                  case_stmt(details::e_sf45,details::sf45_op)
                   #undef case_stmt
                   default : return error_node();
                }
@@ -9513,13 +9573,9 @@ namespace exprtk
          inline expression_node_ptr const_optimize_sf4(const details::operator_type& operation, expression_node_ptr (&branch)[4])
          {
             expression_node_ptr temp_node = error_node();
-
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : temp_node = node_allocator_->allocate<details::sf4_node<Type,op1<Type> > >(operation,branch); break;
-               case_stmt(details::e_sf43,details::sf43_op)
-               case_stmt(details::e_sf44,details::sf44_op)
-               case_stmt(details::e_sf45,details::sf45_op)
                case_stmt(details::e_sf46,details::sf46_op)
                case_stmt(details::e_sf47,details::sf47_op)
                case_stmt(details::e_sf48,details::sf48_op)
@@ -9569,6 +9625,9 @@ namespace exprtk
                case_stmt(details::e_sf92,details::sf92_op)
                case_stmt(details::e_sf93,details::sf93_op)
                case_stmt(details::e_sf94,details::sf94_op)
+               case_stmt(details::e_sf95,details::sf95_op)
+               case_stmt(details::e_sf96,details::sf96_op)
+               case_stmt(details::e_sf97,details::sf97_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9586,9 +9645,6 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rrrr<details::sf4_var_node<Type,op1<Type> > >(v0,v1,v2,v3);
-               case_stmt(details::e_sf43,details::sf43_op)
-               case_stmt(details::e_sf44,details::sf44_op)
-               case_stmt(details::e_sf45,details::sf45_op)
                case_stmt(details::e_sf46,details::sf46_op)
                case_stmt(details::e_sf47,details::sf47_op)
                case_stmt(details::e_sf48,details::sf48_op)
@@ -9638,6 +9694,9 @@ namespace exprtk
                case_stmt(details::e_sf92,details::sf92_op)
                case_stmt(details::e_sf93,details::sf93_op)
                case_stmt(details::e_sf94,details::sf94_op)
+               case_stmt(details::e_sf95,details::sf95_op)
+               case_stmt(details::e_sf96,details::sf96_op)
+               case_stmt(details::e_sf97,details::sf97_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9654,9 +9713,6 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate<details::sf4_node<Type,op1<Type> > >(operation,branch);
-               case_stmt(details::e_sf43,details::sf43_op)
-               case_stmt(details::e_sf44,details::sf44_op)
-               case_stmt(details::e_sf45,details::sf45_op)
                case_stmt(details::e_sf46,details::sf46_op)
                case_stmt(details::e_sf47,details::sf47_op)
                case_stmt(details::e_sf48,details::sf48_op)
@@ -9698,6 +9754,17 @@ namespace exprtk
                case_stmt(details::e_sf84,details::sf84_op)
                case_stmt(details::e_sf85,details::sf85_op)
                case_stmt(details::e_sf86,details::sf86_op)
+               case_stmt(details::e_sf87,details::sf87_op)
+               case_stmt(details::e_sf88,details::sf88_op)
+               case_stmt(details::e_sf89,details::sf89_op)
+               case_stmt(details::e_sf90,details::sf90_op)
+               case_stmt(details::e_sf91,details::sf91_op)
+               case_stmt(details::e_sf92,details::sf92_op)
+               case_stmt(details::e_sf93,details::sf93_op)
+               case_stmt(details::e_sf94,details::sf94_op)
+               case_stmt(details::e_sf95,details::sf95_op)
+               case_stmt(details::e_sf96,details::sf96_op)
+               case_stmt(details::e_sf97,details::sf97_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9774,6 +9841,18 @@ namespace exprtk
                   return false;
             }
             return true;
+         }
+
+         template <typename NodeAllocator, std::size_t N>
+         inline void free_all_nodes(NodeAllocator& node_allocator, expression_node_ptr (&b)[N]) const
+         {
+            for (std::size_t i = 0; i < N; ++i)
+            {
+               if (0 != b[i])
+               {
+                  node_allocator.free(b[i]);
+               }
+            }
          }
 
          inline expression_node_ptr synthesize_assignment_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
@@ -9865,7 +9944,9 @@ namespace exprtk
 
          struct synthesize_binary_ext_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                switch (operation)
                {
@@ -9880,7 +9961,9 @@ namespace exprtk
 
          struct synthesize_vob_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
                switch (operation)
@@ -9896,7 +9979,9 @@ namespace exprtk
 
          struct synthesize_bov_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
                switch (operation)
@@ -9912,7 +9997,9 @@ namespace exprtk
 
          struct synthesize_cob_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
                expr_gen.node_allocator_->free(branch[0]);
@@ -9952,7 +10039,9 @@ namespace exprtk
 
          struct synthesize_boc_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
                expr_gen.node_allocator_->free(branch[1]);
@@ -10008,7 +10097,9 @@ namespace exprtk
 
          struct synthesize_vov_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type& v1 = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
                const Type& v2 = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
@@ -10025,7 +10116,9 @@ namespace exprtk
 
          struct synthesize_cov_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type  c = dynamic_cast<details::literal_node<Type>* >(branch[0])->value();
                const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
@@ -10043,7 +10136,9 @@ namespace exprtk
 
          struct synthesize_voc_expression
          {
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
                const Type  c = dynamic_cast<details::literal_node<Type>* >(branch[1])->value();
@@ -10067,7 +10162,9 @@ namespace exprtk
          {
             typedef typename vovov_t::type0 node_type;
             typedef typename vovov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 v1) o1 (v2)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
@@ -10096,7 +10193,9 @@ namespace exprtk
          {
             typedef typename vovov_t::type1 node_type;
             typedef typename vovov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0) o0 (v1 o1 v2)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
@@ -10125,7 +10224,9 @@ namespace exprtk
          {
             typedef typename vovoc_t::type0 node_type;
             typedef typename vovoc_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 v1) o1 (c)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
@@ -10155,7 +10256,9 @@ namespace exprtk
          {
             typedef typename vovoc_t::type1 node_type;
             typedef typename vovoc_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0) o0 (v1 o1 c)
                const details::voc_base_node<Type>* voc = dynamic_cast<const details::voc_base_node<Type>*>(branch[1]);
@@ -10184,7 +10287,9 @@ namespace exprtk
          {
             typedef typename vocov_t::type0 node_type;
             typedef typename vocov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 c) o1 (v1)
                const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
@@ -10213,7 +10318,9 @@ namespace exprtk
          {
             typedef typename vocov_t::type1 node_type;
             typedef typename vocov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0) o0 (c o1 v1)
                const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
@@ -10242,7 +10349,9 @@ namespace exprtk
          {
             typedef typename covov_t::type0 node_type;
             typedef typename covov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c o0 v0) o1 (v1)
                const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
@@ -10271,7 +10380,9 @@ namespace exprtk
          {
             typedef typename covov_t::type1 node_type;
             typedef typename covov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c) o0 (v0 o1 v1)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
@@ -10301,7 +10412,9 @@ namespace exprtk
          {
             typedef typename covoc_t::type0 node_type;
             typedef typename covoc_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c0 o0 v) o1 (c1)
                const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
@@ -10331,7 +10444,9 @@ namespace exprtk
          {
             typedef typename covoc_t::type1 node_type;
             typedef typename covoc_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c0) o0 (v o1 c1)
                const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[1]);
@@ -10371,7 +10486,9 @@ namespace exprtk
          {
             typedef typename cocov_t::type1 node_type;
             typedef typename cocov_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c0) o0 (c1 o1 v)
                const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[1]);
@@ -10401,7 +10518,9 @@ namespace exprtk
          {
             typedef typename vococ_t::type0 node_type;
             typedef typename vococ_t::sf3_type sf3_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v o0 c0) o1 (c1)
                const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
@@ -10441,7 +10560,9 @@ namespace exprtk
          {
             typedef typename vovovov_t::type0 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 v1) o1 (v2 o2 v3)
                const details::vov_base_node<Type>* vov0 = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
@@ -10477,7 +10598,9 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type0 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 v1) o1 (v2 o2 c)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
@@ -10513,7 +10636,9 @@ namespace exprtk
          {
             typedef typename vovocov_t::type0 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 v1) o1 (c o2 v2)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[0]);
@@ -10549,7 +10674,9 @@ namespace exprtk
          {
             typedef typename vocovov_t::type0 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 c) o1 (v1 o2 v2)
                const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
@@ -10585,7 +10712,9 @@ namespace exprtk
          {
             typedef typename covovov_t::type0 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c o0 v0) o1 (v1 o2 v2)
                const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
@@ -10621,7 +10750,9 @@ namespace exprtk
          {
             typedef typename covocov_t::type0 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c0 o0 v0) o1 (c1 o2 v1)
                const details::cov_base_node<Type>* cov0 = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
@@ -10657,7 +10788,9 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type0 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 c0) o1 (v1 o2 c1)
                const details::voc_base_node<Type>* voc0 = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
@@ -10693,7 +10826,9 @@ namespace exprtk
          {
             typedef typename covovoc_t::type0 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (c0 o0 v0) o1 (v1 o2 c1)
                const details::cov_base_node<Type>* cov = dynamic_cast<details::cov_base_node<Type>*>(branch[0]);
@@ -10729,7 +10864,9 @@ namespace exprtk
          {
             typedef typename vococov_t::type0 node_type;
             typedef typename vococov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 c0) o1 (c1 o2 v1)
                const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[0]);
@@ -10765,7 +10902,9 @@ namespace exprtk
          {
             typedef typename vovovov_t::type1 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 (v1 o1 (v2 o2 v3))
                typedef typename synthesize_vovov_expression1::node_type vovov_t;
@@ -10796,7 +10935,9 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type1 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 (v1 o1 (v2 o2 c))
                typedef typename synthesize_vovoc_expression1::node_type vovoc_t;
@@ -10827,7 +10968,9 @@ namespace exprtk
          {
             typedef typename vovocov_t::type1 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 (v1 o1 (c o2 v2))
                typedef typename synthesize_vocov_expression1::node_type vocov_t;
@@ -10858,7 +11001,9 @@ namespace exprtk
          {
             typedef typename vocovov_t::type1 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 (c o1 (v1 o2 v2))
                typedef typename synthesize_covov_expression1::node_type covov_t;
@@ -10889,7 +11034,9 @@ namespace exprtk
          {
             typedef typename covovov_t::type1 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // c o0 (v0 o1 (v1 o2 v2))
                typedef typename synthesize_vovov_expression1::node_type vovov_t;
@@ -10921,7 +11068,9 @@ namespace exprtk
          {
             typedef typename covocov_t::type1 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // c0 o0 (v0 o1 (c1 o2 v1))
                typedef typename synthesize_vocov_expression1::node_type vocov_t;
@@ -10953,7 +11102,9 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type1 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 (c0 o1 (v1 o2 c2))
                typedef typename synthesize_covoc_expression1::node_type covoc_t;
@@ -10984,7 +11135,9 @@ namespace exprtk
          {
             typedef typename covovoc_t::type1 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // c0 o0 (v0 o1 (v1 o2 c1))
                typedef typename synthesize_vovoc_expression1::node_type vovoc_t;
@@ -11016,7 +11169,9 @@ namespace exprtk
          {
             typedef typename vococov_t::type1 node_type;
             typedef typename vococov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 (c0 o1 (c1 o2 v1))
                typedef typename synthesize_cocov_expression1::node_type cocov_t;
@@ -11047,7 +11202,9 @@ namespace exprtk
          {
             typedef typename vovovov_t::type2 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 ((v1 o1 v2) o2 v3)
                typedef typename synthesize_vovov_expression0::node_type vovov_t;
@@ -11078,7 +11235,9 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type2 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 ((v1 o1 v2) o2 c)
                typedef typename synthesize_vovoc_expression0::node_type vovoc_t;
@@ -11109,7 +11268,9 @@ namespace exprtk
          {
             typedef typename vovocov_t::type2 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 ((v1 o1 c) o2 v2)
                typedef typename synthesize_vocov_expression0::node_type vocov_t;
@@ -11140,7 +11301,9 @@ namespace exprtk
          {
             typedef typename vocovov_t::type2 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 ((c o1 v1) o2 v2)
                typedef typename synthesize_covov_expression0::node_type covov_t;
@@ -11171,7 +11334,9 @@ namespace exprtk
          {
             typedef typename covovov_t::type2 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // c o0 ((v1 o1 v2) o2 v3)
                typedef typename synthesize_vovov_expression0::node_type vovov_t;
@@ -11203,7 +11368,9 @@ namespace exprtk
          {
             typedef typename covocov_t::type2 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // c0 o0 ((v0 o1 c1) o2 v1)
                typedef typename synthesize_vocov_expression0::node_type vocov_t;
@@ -11235,7 +11402,9 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type2 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // v0 o0 ((c0 o1 v1) o2 c1)
                typedef typename synthesize_covoc_expression0::node_type covoc_t;
@@ -11266,7 +11435,9 @@ namespace exprtk
          {
             typedef typename covovoc_t::type2 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // c0 o0 ((v0 o1 v1) o2 c1)
                typedef typename synthesize_vovoc_expression0::node_type vovoc_t;
@@ -11308,7 +11479,9 @@ namespace exprtk
          {
             typedef typename vovovov_t::type3 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 v1) o1 v2) o2 v3
                typedef typename synthesize_vovov_expression0::node_type vovov_t;
@@ -11339,7 +11512,9 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type3 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 v1) o1 v2) o2 c
                typedef typename synthesize_vovov_expression0::node_type vovov_t;
@@ -11371,7 +11546,9 @@ namespace exprtk
          {
             typedef typename vovocov_t::type3 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 v1) o1 c) o2 v2
                typedef typename synthesize_vovoc_expression0::node_type vovoc_t;
@@ -11402,7 +11579,9 @@ namespace exprtk
          {
             typedef typename vocovov_t::type3 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 c) o1 v1) o2 v2
                typedef typename synthesize_vocov_expression0::node_type vocov_t;
@@ -11433,7 +11612,9 @@ namespace exprtk
          {
             typedef typename covovov_t::type3 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((c o0 v0) o1 v1) o2 v2
                typedef typename synthesize_covov_expression0::node_type covov_t;
@@ -11464,7 +11645,9 @@ namespace exprtk
          {
             typedef typename covocov_t::type3 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((c0 o0 v0) o1 c1) o2 v1
                typedef typename synthesize_covoc_expression0::node_type covoc_t;
@@ -11495,7 +11678,9 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type3 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 c0) o1 v1) o2 c1
                typedef typename synthesize_vocov_expression0::node_type vocov_t;
@@ -11527,7 +11712,9 @@ namespace exprtk
          {
             typedef typename covovoc_t::type3 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((c0 o0 v0) o1 v1) o2 c1
                typedef typename synthesize_covov_expression0::node_type covov_t;
@@ -11559,7 +11746,9 @@ namespace exprtk
          {
             typedef typename vococov_t::type3 node_type;
             typedef typename vococov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 c0) o1 c1) o2 v1
                typedef typename synthesize_vococ_expression0::node_type vococ_t;
@@ -11590,7 +11779,9 @@ namespace exprtk
          {
             typedef typename vovovov_t::type4 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // (v0 o0 (v1 o1 v2)) o2 v3
                typedef typename synthesize_vovov_expression1::node_type vovov_t;
@@ -11621,7 +11812,9 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type4 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 (v1 o1 v2)) o2 c)
                typedef typename synthesize_vovov_expression1::node_type vovov_t;
@@ -11653,7 +11846,9 @@ namespace exprtk
          {
             typedef typename vovocov_t::type4 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 (v1 o1 c)) o2 v1)
                typedef typename synthesize_vovoc_expression1::node_type vovoc_t;
@@ -11684,7 +11879,9 @@ namespace exprtk
          {
             typedef typename vocovov_t::type4 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 (c o1 v1)) o2 v2)
                typedef typename synthesize_vocov_expression1::node_type vocov_t;
@@ -11715,7 +11912,9 @@ namespace exprtk
          {
             typedef typename covovov_t::type4 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((c o0 (v0 o1 v1)) o2 v2)
                typedef typename synthesize_covov_expression1::node_type covov_t;
@@ -11746,7 +11945,9 @@ namespace exprtk
          {
             typedef typename covocov_t::type4 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((c0 o0 (v0 o1 c1)) o2 v1)
                typedef typename synthesize_covoc_expression1::node_type covoc_t;
@@ -11777,7 +11978,9 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type4 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((v0 o0 (c0 o1 v1)) o2 c1)
                typedef typename synthesize_vocov_expression1::node_type vocov_t;
@@ -11809,7 +12012,9 @@ namespace exprtk
          {
             typedef typename covovoc_t::type4 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
-            static inline expression_node_ptr process(expression_generator<Type>& expr_gen, const details::operator_type& operation, expression_node_ptr (&branch)[2])
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& operation,
+                                                      expression_node_ptr (&branch)[2])
             {
                // ((c0 o0 (v0 o1 v1)) o2 c1)
                typedef typename synthesize_covov_expression1::node_type covov_t;
@@ -11951,7 +12156,13 @@ namespace exprtk
          #ifndef exprtk_disable_string_capabilities
          inline expression_node_ptr synthesize_string_expression(const details::operator_type& opr, expression_node_ptr (&branch)[2])
          {
-            if (details::is_string_node(branch[0]))
+            if ((0 == branch[0]) || (0 == branch[1]))
+            {
+               if (0 != branch[0]) node_allocator_->free(branch[0]);
+               if (0 != branch[1]) node_allocator_->free(branch[1]);
+               return error_node();
+            }
+            else if (details::is_string_node(branch[0]))
             {
                     if (details::is_string_node(branch[1]))       return synthesize_sos_expression(opr,branch);
                else if (details::is_const_string_node(branch[1])) return synthesize_socs_expression(opr,branch);
@@ -11966,6 +12177,8 @@ namespace exprtk
          #else
          inline expression_node_ptr synthesize_string_expression(const details::operator_type&, expression_node_ptr (&)[2])
          {
+            if (0 != branch[0]) node_allocator_->free(branch[0]);
+            if (0 != branch[1]) node_allocator_->free(branch[1]);
             return error_node();
          }
          #endif
@@ -11975,6 +12188,13 @@ namespace exprtk
          {
             if (details::e_inrange != opr)
                return error_node();
+            else if ((0 == branch[0]) || (0 == branch[1]) || (0 == branch[2]))
+            {
+               if (0 != branch[0]) node_allocator_->free(branch[0]);
+               if (0 != branch[1]) node_allocator_->free(branch[1]);
+               if (0 != branch[2]) node_allocator_->free(branch[2]);
+               return error_node();
+            }
             else if (
                       details::is_const_string_node(branch[0]) &&
                       details::is_const_string_node(branch[1]) &&
@@ -12061,6 +12281,13 @@ namespace exprtk
          #else
          inline expression_node_ptr synthesize_string_expression(const details::operator_type&, expression_node_ptr (&)[3])
          {
+            if ((0 == branch[0]) || (0 == branch[1]) || (0 == branch[2]))
+            {
+               if (0 != branch[0]) node_allocator_->free(branch[0]);
+               if (0 != branch[1]) node_allocator_->free(branch[1]);
+               if (0 != branch[2]) node_allocator_->free(branch[2]);
+               return error_node();
+            }
             return error_node();
          }
          #endif
@@ -12068,9 +12295,18 @@ namespace exprtk
          template <typename NodeType, std::size_t N>
          inline expression_node_ptr synthesize_expression(const details::operator_type& operation, expression_node_ptr (&branch)[N])
          {
-            if ((details::e_in == operation) || (details::e_like == operation) || (details::e_ilike == operation))
+            if (
+                (details::e_in    == operation) ||
+                (details::e_like  == operation) ||
+                (details::e_ilike == operation)
+               )
                return error_node();
-            else if ((details::e_default != operation) && all_nodes_valid<N>(branch))
+            else if (!all_nodes_valid<N>(branch))
+            {
+               free_all_nodes(*node_allocator_,branch);
+               return error_node();
+            }
+            else if ((details::e_default != operation))
             {
                // Attempt simple constant folding optimization.
                expression_node_ptr expression_point = node_allocator_->allocate<NodeType>(operation,branch);
@@ -12090,23 +12326,23 @@ namespace exprtk
          template <typename NodeType, std::size_t N>
          inline expression_node_ptr synthesize_expression(F* f, expression_node_ptr (&branch)[N])
          {
-            if (all_nodes_valid<N>(branch))
+            if (!all_nodes_valid<N>(branch))
             {
-               typedef typename details::function_N_node<T,ifunction_t,N> function_N_node_t;
-               // Attempt simple constant folding optimization.
-               expression_node_ptr expression_point = node_allocator_->allocate<NodeType>(f);
-               dynamic_cast<function_N_node_t*>(expression_point)->init_branches(branch);
-               if (is_constant_foldable<N>(branch))
-               {
-                  Type v = expression_point->value();
-                  node_allocator_->free(expression_point);
-                  return node_allocator_->allocate<literal_node_t>(v);
-               }
-               else
-                  return expression_point;
+               free_all_nodes(*node_allocator_,branch);
+               return error_node();
+            }
+            typedef typename details::function_N_node<T,ifunction_t,N> function_N_node_t;
+            // Attempt simple constant folding optimization.
+            expression_node_ptr expression_point = node_allocator_->allocate<NodeType>(f);
+            dynamic_cast<function_N_node_t*>(expression_point)->init_branches(branch);
+            if (is_constant_foldable<N>(branch))
+            {
+               Type v = expression_point->value();
+               node_allocator_->free(expression_point);
+               return node_allocator_->allocate<literal_node_t>(v);
             }
             else
-               return error_node();
+               return expression_point;
          }
 
          details::node_allocator* node_allocator_;
@@ -12238,54 +12474,57 @@ namespace exprtk
          sf3_map["t/(t-t)"] = details::sf15_op<T>::process;
          sf3_map["t/(t*t)"] = details::sf16_op<T>::process;
          sf3_map["t/(t/t)"] = details::sf17_op<T>::process;
-         sf3_map["t/(t/t)"] = details::sf18_op<T>::process;
-         sf3_map["t-(t/t)"] = details::sf19_op<T>::process;
-         sf3_map["t-(t/t)"] = details::sf20_op<T>::process;
-         sf3_map["t-(t*t)"] = details::sf21_op<T>::process;
-         sf3_map["t+(t*t)"] = details::sf22_op<T>::process;
-         sf3_map["t+(t/t)"] = details::sf23_op<T>::process;
-         sf3_map["t+(t+t)"] = details::sf24_op<T>::process;
-         sf3_map["t+(t-t)"] = details::sf25_op<T>::process;
+         sf3_map["t*(t+t)"] = details::sf18_op<T>::process;
+         sf3_map["t*(t-t)"] = details::sf19_op<T>::process;
+         sf3_map["t*(t*t)"] = details::sf20_op<T>::process;
+         sf3_map["t*(t/t)"] = details::sf21_op<T>::process;
+         sf3_map["t-(t/t)"] = details::sf22_op<T>::process;
+         sf3_map["t-(t/t)"] = details::sf23_op<T>::process;
+         sf3_map["t-(t*t)"] = details::sf24_op<T>::process;
+         sf3_map["t+(t*t)"] = details::sf25_op<T>::process;
+         sf3_map["t+(t/t)"] = details::sf26_op<T>::process;
+         sf3_map["t+(t+t)"] = details::sf27_op<T>::process;
+         sf3_map["t+(t-t)"] = details::sf28_op<T>::process;
       }
 
       inline void load_sf4_map(sf4_map_t& sf4_map)
       {
-         sf4_map["t+((t+t)/t)"] = details::sf43_op<T>::process;
-         sf4_map["t+((t+t)*t)"] = details::sf44_op<T>::process;
-         sf4_map["t+((t-t)/t)"] = details::sf45_op<T>::process;
-         sf4_map["t+((t-t)*t)"] = details::sf46_op<T>::process;
-         sf4_map["t+((t*t)/t)"] = details::sf47_op<T>::process;
-         sf4_map["t+((t*t)*t)"] = details::sf48_op<T>::process;
-         sf4_map["t+((t/t)+t)"] = details::sf49_op<T>::process;
-         sf4_map["t+((t/t)/t)"] = details::sf50_op<T>::process;
-         sf4_map["t+((t/t)*t)"] = details::sf51_op<T>::process;
-         sf4_map["t-((t+t)/t)"] = details::sf52_op<T>::process;
-         sf4_map["t-((t+t)*t)"] = details::sf53_op<T>::process;
-         sf4_map["t-((t-t)/t)"] = details::sf54_op<T>::process;
-         sf4_map["t-((t-t)*t)"] = details::sf55_op<T>::process;
-         sf4_map["t-((t*t)/t)"] = details::sf56_op<T>::process;
-         sf4_map["t-((t*t)*t)"] = details::sf57_op<T>::process;
-         sf4_map["t-((t/t)/t)"] = details::sf58_op<T>::process;
-         sf4_map["t-((t/t)*t)"] = details::sf59_op<T>::process;
-         sf4_map["((t+t)*t)-t"] = details::sf60_op<T>::process;
-         sf4_map["((t-t)*t)-t"] = details::sf61_op<T>::process;
-         sf4_map["((t*t)*t)-t"] = details::sf62_op<T>::process;
-         sf4_map["((t/t)*t)-t"] = details::sf63_op<T>::process;
-         sf4_map["((t+t)/t)-t"] = details::sf64_op<T>::process;
-         sf4_map["((t-t)/t)-t"] = details::sf65_op<T>::process;
-         sf4_map["((t*t)/t)-t"] = details::sf66_op<T>::process;
-         sf4_map["((t/t)/t)-t"] = details::sf67_op<T>::process;
-         sf4_map["(t*t)+(t*t)"] = details::sf68_op<T>::process;
-         sf4_map["(t*t)-(t*t)"] = details::sf69_op<T>::process;
-         sf4_map["(t*t)+(t/t)"] = details::sf70_op<T>::process;
-         sf4_map["(t*t)-(t/t)"] = details::sf71_op<T>::process;
-         sf4_map["(t/t)+(t/t)"] = details::sf72_op<T>::process;
-         sf4_map["(t/t)-(t/t)"] = details::sf73_op<T>::process;
-         sf4_map["(t/t)-(t*t)"] = details::sf74_op<T>::process;
-         sf4_map["t/(t+(t*t))"] = details::sf75_op<T>::process;
-         sf4_map["t/(t-(t*t))"] = details::sf76_op<T>::process;
-         sf4_map["t*(t+(t*t))"] = details::sf77_op<T>::process;
-         sf4_map["t*(t-(t*t))"] = details::sf78_op<T>::process;
+         sf4_map["t+((t+t)/t)"] = details::sf46_op<T>::process;
+         sf4_map["t+((t+t)*t)"] = details::sf47_op<T>::process;
+         sf4_map["t+((t-t)/t)"] = details::sf48_op<T>::process;
+         sf4_map["t+((t-t)*t)"] = details::sf49_op<T>::process;
+         sf4_map["t+((t*t)/t)"] = details::sf50_op<T>::process;
+         sf4_map["t+((t*t)*t)"] = details::sf51_op<T>::process;
+         sf4_map["t+((t/t)+t)"] = details::sf52_op<T>::process;
+         sf4_map["t+((t/t)/t)"] = details::sf53_op<T>::process;
+         sf4_map["t+((t/t)*t)"] = details::sf54_op<T>::process;
+         sf4_map["t-((t+t)/t)"] = details::sf55_op<T>::process;
+         sf4_map["t-((t+t)*t)"] = details::sf56_op<T>::process;
+         sf4_map["t-((t-t)/t)"] = details::sf57_op<T>::process;
+         sf4_map["t-((t-t)*t)"] = details::sf58_op<T>::process;
+         sf4_map["t-((t*t)/t)"] = details::sf59_op<T>::process;
+         sf4_map["t-((t*t)*t)"] = details::sf60_op<T>::process;
+         sf4_map["t-((t/t)/t)"] = details::sf61_op<T>::process;
+         sf4_map["t-((t/t)*t)"] = details::sf62_op<T>::process;
+         sf4_map["((t+t)*t)-t"] = details::sf63_op<T>::process;
+         sf4_map["((t-t)*t)-t"] = details::sf64_op<T>::process;
+         sf4_map["((t*t)*t)-t"] = details::sf65_op<T>::process;
+         sf4_map["((t/t)*t)-t"] = details::sf66_op<T>::process;
+         sf4_map["((t+t)/t)-t"] = details::sf67_op<T>::process;
+         sf4_map["((t-t)/t)-t"] = details::sf68_op<T>::process;
+         sf4_map["((t*t)/t)-t"] = details::sf69_op<T>::process;
+         sf4_map["((t/t)/t)-t"] = details::sf70_op<T>::process;
+         sf4_map["(t*t)+(t*t)"] = details::sf71_op<T>::process;
+         sf4_map["(t*t)-(t*t)"] = details::sf72_op<T>::process;
+         sf4_map["(t*t)+(t/t)"] = details::sf73_op<T>::process;
+         sf4_map["(t*t)-(t/t)"] = details::sf74_op<T>::process;
+         sf4_map["(t/t)+(t/t)"] = details::sf75_op<T>::process;
+         sf4_map["(t/t)-(t/t)"] = details::sf76_op<T>::process;
+         sf4_map["(t/t)-(t*t)"] = details::sf77_op<T>::process;
+         sf4_map["t/(t+(t*t))"] = details::sf78_op<T>::process;
+         sf4_map["t/(t-(t*t))"] = details::sf79_op<T>::process;
+         sf4_map["t*(t+(t*t))"] = details::sf80_op<T>::process;
+         sf4_map["t*(t-(t*t))"] = details::sf81_op<T>::process;
       }
 
    private:

@@ -14,6 +14,7 @@ BenchExprTk::BenchExprTk()
 : Benchmark()
 {
    m_sName = "ExprTk";
+   //exprtk::pgo_primer<double>();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -24,7 +25,7 @@ double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
    double c = 3.0;
 
    exprtk::symbol_table<double> symbol_table;
-   exprtk::expression<double> expr;
+   exprtk::expression<double> expression;
 
    symbol_table.add_variable("a", a);
    symbol_table.add_variable("b", b);
@@ -35,22 +36,24 @@ double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
 
    symbol_table.add_constants();
 
-   expr.register_symbol_table(symbol_table);
+   expression.register_symbol_table(symbol_table);
 
-   exprtk::parser<double> parser;
-   parser.compile(sExpr, expr);
+   {
+      exprtk::parser<double> parser;
+      parser.compile(sExpr,expression);
+   }
 
    // Calculate/bench and show result finally
    double fTime = 0;
    double fRes  = 0;
    double fSum  = 0;
 
-   fRes = expr.value();
+   fRes = expression.value();
    StartTimer();
    for (int j = 0; j < iCount; j++)
    {
       std::swap(a,b);
-      fSum += expr.value();
+      fSum += expression.value();
    }
    StopTimer(fRes, fSum, iCount);
    return m_fTime1;
