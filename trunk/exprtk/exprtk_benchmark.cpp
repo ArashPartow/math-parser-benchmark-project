@@ -50,7 +50,7 @@ static const double lower_bound_x = -100.0;
 static const double lower_bound_y = -100.0;
 static const double upper_bound_x = +100.0;
 static const double upper_bound_y = +100.0;
-static const double delta = 0.0133;
+static const double delta = 0.0111;
 
 
 template <typename T,
@@ -103,9 +103,7 @@ void run_exprtk_benchmark(T& x, T& y,
       printf("run_exprtk_benchmark() - Error running benchmark for expression: %s\n",expr_string.c_str());
 }
 
-
 template <typename T> struct native;
-
 
 template <typename T, typename NativeFunction>
 void run_native_benchmark(T& x, T& y, NativeFunction f, const std::string& expr_string)
