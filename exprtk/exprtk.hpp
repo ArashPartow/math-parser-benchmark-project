@@ -1796,47 +1796,49 @@ namespace exprtk
 
          inline std::size_t process(generator& g)
          {
-            for (std::size_t i = 0; i < (g.token_list_.size() - stride_ + 1); ++i)
+            if (!g.token_list_.empty())
             {
-               token t;
-               switch (stride_)
+               for (std::size_t i = 0; i < (g.token_list_.size() - stride_ + 1); ++i)
                {
-                  case 1 :
-                           {
-                              const token& t0 = g.token_list_[i];
-                              if (!operator()(t0)) return i;
-                           }
-                           break;
+                  token t;
+                  switch (stride_)
+                  {
+                     case 1 :
+                              {
+                                 const token& t0 = g.token_list_[i];
+                                 if (!operator()(t0)) return i;
+                              }
+                              break;
 
-                  case 2 :
-                           {
-                              const token& t0 = g.token_list_[i    ];
-                              const token& t1 = g.token_list_[i + 1];
-                              if (!operator()(t0,t1)) return i;
-                           }
-                           break;
+                     case 2 :
+                              {
+                                 const token& t0 = g.token_list_[i    ];
+                                 const token& t1 = g.token_list_[i + 1];
+                                 if (!operator()(t0,t1)) return i;
+                              }
+                              break;
 
-                  case 3 :
-                           {
-                              const token& t0 = g.token_list_[i    ];
-                              const token& t1 = g.token_list_[i + 1];
-                              const token& t2 = g.token_list_[i + 2];
-                              if (!operator()(t0,t1,t2)) return i;
-                           }
-                           break;
+                     case 3 :
+                              {
+                                 const token& t0 = g.token_list_[i    ];
+                                 const token& t1 = g.token_list_[i + 1];
+                                 const token& t2 = g.token_list_[i + 2];
+                                 if (!operator()(t0,t1,t2)) return i;
+                              }
+                              break;
 
-                  case 4 :
-                           {
-                              const token& t0 = g.token_list_[i    ];
-                              const token& t1 = g.token_list_[i + 1];
-                              const token& t2 = g.token_list_[i + 2];
-                              const token& t3 = g.token_list_[i + 3];
-                              if (!operator()(t0,t1,t2,t3)) return i;
-                           }
-                           break;
+                     case 4 :
+                              {
+                                 const token& t0 = g.token_list_[i    ];
+                                 const token& t1 = g.token_list_[i + 1];
+                                 const token& t2 = g.token_list_[i + 2];
+                                 const token& t3 = g.token_list_[i + 3];
+                                 if (!operator()(t0,t1,t2,t3)) return i;
+                              }
+                              break;
+                  }
                }
             }
-
             return (g.token_list_.size() - stride_ + 1);
          }
 
@@ -1872,12 +1874,10 @@ namespace exprtk
          inline std::size_t process(generator& g)
          {
             std::size_t changes = 0;
-
             for (std::size_t i = 0; i < g.token_list_.size(); ++i)
             {
                if (modify(g.token_list_[i])) changes++;
             }
-
             return changes;
          }
 
@@ -1899,8 +1899,9 @@ namespace exprtk
 
          inline std::size_t process(generator& g)
          {
+            if (g.token_list_.empty())
+               return 0;
             std::size_t changes = 0;
-
             for (std::size_t i = 0; i < (g.token_list_.size() - stride_ + 1); ++i)
             {
                token t;
@@ -1969,6 +1970,8 @@ namespace exprtk
 
          inline std::size_t process(generator& g)
          {
+            if (g.token_list_.empty())
+               return 0;
             std::size_t changes = 0;
             for (std::size_t i = 0; i < g.token_list_.size() - 1; ++i)
             {
@@ -2699,7 +2702,17 @@ namespace exprtk
          e_sf88 = 1088, e_sf89 = 1089, e_sf90 = 1090, e_sf91 = 1091,
          e_sf92 = 1092, e_sf93 = 1093, e_sf94 = 1094, e_sf95 = 1095,
          e_sf96 = 1096, e_sf97 = 1097,
-         e_sffinal = 1098
+         e_sffinal = 1098,
+         e_sf4ext00 = 2000, e_sf4ext01 = 2001, e_sf4ext02 = 2002, e_sf4ext03 = 2003,
+         e_sf4ext04 = 2004, e_sf4ext05 = 2005, e_sf4ext06 = 2006, e_sf4ext07 = 2007,
+         e_sf4ext08 = 2008, e_sf4ext09 = 2009, e_sf4ext10 = 2010, e_sf4ext11 = 2011,
+         e_sf4ext12 = 2012, e_sf4ext13 = 2013, e_sf4ext14 = 2014, e_sf4ext15 = 2015,
+         e_sf4ext16 = 2016, e_sf4ext17 = 2017, e_sf4ext18 = 2018, e_sf4ext19 = 2019,
+         e_sf4ext20 = 2020, e_sf4ext21 = 2021, e_sf4ext22 = 2022, e_sf4ext23 = 2023,
+         e_sf4ext24 = 2024, e_sf4ext25 = 2025, e_sf4ext26 = 2026, e_sf4ext27 = 2027,
+         e_sf4ext28 = 2028, e_sf4ext29 = 2029, e_sf4ext30 = 2030, e_sf4ext31 = 2031,
+         e_sf4ext32 = 2032, e_sf4ext33 = 2033, e_sf4ext34 = 2034, e_sf4ext35 = 2035,
+         e_sf4ext36 = 2036, e_sf4ext37 = 2037, e_sf4ext38 = 2038, e_sf4ext39 = 2039
       };
 
       struct base_operation_t
@@ -3056,6 +3069,57 @@ namespace exprtk
       inline bool branch_deletable(expression_node<T>* node)
       {
          return !is_variable_node(node);
+      }
+
+      template <std::size_t N, typename T>
+      inline bool all_nodes_valid(expression_node<T>* (&b)[N])
+      {
+         for (std::size_t i = 0; i < N; ++i)
+         {
+            if (0 == b[i]) return false;
+         }
+         return true;
+      }
+
+      template <std::size_t N, typename T>
+      inline bool all_nodes_variables(expression_node<T>* (&b)[N])
+      {
+         for (std::size_t i = 0; i < N; ++i)
+         {
+            if (0 == b[i])
+               return false;
+            else if (!is_variable_node(b[i]))
+               return false;
+         }
+         return true;
+      }
+
+      template <typename NodeAllocator, typename T, std::size_t N>
+      inline void free_all_nodes(NodeAllocator& node_allocator, expression_node<T>* (&b)[N])
+      {
+         for (std::size_t i = 0; i < N; ++i)
+         {
+            if (0 != b[i])
+            {
+               if (!is_variable_node(b[i]))
+               {
+                  node_allocator.free(b[i]);
+                  b[i] = 0;
+               }
+            }
+         }
+      }
+
+      template <typename NodeAllocator, typename T>
+      inline void free_node(NodeAllocator& node_allocator, expression_node<T>*& node)
+      {
+         if (0 != node)
+         {
+            if (is_variable_node(node))
+               return;
+            node_allocator.free(node);
+            node = 0;
+         }
       }
 
       template <typename T>
@@ -3784,35 +3848,35 @@ namespace exprtk
          typedef typename functor_t::ufunc_t unary_functor_t;
       };
 
-      template <typename T> struct sf00_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) / z; } };
-      template <typename T> struct sf01_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) * z; } };
-      template <typename T> struct sf02_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) - z; } };
-      template <typename T> struct sf03_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) + z; } };
-      template <typename T> struct sf04_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x - y) / z; } };
-      template <typename T> struct sf05_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x - y) * z; } };
-      template <typename T> struct sf06_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) + z; } };
-      template <typename T> struct sf07_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) - z; } };
-      template <typename T> struct sf08_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) / z; } };
-      template <typename T> struct sf09_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) * z; } };
-      template <typename T> struct sf10_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) + z; } };
-      template <typename T> struct sf11_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) - z; } };
-      template <typename T> struct sf12_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) / z; } };
-      template <typename T> struct sf13_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) * z; } };
-      template <typename T> struct sf14_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y + z); } };
-      template <typename T> struct sf15_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y - z); } };
-      template <typename T> struct sf16_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y * z); } };
-      template <typename T> struct sf17_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y / z); } };
-      template <typename T> struct sf18_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y + z); } };
-      template <typename T> struct sf19_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y - z); } };
-      template <typename T> struct sf20_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y * z); } };
-      template <typename T> struct sf21_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y / z); } };
-      template <typename T> struct sf22_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
-      template <typename T> struct sf23_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y / z); } };
-      template <typename T> struct sf24_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y * z); } };
-      template <typename T> struct sf25_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y * z); } };
-      template <typename T> struct sf26_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y / z); } };
-      template <typename T> struct sf27_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y + z); } };
-      template <typename T> struct sf28_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y - z); } };
+      template <typename T> struct sf00_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) / z; } static inline std::string id() { return "(t+t)/t";} };
+      template <typename T> struct sf01_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) * z; } static inline std::string id() { return "(t+t)*t";} };
+      template <typename T> struct sf02_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) - z; } static inline std::string id() { return "(t+t)-t";} };
+      template <typename T> struct sf03_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x + y) + z; } static inline std::string id() { return "(t+t)+t";} };
+      template <typename T> struct sf04_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x - y) / z; } static inline std::string id() { return "(t-t)/t";} };
+      template <typename T> struct sf05_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x - y) * z; } static inline std::string id() { return "(t-t)*t";} };
+      template <typename T> struct sf06_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) + z; } static inline std::string id() { return "(t*t)+t";} };
+      template <typename T> struct sf07_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) - z; } static inline std::string id() { return "(t*t)-t";} };
+      template <typename T> struct sf08_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) / z; } static inline std::string id() { return "(t*t)/t";} };
+      template <typename T> struct sf09_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x * y) * z; } static inline std::string id() { return "(t*t)*t";} };
+      template <typename T> struct sf10_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) + z; } static inline std::string id() { return "(t/t)+t";} };
+      template <typename T> struct sf11_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) - z; } static inline std::string id() { return "(t/t)-t";} };
+      template <typename T> struct sf12_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) / z; } static inline std::string id() { return "(t/t)/t";} };
+      template <typename T> struct sf13_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return (x / y) * z; } static inline std::string id() { return "(t/t)*t";} };
+      template <typename T> struct sf14_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y + z); } static inline std::string id() { return "t/(t+t)";} };
+      template <typename T> struct sf15_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y - z); } static inline std::string id() { return "t/(t-t)";} };
+      template <typename T> struct sf16_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y * z); } static inline std::string id() { return "t/(t*t)";} };
+      template <typename T> struct sf17_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x / (y / z); } static inline std::string id() { return "t/(t/t)";} };
+      template <typename T> struct sf18_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y + z); } static inline std::string id() { return "t*(t+t)";} };
+      template <typename T> struct sf19_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y - z); } static inline std::string id() { return "t*(t-t)";} };
+      template <typename T> struct sf20_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y * z); } static inline std::string id() { return "t*(t*t)";} };
+      template <typename T> struct sf21_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * (y / z); } static inline std::string id() { return "t*(t/t)";} };
+      template <typename T> struct sf22_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y / z); } static inline std::string id() { return "t-(t/t)";} };
+      template <typename T> struct sf23_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y / z); } static inline std::string id() { return "t-(t/t)";} };
+      template <typename T> struct sf24_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x - (y * z); } static inline std::string id() { return "t-(t*t)";} };
+      template <typename T> struct sf25_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y * z); } static inline std::string id() { return "t+(t*t)";} };
+      template <typename T> struct sf26_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y / z); } static inline std::string id() { return "t+(t/t)";} };
+      template <typename T> struct sf27_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y + z); } static inline std::string id() { return "t+(t+t)";} };
+      template <typename T> struct sf28_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x + (y - z); } static inline std::string id() { return "t+(t-t)";} };
       template <typename T> struct sf29_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,2>(x,y,z); } }; //x * y^2 + z
       template <typename T> struct sf30_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,3>(x,y,z); } }; //x * y^3 + z
       template <typename T> struct sf31_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return axnb<T,4>(x,y,z); } }; //x * y^4 + z
@@ -3830,42 +3894,42 @@ namespace exprtk
       template <typename T> struct sf43_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) + z; } };
       template <typename T> struct sf44_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return x * numeric::cos(y) - z; } };
       template <typename T> struct sf45_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z) { return is_true(x) ? y : z;      } };
-      template <typename T> struct sf46_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) / w); } };
-      template <typename T> struct sf47_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) * w); } };
-      template <typename T> struct sf48_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) / w); } };
-      template <typename T> struct sf49_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) * w); } };
-      template <typename T> struct sf50_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) / w); } };
-      template <typename T> struct sf51_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) * w); } };
-      template <typename T> struct sf52_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) + w); } };
-      template <typename T> struct sf53_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) / w); } };
-      template <typename T> struct sf54_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) * w); } };
-      template <typename T> struct sf55_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) / w); } };
-      template <typename T> struct sf56_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) * w); } };
-      template <typename T> struct sf57_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) / w); } };
-      template <typename T> struct sf58_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) * w); } };
-      template <typename T> struct sf59_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) / w); } };
-      template <typename T> struct sf60_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) * w); } };
-      template <typename T> struct sf61_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) / w); } };
-      template <typename T> struct sf62_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) * w); } };
-      template <typename T> struct sf63_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) * z) - w; } };
-      template <typename T> struct sf64_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) * z) - w; } };
-      template <typename T> struct sf65_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) * z) - w; } };
-      template <typename T> struct sf66_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) * z) - w; } };
-      template <typename T> struct sf67_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) / z) - w; } };
-      template <typename T> struct sf68_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) / z) - w; } };
-      template <typename T> struct sf69_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) / z) - w; } };
-      template <typename T> struct sf70_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) / z) - w; } };
-      template <typename T> struct sf71_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z * w); } };
-      template <typename T> struct sf72_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z * w); } };
-      template <typename T> struct sf73_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z / w); } };
-      template <typename T> struct sf74_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z / w); } };
-      template <typename T> struct sf75_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z / w); } };
-      template <typename T> struct sf76_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z / w); } };
-      template <typename T> struct sf77_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z * w); } };
-      template <typename T> struct sf78_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x / (y + (z * w)); } };
-      template <typename T> struct sf79_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x / (y - (z * w)); } };
-      template <typename T> struct sf80_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * (y + (z * w)); } };
-      template <typename T> struct sf81_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * (y - (z * w)); } };
+      template <typename T> struct sf46_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) / w); } static inline std::string id() { return "t+((t+t)/t)";} };
+      template <typename T> struct sf47_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y + z) * w); } static inline std::string id() { return "t+((t+t)*t)";} };
+      template <typename T> struct sf48_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) / w); } static inline std::string id() { return "t+((t-t)/t)";} };
+      template <typename T> struct sf49_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y - z) * w); } static inline std::string id() { return "t+((t-t)*t)";} };
+      template <typename T> struct sf50_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) / w); } static inline std::string id() { return "t+((t*t)/t)";} };
+      template <typename T> struct sf51_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y * z) * w); } static inline std::string id() { return "t+((t*t)*t)";} };
+      template <typename T> struct sf52_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) + w); } static inline std::string id() { return "t+((t/t)+t)";} };
+      template <typename T> struct sf53_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) / w); } static inline std::string id() { return "t+((t/t)/t)";} };
+      template <typename T> struct sf54_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x + ((y / z) * w); } static inline std::string id() { return "t+((t/t)*t)";} };
+      template <typename T> struct sf55_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) / w); } static inline std::string id() { return "t-((t+t)/t)";} };
+      template <typename T> struct sf56_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y + z) * w); } static inline std::string id() { return "t-((t+t)*t)";} };
+      template <typename T> struct sf57_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) / w); } static inline std::string id() { return "t-((t-t)/t)";} };
+      template <typename T> struct sf58_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y - z) * w); } static inline std::string id() { return "t-((t-t)*t)";} };
+      template <typename T> struct sf59_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) / w); } static inline std::string id() { return "t-((t*t)/t)";} };
+      template <typename T> struct sf60_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y * z) * w); } static inline std::string id() { return "t-((t*t)*t)";} };
+      template <typename T> struct sf61_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) / w); } static inline std::string id() { return "t-((t/t)/t)";} };
+      template <typename T> struct sf62_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x - ((y / z) * w); } static inline std::string id() { return "t-((t/t)*t)";} };
+      template <typename T> struct sf63_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) * z) - w; } static inline std::string id() { return "((t+t)*t)-t";} };
+      template <typename T> struct sf64_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) * z) - w; } static inline std::string id() { return "((t-t)*t)-t";} };
+      template <typename T> struct sf65_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) * z) - w; } static inline std::string id() { return "((t*t)*t)-t";} };
+      template <typename T> struct sf66_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) * z) - w; } static inline std::string id() { return "((t/t)*t)-t";} };
+      template <typename T> struct sf67_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x + y) / z) - w; } static inline std::string id() { return "((t+t)/t)-t";} };
+      template <typename T> struct sf68_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x - y) / z) - w; } static inline std::string id() { return "((t-t)/t)-t";} };
+      template <typename T> struct sf69_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x * y) / z) - w; } static inline std::string id() { return "((t*t)/t)-t";} };
+      template <typename T> struct sf70_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return ((x / y) / z) - w; } static inline std::string id() { return "((t/t)/t)-t";} };
+      template <typename T> struct sf71_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z * w); } static inline std::string id() { return "(t*t)+(t*t)";} };
+      template <typename T> struct sf72_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z * w); } static inline std::string id() { return "(t*t)-(t*t)";} };
+      template <typename T> struct sf73_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z / w); } static inline std::string id() { return "(t*t)+(t/t)";} };
+      template <typename T> struct sf74_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z / w); } static inline std::string id() { return "(t*t)-(t/t)";} };
+      template <typename T> struct sf75_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z / w); } static inline std::string id() { return "(t/t)+(t/t)";} };
+      template <typename T> struct sf76_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z / w); } static inline std::string id() { return "(t/t)-(t/t)";} };
+      template <typename T> struct sf77_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z * w); } static inline std::string id() { return "(t/t)-(t*t)";} };
+      template <typename T> struct sf78_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x / (y + (z * w)); } static inline std::string id() { return "t/(t+(t*t))";} };
+      template <typename T> struct sf79_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x / (y - (z * w)); } static inline std::string id() { return "t/(t-(t*t))";} };
+      template <typename T> struct sf80_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * (y + (z * w)); } static inline std::string id() { return "t*(t+(t*t))";} };
+      template <typename T> struct sf81_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * (y - (z * w)); } static inline std::string id() { return "t*(t-(t*t))";} };
       template <typename T> struct sf82_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,2>(x,y) + axn<T,2>(z,w); } }; //x*y^2+z*w^2
       template <typename T> struct sf83_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,3>(x,y) + axn<T,3>(z,w); } }; //x*y^3+z*w^3
       template <typename T> struct sf84_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return axn<T,4>(x,y) + axn<T,4>(z,w); } }; //x*y^4+z*w^4
@@ -3882,6 +3946,47 @@ namespace exprtk
       template <typename T> struct sf95_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x >= y) ? z : w; } };
       template <typename T> struct sf96_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return numeric::equal(x,y) ? z : w; } };
       template <typename T> struct sf97_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return x * numeric::sin(y) + z * numeric::cos(w); } };
+
+      template <typename T> struct sfext00_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) - (z * w); } static inline std::string id() { return "(t+t)-(t*t)";} };
+      template <typename T> struct sfext01_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) - (z / w); } static inline std::string id() { return "(t+t)-(t/t)";} };
+      template <typename T> struct sfext02_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) + (z * w); } static inline std::string id() { return "(t+t)+(t*t)";} };
+      template <typename T> struct sfext03_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) + (z / w); } static inline std::string id() { return "(t+t)+(t/t)";} };
+      template <typename T> struct sfext04_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) + (z * w); } static inline std::string id() { return "(t-t)+(t*t)";} };
+      template <typename T> struct sfext05_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) + (z / w); } static inline std::string id() { return "(t-t)+(t/t)";} };
+      template <typename T> struct sfext06_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) - (z * w); } static inline std::string id() { return "(t-t)-(t*t)";} };
+      template <typename T> struct sfext07_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) - (z / w); } static inline std::string id() { return "(t-t)-(t/t)";} };
+      template <typename T> struct sfext08_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) - (z - w); } static inline std::string id() { return "(t+t)-(t-t)";} };
+      template <typename T> struct sfext09_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) - (z - w); } static inline std::string id() { return "(t+t)-(t-t)";} };
+      template <typename T> struct sfext10_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) + (z - w); } static inline std::string id() { return "(t+t)+(t-t)";} };
+      template <typename T> struct sfext11_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) + (z - w); } static inline std::string id() { return "(t+t)+(t-t)";} };
+      template <typename T> struct sfext12_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) - (z + w); } static inline std::string id() { return "(t-t)-(t+t)";} };
+      template <typename T> struct sfext13_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) - (z + w); } static inline std::string id() { return "(t-t)-(t+t)";} };
+      template <typename T> struct sfext14_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) + (z + w); } static inline std::string id() { return "(t-t)+(t+t)";} };
+      template <typename T> struct sfext15_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) + (z + w); } static inline std::string id() { return "(t-t)+(t+t)";} };
+      template <typename T> struct sfext16_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z + w); } static inline std::string id() { return "(t*t)-(t+t)";} };
+      template <typename T> struct sfext17_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z + w); } static inline std::string id() { return "(t/t)-(t+t)";} };
+      template <typename T> struct sfext18_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z + w); } static inline std::string id() { return "(t*t)+(t+t)";} };
+      template <typename T> struct sfext19_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z + w); } static inline std::string id() { return "(t/t)+(t+t)";} };
+      template <typename T> struct sfext20_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) + (z - w); } static inline std::string id() { return "(t*t)+(t-t)";} };
+      template <typename T> struct sfext21_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) + (z - w); } static inline std::string id() { return "(t/t)+(t-t)";} };
+      template <typename T> struct sfext22_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) - (z - w); } static inline std::string id() { return "(t*t)-(t-t)";} };
+      template <typename T> struct sfext23_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) - (z - w); } static inline std::string id() { return "(t/t)-(t-t)";} };
+      template <typename T> struct sfext24_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) * (z * w); } static inline std::string id() { return "(t+t)*(t*t)";} };
+      template <typename T> struct sfext25_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) * (z / w); } static inline std::string id() { return "(t+t)*(t/t)";} };
+      template <typename T> struct sfext26_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) / (z * w); } static inline std::string id() { return "(t+t)/(t*t)";} };
+      template <typename T> struct sfext27_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x + y) / (z / w); } static inline std::string id() { return "(t+t)/(t/t)";} };
+      template <typename T> struct sfext28_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) / (z * w); } static inline std::string id() { return "(t-t)/(t*t)";} };
+      template <typename T> struct sfext29_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) / (z / w); } static inline std::string id() { return "(t-t)/(t/t)";} };
+      template <typename T> struct sfext30_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) * (z * w); } static inline std::string id() { return "(t-t)*(t*t)";} };
+      template <typename T> struct sfext31_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x - y) * (z / w); } static inline std::string id() { return "(t-t)*(t/t)";} };
+      template <typename T> struct sfext32_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) * (z + w); } static inline std::string id() { return "(t*t)*(t+t)";} };
+      template <typename T> struct sfext33_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) * (z + w); } static inline std::string id() { return "(t/t)*(t+t)";} };
+      template <typename T> struct sfext34_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) / (z + w); } static inline std::string id() { return "(t*t)/(t+t)";} };
+      template <typename T> struct sfext35_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) / (z + w); } static inline std::string id() { return "(t/t)/(t+t)";} };
+      template <typename T> struct sfext36_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) / (z - w); } static inline std::string id() { return "(t*t)/(t-t)";} };
+      template <typename T> struct sfext37_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) / (z - w); } static inline std::string id() { return "(t/t)/(t-t)";} };
+      template <typename T> struct sfext38_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x * y) * (z - w); } static inline std::string id() { return "(t*t)*(t-t)";} };
+      template <typename T> struct sfext39_op : public sf_base<T> { typedef typename sf_base<T>::Type Type; static inline T process(Type x, Type y, Type z, Type w) { return (x / y) * (z - w); } static inline std::string id() { return "(t/t)*(t-t)";} };
 
       template <typename T, typename SpecialFunction>
       class sf3_node : public trinary_node<T>
@@ -5303,14 +5408,18 @@ namespace exprtk
          const bfunc_t f1_;
       };
 
-      template <typename T, typename T0, typename T1, typename T2, typename T3, typename ProcessMode>
-      class T0oT1oT2oT3 : public T0oT1oT2_base_node<T>
+      template <typename T, typename T0_, typename T1_, typename T2_, typename T3_, typename ProcessMode>
+      class T0oT1oT2oT3 : public T0oT1oT2oT3_base_node<T>
       {
       public:
 
          typedef typename details::functor_t<T> functor_t;
          typedef typename functor_t::bfunc_t bfunc_t;
          typedef T value_type;
+         typedef T0_ T0;
+         typedef T1_ T1;
+         typedef T2_ T2;
+         typedef T3_ T3;
          typedef T0oT1oT2oT3<T,T0,T1,T2,T3,ProcessMode> node_type;
          typedef ProcessMode process_mode_t;
 
@@ -5476,6 +5585,79 @@ namespace exprtk
          const tfunc_t f_;
       };
 
+      template <typename T, typename T0, typename T1, typename T2, typename SF3Operation>
+      class T0oT1oT2_sf3ext : public T0oT1oT2_base_node<T>
+      {
+      public:
+
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::tfunc_t tfunc_t;
+         typedef T value_type;
+         typedef T0oT1oT2_sf3ext<T,T0,T1,T2,SF3Operation> node_type;
+
+         T0oT1oT2_sf3ext(T0 t0, T1 t1, T2 t2)
+         : t0_(t0),
+           t1_(t1),
+           t2_(t2)
+         {}
+
+         inline typename expression_node<T>::node_type type() const
+         {
+            static const typename expression_node<T>::node_type result = nodetype_T0oT1oT2<T,T0,T1,T2>::result;
+            return result;
+         }
+
+         inline operator_type operation() const
+         {
+            return e_default;
+         }
+
+         inline T value() const
+         {
+            return SF3Operation::process(t0_,t1_,t2_);
+         }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline T2 t2() const
+         {
+            return t2_;
+         }
+
+         std::string type_id() const
+         {
+            return id();
+         }
+
+         static inline std::string id()
+         {
+            return SF3Operation::id();
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator, T0 t0, T1 t1, T2 t2)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,T2>(t0,t1,t2);
+         }
+
+      private:
+
+         T0oT1oT2_sf3ext(node_type&) {}
+         node_type& operator=(node_type&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         T2 t2_;
+      };
+
       template <typename T, typename T0, typename T1, typename T2, typename T3>
       class T0oT1oT2oT3_sf4 : public T0oT1oT2_base_node<T>
       {
@@ -5561,6 +5743,86 @@ namespace exprtk
          T2 t2_;
          T3 t3_;
          const qfunc_t f_;
+      };
+
+      template <typename T, typename T0, typename T1, typename T2, typename T3, typename SF4Operation>
+      class T0oT1oT2oT3_sf4ext : public T0oT1oT2oT3_base_node<T>
+      {
+      public:
+
+         typedef typename details::functor_t<T> functor_t;
+         typedef typename functor_t::tfunc_t tfunc_t;
+         typedef T value_type;
+         typedef T0oT1oT2oT3_sf4ext<T,T0,T1,T2,T3,SF4Operation> node_type;
+
+         T0oT1oT2oT3_sf4ext(T0 t0, T1 t1, T2 t2, T3 t3)
+         : t0_(t0),
+           t1_(t1),
+           t2_(t2),
+           t3_(t3)
+         {}
+
+         inline typename expression_node<T>::node_type type() const
+         {
+            static const typename expression_node<T>::node_type result = nodetype_T0oT1oT2oT3<T,T0,T1,T2,T3>::result;
+            return result;
+         }
+
+         inline operator_type operation() const
+         {
+            return e_default;
+         }
+
+         inline T value() const
+         {
+            return SF4Operation::process(t0_,t1_,t2_,t3_);
+         }
+
+         inline T0 t0() const
+         {
+            return t0_;
+         }
+
+         inline T1 t1() const
+         {
+            return t1_;
+         }
+
+         inline T2 t2() const
+         {
+            return t2_;
+         }
+
+         inline T3 t3() const
+         {
+            return t2_;
+         }
+
+         std::string type_id() const
+         {
+            return id();
+         }
+
+         static inline std::string id()
+         {
+            return SF4Operation::id();
+         }
+
+         template <typename Allocator>
+         static inline expression_node<T>* allocate(Allocator& allocator, T0 t0, T1 t1, T2 t2, T3 t3)
+         {
+            return allocator.template allocate_type<node_type,T0,T1,T2,T3>(t0,t1,t2,t3);
+         }
+
+      private:
+
+         T0oT1oT2oT3_sf4ext(node_type&) {}
+         node_type& operator=(node_type&) { return *this; }
+
+         T0 t0_;
+         T1 t1_;
+         T2 t2_;
+         T3 t3_;
       };
 
       template <typename T, typename T0, typename T1>
@@ -7719,8 +7981,8 @@ namespace exprtk
       typedef std::map<details::operator_type,unary_functor_t> unary_op_map_t;
       typedef std::map<details::operator_type,binary_functor_t> binary_op_map_t;
       typedef std::map<details::operator_type,trinary_functor_t> trinary_op_map_t;
-      typedef std::map<std::string,trinary_functor_t> sf3_map_t;
-      typedef std::map<std::string,quaternary_functor_t> sf4_map_t;
+      typedef std::map<std::string,std::pair<trinary_functor_t,details::operator_type> > sf3_map_t;
+      typedef std::map<std::string,std::pair<quaternary_functor_t,details::operator_type> > sf4_map_t;
       typedef std::map<binary_functor_t,details::operator_type> inv_binary_op_map_t;
       typedef std::multimap<std::string,details::base_operation_t,details::ilesscompare> base_ops_map_t;
 
@@ -7840,6 +8102,12 @@ namespace exprtk
 
       inline bool compile(const std::string& expression_string, expression<T>& expr)
       {
+         if (expression_string.empty())
+         {
+            set_error(parser_error::make_error(parser_error::e_syntax, "ERR00 - Empty expression!"));
+            return false;
+         }
+
          error_list_.clear();
          expression_generator_.set_allocator(node_allocator_);
 
@@ -8249,6 +8517,7 @@ namespace exprtk
                   if (p_[i] && !is_variable_node(p_[i]))
                   {
                      parser_.node_allocator_.free(p_[i]);
+                     p_[i] = 0;
                   }
                }
             }
@@ -8808,6 +9077,8 @@ namespace exprtk
          typedef details::expression_node<Type>* expression_node_ptr;
          typedef expression_node_ptr (*synthesize_functor_t)(expression_generator<T>&, const details::operator_type& operation, expression_node_ptr (&branch)[2]);
          typedef std::map<std::string,synthesize_functor_t> synthesize_map_t;
+         typedef const Type& vtype;
+         typedef const Type  ctype;
 
          inline void init_synthesize_map()
          {
@@ -8969,7 +9240,7 @@ namespace exprtk
             if (sf3_map_->end() == itr)
                return false;
             else
-               tfunc = itr->second;
+               tfunc = itr->second.first;
             return true;
          }
 
@@ -8979,7 +9250,27 @@ namespace exprtk
             if (sf4_map_->end() == itr)
                return false;
             else
-               qfunc = itr->second;
+               qfunc = itr->second.first;
+            return true;
+         }
+
+         inline bool sf3_optimizable(const std::string sf3id, details::operator_type& operation)
+         {
+            typename sf3_map_t::iterator itr = sf3_map_->find(sf3id);
+            if (sf3_map_->end() == itr)
+               return false;
+            else
+               operation = itr->second.second;
+            return true;
+         }
+
+         inline bool sf4_optimizable(const std::string sf4id, details::operator_type& operation)
+         {
+            typename sf4_map_t::iterator itr = sf4_map_->find(sf4id);
+            if (sf4_map_->end() == itr)
+               return false;
+            else
+               operation = itr->second.second;
             return true;
          }
 
@@ -9208,8 +9499,7 @@ namespace exprtk
          {
             if ((0 == branch[0]) || (0 == branch[1]))
             {
-               if (0 != branch[0]) node_allocator_->free(branch[0]);
-               if (0 != branch[1]) node_allocator_->free(branch[1]);
+               details::free_all_nodes(*node_allocator_,branch);
                return error_node();
             }
             else if (is_invalid_string_op(operation,branch))
@@ -9243,9 +9533,7 @@ namespace exprtk
          {
             if ((0 == branch[0]) || (0 == branch[1]) || (0 == branch[2]))
             {
-               if (0 != branch[0]) node_allocator_->free(branch[0]);
-               if (0 != branch[1]) node_allocator_->free(branch[1]);
-               if (0 != branch[2]) node_allocator_->free(branch[2]);
+               details::free_all_nodes(*node_allocator_,branch);
                return error_node();
             }
             else if (is_invalid_string_op(operation,branch))
@@ -9281,8 +9569,8 @@ namespace exprtk
          {
             if ((0 == b0) || (0 == b1))
             {
-               if (0 != b0) node_allocator_->free(b0);
-               if (0 != b1) node_allocator_->free(b1);
+               details::free_node(*node_allocator_,b0);
+               details::free_node(*node_allocator_,b1);
                return error_node();
             }
             else
@@ -9298,9 +9586,9 @@ namespace exprtk
          {
             if ((0 == condition) || (0 == consequent) || (0 == alternative))
             {
-               if (0 != condition  ) node_allocator_->free(condition  );
-               if (0 != consequent ) node_allocator_->free(consequent );
-               if (0 != alternative) node_allocator_->free(alternative);
+               free_node(*node_allocator_,condition);
+               free_node(*node_allocator_,consequent);
+               free_node(*node_allocator_,alternative);
                return error_node();
             }
             // Can the condition be immediately evaluated? if so optimize.
@@ -9309,15 +9597,15 @@ namespace exprtk
                // True branch
                if (details::is_true(condition))
                {
-                  node_allocator_->free(condition);
-                  node_allocator_->free(alternative);
+                  free_node(*node_allocator_,condition);
+                  free_node(*node_allocator_,alternative);
                   return consequent;
                }
                // False branch
                else
                {
-                  node_allocator_->free(condition);
-                  node_allocator_->free(consequent);
+                  free_node(*node_allocator_,condition);
+                  free_node(*node_allocator_,consequent);
                   return alternative;
                }
             }
@@ -9445,6 +9733,7 @@ namespace exprtk
             }
             T v = temp_node->value();
             node_allocator_->free(temp_node);
+            details::free_node(*node_allocator_,temp_node);
             return node_allocator_->allocate<literal_node_t>(v);
          }
 
@@ -9632,7 +9921,7 @@ namespace exprtk
                default : return error_node();
             }
             T v = temp_node->value();
-            node_allocator_->free(temp_node);
+            details::free_node(*node_allocator_,temp_node);
             return node_allocator_->allocate<literal_node_t>(v);
          }
 
@@ -9820,41 +10109,6 @@ namespace exprtk
             return true;
          }
 
-         template <std::size_t N>
-         inline bool all_nodes_valid(expression_node_ptr (&b)[N]) const
-         {
-            for (std::size_t i = 0; i < N; ++i)
-            {
-               if (0 == b[i]) return false;
-            }
-            return true;
-         }
-
-         template <std::size_t N>
-         inline bool all_nodes_variables(expression_node_ptr (&b)[N]) const
-         {
-            for (std::size_t i = 0; i < N; ++i)
-            {
-               if (0 == b[i])
-                  return false;
-               else if (!is_variable_node(b[i]))
-                  return false;
-            }
-            return true;
-         }
-
-         template <typename NodeAllocator, std::size_t N>
-         inline void free_all_nodes(NodeAllocator& node_allocator, expression_node_ptr (&b)[N]) const
-         {
-            for (std::size_t i = 0; i < N; ++i)
-            {
-               if (0 != b[i])
-               {
-                  node_allocator.free(b[i]);
-               }
-            }
-         }
-
          inline expression_node_ptr synthesize_assignment_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
          {
             if (details::is_variable_node(branch[0]))
@@ -10002,7 +10256,7 @@ namespace exprtk
                                                       expression_node_ptr (&branch)[2])
             {
                const Type c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
-               expr_gen.node_allocator_->free(branch[0]);
+               free_node(*expr_gen.node_allocator_,branch[0]);
                if (details::is_cob_node(branch[1]))
                {
                   // Simplify expressions of the form:
@@ -10044,7 +10298,7 @@ namespace exprtk
                                                       expression_node_ptr (&branch)[2])
             {
                const Type c = dynamic_cast<details::literal_node<Type>*>(branch[1])->value();
-               expr_gen.node_allocator_->free(branch[1]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
                if (details::is_boc_node(branch[0]))
                {
                   // Simplify expressions of the form:
@@ -10122,7 +10376,7 @@ namespace exprtk
             {
                const Type  c = dynamic_cast<details::literal_node<Type>* >(branch[0])->value();
                const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[1])->ref();
-               expr_gen.node_allocator_->free(branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
                switch (operation)
                {
                   #define case_stmt(op0,op1) case op0 : return expr_gen.node_allocator_->template allocate_cr<typename details::cov_node<Type,op1<Type> > >(c,v);
@@ -10142,7 +10396,7 @@ namespace exprtk
             {
                const Type& v = dynamic_cast<details::variable_node<Type>*>(branch[0])->ref();
                const Type  c = dynamic_cast<details::literal_node<Type>* >(branch[1])->value();
-               expr_gen.node_allocator_->free(branch[1]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
                if (expr_gen.cardinal_pow_optimizable(operation,c))
                {
                   return expr_gen.cardinal_pow_optimization(v,c);
@@ -10155,6 +10409,169 @@ namespace exprtk
                   #undef case_stmt
                   default : return error_node();
                }
+            }
+         };
+
+         struct synthesize_sf3ext_expression
+         {
+            template <typename T0, typename T1, typename T2>
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& sf3opr,
+                                                      T0 t0, T1 t1, T2 t2)
+            {
+               switch (sf3opr)
+               {
+                  #define case_stmt(op0,op1) case op0 : return details::T0oT1oT2_sf3ext<T,T0,T1,T2,op1<Type> >::allocate(*(expr_gen.node_allocator_),t0,t1,t2);
+                  case_stmt(details::e_sf00,details::sf00_op)
+                  case_stmt(details::e_sf01,details::sf01_op)
+                  case_stmt(details::e_sf02,details::sf02_op)
+                  case_stmt(details::e_sf03,details::sf03_op)
+                  case_stmt(details::e_sf04,details::sf04_op)
+                  case_stmt(details::e_sf05,details::sf05_op)
+                  case_stmt(details::e_sf06,details::sf06_op)
+                  case_stmt(details::e_sf07,details::sf07_op)
+                  case_stmt(details::e_sf08,details::sf08_op)
+                  case_stmt(details::e_sf09,details::sf09_op)
+                  case_stmt(details::e_sf10,details::sf10_op)
+                  case_stmt(details::e_sf11,details::sf11_op)
+                  case_stmt(details::e_sf12,details::sf12_op)
+                  case_stmt(details::e_sf13,details::sf13_op)
+                  case_stmt(details::e_sf14,details::sf14_op)
+                  case_stmt(details::e_sf15,details::sf15_op)
+                  case_stmt(details::e_sf16,details::sf16_op)
+                  case_stmt(details::e_sf17,details::sf17_op)
+                  case_stmt(details::e_sf18,details::sf18_op)
+                  case_stmt(details::e_sf19,details::sf19_op)
+                  case_stmt(details::e_sf20,details::sf20_op)
+                  case_stmt(details::e_sf21,details::sf21_op)
+                  case_stmt(details::e_sf22,details::sf22_op)
+                  case_stmt(details::e_sf23,details::sf23_op)
+                  case_stmt(details::e_sf24,details::sf24_op)
+                  case_stmt(details::e_sf25,details::sf25_op)
+                  case_stmt(details::e_sf26,details::sf26_op)
+                  case_stmt(details::e_sf27,details::sf27_op)
+                  case_stmt(details::e_sf28,details::sf28_op)
+                  #undef case_stmt
+                  default : return error_node();
+               }
+            }
+
+            template <typename T0, typename T1, typename T2>
+            static inline bool compile(expression_generator<Type>& expr_gen, const std::string& id,
+                                       T0 t0, T1 t1, T2 t2,
+                                       expression_node_ptr& result)
+            {
+               details::operator_type sf3opr;
+               if (!expr_gen.sf3_optimizable(id,sf3opr))
+                  return false;
+               else
+                  result = synthesize_sf3ext_expression::process<T0,T1,T2>(expr_gen,sf3opr,t0,t1,t2);
+               return true;
+            }
+         };
+
+         struct synthesize_sf4ext_expression
+         {
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
+                                                      const details::operator_type& sf4opr,
+                                                      T0 t0, T1 t1, T2 t2, T3 t3)
+            {
+               switch (sf4opr)
+               {
+                  #define case_stmt(op0,op1) case op0 : return details::T0oT1oT2oT3_sf4ext<T,T0,T1,T2,T3,op1<Type> >::allocate(*(expr_gen.node_allocator_),t0,t1,t2,t3);
+                  case_stmt(details::e_sf46,details::sf46_op)
+                  case_stmt(details::e_sf47,details::sf47_op)
+                  case_stmt(details::e_sf48,details::sf48_op)
+                  case_stmt(details::e_sf49,details::sf49_op)
+                  case_stmt(details::e_sf50,details::sf50_op)
+                  case_stmt(details::e_sf51,details::sf51_op)
+                  case_stmt(details::e_sf52,details::sf52_op)
+                  case_stmt(details::e_sf53,details::sf53_op)
+                  case_stmt(details::e_sf54,details::sf54_op)
+                  case_stmt(details::e_sf55,details::sf55_op)
+                  case_stmt(details::e_sf56,details::sf56_op)
+                  case_stmt(details::e_sf57,details::sf57_op)
+                  case_stmt(details::e_sf58,details::sf58_op)
+                  case_stmt(details::e_sf59,details::sf59_op)
+                  case_stmt(details::e_sf60,details::sf60_op)
+                  case_stmt(details::e_sf61,details::sf61_op)
+                  case_stmt(details::e_sf62,details::sf62_op)
+                  case_stmt(details::e_sf63,details::sf63_op)
+                  case_stmt(details::e_sf64,details::sf64_op)
+                  case_stmt(details::e_sf65,details::sf65_op)
+                  case_stmt(details::e_sf66,details::sf66_op)
+                  case_stmt(details::e_sf67,details::sf67_op)
+                  case_stmt(details::e_sf68,details::sf68_op)
+                  case_stmt(details::e_sf69,details::sf69_op)
+                  case_stmt(details::e_sf70,details::sf70_op)
+                  case_stmt(details::e_sf71,details::sf71_op)
+                  case_stmt(details::e_sf72,details::sf72_op)
+                  case_stmt(details::e_sf73,details::sf73_op)
+                  case_stmt(details::e_sf74,details::sf74_op)
+                  case_stmt(details::e_sf75,details::sf75_op)
+                  case_stmt(details::e_sf76,details::sf76_op)
+                  case_stmt(details::e_sf77,details::sf77_op)
+                  case_stmt(details::e_sf78,details::sf78_op)
+                  case_stmt(details::e_sf79,details::sf79_op)
+                  case_stmt(details::e_sf80,details::sf80_op)
+                  case_stmt(details::e_sf81,details::sf81_op)
+                  case_stmt(details::e_sf4ext00,details::sfext00_op)
+                  case_stmt(details::e_sf4ext01,details::sfext01_op)
+                  case_stmt(details::e_sf4ext02,details::sfext02_op)
+                  case_stmt(details::e_sf4ext03,details::sfext03_op)
+                  case_stmt(details::e_sf4ext04,details::sfext04_op)
+                  case_stmt(details::e_sf4ext05,details::sfext05_op)
+                  case_stmt(details::e_sf4ext06,details::sfext06_op)
+                  case_stmt(details::e_sf4ext07,details::sfext07_op)
+                  case_stmt(details::e_sf4ext08,details::sfext08_op)
+                  case_stmt(details::e_sf4ext09,details::sfext09_op)
+                  case_stmt(details::e_sf4ext10,details::sfext10_op)
+                  case_stmt(details::e_sf4ext11,details::sfext11_op)
+                  case_stmt(details::e_sf4ext12,details::sfext12_op)
+                  case_stmt(details::e_sf4ext13,details::sfext13_op)
+                  case_stmt(details::e_sf4ext14,details::sfext14_op)
+                  case_stmt(details::e_sf4ext15,details::sfext15_op)
+                  case_stmt(details::e_sf4ext16,details::sfext16_op)
+                  case_stmt(details::e_sf4ext17,details::sfext17_op)
+                  case_stmt(details::e_sf4ext18,details::sfext18_op)
+                  case_stmt(details::e_sf4ext19,details::sfext19_op)
+                  case_stmt(details::e_sf4ext20,details::sfext20_op)
+                  case_stmt(details::e_sf4ext21,details::sfext21_op)
+                  case_stmt(details::e_sf4ext22,details::sfext22_op)
+                  case_stmt(details::e_sf4ext23,details::sfext23_op)
+                  case_stmt(details::e_sf4ext24,details::sfext24_op)
+                  case_stmt(details::e_sf4ext25,details::sfext25_op)
+                  case_stmt(details::e_sf4ext26,details::sfext26_op)
+                  case_stmt(details::e_sf4ext27,details::sfext27_op)
+                  case_stmt(details::e_sf4ext28,details::sfext28_op)
+                  case_stmt(details::e_sf4ext29,details::sfext29_op)
+                  case_stmt(details::e_sf4ext30,details::sfext30_op)
+                  case_stmt(details::e_sf4ext31,details::sfext31_op)
+                  case_stmt(details::e_sf4ext32,details::sfext32_op)
+                  case_stmt(details::e_sf4ext33,details::sfext33_op)
+                  case_stmt(details::e_sf4ext34,details::sfext34_op)
+                  case_stmt(details::e_sf4ext35,details::sfext35_op)
+                  case_stmt(details::e_sf4ext36,details::sfext36_op)
+                  case_stmt(details::e_sf4ext37,details::sfext37_op)
+                  case_stmt(details::e_sf4ext38,details::sfext38_op)
+                  case_stmt(details::e_sf4ext39,details::sfext39_op)
+                  #undef case_stmt
+                  default : return error_node();
+               }
+            }
+
+            template <typename T0, typename T1, typename T2, typename T3>
+            static inline bool compile(expression_generator<Type>& expr_gen, const std::string& id,
+                                       T0 t0, T1 t1, T2 t2, T3 t3,
+                                       expression_node_ptr& result)
+            {
+               details::operator_type sf4opr;
+               if (!expr_gen.sf4_optimizable(id,sf4opr))
+                  return false;
+               else
+                  result = synthesize_sf4ext_expression::process<T0,T1,T2,T3>(expr_gen,sf4opr,t0,t1,t2,t3);
+               return true;
             }
          };
 
@@ -10175,17 +10592,22 @@ namespace exprtk
                const details::operator_type o1 = operation;
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,vtype,vtype>(expr_gen,id(expr_gen,o0,o1),v0,v1,v2,result))
+                  return result;
                else if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
             }
          };
 
@@ -10206,17 +10628,22 @@ namespace exprtk
                const details::operator_type o1 = vov->operation();
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,vtype,vtype>(expr_gen,id(expr_gen,o0,o1),v0,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
             }
          };
 
@@ -10237,18 +10664,23 @@ namespace exprtk
                const details::operator_type o1 = operation;
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,vtype,ctype>(expr_gen,id(expr_gen,o0,o1),v0,v1,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
             }
          };
 
@@ -10269,17 +10701,22 @@ namespace exprtk
                const details::operator_type o1 = voc->operation();
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,vtype,ctype>(expr_gen,id(expr_gen,o0,o1),v0,v1,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
             }
          };
 
@@ -10300,17 +10737,22 @@ namespace exprtk
                const details::operator_type o1 = operation;
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,ctype,vtype>(expr_gen,id(expr_gen,o0,o1),v0,c,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
             }
          };
 
@@ -10331,17 +10773,22 @@ namespace exprtk
                const details::operator_type o1 = cov->operation();
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,ctype,vtype>(expr_gen,id(expr_gen,o0,o1),v0,c,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
             }
          };
 
@@ -10362,17 +10809,22 @@ namespace exprtk
                const details::operator_type o1 = operation;
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<ctype,vtype,vtype>(expr_gen,id(expr_gen,o0,o1),c,v0,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
             }
          };
 
@@ -10386,25 +10838,29 @@ namespace exprtk
             {
                // (c) o0 (v0 o1 v1)
                const details::vov_base_node<Type>* vov = dynamic_cast<details::vov_base_node<Type>*>(branch[1]);
+               const Type   c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
                const Type& v0 = vov->v0();
                const Type& v1 = vov->v1();
-               const Type   c = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
                const details::operator_type o0 = operation;
                const details::operator_type o1 = vov->operation();
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<ctype,vtype,vtype>(expr_gen,id(expr_gen,o0,o1),c,v0,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen, const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
             }
          };
 
@@ -10425,18 +10881,23 @@ namespace exprtk
                const details::operator_type o1 = operation;
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<ctype,vtype,ctype>(expr_gen,id(expr_gen,o0,o1),c0,v,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
             }
          };
 
@@ -10450,19 +10911,18 @@ namespace exprtk
             {
                // (c0) o0 (v o1 c1)
                const details::voc_base_node<Type>* voc = dynamic_cast<details::voc_base_node<Type>*>(branch[1]);
+               const Type  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
                const Type&  v = voc->v();
                const Type  c1 = voc->c();
-               const Type  c0 = dynamic_cast<details::literal_node<Type>*>(branch[0])->value();
                const details::operator_type o0 = operation;
                const details::operator_type o1 = voc->operation();
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<ctype,vtype,ctype>(expr_gen,id(expr_gen,o0,o1),c0,v,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10470,12 +10930,18 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v,c1,f0,f1);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
+            }
          };
 
          struct synthesize_cocov_expression0
          {
             typedef typename cocov_t::type0 node_type;
-            static inline expression_node_ptr process(expression_generator<Type>& , const details::operator_type&, expression_node_ptr (&)[2])
+            static inline expression_node_ptr process(expression_generator<Type>&, const details::operator_type&, expression_node_ptr (&)[2])
             {
                // (c0 o0 c1) o1 (v) - Not possible.
                return error_node();
@@ -10499,18 +10965,22 @@ namespace exprtk
                const details::operator_type o1 = cov->operation();
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),c0,c1,v,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<ctype,ctype,vtype>(expr_gen,id(expr_gen,o0,o1),c0,c1,v,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,c1,v,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen, const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t" << expr_gen.to_str(o1) << "t)");
             }
          };
 
@@ -10531,18 +11001,23 @@ namespace exprtk
                const details::operator_type o1 = operation;
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
-               trinary_functor_t sf3 = reinterpret_cast<trinary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf3id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
-               if (expr_gen.sf3_optimizable(sf3id,sf3))
-                  return sf3_type::allocate(*(expr_gen.node_allocator_),v,c0,c1,sf3);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf3ext_expression::template compile<vtype,ctype,ctype>(expr_gen,id(expr_gen,o0,o1),v,c0,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v,c0,c1,f0,f1);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)" << expr_gen.to_str(o1) << "t");
             }
          };
 
@@ -10560,6 +11035,11 @@ namespace exprtk
          {
             typedef typename vovovov_t::type0 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
+
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10577,12 +11057,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,v3,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10592,12 +11071,21 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
             }
-         };
 
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
+         };
          struct synthesize_vovovoc_expression0
          {
             typedef typename vovovoc_t::type0 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10615,12 +11103,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10630,12 +11117,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_vovocov_expression0
          {
             typedef typename vovocov_t::type0 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10653,12 +11150,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,c,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10668,12 +11164,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_vocovov_expression0
          {
             typedef typename vocovov_t::type0 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10691,12 +11197,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10706,12 +11211,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_covovov_expression0
          {
             typedef typename covovov_t::type0 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10729,12 +11244,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c,v0,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10744,12 +11258,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_covocov_expression0
          {
             typedef typename covocov_t::type0 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10767,12 +11291,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10782,12 +11305,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_vocovoc_expression0
          {
             typedef typename vocovoc_t::type0 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10805,12 +11338,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10820,12 +11352,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_covovoc_expression0
          {
             typedef typename covovoc_t::type0 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10843,12 +11385,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10858,12 +11399,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_vococov_expression0
          {
             typedef typename vococov_t::type0 node_type;
             typedef typename vococov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10881,12 +11432,11 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else if (!expr_gen.valid_operator(o1,f1))
@@ -10896,12 +11446,22 @@ namespace exprtk
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,f0,f1,f2);
             }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t)");
+            }
          };
 
          struct synthesize_vovovov_expression1
          {
             typedef typename vovovov_t::type1 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10919,15 +11479,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovov->f0();
                binary_functor_t f2 = vovov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,v3,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -10935,6 +11500,10 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type1 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10952,15 +11521,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovoc->f0();
                binary_functor_t f2 = vovoc->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -10968,6 +11542,10 @@ namespace exprtk
          {
             typedef typename vovocov_t::type1 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -10985,15 +11563,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vocov->f0();
                binary_functor_t f2 = vocov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,c,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11001,6 +11584,10 @@ namespace exprtk
          {
             typedef typename vocovov_t::type1 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11018,15 +11605,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = covov->f0();
                binary_functor_t f2 = covov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11034,6 +11626,10 @@ namespace exprtk
          {
             typedef typename covovov_t::type1 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11051,16 +11647,21 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovov->f0();
                binary_functor_t f2 = vovov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c,v0,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11068,6 +11669,10 @@ namespace exprtk
          {
             typedef typename covocov_t::type1 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11085,16 +11690,21 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vocov->f0();
                binary_functor_t f2 = vocov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11102,6 +11712,10 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type1 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11119,15 +11733,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = covoc->f0();
                binary_functor_t f2 = covoc->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11135,6 +11754,10 @@ namespace exprtk
          {
             typedef typename covovoc_t::type1 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11152,16 +11775,21 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovoc->f0();
                binary_functor_t f2 = vovoc->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11169,6 +11797,10 @@ namespace exprtk
          {
             typedef typename vococov_t::type1 node_type;
             typedef typename vococov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11186,15 +11818,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = cocov->f0();
                binary_functor_t f2 = cocov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "(t" << expr_gen.to_str(o2) << "t))");
             }
          };
 
@@ -11202,6 +11839,10 @@ namespace exprtk
          {
             typedef typename vovovov_t::type2 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11219,15 +11860,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovov->f0();
                binary_functor_t f2 = vovov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,v3,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11235,6 +11881,10 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type2 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11252,15 +11902,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovoc->f0();
                binary_functor_t f2 = vovoc->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11268,6 +11923,10 @@ namespace exprtk
          {
             typedef typename vovocov_t::type2 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11285,15 +11944,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vocov->f0();
                binary_functor_t f2 = vocov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,c,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11301,6 +11965,10 @@ namespace exprtk
          {
             typedef typename vocovov_t::type2 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11318,15 +11986,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = covov->f0();
                binary_functor_t f2 = covov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11334,6 +12007,10 @@ namespace exprtk
          {
             typedef typename covovov_t::type2 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11351,23 +12028,32 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovov->f0();
                binary_functor_t f2 = vovov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c,v0,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
             }
-         };
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
+            }
+        };
 
          struct synthesize_covocov_expression2
          {
             typedef typename covocov_t::type2 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11385,16 +12071,21 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vocov->f0();
                binary_functor_t f2 = vocov->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11402,6 +12093,10 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type2 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11419,15 +12114,20 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = covoc->f0();
                binary_functor_t f2 = covoc->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11435,6 +12135,10 @@ namespace exprtk
          {
             typedef typename covovoc_t::type2 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11452,16 +12156,21 @@ namespace exprtk
                binary_functor_t f0 = reinterpret_cast<binary_functor_t>(0);
                binary_functor_t f1 = vovoc->f0();
                binary_functor_t f2 = vovoc->f1();
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o0,f0))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "t" << expr_gen.to_str(o0) << "((t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t)");
             }
          };
 
@@ -11473,12 +12182,22 @@ namespace exprtk
                // v0 o0 ((c0 o1 c1) o2 v1) - Not possible
                return error_node();
             }
+
+            static inline std::string id(expression_generator<Type>&,
+                                         const details::operator_type, const details::operator_type, const details::operator_type)
+            {
+               return "INVALID";
+            }
          };
 
          struct synthesize_vovovov_expression3
          {
             typedef typename vovovov_t::type3 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11496,15 +12215,20 @@ namespace exprtk
                binary_functor_t f0 = vovov->f0();
                binary_functor_t f1 = vovov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,v3,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11512,6 +12236,10 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type3 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11529,16 +12257,21 @@ namespace exprtk
                binary_functor_t f0 = vovov->f0();
                binary_functor_t f1 = vovov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11546,6 +12279,10 @@ namespace exprtk
          {
             typedef typename vovocov_t::type3 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11563,15 +12300,20 @@ namespace exprtk
                binary_functor_t f0 = vovoc->f0();
                binary_functor_t f1 = vovoc->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,c,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11579,6 +12321,10 @@ namespace exprtk
          {
             typedef typename vocovov_t::type3 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11596,15 +12342,20 @@ namespace exprtk
                binary_functor_t f0 = vocov->f0();
                binary_functor_t f1 = vocov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11612,6 +12363,10 @@ namespace exprtk
          {
             typedef typename covovov_t::type3 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11629,15 +12384,20 @@ namespace exprtk
                binary_functor_t f0 = covov->f0();
                binary_functor_t f1 = covov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c,v0,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11645,6 +12405,10 @@ namespace exprtk
          {
             typedef typename covocov_t::type3 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11662,15 +12426,20 @@ namespace exprtk
                binary_functor_t f0 = covoc->f0();
                binary_functor_t f1 = covoc->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11678,6 +12447,10 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type3 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11695,16 +12468,21 @@ namespace exprtk
                binary_functor_t f0 = vocov->f0();
                binary_functor_t f1 = vocov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11712,6 +12490,10 @@ namespace exprtk
          {
             typedef typename covovoc_t::type3 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11729,16 +12511,21 @@ namespace exprtk
                binary_functor_t f0 = covov->f0();
                binary_functor_t f1 = covov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11746,6 +12533,10 @@ namespace exprtk
          {
             typedef typename vococov_t::type3 node_type;
             typedef typename vococov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11763,15 +12554,20 @@ namespace exprtk
                binary_functor_t f0 = vococ->f0();
                binary_functor_t f1 = vococ->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,c1,v1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "((t" << expr_gen.to_str(o0) << "t)"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11779,6 +12575,10 @@ namespace exprtk
          {
             typedef typename vovovov_t::type4 node_type;
             typedef typename vovovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11796,15 +12596,20 @@ namespace exprtk
                binary_functor_t f0 = vovov->f0();
                binary_functor_t f1 = vovov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,v3,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,v3,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11812,6 +12617,10 @@ namespace exprtk
          {
             typedef typename vovovoc_t::type4 node_type;
             typedef typename vovovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11829,16 +12638,21 @@ namespace exprtk
                binary_functor_t f0 = vovov->f0();
                binary_functor_t f1 = vovov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,v2,c,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,v2,c,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11846,6 +12660,10 @@ namespace exprtk
          {
             typedef typename vovocov_t::type4 node_type;
             typedef typename vovocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11863,15 +12681,20 @@ namespace exprtk
                binary_functor_t f0 = vovoc->f0();
                binary_functor_t f1 = vovoc->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,v1,c,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,v1,c,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11879,6 +12702,10 @@ namespace exprtk
          {
             typedef typename vocovov_t::type4 node_type;
             typedef typename vocovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11896,15 +12723,20 @@ namespace exprtk
                binary_functor_t f0 = vocov->f0();
                binary_functor_t f1 = vocov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11912,6 +12744,10 @@ namespace exprtk
          {
             typedef typename covovov_t::type4 node_type;
             typedef typename covovov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11929,15 +12765,20 @@ namespace exprtk
                binary_functor_t f0 = covov->f0();
                binary_functor_t f1 = covov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c,v0,v1,v2,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c,v0,v1,v2,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11945,6 +12786,10 @@ namespace exprtk
          {
             typedef typename covocov_t::type4 node_type;
             typedef typename covocov_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11962,15 +12807,20 @@ namespace exprtk
                binary_functor_t f0 = covoc->f0();
                binary_functor_t f1 = covoc->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,c1,v1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,c1,v1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -11978,6 +12828,10 @@ namespace exprtk
          {
             typedef typename vocovoc_t::type4 node_type;
             typedef typename vocovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -11995,16 +12849,21 @@ namespace exprtk
                binary_functor_t f0 = vocov->f0();
                binary_functor_t f1 = vocov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),v0,c0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -12012,6 +12871,10 @@ namespace exprtk
          {
             typedef typename covovoc_t::type4 node_type;
             typedef typename covovoc_t::sf4_type sf4_type;
+            typedef typename node_type::T0 T0;
+            typedef typename node_type::T1 T1;
+            typedef typename node_type::T2 T2;
+            typedef typename node_type::T3 T3;
             static inline expression_node_ptr process(expression_generator<Type>& expr_gen,
                                                       const details::operator_type& operation,
                                                       expression_node_ptr (&branch)[2])
@@ -12029,16 +12892,21 @@ namespace exprtk
                binary_functor_t f0 = covov->f0();
                binary_functor_t f1 = covov->f1();
                binary_functor_t f2 = reinterpret_cast<binary_functor_t>(0);
-               quaternary_functor_t sf4 = reinterpret_cast<quaternary_functor_t>(0);
-               expr_gen.node_allocator_->free(branch[0]);
-               expr_gen.node_allocator_->free(branch[1]);
-               const std::string sf4id = (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
-               if (expr_gen.sf4_optimizable(sf4id,sf4))
-                  return sf4_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,sf4);
+               details::free_node(*(expr_gen.node_allocator_),branch[0]);
+               details::free_node(*(expr_gen.node_allocator_),branch[1]);
+               expression_node_ptr result = error_node();
+               if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,v1,c1,result))
+                  return result;
                if (!expr_gen.valid_operator(o2,f2))
                   return error_node();
                else
                   return node_type::allocate(*(expr_gen.node_allocator_),c0,v0,v1,c1,f0,f1,f2);
+            }
+
+            static inline std::string id(expression_generator<Type>& expr_gen,
+                                         const details::operator_type o0, const details::operator_type o1, const details::operator_type o2)
+            {
+               return (details::build_string() << "(t" << expr_gen.to_str(o0) << "(t"<< expr_gen.to_str(o1) << "t)" << expr_gen.to_str(o2) << "t");
             }
          };
 
@@ -12049,6 +12917,12 @@ namespace exprtk
             {
                // ((v0 o0 (c0 o1 c1)) o2 v1) - Not possible
                return error_node();
+            }
+
+            static inline std::string id(expression_generator<Type>&,
+                                         const details::operator_type, const details::operator_type, const details::operator_type)
+            {
+               return "INVALID";
             }
          };
 
@@ -12073,8 +12947,7 @@ namespace exprtk
             expression_node_ptr result = error_node();
             result = node_allocator_->allocate_rrrrr<typename details::uvouv_node<Type> >(v0,v1,u0,u1,f);
 
-            node_allocator_->free(branch[0]);
-            node_allocator_->free(branch[1]);
+            details::free_all_nodes(*node_allocator_,branch);
             return result;
          }
 
@@ -12114,7 +12987,7 @@ namespace exprtk
          {
             std::string& s0 = dynamic_cast<     details::stringvar_node<Type>*>(branch[0])->ref();
             std::string  s1 = dynamic_cast<details::string_literal_node<Type>*>(branch[1])->str();
-            node_allocator_->free(branch[1]);
+            details::free_node(*node_allocator_,branch[1]);
             return synthesize_sos_expression_impl<std::string&,const std::string>(opr,s0,s1);
          }
 
@@ -12122,7 +12995,7 @@ namespace exprtk
          {
             std::string  s0 = dynamic_cast<details::string_literal_node<Type>*>(branch[0])->str();
             std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
-            node_allocator_->free(branch[0]);
+            details::free_node(*node_allocator_,branch[0]);
             return synthesize_sos_expression_impl<const std::string,std::string&>(opr,s0,s1);
          }
 
@@ -12144,11 +13017,10 @@ namespace exprtk
             {
                expression_node_ptr temp = synthesize_sos_expression_impl<const std::string,const std::string>(opr,s0,s1);
                Type v = temp->value();
-               node_allocator_->free(temp);
+               details::free_node(*node_allocator_,temp);
                result = node_allocator_->allocate<literal_node_t>(v);
             }
-            node_allocator_->free(branch[0]);
-            node_allocator_->free(branch[1]);
+            details::free_all_nodes(*node_allocator_,branch);
             return result;
          }
          #endif
@@ -12158,8 +13030,7 @@ namespace exprtk
          {
             if ((0 == branch[0]) || (0 == branch[1]))
             {
-               if (0 != branch[0]) node_allocator_->free(branch[0]);
-               if (0 != branch[1]) node_allocator_->free(branch[1]);
+               details::free_all_nodes(*node_allocator_,branch);
                return error_node();
             }
             else if (details::is_string_node(branch[0]))
@@ -12177,8 +13048,7 @@ namespace exprtk
          #else
          inline expression_node_ptr synthesize_string_expression(const details::operator_type&, expression_node_ptr (&)[2])
          {
-            if (0 != branch[0]) node_allocator_->free(branch[0]);
-            if (0 != branch[1]) node_allocator_->free(branch[1]);
+            details::free_all_nodes(*node_allocator_,branch);
             return error_node();
          }
          #endif
@@ -12190,9 +13060,7 @@ namespace exprtk
                return error_node();
             else if ((0 == branch[0]) || (0 == branch[1]) || (0 == branch[2]))
             {
-               if (0 != branch[0]) node_allocator_->free(branch[0]);
-               if (0 != branch[1]) node_allocator_->free(branch[1]);
-               if (0 != branch[2]) node_allocator_->free(branch[2]);
+               details::free_all_nodes(*node_allocator_,branch);
                return error_node();
             }
             else if (
@@ -12205,9 +13073,7 @@ namespace exprtk
                const std::string s1 = dynamic_cast<details::string_literal_node<Type>*>(branch[1])->str();
                const std::string s2 = dynamic_cast<details::string_literal_node<Type>*>(branch[2])->str();
                Type v = (((s0 <= s1) && (s1 <= s2)) ? Type(1) : Type(0));
-               node_allocator_->free(branch[0]);
-               node_allocator_->free(branch[1]);
-               node_allocator_->free(branch[2]);
+               details::free_all_nodes(*node_allocator_,branch);
                return node_allocator_->allocate_c<details::literal_node<Type> >(v);
             }
             else if (
@@ -12232,8 +13098,8 @@ namespace exprtk
                std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
                std::string  s2 = dynamic_cast<details::string_literal_node<Type>*>(branch[2])->str();
                typedef typename details::sosos_node<Type,std::string,std::string&,std::string,details::inrange_op<Type> > inrange_t;
-               node_allocator_->free(branch[0]);
-               node_allocator_->free(branch[2]);
+               details::free_node(*node_allocator_,branch[0]);
+               details::free_node(*node_allocator_,branch[2]);
                return node_allocator_->allocate_type<inrange_t,std::string,std::string&,std::string>(s0,s1,s2);
             }
             else if (
@@ -12246,7 +13112,7 @@ namespace exprtk
                std::string   s1 = dynamic_cast<details::string_literal_node<Type>*>(branch[1])->str();
                std::string&  s2 = dynamic_cast<     details::stringvar_node<Type>*>(branch[2])->ref();
                typedef typename details::sosos_node<Type,std::string&,std::string,std::string&,details::inrange_op<Type> > inrange_t;
-               node_allocator_->free(branch[1]);
+               details::free_node(*node_allocator_,branch[1]);
                return node_allocator_->allocate_type<inrange_t,std::string&,std::string,std::string&>(s0,s1,s2);
             }
             else if (
@@ -12259,7 +13125,7 @@ namespace exprtk
                std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
                std::string  s2 = dynamic_cast<details::string_literal_node<Type>*>(branch[2])->str();
                typedef typename details::sosos_node<Type,std::string&,std::string&,std::string,details::inrange_op<Type> > inrange_t;
-               node_allocator_->free(branch[2]);
+               details::free_node(*node_allocator_,branch[2]);
                return node_allocator_->allocate_type<inrange_t,std::string&,std::string&,std::string>(s0,s1,s2);
             }
             else if (
@@ -12272,7 +13138,7 @@ namespace exprtk
                std::string& s1 = dynamic_cast<     details::stringvar_node<Type>*>(branch[1])->ref();
                std::string& s2 = dynamic_cast<     details::stringvar_node<Type>*>(branch[2])->ref();
                typedef typename details::sosos_node<Type,std::string,std::string&,std::string&,details::inrange_op<Type> > inrange_t;
-               node_allocator_->free(branch[0]);
+               details::free_node(*node_allocator_,branch[0]);
                return node_allocator_->allocate_type<inrange_t,std::string,std::string&,std::string&>(s0,s1,s2);
             }
             else
@@ -12283,9 +13149,7 @@ namespace exprtk
          {
             if ((0 == branch[0]) || (0 == branch[1]) || (0 == branch[2]))
             {
-               if (0 != branch[0]) node_allocator_->free(branch[0]);
-               if (0 != branch[1]) node_allocator_->free(branch[1]);
-               if (0 != branch[2]) node_allocator_->free(branch[2]);
+               details::free_all_nodes(*node_allocator_,branch);
                return error_node();
             }
             return error_node();
@@ -12301,7 +13165,7 @@ namespace exprtk
                 (details::e_ilike == operation)
                )
                return error_node();
-            else if (!all_nodes_valid<N>(branch))
+            else if (!details::all_nodes_valid<N>(branch))
             {
                free_all_nodes(*node_allocator_,branch);
                return error_node();
@@ -12313,7 +13177,7 @@ namespace exprtk
                if (is_constant_foldable<N>(branch))
                {
                   Type v = expression_point->value();
-                  node_allocator_->free(expression_point);
+                  details::free_node(*node_allocator_,expression_point);
                   return node_allocator_->allocate<literal_node_t>(v);
                }
                else
@@ -12326,7 +13190,7 @@ namespace exprtk
          template <typename NodeType, std::size_t N>
          inline expression_node_ptr synthesize_expression(F* f, expression_node_ptr (&branch)[N])
          {
-            if (!all_nodes_valid<N>(branch))
+            if (!details::all_nodes_valid<N>(branch))
             {
                free_all_nodes(*node_allocator_,branch);
                return error_node();
@@ -12338,7 +13202,7 @@ namespace exprtk
             if (is_constant_foldable<N>(branch))
             {
                Type v = expression_point->value();
-               node_allocator_->free(expression_point);
+               details::free_node(*node_allocator_,expression_point);
                return node_allocator_->allocate<literal_node_t>(v);
             }
             else
@@ -12456,75 +13320,119 @@ namespace exprtk
 
       inline void load_sf3_map(sf3_map_t& sf3_map)
       {
-         sf3_map["(t+t)/t"] = details::sf00_op<T>::process;
-         sf3_map["(t+t)*t"] = details::sf01_op<T>::process;
-         sf3_map["(t+t)-t"] = details::sf02_op<T>::process;
-         sf3_map["(t+t)+t"] = details::sf03_op<T>::process;
-         sf3_map["(t-t)/t"] = details::sf04_op<T>::process;
-         sf3_map["(t-t)*t"] = details::sf05_op<T>::process;
-         sf3_map["(t*t)+t"] = details::sf06_op<T>::process;
-         sf3_map["(t*t)-t"] = details::sf07_op<T>::process;
-         sf3_map["(t*t)/t"] = details::sf08_op<T>::process;
-         sf3_map["(t*t)*t"] = details::sf09_op<T>::process;
-         sf3_map["(t/t)+t"] = details::sf10_op<T>::process;
-         sf3_map["(t/t)-t"] = details::sf11_op<T>::process;
-         sf3_map["(t/t)/t"] = details::sf12_op<T>::process;
-         sf3_map["(t/t)*t"] = details::sf13_op<T>::process;
-         sf3_map["t/(t+t)"] = details::sf14_op<T>::process;
-         sf3_map["t/(t-t)"] = details::sf15_op<T>::process;
-         sf3_map["t/(t*t)"] = details::sf16_op<T>::process;
-         sf3_map["t/(t/t)"] = details::sf17_op<T>::process;
-         sf3_map["t*(t+t)"] = details::sf18_op<T>::process;
-         sf3_map["t*(t-t)"] = details::sf19_op<T>::process;
-         sf3_map["t*(t*t)"] = details::sf20_op<T>::process;
-         sf3_map["t*(t/t)"] = details::sf21_op<T>::process;
-         sf3_map["t-(t/t)"] = details::sf22_op<T>::process;
-         sf3_map["t-(t/t)"] = details::sf23_op<T>::process;
-         sf3_map["t-(t*t)"] = details::sf24_op<T>::process;
-         sf3_map["t+(t*t)"] = details::sf25_op<T>::process;
-         sf3_map["t+(t/t)"] = details::sf26_op<T>::process;
-         sf3_map["t+(t+t)"] = details::sf27_op<T>::process;
-         sf3_map["t+(t-t)"] = details::sf28_op<T>::process;
+         typedef std::pair<trinary_functor_t,details::operator_type> pair_t;
+         #define register_sf3(Op) sf3_map[details::sf##Op##_op<T>::id()] = pair_t(details::sf##Op##_op<T>::process,details::e_sf##Op);
+
+         register_sf3(00)
+         register_sf3(01)
+         register_sf3(02)
+         register_sf3(03)
+         register_sf3(04)
+         register_sf3(05)
+         register_sf3(06)
+         register_sf3(07)
+         register_sf3(08)
+         register_sf3(09)
+         register_sf3(10)
+         register_sf3(11)
+         register_sf3(12)
+         register_sf3(13)
+         register_sf3(14)
+         register_sf3(15)
+         register_sf3(16)
+         register_sf3(17)
+         register_sf3(18)
+         register_sf3(19)
+         register_sf3(20)
+         register_sf3(21)
+         register_sf3(22)
+         register_sf3(23)
+         register_sf3(24)
+         register_sf3(25)
+         register_sf3(26)
+         register_sf3(27)
+         register_sf3(28)
+         #undef register_sf3
       }
 
       inline void load_sf4_map(sf4_map_t& sf4_map)
       {
-         sf4_map["t+((t+t)/t)"] = details::sf46_op<T>::process;
-         sf4_map["t+((t+t)*t)"] = details::sf47_op<T>::process;
-         sf4_map["t+((t-t)/t)"] = details::sf48_op<T>::process;
-         sf4_map["t+((t-t)*t)"] = details::sf49_op<T>::process;
-         sf4_map["t+((t*t)/t)"] = details::sf50_op<T>::process;
-         sf4_map["t+((t*t)*t)"] = details::sf51_op<T>::process;
-         sf4_map["t+((t/t)+t)"] = details::sf52_op<T>::process;
-         sf4_map["t+((t/t)/t)"] = details::sf53_op<T>::process;
-         sf4_map["t+((t/t)*t)"] = details::sf54_op<T>::process;
-         sf4_map["t-((t+t)/t)"] = details::sf55_op<T>::process;
-         sf4_map["t-((t+t)*t)"] = details::sf56_op<T>::process;
-         sf4_map["t-((t-t)/t)"] = details::sf57_op<T>::process;
-         sf4_map["t-((t-t)*t)"] = details::sf58_op<T>::process;
-         sf4_map["t-((t*t)/t)"] = details::sf59_op<T>::process;
-         sf4_map["t-((t*t)*t)"] = details::sf60_op<T>::process;
-         sf4_map["t-((t/t)/t)"] = details::sf61_op<T>::process;
-         sf4_map["t-((t/t)*t)"] = details::sf62_op<T>::process;
-         sf4_map["((t+t)*t)-t"] = details::sf63_op<T>::process;
-         sf4_map["((t-t)*t)-t"] = details::sf64_op<T>::process;
-         sf4_map["((t*t)*t)-t"] = details::sf65_op<T>::process;
-         sf4_map["((t/t)*t)-t"] = details::sf66_op<T>::process;
-         sf4_map["((t+t)/t)-t"] = details::sf67_op<T>::process;
-         sf4_map["((t-t)/t)-t"] = details::sf68_op<T>::process;
-         sf4_map["((t*t)/t)-t"] = details::sf69_op<T>::process;
-         sf4_map["((t/t)/t)-t"] = details::sf70_op<T>::process;
-         sf4_map["(t*t)+(t*t)"] = details::sf71_op<T>::process;
-         sf4_map["(t*t)-(t*t)"] = details::sf72_op<T>::process;
-         sf4_map["(t*t)+(t/t)"] = details::sf73_op<T>::process;
-         sf4_map["(t*t)-(t/t)"] = details::sf74_op<T>::process;
-         sf4_map["(t/t)+(t/t)"] = details::sf75_op<T>::process;
-         sf4_map["(t/t)-(t/t)"] = details::sf76_op<T>::process;
-         sf4_map["(t/t)-(t*t)"] = details::sf77_op<T>::process;
-         sf4_map["t/(t+(t*t))"] = details::sf78_op<T>::process;
-         sf4_map["t/(t-(t*t))"] = details::sf79_op<T>::process;
-         sf4_map["t*(t+(t*t))"] = details::sf80_op<T>::process;
-         sf4_map["t*(t-(t*t))"] = details::sf81_op<T>::process;
+         typedef std::pair<quaternary_functor_t,details::operator_type> pair_t;
+         #define register_sf4(Op) sf4_map[details::sf##Op##_op<T>::id()] = pair_t(details::sf##Op##_op<T>::process,details::e_sf##Op);
+
+         register_sf4(46)
+         register_sf4(47)
+         register_sf4(48)
+         register_sf4(49)
+         register_sf4(50)
+         register_sf4(51)
+         register_sf4(52)
+         register_sf4(53)
+         register_sf4(54)
+         register_sf4(55)
+         register_sf4(56)
+         register_sf4(57)
+         register_sf4(58)
+         register_sf4(59)
+         register_sf4(60)
+         register_sf4(61)
+         register_sf4(62)
+         register_sf4(63)
+         register_sf4(64)
+         register_sf4(65)
+         register_sf4(66)
+         register_sf4(67)
+         register_sf4(68)
+         register_sf4(69)
+         register_sf4(70)
+         register_sf4(71)
+         register_sf4(72)
+         register_sf4(73)
+         register_sf4(74)
+         register_sf4(75)
+         register_sf4(76)
+         register_sf4(77)
+         register_sf4(78)
+         register_sf4(79)
+         register_sf4(80)
+         register_sf4(81)
+         #undef register_sf4
+
+         typedef std::pair<quaternary_functor_t,details::operator_type> pair_t;
+         #define register_sf4ext(Op) sf4_map[details::sfext##Op##_op<T>::id()] = pair_t(details::sfext##Op##_op<T>::process,details::e_sf4ext##Op);
+         register_sf4ext(00)
+         register_sf4ext(01)
+         register_sf4ext(02)
+         register_sf4ext(03)
+         register_sf4ext(04)
+         register_sf4ext(05)
+         register_sf4ext(06)
+         register_sf4ext(07)
+         register_sf4ext(08)
+         register_sf4ext(09)
+         register_sf4ext(10)
+         register_sf4ext(11)
+         register_sf4ext(12)
+         register_sf4ext(13)
+         register_sf4ext(14)
+         register_sf4ext(15)
+         register_sf4ext(16)
+         register_sf4ext(17)
+         register_sf4ext(18)
+         register_sf4ext(19)
+         register_sf4ext(20)
+         register_sf4ext(21)
+         register_sf4ext(22)
+         register_sf4ext(23)
+         register_sf4ext(24)
+         register_sf4ext(25)
+         register_sf4ext(26)
+         register_sf4ext(27)
+         register_sf4ext(28)
+         register_sf4ext(29)
+         register_sf4ext(30)
+         register_sf4ext(31)
+         #undef register_sf4ext
       }
 
    private:
