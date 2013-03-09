@@ -224,7 +224,7 @@ namespace exprtk
       static const std::string reserved_words[] =
                                   {
                                      "and", "false", "for", "if", "ilike", "in", "like", "nand", "nor", "not",
-                                     "or", "shl", "shr", "true", "while", "xor"
+                                     "null", "or", "shl", "shr", "true", "while", "xor"
                                   };
 
       static const std::size_t reserved_words_size = sizeof(reserved_words) / sizeof(std::string);
@@ -235,9 +235,9 @@ namespace exprtk
                                      "cos", "cosh", "cot", "csc", "deg2grad", "deg2rad", "equal", "erf", "erfc",
                                      "exp", "false", "floor", "for", "frac", "grad2deg", "hyp", "if", "ilike",
                                      "in", "inrange", "like", "log", "log10", "logn", "max", "min", "mod", "mul",
-                                     "nand", "nor", "not", "not_equal", "or", "pow", "rad2deg", "root", "round",
-                                     "roundn", "sec", "sgn", "shl", "shr", "sin", "sinh", "sqrt", "sum", "tan",
-                                     "tanh", "true", "trunc", "while", "xor"
+                                     "nand", "nor", "not", "not_equal", "null", "or", "pow", "rad2deg", "root",
+                                     "round", "roundn", "sec", "sgn", "shl", "shr", "sin", "sinh", "sqrt", "sum",
+                                     "tan", "tanh", "true", "trunc", "while", "xor"
                                   };
 
       static const std::size_t reserved_symbols_size = sizeof(reserved_symbols) / sizeof(std::string);
@@ -2602,79 +2602,26 @@ namespace exprtk
 
    namespace details
    {
-
       enum operator_type
       {
-         e_default,
-         e_add    ,
-         e_sub    ,
-         e_mul    ,
-         e_div    ,
-         e_mod    ,
-         e_pow    ,
-         e_atan2  ,
-         e_min    ,
-         e_max    ,
-         e_avg    ,
-         e_sum    ,
-         e_prod   ,
-         e_lt     ,
-         e_lte    ,
-         e_eq     ,
-         e_equal  ,
-         e_ne     ,
-         e_nequal ,
-         e_gte    ,
-         e_gt     ,
-         e_and    ,
-         e_nand   ,
-         e_or     ,
-         e_nor    ,
-         e_xor    ,
-         e_shr    ,
-         e_shl    ,
-         e_abs    ,
-         e_acos   ,
-         e_asin   ,
-         e_atan   ,
-         e_ceil   ,
-         e_cos    ,
-         e_cosh   ,
-         e_exp    ,
-         e_floor  ,
-         e_log    ,
-         e_log10  ,
-         e_logn   ,
-         e_neg    ,
-         e_pos    ,
-         e_round  ,
-         e_roundn ,
-         e_root   ,
-         e_sqrt   ,
-         e_sin    ,
-         e_sinh   ,
-         e_sec    ,
-         e_csc    ,
-         e_tan    ,
-         e_tanh   ,
-         e_cot    ,
-         e_clamp  ,
-         e_inrange,
-         e_sgn    ,
-         e_r2d    ,
-         e_d2r    ,
-         e_d2g    ,
-         e_g2d    ,
-         e_hyp    ,
-         e_notl   ,
-         e_erf    ,
-         e_erfc   ,
-         e_frac   ,
-         e_trunc  ,
-         e_assign ,
-         e_in     ,
-         e_like   ,
-         e_ilike  ,
+         e_default, e_null   , e_add    , e_sub    ,
+         e_mul    , e_div    , e_mod    , e_pow    ,
+         e_atan2  , e_min    , e_max    , e_avg    ,
+         e_sum    , e_prod   , e_lt     , e_lte    ,
+         e_eq     , e_equal  , e_ne     , e_nequal ,
+         e_gte    , e_gt     , e_and    , e_nand   ,
+         e_or     , e_nor    , e_xor    , e_shr    ,
+         e_shl    , e_abs    , e_acos   , e_asin   ,
+         e_atan   , e_ceil   , e_cos    , e_cosh   ,
+         e_exp    , e_floor  , e_log    , e_log10  ,
+         e_logn   , e_neg    , e_pos    , e_round  ,
+         e_roundn , e_root   , e_sqrt   , e_sin    ,
+         e_sinh   , e_sec    , e_csc    , e_tan    ,
+         e_tanh   , e_cot    , e_clamp  , e_inrange,
+         e_sgn    , e_r2d    , e_d2r    , e_d2g    ,
+         e_g2d    , e_hyp    , e_notl   , e_erf    ,
+         e_erfc   , e_frac   , e_trunc  , e_assign ,
+         e_in     , e_like   , e_ilike  ,
 
          // Do not add new functions/operators after this point.
          e_sf00 = 1000, e_sf01 = 1001, e_sf02 = 1002, e_sf03 = 1003,
@@ -2890,98 +2837,29 @@ namespace exprtk
 
          enum node_type
          {
-            e_none        ,
-            e_null        ,
-            e_constant    ,
-            e_unary       ,
-            e_binary      ,
-            e_binary_ext  ,
-            e_trinary     ,
-            e_quaternary  ,
-            e_quinary     ,
-            e_senary      ,
-            e_conditional ,
-            e_while       ,
-            e_variable    ,
-            e_stringvar   ,
-            e_stringconst ,
-            e_function    ,
-            e_add         ,
-            e_sub         ,
-            e_mul         ,
-            e_div         ,
-            e_mod         ,
-            e_pow         ,
-            e_lt          ,
-            e_lte         ,
-            e_gt          ,
-            e_gte         ,
-            e_eq          ,
-            e_ne          ,
-            e_and         ,
-            e_nand        ,
-            e_or          ,
-            e_nor         ,
-            e_xor         ,
-            e_in          ,
-            e_like        ,
-            e_ilike       ,
-            e_inranges    ,
-            e_ipow        ,
-            e_ipowinv     ,
-            e_abs         ,
-            e_acos        ,
-            e_asin        ,
-            e_atan        ,
-            e_ceil        ,
-            e_cos         ,
-            e_cosh        ,
-            e_exp         ,
-            e_floor       ,
-            e_log         ,
-            e_log10       ,
-            e_neg         ,
-            e_pos         ,
-            e_round       ,
-            e_sin         ,
-            e_sinh        ,
-            e_sqrt        ,
-            e_tan         ,
-            e_tanh        ,
-            e_cot         ,
-            e_sec         ,
-            e_csc         ,
-            e_r2d         ,
-            e_d2r         ,
-            e_d2g         ,
-            e_g2d         ,
-            e_notl        ,
-            e_sgn         ,
-            e_erf         ,
-            e_erfc        ,
-            e_frac        ,
-            e_trunc       ,
-            e_uvouv       ,
-            e_vov         ,
-            e_cov         ,
-            e_voc         ,
-            e_vob         ,
-            e_bov         ,
-            e_cob         ,
-            e_boc         ,
-            e_vovov       ,
-            e_vovoc       ,
-            e_vocov       ,
-            e_covov       ,
-            e_covoc       ,
-            e_vovovov     ,
-            e_vovovoc     ,
-            e_vovocov     ,
-            e_vocovov     ,
-            e_covovov     ,
-            e_covocov     ,
-            e_vocovoc     ,
-            e_covovoc     ,
+            e_none        , e_null        , e_constant    , e_unary       ,
+            e_binary      , e_binary_ext  , e_trinary     , e_quaternary  ,
+            e_quinary     , e_senary      , e_conditional , e_while       ,
+            e_variable    , e_stringvar   , e_stringconst , e_function    ,
+            e_add         , e_sub         , e_mul         , e_div         ,
+            e_mod         , e_pow         , e_lt          , e_lte         ,
+            e_gt          , e_gte         , e_eq          , e_ne          ,
+            e_and         , e_nand        , e_or          , e_nor         ,
+            e_xor         , e_in          , e_like        , e_ilike       ,
+            e_inranges    , e_ipow        , e_ipowinv     , e_abs         ,
+            e_acos        , e_asin        , e_atan        , e_ceil        ,
+            e_cos         , e_cosh        , e_exp         , e_floor       ,
+            e_log         , e_log10       , e_neg         , e_pos         ,
+            e_round       , e_sin         , e_sinh        , e_sqrt        ,
+            e_tan         , e_tanh        , e_cot         , e_sec         ,
+            e_csc         , e_r2d         , e_d2r         , e_d2g         ,
+            e_g2d         , e_notl        , e_sgn         , e_erf         ,
+            e_erfc        , e_frac        , e_trunc       , e_uvouv       ,
+            e_vov         , e_cov         , e_voc         , e_vob         ,
+            e_bov         , e_cob         , e_boc         , e_vovov       ,
+            e_vovoc       , e_vocov       , e_covov       , e_covoc       ,
+            e_vovovov     , e_vovovoc     , e_vovocov     , e_vocovov     ,
+            e_covovov     , e_covocov     , e_vocovoc     , e_covovoc     ,
             e_vococov
          };
 
@@ -3057,6 +2935,12 @@ namespace exprtk
       inline bool is_constant_node(const expression_node<T>* node)
       {
          return (details::expression_node<T>::e_constant == node->type());
+      }
+
+      template <typename T>
+      inline bool is_null_node(const expression_node<T>* node)
+      {
+         return (details::expression_node<T>::e_null == node->type());
       }
 
       template <typename T>
@@ -6474,6 +6358,12 @@ namespace exprtk
             return allocate<ResultNode>(operation,branch[0],branch[1],branch[2],branch[3],branch[4],branch[5]);
          }
 
+         template <typename node_type>
+         inline expression_node<typename node_type::value_type>* allocate() const
+         {
+            return new node_type();
+         }
+
          template <typename node_type, typename T1>
          inline expression_node<typename node_type::value_type>* allocate(T1& t1) const
          {
@@ -7950,6 +7840,8 @@ namespace exprtk
          e_level13
       };
 
+      struct state_t;
+
       typedef const T&                                       cref_t;
       typedef const T                                       const_t;
       typedef ifunction                <T>                        F;
@@ -8104,7 +7996,9 @@ namespace exprtk
       {
          if (expression_string.empty())
          {
-            set_error(parser_error::make_error(parser_error::e_syntax, "ERR00 - Empty expression!"));
+            set_error(
+               make_error(parser_error::e_syntax,
+                          "ERR00 - Empty expression!"));
             return false;
          }
 
@@ -8137,7 +8031,9 @@ namespace exprtk
          }
          else
          {
-            set_error(parser_error::make_error(parser_error::e_syntax, "ERR01 - Incomplete expression!"));
+            set_error(
+               make_error(parser_error::e_syntax,
+                          "ERR01 - Incomplete expression!"));
             symbol_name_cache_.clear();
             if (0 != e)
             {
@@ -8415,13 +8311,13 @@ namespace exprtk
                case token_t::e_pow    : current_state.set(e_level12,e_level12,details::   e_pow); break;
                default                : if (token_t::e_symbol == current_token_.type)
                                         {
-                                           static const std::string s_and  =    "and";
-                                           static const std::string s_nand =   "nand";
-                                           static const std::string s_or   =     "or";
-                                           static const std::string s_nor  =    "nor";
-                                           static const std::string s_xor  =    "xor";
-                                           static const std::string s_in   =     "in";
-                                           static const std::string s_like =   "like";
+                                           static const std::string s_and   =   "and";
+                                           static const std::string s_nand  =  "nand";
+                                           static const std::string s_or    =    "or";
+                                           static const std::string s_nor   =   "nor";
+                                           static const std::string s_xor   =   "xor";
+                                           static const std::string s_in    =    "in";
+                                           static const std::string s_like  =  "like";
                                            static const std::string s_ilike = "ilike";
 
                                            if (details::imatch(current_token_.value,s_and))
@@ -8764,8 +8660,18 @@ namespace exprtk
          }
          else if (!token_is(token_t::e_rcrlbracket))
             return error_node();
+
+         expression_node_ptr result;
+         if (0 == (result = expression_generator_.while_loop(condition,branch)))
+         {
+            set_error(
+               make_error(parser_error::e_syntax,
+               current_token_,
+               "ERR18 - Failed to parse branch for while-loop"));
+            return error_node();
+         }
          else
-            return expression_generator_.while_loop(condition,branch);
+            return result;
       }
 
       template <typename Type, std::size_t NumberOfParameters>
@@ -8818,7 +8724,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_token,
                           current_token_,
-                          "ERR18 - Invalid special function[1]: " + current_token_.value));
+                          "ERR19 - Invalid special function[1]: " + current_token_.value));
             return error_node();
          }
 
@@ -8829,7 +8735,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_token,
                           current_token_,
-                          "ERR19 - Invalid special function[2]: " + current_token_.value));
+                          "ERR20 - Invalid special function[2]: " + current_token_.value));
             return error_node();
          }
 
@@ -8843,6 +8749,12 @@ namespace exprtk
             case 4  : return parse_special_function_impl<T,4>::process(*this,opt_type);
             default : return error_node();
          }
+      }
+
+      inline expression_node_ptr parse_null_statement()
+      {
+         next_token();
+         return node_allocator_.allocate<details::null_node<T> >();
       }
 
       inline expression_node_ptr parse_symtab_symbol()
@@ -8915,7 +8827,7 @@ namespace exprtk
                            set_error(
                               make_error(parser_error::e_syntax,
                                          current_token_,
-                                         "ERR20 - Invalid number of parameters for function: " + symbol));
+                                         "ERR21 - Invalid number of parameters for function: " + symbol));
                            return error_node();
                          }
             }
@@ -8927,7 +8839,7 @@ namespace exprtk
                set_error(
                   make_error(parser_error::e_syntax,
                              current_token_,
-                             "ERR21 - Failed to generate node for function: '" + symbol + "'"));
+                             "ERR22 - Failed to generate node for function: '" + symbol + "'"));
                return error_node();
             }
          }
@@ -8936,7 +8848,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR22 - Undefined variable or function: '" + symbol + "'"));
+                          "ERR23 - Undefined variable or function: '" + symbol + "'"));
             return error_node();
          }
       }
@@ -8945,6 +8857,7 @@ namespace exprtk
       {
          static const std::string symbol_if = "if";
          static const std::string symbol_while = "while";
+         static const std::string symbol_null = "null";
 
          if (valid_base_operation(current_token_.value))
          {
@@ -8962,6 +8875,10 @@ namespace exprtk
          {
             return parse_special_function();
          }
+         else if (details::imatch(current_token_.value,symbol_null))
+         {
+            return parse_null_statement();
+         }
          else if (symbol_table_.valid())
          {
             return parse_symtab_symbol();
@@ -8971,7 +8888,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_symtab,
                           current_token_,
-                          "ERR23 - Variable or function detected, yet symbol-table is invalid, Symbol: " + current_token_.value));
+                          "ERR24 - Variable or function detected, yet symbol-table is invalid, Symbol: " + current_token_.value));
             return error_node();
          }
       }
@@ -9046,7 +8963,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR24 - Premature end of expression.[1]"));
+                          "ERR25 - Premature end of expression.[1]"));
             return error_node();
          }
          else
@@ -9054,7 +8971,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR25 - Premature end of expression.[2]"));
+                          "ERR26 - Premature end of expression.[2]"));
             return error_node();
          }
       }
@@ -9278,6 +9195,8 @@ namespace exprtk
          {
             if (0 == branch[0])
                return error_node();
+            else if (details::is_null_node(branch[0]))
+               return branch[0];
             else if (details::is_constant_node(branch[0]))
                return synthesize_expression<unary_node_t,1>(operation,branch);
             else if (unary_optimizable(operation) && details::is_variable_node(branch[0]))
@@ -9356,7 +9275,9 @@ namespace exprtk
 
          inline std::string branch_to_id(expression_node_ptr branch)
          {
-            if (details::is_constant_node(branch))
+            if (details::is_null_node(branch))
+               return "(null)";
+            else if (details::is_constant_node(branch))
                return "(c)";
             else if (details::is_variable_node(branch))
                return "(v)";
@@ -9495,6 +9416,12 @@ namespace exprtk
             return (b0_string && b1_string && b2_string && (details::e_inrange == operation));
          }
 
+         inline bool is_null_present(expression_node_ptr (&branch)[2])
+         {
+            return details::is_null_node(branch[0]) ||
+                   details::is_null_node(branch[1]);
+         }
+
          inline expression_node_ptr operator()(const details::operator_type& operation, expression_node_ptr (&branch)[2])
          {
             if ((0 == branch[0]) || (0 == branch[1]))
@@ -9508,6 +9435,8 @@ namespace exprtk
                return synthesize_assignment_expression(operation,branch);
             else if (is_string_operation(operation,branch))
                return synthesize_string_expression(operation,branch);
+            else if (is_null_present(branch))
+               return synthesize_null_expression(operation,branch);
             expression_node_ptr result = error_node();
             if (synthesize_expression(operation,branch,result))
                return result;
@@ -9616,7 +9545,25 @@ namespace exprtk
          inline expression_node_ptr while_loop(expression_node_ptr condition,
                                                expression_node_ptr branch) const
          {
-            return node_allocator_->allocate<while_loop_node_t>(condition,branch);
+            if (details::is_constant_node(condition))
+            {
+               expression_node_ptr result = error_node();
+               if (details::is_true(condition))
+                  //Infinite loops are not allowed.
+                  result = error_node();
+               else
+                  result = node_allocator_->allocate<details::null_node<Type> >();
+               free_node(*node_allocator_,condition);
+               free_node(*node_allocator_,branch);
+               return result;
+            }
+            else if (details::is_null_node(condition))
+            {
+               free_node(*node_allocator_,condition);
+               return branch;
+            }
+            else
+               return node_allocator_->allocate<while_loop_node_t>(condition,branch);
          }
 
          #define unary_opr_switch_statements \
@@ -9682,52 +9629,29 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : temp_node = node_allocator_->allocate<details::sf3_node<Type,op1<Type> > >(operation,branch); break;
-               case_stmt(details::e_sf00,details::sf00_op)
-               case_stmt(details::e_sf01,details::sf01_op)
-               case_stmt(details::e_sf02,details::sf02_op)
-               case_stmt(details::e_sf03,details::sf03_op)
-               case_stmt(details::e_sf04,details::sf04_op)
-               case_stmt(details::e_sf05,details::sf05_op)
-               case_stmt(details::e_sf06,details::sf06_op)
-               case_stmt(details::e_sf07,details::sf07_op)
-               case_stmt(details::e_sf08,details::sf08_op)
-               case_stmt(details::e_sf09,details::sf09_op)
-               case_stmt(details::e_sf10,details::sf10_op)
-               case_stmt(details::e_sf11,details::sf11_op)
-               case_stmt(details::e_sf12,details::sf12_op)
-               case_stmt(details::e_sf13,details::sf13_op)
-               case_stmt(details::e_sf14,details::sf14_op)
-               case_stmt(details::e_sf15,details::sf15_op)
-               case_stmt(details::e_sf16,details::sf16_op)
-               case_stmt(details::e_sf17,details::sf17_op)
-               case_stmt(details::e_sf18,details::sf18_op)
-               case_stmt(details::e_sf19,details::sf19_op)
-               case_stmt(details::e_sf20,details::sf20_op)
-               case_stmt(details::e_sf21,details::sf21_op)
-               case_stmt(details::e_sf22,details::sf22_op)
-               case_stmt(details::e_sf23,details::sf23_op)
-               case_stmt(details::e_sf24,details::sf24_op)
-               case_stmt(details::e_sf25,details::sf25_op)
-               case_stmt(details::e_sf26,details::sf26_op)
-               case_stmt(details::e_sf27,details::sf27_op)
-               case_stmt(details::e_sf28,details::sf28_op)
-               case_stmt(details::e_sf29,details::sf29_op)
-               case_stmt(details::e_sf30,details::sf30_op)
-               case_stmt(details::e_sf31,details::sf31_op)
-               case_stmt(details::e_sf32,details::sf32_op)
-               case_stmt(details::e_sf33,details::sf33_op)
-               case_stmt(details::e_sf34,details::sf34_op)
-               case_stmt(details::e_sf35,details::sf35_op)
-               case_stmt(details::e_sf36,details::sf36_op)
-               case_stmt(details::e_sf37,details::sf37_op)
-               case_stmt(details::e_sf38,details::sf38_op)
-               case_stmt(details::e_sf39,details::sf39_op)
-               case_stmt(details::e_sf40,details::sf40_op)
-               case_stmt(details::e_sf41,details::sf41_op)
-               case_stmt(details::e_sf42,details::sf42_op)
-               case_stmt(details::e_sf43,details::sf43_op)
-               case_stmt(details::e_sf44,details::sf44_op)
-               case_stmt(details::e_sf45,details::sf45_op)
+               case_stmt(details::e_sf00,details::sf00_op) case_stmt(details::e_sf01,details::sf01_op)
+               case_stmt(details::e_sf02,details::sf02_op) case_stmt(details::e_sf03,details::sf03_op)
+               case_stmt(details::e_sf04,details::sf04_op) case_stmt(details::e_sf05,details::sf05_op)
+               case_stmt(details::e_sf06,details::sf06_op) case_stmt(details::e_sf07,details::sf07_op)
+               case_stmt(details::e_sf08,details::sf08_op) case_stmt(details::e_sf09,details::sf09_op)
+               case_stmt(details::e_sf10,details::sf10_op) case_stmt(details::e_sf11,details::sf11_op)
+               case_stmt(details::e_sf12,details::sf12_op) case_stmt(details::e_sf13,details::sf13_op)
+               case_stmt(details::e_sf14,details::sf14_op) case_stmt(details::e_sf15,details::sf15_op)
+               case_stmt(details::e_sf16,details::sf16_op) case_stmt(details::e_sf17,details::sf17_op)
+               case_stmt(details::e_sf18,details::sf18_op) case_stmt(details::e_sf19,details::sf19_op)
+               case_stmt(details::e_sf20,details::sf20_op) case_stmt(details::e_sf21,details::sf21_op)
+               case_stmt(details::e_sf22,details::sf22_op) case_stmt(details::e_sf23,details::sf23_op)
+               case_stmt(details::e_sf24,details::sf24_op) case_stmt(details::e_sf25,details::sf25_op)
+               case_stmt(details::e_sf26,details::sf26_op) case_stmt(details::e_sf27,details::sf27_op)
+               case_stmt(details::e_sf28,details::sf28_op) case_stmt(details::e_sf29,details::sf29_op)
+               case_stmt(details::e_sf30,details::sf30_op) case_stmt(details::e_sf31,details::sf31_op)
+               case_stmt(details::e_sf32,details::sf32_op) case_stmt(details::e_sf33,details::sf33_op)
+               case_stmt(details::e_sf34,details::sf34_op) case_stmt(details::e_sf35,details::sf35_op)
+               case_stmt(details::e_sf36,details::sf36_op) case_stmt(details::e_sf37,details::sf37_op)
+               case_stmt(details::e_sf38,details::sf38_op) case_stmt(details::e_sf39,details::sf39_op)
+               case_stmt(details::e_sf40,details::sf40_op) case_stmt(details::e_sf41,details::sf41_op)
+               case_stmt(details::e_sf42,details::sf42_op) case_stmt(details::e_sf43,details::sf43_op)
+               case_stmt(details::e_sf44,details::sf44_op) case_stmt(details::e_sf45,details::sf45_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9745,52 +9669,29 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rrr<details::sf3_var_node<Type,op1<Type> > >(v0,v1,v2);
-               case_stmt(details::e_sf00,details::sf00_op)
-               case_stmt(details::e_sf01,details::sf01_op)
-               case_stmt(details::e_sf02,details::sf02_op)
-               case_stmt(details::e_sf03,details::sf03_op)
-               case_stmt(details::e_sf04,details::sf04_op)
-               case_stmt(details::e_sf05,details::sf05_op)
-               case_stmt(details::e_sf06,details::sf06_op)
-               case_stmt(details::e_sf07,details::sf07_op)
-               case_stmt(details::e_sf08,details::sf08_op)
-               case_stmt(details::e_sf09,details::sf09_op)
-               case_stmt(details::e_sf10,details::sf10_op)
-               case_stmt(details::e_sf11,details::sf11_op)
-               case_stmt(details::e_sf12,details::sf12_op)
-               case_stmt(details::e_sf13,details::sf13_op)
-               case_stmt(details::e_sf14,details::sf14_op)
-               case_stmt(details::e_sf15,details::sf15_op)
-               case_stmt(details::e_sf16,details::sf16_op)
-               case_stmt(details::e_sf17,details::sf17_op)
-               case_stmt(details::e_sf18,details::sf18_op)
-               case_stmt(details::e_sf19,details::sf19_op)
-               case_stmt(details::e_sf20,details::sf20_op)
-               case_stmt(details::e_sf21,details::sf21_op)
-               case_stmt(details::e_sf22,details::sf22_op)
-               case_stmt(details::e_sf23,details::sf23_op)
-               case_stmt(details::e_sf24,details::sf24_op)
-               case_stmt(details::e_sf25,details::sf25_op)
-               case_stmt(details::e_sf26,details::sf26_op)
-               case_stmt(details::e_sf27,details::sf27_op)
-               case_stmt(details::e_sf28,details::sf28_op)
-               case_stmt(details::e_sf29,details::sf29_op)
-               case_stmt(details::e_sf30,details::sf30_op)
-               case_stmt(details::e_sf31,details::sf31_op)
-               case_stmt(details::e_sf32,details::sf32_op)
-               case_stmt(details::e_sf33,details::sf33_op)
-               case_stmt(details::e_sf34,details::sf34_op)
-               case_stmt(details::e_sf35,details::sf35_op)
-               case_stmt(details::e_sf36,details::sf36_op)
-               case_stmt(details::e_sf37,details::sf37_op)
-               case_stmt(details::e_sf38,details::sf38_op)
-               case_stmt(details::e_sf39,details::sf39_op)
-               case_stmt(details::e_sf40,details::sf40_op)
-               case_stmt(details::e_sf41,details::sf41_op)
-               case_stmt(details::e_sf42,details::sf42_op)
-               case_stmt(details::e_sf43,details::sf43_op)
-               case_stmt(details::e_sf44,details::sf44_op)
-               case_stmt(details::e_sf45,details::sf45_op)
+               case_stmt(details::e_sf00,details::sf00_op) case_stmt(details::e_sf01,details::sf01_op)
+               case_stmt(details::e_sf02,details::sf02_op) case_stmt(details::e_sf03,details::sf03_op)
+               case_stmt(details::e_sf04,details::sf04_op) case_stmt(details::e_sf05,details::sf05_op)
+               case_stmt(details::e_sf06,details::sf06_op) case_stmt(details::e_sf07,details::sf07_op)
+               case_stmt(details::e_sf08,details::sf08_op) case_stmt(details::e_sf09,details::sf09_op)
+               case_stmt(details::e_sf10,details::sf10_op) case_stmt(details::e_sf11,details::sf11_op)
+               case_stmt(details::e_sf12,details::sf12_op) case_stmt(details::e_sf13,details::sf13_op)
+               case_stmt(details::e_sf14,details::sf14_op) case_stmt(details::e_sf15,details::sf15_op)
+               case_stmt(details::e_sf16,details::sf16_op) case_stmt(details::e_sf17,details::sf17_op)
+               case_stmt(details::e_sf18,details::sf18_op) case_stmt(details::e_sf19,details::sf19_op)
+               case_stmt(details::e_sf20,details::sf20_op) case_stmt(details::e_sf21,details::sf21_op)
+               case_stmt(details::e_sf22,details::sf22_op) case_stmt(details::e_sf23,details::sf23_op)
+               case_stmt(details::e_sf24,details::sf24_op) case_stmt(details::e_sf25,details::sf25_op)
+               case_stmt(details::e_sf26,details::sf26_op) case_stmt(details::e_sf27,details::sf27_op)
+               case_stmt(details::e_sf28,details::sf28_op) case_stmt(details::e_sf29,details::sf29_op)
+               case_stmt(details::e_sf30,details::sf30_op) case_stmt(details::e_sf31,details::sf31_op)
+               case_stmt(details::e_sf32,details::sf32_op) case_stmt(details::e_sf33,details::sf33_op)
+               case_stmt(details::e_sf34,details::sf34_op) case_stmt(details::e_sf35,details::sf35_op)
+               case_stmt(details::e_sf36,details::sf36_op) case_stmt(details::e_sf37,details::sf37_op)
+               case_stmt(details::e_sf38,details::sf38_op) case_stmt(details::e_sf39,details::sf39_op)
+               case_stmt(details::e_sf40,details::sf40_op) case_stmt(details::e_sf41,details::sf41_op)
+               case_stmt(details::e_sf42,details::sf42_op) case_stmt(details::e_sf43,details::sf43_op)
+               case_stmt(details::e_sf44,details::sf44_op) case_stmt(details::e_sf45,details::sf45_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9808,52 +9709,29 @@ namespace exprtk
                switch (operation)
                {
                   #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate<details::sf3_node<Type,op1<Type> > >(operation,branch);
-                  case_stmt(details::e_sf00,details::sf00_op)
-                  case_stmt(details::e_sf01,details::sf01_op)
-                  case_stmt(details::e_sf02,details::sf02_op)
-                  case_stmt(details::e_sf03,details::sf03_op)
-                  case_stmt(details::e_sf04,details::sf04_op)
-                  case_stmt(details::e_sf05,details::sf05_op)
-                  case_stmt(details::e_sf06,details::sf06_op)
-                  case_stmt(details::e_sf07,details::sf07_op)
-                  case_stmt(details::e_sf08,details::sf08_op)
-                  case_stmt(details::e_sf09,details::sf09_op)
-                  case_stmt(details::e_sf10,details::sf10_op)
-                  case_stmt(details::e_sf11,details::sf11_op)
-                  case_stmt(details::e_sf12,details::sf12_op)
-                  case_stmt(details::e_sf13,details::sf13_op)
-                  case_stmt(details::e_sf14,details::sf14_op)
-                  case_stmt(details::e_sf15,details::sf15_op)
-                  case_stmt(details::e_sf16,details::sf16_op)
-                  case_stmt(details::e_sf17,details::sf17_op)
-                  case_stmt(details::e_sf18,details::sf18_op)
-                  case_stmt(details::e_sf19,details::sf19_op)
-                  case_stmt(details::e_sf20,details::sf20_op)
-                  case_stmt(details::e_sf21,details::sf21_op)
-                  case_stmt(details::e_sf22,details::sf22_op)
-                  case_stmt(details::e_sf23,details::sf23_op)
-                  case_stmt(details::e_sf24,details::sf24_op)
-                  case_stmt(details::e_sf25,details::sf25_op)
-                  case_stmt(details::e_sf26,details::sf26_op)
-                  case_stmt(details::e_sf27,details::sf27_op)
-                  case_stmt(details::e_sf28,details::sf28_op)
-                  case_stmt(details::e_sf29,details::sf29_op)
-                  case_stmt(details::e_sf30,details::sf30_op)
-                  case_stmt(details::e_sf31,details::sf31_op)
-                  case_stmt(details::e_sf32,details::sf32_op)
-                  case_stmt(details::e_sf33,details::sf33_op)
-                  case_stmt(details::e_sf34,details::sf34_op)
-                  case_stmt(details::e_sf35,details::sf35_op)
-                  case_stmt(details::e_sf36,details::sf36_op)
-                  case_stmt(details::e_sf37,details::sf37_op)
-                  case_stmt(details::e_sf38,details::sf38_op)
-                  case_stmt(details::e_sf39,details::sf39_op)
-                  case_stmt(details::e_sf40,details::sf40_op)
-                  case_stmt(details::e_sf41,details::sf41_op)
-                  case_stmt(details::e_sf42,details::sf42_op)
-                  case_stmt(details::e_sf43,details::sf43_op)
-                  case_stmt(details::e_sf44,details::sf44_op)
-                  case_stmt(details::e_sf45,details::sf45_op)
+                  case_stmt(details::e_sf00,details::sf00_op) case_stmt(details::e_sf01,details::sf01_op)
+                  case_stmt(details::e_sf02,details::sf02_op) case_stmt(details::e_sf03,details::sf03_op)
+                  case_stmt(details::e_sf04,details::sf04_op) case_stmt(details::e_sf05,details::sf05_op)
+                  case_stmt(details::e_sf06,details::sf06_op) case_stmt(details::e_sf07,details::sf07_op)
+                  case_stmt(details::e_sf08,details::sf08_op) case_stmt(details::e_sf09,details::sf09_op)
+                  case_stmt(details::e_sf10,details::sf10_op) case_stmt(details::e_sf11,details::sf11_op)
+                  case_stmt(details::e_sf12,details::sf12_op) case_stmt(details::e_sf13,details::sf13_op)
+                  case_stmt(details::e_sf14,details::sf14_op) case_stmt(details::e_sf15,details::sf15_op)
+                  case_stmt(details::e_sf16,details::sf16_op) case_stmt(details::e_sf17,details::sf17_op)
+                  case_stmt(details::e_sf18,details::sf18_op) case_stmt(details::e_sf19,details::sf19_op)
+                  case_stmt(details::e_sf20,details::sf20_op) case_stmt(details::e_sf21,details::sf21_op)
+                  case_stmt(details::e_sf22,details::sf22_op) case_stmt(details::e_sf23,details::sf23_op)
+                  case_stmt(details::e_sf24,details::sf24_op) case_stmt(details::e_sf25,details::sf25_op)
+                  case_stmt(details::e_sf26,details::sf26_op) case_stmt(details::e_sf27,details::sf27_op)
+                  case_stmt(details::e_sf28,details::sf28_op) case_stmt(details::e_sf29,details::sf29_op)
+                  case_stmt(details::e_sf30,details::sf30_op) case_stmt(details::e_sf31,details::sf31_op)
+                  case_stmt(details::e_sf32,details::sf32_op) case_stmt(details::e_sf33,details::sf33_op)
+                  case_stmt(details::e_sf34,details::sf34_op) case_stmt(details::e_sf35,details::sf35_op)
+                  case_stmt(details::e_sf36,details::sf36_op) case_stmt(details::e_sf37,details::sf37_op)
+                  case_stmt(details::e_sf38,details::sf38_op) case_stmt(details::e_sf39,details::sf39_op)
+                  case_stmt(details::e_sf40,details::sf40_op) case_stmt(details::e_sf41,details::sf41_op)
+                  case_stmt(details::e_sf42,details::sf42_op) case_stmt(details::e_sf43,details::sf43_op)
+                  case_stmt(details::e_sf44,details::sf44_op) case_stmt(details::e_sf45,details::sf45_op)
                   #undef case_stmt
                   default : return error_node();
                }
@@ -9865,58 +9743,32 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : temp_node = node_allocator_->allocate<details::sf4_node<Type,op1<Type> > >(operation,branch); break;
-               case_stmt(details::e_sf46,details::sf46_op)
-               case_stmt(details::e_sf47,details::sf47_op)
-               case_stmt(details::e_sf48,details::sf48_op)
-               case_stmt(details::e_sf49,details::sf49_op)
-               case_stmt(details::e_sf50,details::sf50_op)
-               case_stmt(details::e_sf51,details::sf51_op)
-               case_stmt(details::e_sf52,details::sf52_op)
-               case_stmt(details::e_sf53,details::sf53_op)
-               case_stmt(details::e_sf54,details::sf54_op)
-               case_stmt(details::e_sf55,details::sf55_op)
-               case_stmt(details::e_sf56,details::sf56_op)
-               case_stmt(details::e_sf57,details::sf57_op)
-               case_stmt(details::e_sf58,details::sf58_op)
-               case_stmt(details::e_sf59,details::sf59_op)
-               case_stmt(details::e_sf60,details::sf60_op)
-               case_stmt(details::e_sf61,details::sf61_op)
-               case_stmt(details::e_sf62,details::sf62_op)
-               case_stmt(details::e_sf63,details::sf63_op)
-               case_stmt(details::e_sf64,details::sf64_op)
-               case_stmt(details::e_sf65,details::sf65_op)
-               case_stmt(details::e_sf66,details::sf66_op)
-               case_stmt(details::e_sf67,details::sf67_op)
-               case_stmt(details::e_sf68,details::sf68_op)
-               case_stmt(details::e_sf69,details::sf69_op)
-               case_stmt(details::e_sf70,details::sf70_op)
-               case_stmt(details::e_sf71,details::sf71_op)
-               case_stmt(details::e_sf72,details::sf72_op)
-               case_stmt(details::e_sf73,details::sf73_op)
-               case_stmt(details::e_sf74,details::sf74_op)
-               case_stmt(details::e_sf75,details::sf75_op)
-               case_stmt(details::e_sf76,details::sf76_op)
-               case_stmt(details::e_sf77,details::sf77_op)
-               case_stmt(details::e_sf78,details::sf78_op)
-               case_stmt(details::e_sf79,details::sf79_op)
-               case_stmt(details::e_sf80,details::sf80_op)
-               case_stmt(details::e_sf81,details::sf81_op)
-               case_stmt(details::e_sf82,details::sf82_op)
-               case_stmt(details::e_sf83,details::sf83_op)
-               case_stmt(details::e_sf84,details::sf84_op)
-               case_stmt(details::e_sf85,details::sf85_op)
-               case_stmt(details::e_sf86,details::sf86_op)
-               case_stmt(details::e_sf87,details::sf87_op)
-               case_stmt(details::e_sf88,details::sf88_op)
-               case_stmt(details::e_sf89,details::sf89_op)
-               case_stmt(details::e_sf90,details::sf90_op)
-               case_stmt(details::e_sf91,details::sf91_op)
-               case_stmt(details::e_sf92,details::sf92_op)
-               case_stmt(details::e_sf93,details::sf93_op)
-               case_stmt(details::e_sf94,details::sf94_op)
-               case_stmt(details::e_sf95,details::sf95_op)
-               case_stmt(details::e_sf96,details::sf96_op)
-               case_stmt(details::e_sf97,details::sf97_op)
+               case_stmt(details::e_sf46,details::sf46_op) case_stmt(details::e_sf47,details::sf47_op)
+               case_stmt(details::e_sf48,details::sf48_op) case_stmt(details::e_sf49,details::sf49_op)
+               case_stmt(details::e_sf50,details::sf50_op) case_stmt(details::e_sf51,details::sf51_op)
+               case_stmt(details::e_sf52,details::sf52_op) case_stmt(details::e_sf53,details::sf53_op)
+               case_stmt(details::e_sf54,details::sf54_op) case_stmt(details::e_sf55,details::sf55_op)
+               case_stmt(details::e_sf56,details::sf56_op) case_stmt(details::e_sf57,details::sf57_op)
+               case_stmt(details::e_sf58,details::sf58_op) case_stmt(details::e_sf59,details::sf59_op)
+               case_stmt(details::e_sf60,details::sf60_op) case_stmt(details::e_sf61,details::sf61_op)
+               case_stmt(details::e_sf62,details::sf62_op) case_stmt(details::e_sf63,details::sf63_op)
+               case_stmt(details::e_sf64,details::sf64_op) case_stmt(details::e_sf65,details::sf65_op)
+               case_stmt(details::e_sf66,details::sf66_op) case_stmt(details::e_sf67,details::sf67_op)
+               case_stmt(details::e_sf68,details::sf68_op) case_stmt(details::e_sf69,details::sf69_op)
+               case_stmt(details::e_sf70,details::sf70_op) case_stmt(details::e_sf71,details::sf71_op)
+               case_stmt(details::e_sf72,details::sf72_op) case_stmt(details::e_sf73,details::sf73_op)
+               case_stmt(details::e_sf74,details::sf74_op) case_stmt(details::e_sf75,details::sf75_op)
+               case_stmt(details::e_sf76,details::sf76_op) case_stmt(details::e_sf77,details::sf77_op)
+               case_stmt(details::e_sf78,details::sf78_op) case_stmt(details::e_sf79,details::sf79_op)
+               case_stmt(details::e_sf80,details::sf80_op) case_stmt(details::e_sf81,details::sf81_op)
+               case_stmt(details::e_sf82,details::sf82_op) case_stmt(details::e_sf83,details::sf83_op)
+               case_stmt(details::e_sf84,details::sf84_op) case_stmt(details::e_sf85,details::sf85_op)
+               case_stmt(details::e_sf86,details::sf86_op) case_stmt(details::e_sf87,details::sf87_op)
+               case_stmt(details::e_sf88,details::sf88_op) case_stmt(details::e_sf89,details::sf89_op)
+               case_stmt(details::e_sf90,details::sf90_op) case_stmt(details::e_sf91,details::sf91_op)
+               case_stmt(details::e_sf92,details::sf92_op) case_stmt(details::e_sf93,details::sf93_op)
+               case_stmt(details::e_sf94,details::sf94_op) case_stmt(details::e_sf95,details::sf95_op)
+               case_stmt(details::e_sf96,details::sf96_op) case_stmt(details::e_sf97,details::sf97_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -9934,58 +9786,32 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate_rrrr<details::sf4_var_node<Type,op1<Type> > >(v0,v1,v2,v3);
-               case_stmt(details::e_sf46,details::sf46_op)
-               case_stmt(details::e_sf47,details::sf47_op)
-               case_stmt(details::e_sf48,details::sf48_op)
-               case_stmt(details::e_sf49,details::sf49_op)
-               case_stmt(details::e_sf50,details::sf50_op)
-               case_stmt(details::e_sf51,details::sf51_op)
-               case_stmt(details::e_sf52,details::sf52_op)
-               case_stmt(details::e_sf53,details::sf53_op)
-               case_stmt(details::e_sf54,details::sf54_op)
-               case_stmt(details::e_sf55,details::sf55_op)
-               case_stmt(details::e_sf56,details::sf56_op)
-               case_stmt(details::e_sf57,details::sf57_op)
-               case_stmt(details::e_sf58,details::sf58_op)
-               case_stmt(details::e_sf59,details::sf59_op)
-               case_stmt(details::e_sf60,details::sf60_op)
-               case_stmt(details::e_sf61,details::sf61_op)
-               case_stmt(details::e_sf62,details::sf62_op)
-               case_stmt(details::e_sf63,details::sf63_op)
-               case_stmt(details::e_sf64,details::sf64_op)
-               case_stmt(details::e_sf65,details::sf65_op)
-               case_stmt(details::e_sf66,details::sf66_op)
-               case_stmt(details::e_sf67,details::sf67_op)
-               case_stmt(details::e_sf68,details::sf68_op)
-               case_stmt(details::e_sf69,details::sf69_op)
-               case_stmt(details::e_sf70,details::sf70_op)
-               case_stmt(details::e_sf71,details::sf71_op)
-               case_stmt(details::e_sf72,details::sf72_op)
-               case_stmt(details::e_sf73,details::sf73_op)
-               case_stmt(details::e_sf74,details::sf74_op)
-               case_stmt(details::e_sf75,details::sf75_op)
-               case_stmt(details::e_sf76,details::sf76_op)
-               case_stmt(details::e_sf77,details::sf77_op)
-               case_stmt(details::e_sf78,details::sf78_op)
-               case_stmt(details::e_sf79,details::sf79_op)
-               case_stmt(details::e_sf80,details::sf80_op)
-               case_stmt(details::e_sf81,details::sf81_op)
-               case_stmt(details::e_sf82,details::sf82_op)
-               case_stmt(details::e_sf83,details::sf83_op)
-               case_stmt(details::e_sf84,details::sf84_op)
-               case_stmt(details::e_sf85,details::sf85_op)
-               case_stmt(details::e_sf86,details::sf86_op)
-               case_stmt(details::e_sf87,details::sf87_op)
-               case_stmt(details::e_sf88,details::sf88_op)
-               case_stmt(details::e_sf89,details::sf89_op)
-               case_stmt(details::e_sf90,details::sf90_op)
-               case_stmt(details::e_sf91,details::sf91_op)
-               case_stmt(details::e_sf92,details::sf92_op)
-               case_stmt(details::e_sf93,details::sf93_op)
-               case_stmt(details::e_sf94,details::sf94_op)
-               case_stmt(details::e_sf95,details::sf95_op)
-               case_stmt(details::e_sf96,details::sf96_op)
-               case_stmt(details::e_sf97,details::sf97_op)
+               case_stmt(details::e_sf46,details::sf46_op) case_stmt(details::e_sf47,details::sf47_op)
+               case_stmt(details::e_sf48,details::sf48_op) case_stmt(details::e_sf49,details::sf49_op)
+               case_stmt(details::e_sf50,details::sf50_op) case_stmt(details::e_sf51,details::sf51_op)
+               case_stmt(details::e_sf52,details::sf52_op) case_stmt(details::e_sf53,details::sf53_op)
+               case_stmt(details::e_sf54,details::sf54_op) case_stmt(details::e_sf55,details::sf55_op)
+               case_stmt(details::e_sf56,details::sf56_op) case_stmt(details::e_sf57,details::sf57_op)
+               case_stmt(details::e_sf58,details::sf58_op) case_stmt(details::e_sf59,details::sf59_op)
+               case_stmt(details::e_sf60,details::sf60_op) case_stmt(details::e_sf61,details::sf61_op)
+               case_stmt(details::e_sf62,details::sf62_op) case_stmt(details::e_sf63,details::sf63_op)
+               case_stmt(details::e_sf64,details::sf64_op) case_stmt(details::e_sf65,details::sf65_op)
+               case_stmt(details::e_sf66,details::sf66_op) case_stmt(details::e_sf67,details::sf67_op)
+               case_stmt(details::e_sf68,details::sf68_op) case_stmt(details::e_sf69,details::sf69_op)
+               case_stmt(details::e_sf70,details::sf70_op) case_stmt(details::e_sf71,details::sf71_op)
+               case_stmt(details::e_sf72,details::sf72_op) case_stmt(details::e_sf73,details::sf73_op)
+               case_stmt(details::e_sf74,details::sf74_op) case_stmt(details::e_sf75,details::sf75_op)
+               case_stmt(details::e_sf76,details::sf76_op) case_stmt(details::e_sf77,details::sf77_op)
+               case_stmt(details::e_sf78,details::sf78_op) case_stmt(details::e_sf79,details::sf79_op)
+               case_stmt(details::e_sf80,details::sf80_op) case_stmt(details::e_sf81,details::sf81_op)
+               case_stmt(details::e_sf82,details::sf82_op) case_stmt(details::e_sf83,details::sf83_op)
+               case_stmt(details::e_sf84,details::sf84_op) case_stmt(details::e_sf85,details::sf85_op)
+               case_stmt(details::e_sf86,details::sf86_op) case_stmt(details::e_sf87,details::sf87_op)
+               case_stmt(details::e_sf88,details::sf88_op) case_stmt(details::e_sf89,details::sf89_op)
+               case_stmt(details::e_sf90,details::sf90_op) case_stmt(details::e_sf91,details::sf91_op)
+               case_stmt(details::e_sf92,details::sf92_op) case_stmt(details::e_sf93,details::sf93_op)
+               case_stmt(details::e_sf94,details::sf94_op) case_stmt(details::e_sf95,details::sf95_op)
+               case_stmt(details::e_sf96,details::sf96_op) case_stmt(details::e_sf97,details::sf97_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -10002,58 +9828,32 @@ namespace exprtk
             switch (operation)
             {
                #define case_stmt(op0,op1) case op0 : return node_allocator_->allocate<details::sf4_node<Type,op1<Type> > >(operation,branch);
-               case_stmt(details::e_sf46,details::sf46_op)
-               case_stmt(details::e_sf47,details::sf47_op)
-               case_stmt(details::e_sf48,details::sf48_op)
-               case_stmt(details::e_sf49,details::sf49_op)
-               case_stmt(details::e_sf50,details::sf50_op)
-               case_stmt(details::e_sf51,details::sf51_op)
-               case_stmt(details::e_sf52,details::sf52_op)
-               case_stmt(details::e_sf53,details::sf53_op)
-               case_stmt(details::e_sf54,details::sf54_op)
-               case_stmt(details::e_sf55,details::sf55_op)
-               case_stmt(details::e_sf56,details::sf56_op)
-               case_stmt(details::e_sf57,details::sf57_op)
-               case_stmt(details::e_sf58,details::sf58_op)
-               case_stmt(details::e_sf59,details::sf59_op)
-               case_stmt(details::e_sf60,details::sf60_op)
-               case_stmt(details::e_sf61,details::sf61_op)
-               case_stmt(details::e_sf62,details::sf62_op)
-               case_stmt(details::e_sf63,details::sf63_op)
-               case_stmt(details::e_sf64,details::sf64_op)
-               case_stmt(details::e_sf65,details::sf65_op)
-               case_stmt(details::e_sf66,details::sf66_op)
-               case_stmt(details::e_sf67,details::sf67_op)
-               case_stmt(details::e_sf68,details::sf68_op)
-               case_stmt(details::e_sf69,details::sf69_op)
-               case_stmt(details::e_sf70,details::sf70_op)
-               case_stmt(details::e_sf71,details::sf71_op)
-               case_stmt(details::e_sf72,details::sf72_op)
-               case_stmt(details::e_sf73,details::sf73_op)
-               case_stmt(details::e_sf74,details::sf74_op)
-               case_stmt(details::e_sf75,details::sf75_op)
-               case_stmt(details::e_sf76,details::sf76_op)
-               case_stmt(details::e_sf77,details::sf77_op)
-               case_stmt(details::e_sf78,details::sf78_op)
-               case_stmt(details::e_sf79,details::sf79_op)
-               case_stmt(details::e_sf80,details::sf80_op)
-               case_stmt(details::e_sf81,details::sf81_op)
-               case_stmt(details::e_sf82,details::sf82_op)
-               case_stmt(details::e_sf83,details::sf83_op)
-               case_stmt(details::e_sf84,details::sf84_op)
-               case_stmt(details::e_sf85,details::sf85_op)
-               case_stmt(details::e_sf86,details::sf86_op)
-               case_stmt(details::e_sf87,details::sf87_op)
-               case_stmt(details::e_sf88,details::sf88_op)
-               case_stmt(details::e_sf89,details::sf89_op)
-               case_stmt(details::e_sf90,details::sf90_op)
-               case_stmt(details::e_sf91,details::sf91_op)
-               case_stmt(details::e_sf92,details::sf92_op)
-               case_stmt(details::e_sf93,details::sf93_op)
-               case_stmt(details::e_sf94,details::sf94_op)
-               case_stmt(details::e_sf95,details::sf95_op)
-               case_stmt(details::e_sf96,details::sf96_op)
-               case_stmt(details::e_sf97,details::sf97_op)
+               case_stmt(details::e_sf46,details::sf46_op) case_stmt(details::e_sf47,details::sf47_op)
+               case_stmt(details::e_sf48,details::sf48_op) case_stmt(details::e_sf49,details::sf49_op)
+               case_stmt(details::e_sf50,details::sf50_op) case_stmt(details::e_sf51,details::sf51_op)
+               case_stmt(details::e_sf52,details::sf52_op) case_stmt(details::e_sf53,details::sf53_op)
+               case_stmt(details::e_sf54,details::sf54_op) case_stmt(details::e_sf55,details::sf55_op)
+               case_stmt(details::e_sf56,details::sf56_op) case_stmt(details::e_sf57,details::sf57_op)
+               case_stmt(details::e_sf58,details::sf58_op) case_stmt(details::e_sf59,details::sf59_op)
+               case_stmt(details::e_sf60,details::sf60_op) case_stmt(details::e_sf61,details::sf61_op)
+               case_stmt(details::e_sf62,details::sf62_op) case_stmt(details::e_sf63,details::sf63_op)
+               case_stmt(details::e_sf64,details::sf64_op) case_stmt(details::e_sf65,details::sf65_op)
+               case_stmt(details::e_sf66,details::sf66_op) case_stmt(details::e_sf67,details::sf67_op)
+               case_stmt(details::e_sf68,details::sf68_op) case_stmt(details::e_sf69,details::sf69_op)
+               case_stmt(details::e_sf70,details::sf70_op) case_stmt(details::e_sf71,details::sf71_op)
+               case_stmt(details::e_sf72,details::sf72_op) case_stmt(details::e_sf73,details::sf73_op)
+               case_stmt(details::e_sf74,details::sf74_op) case_stmt(details::e_sf75,details::sf75_op)
+               case_stmt(details::e_sf76,details::sf76_op) case_stmt(details::e_sf77,details::sf77_op)
+               case_stmt(details::e_sf78,details::sf78_op) case_stmt(details::e_sf79,details::sf79_op)
+               case_stmt(details::e_sf80,details::sf80_op) case_stmt(details::e_sf81,details::sf81_op)
+               case_stmt(details::e_sf82,details::sf82_op) case_stmt(details::e_sf83,details::sf83_op)
+               case_stmt(details::e_sf84,details::sf84_op) case_stmt(details::e_sf85,details::sf85_op)
+               case_stmt(details::e_sf86,details::sf86_op) case_stmt(details::e_sf87,details::sf87_op)
+               case_stmt(details::e_sf88,details::sf88_op) case_stmt(details::e_sf89,details::sf89_op)
+               case_stmt(details::e_sf90,details::sf90_op) case_stmt(details::e_sf91,details::sf91_op)
+               case_stmt(details::e_sf92,details::sf92_op) case_stmt(details::e_sf93,details::sf93_op)
+               case_stmt(details::e_sf94,details::sf94_op) case_stmt(details::e_sf95,details::sf95_op)
+               case_stmt(details::e_sf96,details::sf96_op) case_stmt(details::e_sf97,details::sf97_op)
                #undef case_stmt
                default : return error_node();
             }
@@ -10422,34 +10222,20 @@ namespace exprtk
                switch (sf3opr)
                {
                   #define case_stmt(op0,op1) case op0 : return details::T0oT1oT2_sf3ext<T,T0,T1,T2,op1<Type> >::allocate(*(expr_gen.node_allocator_),t0,t1,t2);
-                  case_stmt(details::e_sf00,details::sf00_op)
-                  case_stmt(details::e_sf01,details::sf01_op)
-                  case_stmt(details::e_sf02,details::sf02_op)
-                  case_stmt(details::e_sf03,details::sf03_op)
-                  case_stmt(details::e_sf04,details::sf04_op)
-                  case_stmt(details::e_sf05,details::sf05_op)
-                  case_stmt(details::e_sf06,details::sf06_op)
-                  case_stmt(details::e_sf07,details::sf07_op)
-                  case_stmt(details::e_sf08,details::sf08_op)
-                  case_stmt(details::e_sf09,details::sf09_op)
-                  case_stmt(details::e_sf10,details::sf10_op)
-                  case_stmt(details::e_sf11,details::sf11_op)
-                  case_stmt(details::e_sf12,details::sf12_op)
-                  case_stmt(details::e_sf13,details::sf13_op)
-                  case_stmt(details::e_sf14,details::sf14_op)
-                  case_stmt(details::e_sf15,details::sf15_op)
-                  case_stmt(details::e_sf16,details::sf16_op)
-                  case_stmt(details::e_sf17,details::sf17_op)
-                  case_stmt(details::e_sf18,details::sf18_op)
-                  case_stmt(details::e_sf19,details::sf19_op)
-                  case_stmt(details::e_sf20,details::sf20_op)
-                  case_stmt(details::e_sf21,details::sf21_op)
-                  case_stmt(details::e_sf22,details::sf22_op)
-                  case_stmt(details::e_sf23,details::sf23_op)
-                  case_stmt(details::e_sf24,details::sf24_op)
-                  case_stmt(details::e_sf25,details::sf25_op)
-                  case_stmt(details::e_sf26,details::sf26_op)
-                  case_stmt(details::e_sf27,details::sf27_op)
+                  case_stmt(details::e_sf00,details::sf00_op) case_stmt(details::e_sf01,details::sf01_op)
+                  case_stmt(details::e_sf02,details::sf02_op) case_stmt(details::e_sf03,details::sf03_op)
+                  case_stmt(details::e_sf04,details::sf04_op) case_stmt(details::e_sf05,details::sf05_op)
+                  case_stmt(details::e_sf06,details::sf06_op) case_stmt(details::e_sf07,details::sf07_op)
+                  case_stmt(details::e_sf08,details::sf08_op) case_stmt(details::e_sf09,details::sf09_op)
+                  case_stmt(details::e_sf10,details::sf10_op) case_stmt(details::e_sf11,details::sf11_op)
+                  case_stmt(details::e_sf12,details::sf12_op) case_stmt(details::e_sf13,details::sf13_op)
+                  case_stmt(details::e_sf14,details::sf14_op) case_stmt(details::e_sf15,details::sf15_op)
+                  case_stmt(details::e_sf16,details::sf16_op) case_stmt(details::e_sf17,details::sf17_op)
+                  case_stmt(details::e_sf18,details::sf18_op) case_stmt(details::e_sf19,details::sf19_op)
+                  case_stmt(details::e_sf20,details::sf20_op) case_stmt(details::e_sf21,details::sf21_op)
+                  case_stmt(details::e_sf22,details::sf22_op) case_stmt(details::e_sf23,details::sf23_op)
+                  case_stmt(details::e_sf24,details::sf24_op) case_stmt(details::e_sf25,details::sf25_op)
+                  case_stmt(details::e_sf26,details::sf26_op) case_stmt(details::e_sf27,details::sf27_op)
                   case_stmt(details::e_sf28,details::sf28_op)
                   #undef case_stmt
                   default : return error_node();
@@ -10480,82 +10266,44 @@ namespace exprtk
                switch (sf4opr)
                {
                   #define case_stmt(op0,op1) case op0 : return details::T0oT1oT2oT3_sf4ext<T,T0,T1,T2,T3,op1<Type> >::allocate(*(expr_gen.node_allocator_),t0,t1,t2,t3);
-                  case_stmt(details::e_sf46,details::sf46_op)
-                  case_stmt(details::e_sf47,details::sf47_op)
-                  case_stmt(details::e_sf48,details::sf48_op)
-                  case_stmt(details::e_sf49,details::sf49_op)
-                  case_stmt(details::e_sf50,details::sf50_op)
-                  case_stmt(details::e_sf51,details::sf51_op)
-                  case_stmt(details::e_sf52,details::sf52_op)
-                  case_stmt(details::e_sf53,details::sf53_op)
-                  case_stmt(details::e_sf54,details::sf54_op)
-                  case_stmt(details::e_sf55,details::sf55_op)
-                  case_stmt(details::e_sf56,details::sf56_op)
-                  case_stmt(details::e_sf57,details::sf57_op)
-                  case_stmt(details::e_sf58,details::sf58_op)
-                  case_stmt(details::e_sf59,details::sf59_op)
-                  case_stmt(details::e_sf60,details::sf60_op)
-                  case_stmt(details::e_sf61,details::sf61_op)
-                  case_stmt(details::e_sf62,details::sf62_op)
-                  case_stmt(details::e_sf63,details::sf63_op)
-                  case_stmt(details::e_sf64,details::sf64_op)
-                  case_stmt(details::e_sf65,details::sf65_op)
-                  case_stmt(details::e_sf66,details::sf66_op)
-                  case_stmt(details::e_sf67,details::sf67_op)
-                  case_stmt(details::e_sf68,details::sf68_op)
-                  case_stmt(details::e_sf69,details::sf69_op)
-                  case_stmt(details::e_sf70,details::sf70_op)
-                  case_stmt(details::e_sf71,details::sf71_op)
-                  case_stmt(details::e_sf72,details::sf72_op)
-                  case_stmt(details::e_sf73,details::sf73_op)
-                  case_stmt(details::e_sf74,details::sf74_op)
-                  case_stmt(details::e_sf75,details::sf75_op)
-                  case_stmt(details::e_sf76,details::sf76_op)
-                  case_stmt(details::e_sf77,details::sf77_op)
-                  case_stmt(details::e_sf78,details::sf78_op)
-                  case_stmt(details::e_sf79,details::sf79_op)
-                  case_stmt(details::e_sf80,details::sf80_op)
-                  case_stmt(details::e_sf81,details::sf81_op)
-                  case_stmt(details::e_sf4ext00,details::sfext00_op)
-                  case_stmt(details::e_sf4ext01,details::sfext01_op)
-                  case_stmt(details::e_sf4ext02,details::sfext02_op)
-                  case_stmt(details::e_sf4ext03,details::sfext03_op)
-                  case_stmt(details::e_sf4ext04,details::sfext04_op)
-                  case_stmt(details::e_sf4ext05,details::sfext05_op)
-                  case_stmt(details::e_sf4ext06,details::sfext06_op)
-                  case_stmt(details::e_sf4ext07,details::sfext07_op)
-                  case_stmt(details::e_sf4ext08,details::sfext08_op)
-                  case_stmt(details::e_sf4ext09,details::sfext09_op)
-                  case_stmt(details::e_sf4ext10,details::sfext10_op)
-                  case_stmt(details::e_sf4ext11,details::sfext11_op)
-                  case_stmt(details::e_sf4ext12,details::sfext12_op)
-                  case_stmt(details::e_sf4ext13,details::sfext13_op)
-                  case_stmt(details::e_sf4ext14,details::sfext14_op)
-                  case_stmt(details::e_sf4ext15,details::sfext15_op)
-                  case_stmt(details::e_sf4ext16,details::sfext16_op)
-                  case_stmt(details::e_sf4ext17,details::sfext17_op)
-                  case_stmt(details::e_sf4ext18,details::sfext18_op)
-                  case_stmt(details::e_sf4ext19,details::sfext19_op)
-                  case_stmt(details::e_sf4ext20,details::sfext20_op)
-                  case_stmt(details::e_sf4ext21,details::sfext21_op)
-                  case_stmt(details::e_sf4ext22,details::sfext22_op)
-                  case_stmt(details::e_sf4ext23,details::sfext23_op)
-                  case_stmt(details::e_sf4ext24,details::sfext24_op)
-                  case_stmt(details::e_sf4ext25,details::sfext25_op)
-                  case_stmt(details::e_sf4ext26,details::sfext26_op)
-                  case_stmt(details::e_sf4ext27,details::sfext27_op)
-                  case_stmt(details::e_sf4ext28,details::sfext28_op)
-                  case_stmt(details::e_sf4ext29,details::sfext29_op)
-                  case_stmt(details::e_sf4ext30,details::sfext30_op)
-                  case_stmt(details::e_sf4ext31,details::sfext31_op)
-                  case_stmt(details::e_sf4ext32,details::sfext32_op)
-                  case_stmt(details::e_sf4ext33,details::sfext33_op)
-                  case_stmt(details::e_sf4ext34,details::sfext34_op)
-                  case_stmt(details::e_sf4ext35,details::sfext35_op)
-                  case_stmt(details::e_sf4ext36,details::sfext36_op)
-                  case_stmt(details::e_sf4ext37,details::sfext37_op)
-                  case_stmt(details::e_sf4ext38,details::sfext38_op)
-                  case_stmt(details::e_sf4ext39,details::sfext39_op)
+                  case_stmt(details::e_sf46,details::sf46_op) case_stmt(details::e_sf47,details::sf47_op)
+                  case_stmt(details::e_sf48,details::sf48_op) case_stmt(details::e_sf49,details::sf49_op)
+                  case_stmt(details::e_sf50,details::sf50_op) case_stmt(details::e_sf51,details::sf51_op)
+                  case_stmt(details::e_sf52,details::sf52_op) case_stmt(details::e_sf53,details::sf53_op)
+                  case_stmt(details::e_sf54,details::sf54_op) case_stmt(details::e_sf55,details::sf55_op)
+                  case_stmt(details::e_sf56,details::sf56_op) case_stmt(details::e_sf57,details::sf57_op)
+                  case_stmt(details::e_sf58,details::sf58_op) case_stmt(details::e_sf59,details::sf59_op)
+                  case_stmt(details::e_sf60,details::sf60_op) case_stmt(details::e_sf61,details::sf61_op)
+                  case_stmt(details::e_sf62,details::sf62_op) case_stmt(details::e_sf63,details::sf63_op)
+                  case_stmt(details::e_sf64,details::sf64_op) case_stmt(details::e_sf65,details::sf65_op)
+                  case_stmt(details::e_sf66,details::sf66_op) case_stmt(details::e_sf67,details::sf67_op)
+                  case_stmt(details::e_sf68,details::sf68_op) case_stmt(details::e_sf69,details::sf69_op)
+                  case_stmt(details::e_sf70,details::sf70_op) case_stmt(details::e_sf71,details::sf71_op)
+                  case_stmt(details::e_sf72,details::sf72_op) case_stmt(details::e_sf73,details::sf73_op)
+                  case_stmt(details::e_sf74,details::sf74_op) case_stmt(details::e_sf75,details::sf75_op)
+                  case_stmt(details::e_sf76,details::sf76_op) case_stmt(details::e_sf77,details::sf77_op)
+                  case_stmt(details::e_sf78,details::sf78_op) case_stmt(details::e_sf79,details::sf79_op)
+                  case_stmt(details::e_sf80,details::sf80_op) case_stmt(details::e_sf81,details::sf81_op)
+                  case_stmt(details::e_sf4ext00,details::sfext00_op) case_stmt(details::e_sf4ext01,details::sfext01_op)
+                  case_stmt(details::e_sf4ext02,details::sfext02_op) case_stmt(details::e_sf4ext03,details::sfext03_op)
+                  case_stmt(details::e_sf4ext04,details::sfext04_op) case_stmt(details::e_sf4ext05,details::sfext05_op)
+                  case_stmt(details::e_sf4ext06,details::sfext06_op) case_stmt(details::e_sf4ext07,details::sfext07_op)
+                  case_stmt(details::e_sf4ext08,details::sfext08_op) case_stmt(details::e_sf4ext09,details::sfext09_op)
+                  case_stmt(details::e_sf4ext10,details::sfext10_op) case_stmt(details::e_sf4ext11,details::sfext11_op)
+                  case_stmt(details::e_sf4ext12,details::sfext12_op) case_stmt(details::e_sf4ext13,details::sfext13_op)
+                  case_stmt(details::e_sf4ext14,details::sfext14_op) case_stmt(details::e_sf4ext15,details::sfext15_op)
+                  case_stmt(details::e_sf4ext16,details::sfext16_op) case_stmt(details::e_sf4ext17,details::sfext17_op)
+                  case_stmt(details::e_sf4ext18,details::sfext18_op) case_stmt(details::e_sf4ext19,details::sfext19_op)
+                  case_stmt(details::e_sf4ext20,details::sfext20_op) case_stmt(details::e_sf4ext21,details::sfext21_op)
+                  case_stmt(details::e_sf4ext22,details::sfext22_op) case_stmt(details::e_sf4ext23,details::sfext23_op)
+                  case_stmt(details::e_sf4ext24,details::sfext24_op) case_stmt(details::e_sf4ext25,details::sfext25_op)
+                  case_stmt(details::e_sf4ext26,details::sfext26_op) case_stmt(details::e_sf4ext27,details::sfext27_op)
+                  case_stmt(details::e_sf4ext28,details::sfext28_op) case_stmt(details::e_sf4ext29,details::sfext29_op)
+                  case_stmt(details::e_sf4ext30,details::sfext30_op) case_stmt(details::e_sf4ext31,details::sfext31_op)
+                  case_stmt(details::e_sf4ext32,details::sfext32_op) case_stmt(details::e_sf4ext33,details::sfext33_op)
+                  case_stmt(details::e_sf4ext34,details::sfext34_op) case_stmt(details::e_sf4ext35,details::sfext35_op)
+                  case_stmt(details::e_sf4ext36,details::sfext36_op) case_stmt(details::e_sf4ext37,details::sfext37_op)
+                  case_stmt(details::e_sf4ext38,details::sfext38_op) case_stmt(details::e_sf4ext39,details::sfext39_op)
                   #undef case_stmt
                   default : return error_node();
                }
@@ -13156,6 +12904,52 @@ namespace exprtk
          }
          #endif
 
+         inline expression_node_ptr synthesize_null_expression(const details::operator_type& operation, expression_node_ptr (&branch)[2])
+         {
+            bool b0_null = details::is_null_node(branch[0]);
+            bool b1_null = details::is_null_node(branch[1]);
+
+            if (b0_null && b1_null)
+            {
+               details::free_node(*node_allocator_,branch[1]);
+               return branch[0];
+            }
+            else if (b0_null)
+            {
+               details::free_node(*node_allocator_,branch[0]);
+               branch[0] = branch[1];
+               branch[1] = error_node();
+            }
+            else if (b1_null)
+            {
+               details::free_node(*node_allocator_,branch[1]);
+               branch[1] = error_node();
+            }
+
+            if (
+                (details::e_add  == operation) || (details::e_sub  == operation) ||
+                (details::e_mul  == operation) || (details::e_div  == operation) ||
+                (details::e_mod  == operation) || (details::e_pow  == operation)
+               )
+            {
+               return branch[0];
+            }
+            else if (
+                     (details::e_lt   == operation) || (details::e_lte   == operation) ||
+                     (details::e_gt   == operation) || (details::e_gte   == operation) ||
+                     (details::e_eq   == operation) || (details::e_ne    == operation) ||
+                     (details::e_and  == operation) || (details::e_nand  == operation) ||
+                     (details::e_or   == operation) || (details::e_nor   == operation) ||
+                     (details::e_xor  == operation) || (details::e_in    == operation) ||
+                     (details::e_like == operation) || (details::e_ilike == operation)
+                    )
+            {
+               return node_allocator_->allocate_c<literal_node_t>(T(0));
+            }
+            details::free_node(*node_allocator_,branch[0]);
+            return node_allocator_->allocate<details::null_node<Type> >();
+         }
+
          template <typename NodeType, std::size_t N>
          inline expression_node_ptr synthesize_expression(const details::operator_type& operation, expression_node_ptr (&branch)[N])
          {
@@ -13234,7 +13028,6 @@ namespace exprtk
       inline void load_unary_operations_map(unary_op_map_t& m)
       {
          #define register_unary_op(Op,UnaryFunctor) m.insert(std::make_pair(Op,UnaryFunctor<T>::process));
-
          register_unary_op(details::  e_abs,details::  abs_op)
          register_unary_op(details:: e_acos,details:: acos_op)
          register_unary_op(details:: e_asin,details:: asin_op)
@@ -13273,7 +13066,6 @@ namespace exprtk
       inline void load_binary_operations_map(binary_op_map_t& m)
       {
          #define register_binary_op(Op,BinaryFunctor) m.insert(typename binary_op_map_t::value_type(Op,BinaryFunctor<T>::process));
-
          register_binary_op(details:: e_add,details:: add_op)
          register_binary_op(details:: e_sub,details:: sub_op)
          register_binary_op(details:: e_mul,details:: mul_op)
@@ -13297,7 +13089,6 @@ namespace exprtk
       inline void load_inv_binary_operations_map(inv_binary_op_map_t& m)
       {
          #define register_binary_op(Op,BinaryFunctor) m.insert(typename inv_binary_op_map_t::value_type(BinaryFunctor<T>::process,Op));
-
          register_binary_op(details:: e_add,details:: add_op)
          register_binary_op(details:: e_sub,details:: sub_op)
          register_binary_op(details:: e_mul,details:: mul_op)
@@ -13322,35 +13113,13 @@ namespace exprtk
       {
          typedef std::pair<trinary_functor_t,details::operator_type> pair_t;
          #define register_sf3(Op) sf3_map[details::sf##Op##_op<T>::id()] = pair_t(details::sf##Op##_op<T>::process,details::e_sf##Op);
-
-         register_sf3(00)
-         register_sf3(01)
-         register_sf3(02)
-         register_sf3(03)
-         register_sf3(04)
-         register_sf3(05)
-         register_sf3(06)
-         register_sf3(07)
-         register_sf3(08)
-         register_sf3(09)
-         register_sf3(10)
-         register_sf3(11)
-         register_sf3(12)
-         register_sf3(13)
-         register_sf3(14)
-         register_sf3(15)
-         register_sf3(16)
-         register_sf3(17)
-         register_sf3(18)
-         register_sf3(19)
-         register_sf3(20)
-         register_sf3(21)
-         register_sf3(22)
-         register_sf3(23)
-         register_sf3(24)
-         register_sf3(25)
-         register_sf3(26)
-         register_sf3(27)
+         register_sf3(00) register_sf3(01) register_sf3(02) register_sf3(03)
+         register_sf3(04) register_sf3(05) register_sf3(06) register_sf3(07)
+         register_sf3(08) register_sf3(09) register_sf3(10) register_sf3(11)
+         register_sf3(12) register_sf3(13) register_sf3(14) register_sf3(15)
+         register_sf3(16) register_sf3(17) register_sf3(18) register_sf3(19)
+         register_sf3(20) register_sf3(21) register_sf3(22) register_sf3(23)
+         register_sf3(24) register_sf3(25) register_sf3(26) register_sf3(27)
          register_sf3(28)
          #undef register_sf3
       }
@@ -13359,79 +13128,27 @@ namespace exprtk
       {
          typedef std::pair<quaternary_functor_t,details::operator_type> pair_t;
          #define register_sf4(Op) sf4_map[details::sf##Op##_op<T>::id()] = pair_t(details::sf##Op##_op<T>::process,details::e_sf##Op);
-
-         register_sf4(46)
-         register_sf4(47)
-         register_sf4(48)
-         register_sf4(49)
-         register_sf4(50)
-         register_sf4(51)
-         register_sf4(52)
-         register_sf4(53)
-         register_sf4(54)
-         register_sf4(55)
-         register_sf4(56)
-         register_sf4(57)
-         register_sf4(58)
-         register_sf4(59)
-         register_sf4(60)
-         register_sf4(61)
-         register_sf4(62)
-         register_sf4(63)
-         register_sf4(64)
-         register_sf4(65)
-         register_sf4(66)
-         register_sf4(67)
-         register_sf4(68)
-         register_sf4(69)
-         register_sf4(70)
-         register_sf4(71)
-         register_sf4(72)
-         register_sf4(73)
-         register_sf4(74)
-         register_sf4(75)
-         register_sf4(76)
-         register_sf4(77)
-         register_sf4(78)
-         register_sf4(79)
-         register_sf4(80)
-         register_sf4(81)
+         register_sf4(46) register_sf4(47) register_sf4(48) register_sf4(49)
+         register_sf4(50) register_sf4(51) register_sf4(52) register_sf4(53)
+         register_sf4(54) register_sf4(55) register_sf4(56) register_sf4(57)
+         register_sf4(58) register_sf4(59) register_sf4(60) register_sf4(61)
+         register_sf4(62) register_sf4(63) register_sf4(64) register_sf4(65)
+         register_sf4(66) register_sf4(67) register_sf4(68) register_sf4(69)
+         register_sf4(70) register_sf4(71) register_sf4(72) register_sf4(73)
+         register_sf4(74) register_sf4(75) register_sf4(76) register_sf4(77)
+         register_sf4(78) register_sf4(79) register_sf4(80) register_sf4(81)
          #undef register_sf4
 
          typedef std::pair<quaternary_functor_t,details::operator_type> pair_t;
          #define register_sf4ext(Op) sf4_map[details::sfext##Op##_op<T>::id()] = pair_t(details::sfext##Op##_op<T>::process,details::e_sf4ext##Op);
-         register_sf4ext(00)
-         register_sf4ext(01)
-         register_sf4ext(02)
-         register_sf4ext(03)
-         register_sf4ext(04)
-         register_sf4ext(05)
-         register_sf4ext(06)
-         register_sf4ext(07)
-         register_sf4ext(08)
-         register_sf4ext(09)
-         register_sf4ext(10)
-         register_sf4ext(11)
-         register_sf4ext(12)
-         register_sf4ext(13)
-         register_sf4ext(14)
-         register_sf4ext(15)
-         register_sf4ext(16)
-         register_sf4ext(17)
-         register_sf4ext(18)
-         register_sf4ext(19)
-         register_sf4ext(20)
-         register_sf4ext(21)
-         register_sf4ext(22)
-         register_sf4ext(23)
-         register_sf4ext(24)
-         register_sf4ext(25)
-         register_sf4ext(26)
-         register_sf4ext(27)
-         register_sf4ext(28)
-         register_sf4ext(29)
-         register_sf4ext(30)
-         register_sf4ext(31)
+         register_sf4ext(00) register_sf4ext(01) register_sf4ext(02) register_sf4ext(03)
+         register_sf4ext(04) register_sf4ext(05) register_sf4ext(06) register_sf4ext(07)
+         register_sf4ext(08) register_sf4ext(09) register_sf4ext(10) register_sf4ext(11)
+         register_sf4ext(12) register_sf4ext(13) register_sf4ext(14) register_sf4ext(15)
+         register_sf4ext(16) register_sf4ext(17) register_sf4ext(18) register_sf4ext(19)
+         register_sf4ext(20) register_sf4ext(21) register_sf4ext(22) register_sf4ext(23)
+         register_sf4ext(24) register_sf4ext(25) register_sf4ext(26) register_sf4ext(27)
+         register_sf4ext(28) register_sf4ext(29) register_sf4ext(30) register_sf4ext(31)
          #undef register_sf4ext
       }
 
