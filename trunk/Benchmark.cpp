@@ -16,6 +16,7 @@ Benchmark::Benchmark()
   ,m_fSum(0)
   ,m_nTotalBytecodeSize(0)
   ,m_nPoints(0)
+  ,m_vFails()
 {}
 
 //-------------------------------------------------------------------------------------------------
@@ -105,6 +106,7 @@ void Benchmark::Reset()
 {
   m_fTime1 = 0;
   m_fResult = 0;
+  m_vFails.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -131,4 +133,16 @@ double Benchmark::GetSum() const
 double Benchmark::GetRes() const
 {
   return m_fResult;
+}
+
+//-------------------------------------------------------------------------------------------------
+const std::vector<std::string> Benchmark::GetFails() const
+{
+  return m_vFails;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Benchmark::AddFail(const std::string &sExpr)
+{
+  m_vFails.push_back(sExpr);
 }
