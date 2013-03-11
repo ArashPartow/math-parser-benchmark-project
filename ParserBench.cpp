@@ -83,12 +83,18 @@ struct BenchMTParser : Benchmark
 
    double DoBenchmark(const std::string &sExpr, long iCount)
    {
-      double a(1), b(2), c(3);
+      double a(1), b(2), c(3), x(1), y(2), z(3), w(4);
 
       MTParser p;
       p.defineVar("a", &a);
       p.defineVar("b", &b);
       p.defineVar("c", &b);
+
+      p.defineVar("x", &x);
+      p.defineVar("y", &y);
+      p.defineVar("z", &z);
+      p.defineVar("w", &w);
+
       p.defineConst("e", M_E);
       p.defineConst("pi", M_PI);
       p.compile(sExpr.c_str());
@@ -102,6 +108,7 @@ struct BenchMTParser : Benchmark
       for (int j = 0;j<iCount; j++)
       {
          std::swap(a,b);
+         std::swap(x,y);
          fSum += p.evaluate();
       }
 
@@ -323,12 +330,12 @@ int main(int argc, const char *argv[])
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
    //  std::vector<string> vExpr = LoadEqn("bench_slow.txt");
-   //std::vector<string> vExpr = LoadEqn("bench1.txt");
-   std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
+   //std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
+   std::vector<string> vExpr = LoadEqn("bench1.txt");
    //std::vector<string> vExpr = LoadEqn("bench_dbg.txt");
    //std::vector<string> vExpr = LoadEqn("bench_expr_hparser.txt");
 
-   int iCount   = 20000000;
+   int iCount   = 10000000;
 
 #ifdef _DEBUG
    iCount   = 10;
@@ -347,7 +354,7 @@ int main(int argc, const char *argv[])
    
    //vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
-   //vBenchmarks.push_back(new BenchMuParserX());
+   vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
    vBenchmarks.push_back(new BenchMuParserSSE());
    vBenchmarks.push_back(new BenchATMSP());

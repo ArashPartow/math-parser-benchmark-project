@@ -117,6 +117,7 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    for (int j=0; j<iCount; j++)
    {
       std::swap(bc.var[0], bc.var[1]);
+      std::swap(bc.var[3], bc.var[4]);
       fSum += bc.run();
    }
 

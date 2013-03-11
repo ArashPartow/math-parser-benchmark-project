@@ -33,6 +33,7 @@ double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
   for (int j=0; j<iCount; j++) 
   {
     std::swap(vals[0], vals[1]);
+    std::swap(vals[3], vals[4]);
     fSum += Parser.Eval(vals);
   }
 
