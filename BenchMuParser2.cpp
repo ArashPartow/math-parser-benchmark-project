@@ -21,12 +21,18 @@ BenchMuParser2::BenchMuParser2(bool bEnableOptimizer)
 double BenchMuParser2::DoBenchmark(const std::string &sExpr, long iCount)
 {
   Parser p;
-  double fRes(0), fSum(0), a(1), b(2), c(3);
+  double fRes(0), fSum(0), a(1), b(2), c(3), d(4);
 
   p.SetExpr(sExpr.c_str());
   p.DefineVar("a", &a);
   p.DefineVar("b", &b);
   p.DefineVar("c", &c);
+
+  p.DefineVar("x", &a);
+  p.DefineVar("y", &b);
+  p.DefineVar("z", &c);
+  p.DefineVar("w", &d);
+
   p.DefineConst("pi", (double)M_PI);
   p.DefineConst("e", (double)M_E);
 

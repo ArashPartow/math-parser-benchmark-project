@@ -32,6 +32,8 @@ public:
   double GetRes() const;
   double GetSum() const;
 
+  const std::vector<std::string> GetFails() const;
+  void AddFail(const std::string &sExpr);
 
 protected:
 
@@ -39,11 +41,14 @@ protected:
   std::string m_sInfo;
   int m_nTotalBytecodeSize;
   int m_nPoints;
+  int m_nFail;
   long m_nNum;
   double m_fTime1;
   double m_fResult;
   double m_fSum;
   Stopwatch m_timer;
+
+  std::vector<std::string> m_vFails;
 };
 
 #endif

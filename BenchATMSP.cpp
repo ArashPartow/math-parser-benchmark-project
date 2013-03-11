@@ -90,7 +90,7 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    // Parsing/bytecode generation with error check. In a scope here JUST to
    // demonstrate that a parser-instance itself is NOT needed later on
    ATMSP<double> p;
-   unsigned int err = p.parse(bc, sExpr, "a, b, c");
+   unsigned int err = p.parse(bc, sExpr, "a, b, c, x, y, z, w");
    if (err)
    {
       StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
@@ -102,6 +102,10 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    bc.var[0] = 1.0;
    bc.var[1] = 2.0;
    bc.var[2] = 3.0;
+   bc.var[3] = 1.0;
+   bc.var[4] = 2.0;
+   bc.var[5] = 3.0;
+   bc.var[6] = 4.0;
 
    // Calculate/bench and show result finally
    double fTime(0);

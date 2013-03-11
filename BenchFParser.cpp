@@ -22,11 +22,11 @@ double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
   FunctionParser Parser;
   Parser.AddConstant("pi", (double)M_PI);
   Parser.AddConstant("e", (double)M_E);
-  int iRet = Parser.Parse(sExpr.c_str(), "a,b,c");
+  int iRet = Parser.Parse(sExpr.c_str(), "a,b,c,x,y,z,w");
   if (iRet>=0)
     throw false;
 
-  double vals[] = { 1, 2, 3 };
+  double vals[] = { 1, 2, 3, 1, 2, 3, 4 };
   fRes = Parser.Eval(vals);;
 
   StartTimer();

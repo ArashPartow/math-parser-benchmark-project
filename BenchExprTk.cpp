@@ -23,6 +23,7 @@ double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
    double a = 1.0;
    double b = 2.0;
    double c = 3.0;
+   double d = 4.0;
 
    exprtk::symbol_table<double> symbol_table;
    exprtk::expression<double> expression;
@@ -30,6 +31,11 @@ double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
    symbol_table.add_variable("a", a);
    symbol_table.add_variable("b", b);
    symbol_table.add_variable("c", c);
+
+   symbol_table.add_variable("x", a);
+   symbol_table.add_variable("y", b);
+   symbol_table.add_variable("z", c);
+   symbol_table.add_variable("w", d);
 
    static double e = exprtk::details::numeric::constant::e;
    symbol_table.add_variable("e", e, true);
