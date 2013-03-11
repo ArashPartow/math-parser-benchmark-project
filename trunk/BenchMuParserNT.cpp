@@ -19,17 +19,17 @@ BenchMuParserNT::BenchMuParserNT(bool bEnableOptimizer)
 double BenchMuParserNT::DoBenchmark(const std::string &sExpr, long iCount)
 {
   mp::Parser<double, std::string> p;
-  double fRes(0), fSum(0), a(1), b(2), c(3), d(4);
+  double fRes(0), fSum(0), a(1), b(2), c(3), x(1), y(2), z(3), w(4);
 
   p.SetExpr(sExpr.c_str());
   p.DefineVar("a", &a);
   p.DefineVar("b", &b);
   p.DefineVar("c", &c);
 
-  p.DefineVar("x", &a);
-  p.DefineVar("y", &b);
-  p.DefineVar("z", &c);
-  p.DefineVar("w", &d);
+  p.DefineVar("x", &x);
+  p.DefineVar("y", &y);
+  p.DefineVar("z", &z);
+  p.DefineVar("w", &w);
 
   p.DefineConst("pi", (double)M_PI);
   p.DefineConst("e", (double)M_E);
@@ -42,6 +42,7 @@ double BenchMuParserNT::DoBenchmark(const std::string &sExpr, long iCount)
   for (int j=0; j<iCount; j++) 
   {
     std::swap(a,b);
+    std::swap(x,y);
     fSum += p.Eval();
   }
 
