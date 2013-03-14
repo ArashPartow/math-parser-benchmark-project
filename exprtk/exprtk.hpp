@@ -5573,11 +5573,11 @@ namespace exprtk
       {
       public:
 
-         virtual inline T0 t0() const = 0;
+         virtual T0 t0() const = 0;
 
-         virtual inline T1 t1() const = 0;
+         virtual T1 t1() const = 0;
 
-         virtual inline T2 t2() const = 0;
+         virtual T2 t2() const = 0;
       };
 
       template <typename T, typename T0, typename T1, typename T2, typename SF3Operation>
@@ -5612,17 +5612,17 @@ namespace exprtk
             return SF3Operation::process(t0_,t1_,t2_);
          }
 
-         inline T0 t0() const
+         T0 t0() const
          {
             return t0_;
          }
 
-         inline T1 t1() const
+         T1 t1() const
          {
             return t1_;
          }
 
-         inline T2 t2() const
+         T2 t2() const
          {
             return t2_;
          }
@@ -6966,14 +6966,14 @@ namespace exprtk
 
             virtual ~vector_holder_base(){}
 
-            inline const_value_ptr operator[](const std::size_t& index) const
+            inline value_ptr operator[](const std::size_t& index) const
             {
                return value_at(index);
             }
 
          protected:
 
-            virtual const_value_ptr value_at(const std::size_t&) const = 0;
+            virtual value_ptr value_at(const std::size_t&) const = 0;
 
          };
 
@@ -6988,7 +6988,7 @@ namespace exprtk
 
          protected:
 
-            const_value_ptr value_at(const std::size_t& index) const
+            value_ptr value_at(const std::size_t& index) const
             {
                if (index < size_)
                   return const_cast<const_value_ptr>(vec_ + index);
@@ -7018,7 +7018,7 @@ namespace exprtk
 
          protected:
 
-            const_value_ptr value_at(const std::size_t& index) const
+            value_ptr value_at(const std::size_t& index) const
             {
                return (index < sequence_.size()) ? (&sequence_[index]) : const_value_ptr(0);
             }
@@ -7046,7 +7046,7 @@ namespace exprtk
          : vector_holder_base_(new(buffer)sequence_vector_impl<Allocator,std::deque>(deq))
          {}
 
-         inline const_value_ptr operator[](const std::size_t& index) const
+         inline value_ptr operator[](const std::size_t& index) const
          {
             return (*vector_holder_base_)[index];
          }
@@ -7115,7 +7115,6 @@ namespace exprtk
          template <typename Tie, typename RType>
          inline bool add_impl(const std::string& symbol_name, RType t, const bool is_constant)
          {
-
             if (1 == symbol_name.size())
             {
                short_type_lut[static_cast<std::size_t>(std::tolower(symbol_name[0]))] = Tie::make(t,is_constant);
@@ -7199,7 +7198,29 @@ namespace exprtk
                   return std::make_pair(is_constant,&t);
                }
             };
-            return add_impl<tie,RawType&>(symbol_name,t,is_constant);
+
+            if (1 == symbol_name.size())
+            {
+               short_type_lut[static_cast<std::size_t>(std::tolower(symbol_name[0]))] = tie::make(t,is_constant);
+               ++size;
+            }
+            else
+            {
+               for (std::size_t i = 0; i < details::reserved_symbols_size; ++i)
+               {
+                  if (details::imatch(symbol_name,details::reserved_symbols[i]))
+                  {
+                     return false;
+                  }
+               }
+               tm_itr_t itr = map.find(symbol_name);
+               if (map.end() == itr)
+               {
+                  map[symbol_name] = tie::make(t,is_constant);
+                  ++size;
+               }
+            }
+            return true;
          }
 
          inline type_ptr get(const std::string& symbol_name)
