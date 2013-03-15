@@ -42,8 +42,8 @@
 #endif
 
 //-------------------------------------------------------------------------------------------------
-#define MUP_VERSION      _SL("0.3.3")
-#define MUP_VERSION_DATE _SL("20120517; SF-SVN/BRANCHES")
+#define MUP_VERSION      _SL("0.3.4")
+#define MUP_VERSION_DATE _SL("20130315; SF-SVN/BRANCHES")
 
 #define MUP_NAMESPACE_START namespace mp {
 #define MUP_NAMESPACE_END }

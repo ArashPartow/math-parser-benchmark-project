@@ -185,8 +185,8 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    std::map<double, std::vector<Benchmark*>> results;
    for (std::size_t i = 0;i<vExpr.size(); ++i)
    {
-      fprintf(pRes, "\nExpression: \"%s\"\n", vExpr[i].c_str());
-      printf("\nExpression: \"%s\"\n", vExpr[i].c_str());
+      fprintf(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i, vExpr.size(), vExpr[i].c_str());
+      printf("\nExpression %d of %d: \"%s\"\n", (int)i, vExpr.size(), vExpr[i].c_str());
 
       double fRefResult = 0;
       double fRefSum = 0;
@@ -335,10 +335,10 @@ int main(int argc, const char *argv[])
    //std::vector<string> vExpr = LoadEqn("bench_dbg.txt");
    //std::vector<string> vExpr = LoadEqn("bench_expr_hparser.txt");
 
-   int iCount   = 10000000;
-
+//   int iCount = 10000000;
+   int iCount = 5000000;
 #ifdef _DEBUG
-   iCount   = 10;
+   iCount   = 2;
 #endif
 
    std::vector<Benchmark*> vBenchmarks;
@@ -354,7 +354,7 @@ int main(int argc, const char *argv[])
    
    //vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
-   vBenchmarks.push_back(new BenchMuParserX());
+//   vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
    vBenchmarks.push_back(new BenchMuParserSSE());
    vBenchmarks.push_back(new BenchATMSP());
