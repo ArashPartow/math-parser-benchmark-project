@@ -205,7 +205,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    std::map<double, std::vector<Benchmark*>> results;
    for (std::size_t i = 0;i<vExpr.size(); ++i)
    {
-      output(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i, vExpr.size(), vExpr[i].c_str());
+      output(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i+1, vExpr.size(), vExpr[i].c_str());
 
       double fRefResult = 0;
       double fRefSum = 0;
@@ -312,7 +312,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
       Benchmark *pBench = vBenchmarks[i];
       bHasFailures |= pBench->GetFails().size()>0;
 
-      output(pRes,  "   %-15s: %4d %4.4lf\n", pBench->GetShortName().c_str(), pBench->GetPoints(), pBench->GetScore());
+      output(pRes,  "   %-15s: %4d %4.0lf\%\n", pBench->GetShortName().c_str(), pBench->GetPoints(), (pBench->GetScore()/(double)vExpr.size()) * 100.0);
    }
 
    // Dump failures
@@ -350,15 +350,15 @@ int main(int argc, const char *argv[])
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
    //  std::vector<string> vExpr = LoadEqn("bench_slow.txt");
-   //std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
-   std::vector<string> vExpr = LoadEqn("bench1.txt");
+   std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
+   //std::vector<string> vExpr = LoadEqn("bench1.txt");
    //std::vector<string> vExpr = LoadEqn("bench_dbg.txt");
    //std::vector<string> vExpr = LoadEqn("bench_expr_hparser.txt");
 
 //   int iCount = 10000000;
    int iCount = 5000000;
 #ifdef _DEBUG
-   iCount   = 10000;
+   iCount   = 3000;
 #endif
 
    std::vector<Benchmark*> vBenchmarks;
