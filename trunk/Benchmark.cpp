@@ -16,6 +16,7 @@ Benchmark::Benchmark()
   ,m_fSum(0)
   ,m_nTotalBytecodeSize(0)
   ,m_nPoints(0)
+  ,m_fScore(0)
   ,m_vFails()
 {}
 
@@ -29,6 +30,18 @@ void Benchmark::AddPoints(int pt)
 int Benchmark::GetPoints() const
 {
   return m_nPoints;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Benchmark::AddScore(double fScore)
+{
+  m_fScore += fScore;
+}
+
+//-------------------------------------------------------------------------------------------------
+double Benchmark::GetScore() const
+{
+  return m_fScore;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -113,6 +126,12 @@ void Benchmark::Reset()
 void Benchmark::StartTimer()
 {
   m_timer.Start();
+}
+
+//-------------------------------------------------------------------------------------------------
+double Benchmark::GetTime() const
+{
+  return m_fTime1;
 }
 
 //-------------------------------------------------------------------------------------------------

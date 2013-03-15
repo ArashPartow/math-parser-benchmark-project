@@ -29,6 +29,10 @@ public:
   void AddPoints(int pt);
   int GetPoints() const;
 
+  void AddScore(double sc);
+  double GetScore() const;
+
+  double GetTime() const;
   double GetRes() const;
   double GetSum() const;
 
@@ -43,6 +47,7 @@ protected:
   int m_nPoints;
   int m_nFail;
   long m_nNum;
+  double m_fScore;
   double m_fTime1;
   double m_fResult;
   double m_fSum;
