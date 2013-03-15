@@ -99,13 +99,13 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    }
 
    // Set variable values for x,y,z. Here always 1,2,3
-   bc.var[0] = 1.0;
-   bc.var[1] = 2.0;
-   bc.var[2] = 3.0;
-   bc.var[3] = 1.0;
-   bc.var[4] = 2.0;
-   bc.var[5] = 3.0;
-   bc.var[6] = 4.0;
+   bc.var[0] = 1.1;
+   bc.var[1] = 2.2;
+   bc.var[2] = 3.3;
+   bc.var[3] = 1.1;
+   bc.var[4] = 2.2;
+   bc.var[5] = 3.3;
+   bc.var[6] = 4.4;
 
    // Calculate/bench and show result finally
    double fTime(0);

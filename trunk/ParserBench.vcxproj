@@ -92,7 +92,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParserDLL;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\ucalc;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\MTParser\MTParserLib;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParser;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParser3;$(SolutionDir)\asmjit\Asmjit-1.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_WIN32;_USE_MATH_DEFINES;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -127,11 +127,17 @@
     <ClCompile Include="BenchATMSP.cpp" />
     <ClCompile Include="BenchExprTk.cpp" />
     <ClCompile Include="BenchFParser.cpp" />
+    <ClCompile Include="BenchLepton.cpp" />
     <ClCompile Include="Benchmark.cpp" />
     <ClCompile Include="BenchMuParser2.cpp" />
     <ClCompile Include="BenchMuParserNT.cpp" />
     <ClCompile Include="BenchMuParserX.cpp" />
     <ClCompile Include="FormelGenerator.cpp" />
+    <ClCompile Include="lepton\ExpressionProgram.cpp" />
+    <ClCompile Include="lepton\ExpressionTreeNode.cpp" />
+    <ClCompile Include="lepton\Operation.cpp" />
+    <ClCompile Include="lepton\ParsedExpression.cpp" />
+    <ClCompile Include="lepton\Parser.cpp" />
     <ClCompile Include="muparser2\muParser.cpp" />
     <ClCompile Include="muparser2\muParserBase.cpp" />
     <ClCompile Include="muparser2\muParserBytecode.cpp" />
@@ -191,11 +197,22 @@
     <ClInclude Include="BenchATMSP.h" />
     <ClInclude Include="BenchExprTk.h" />
     <ClInclude Include="BenchFParser.h" />
+    <ClInclude Include="BenchLepton.h" />
     <ClInclude Include="Benchmark.h" />
     <ClInclude Include="BenchMuParser2.h" />
     <ClInclude Include="BenchMuParserNT.h" />
     <ClInclude Include="BenchMuParserX.h" />
     <ClInclude Include="exprtk\exprtk.hpp" />
+    <ClInclude Include="lepton\CustomFunction.h" />
+    <ClInclude Include="lepton\Exception.h" />
+    <ClInclude Include="lepton\ExpressionProgram.h" />
+    <ClInclude Include="lepton\ExpressionTreeNode.h" />
+    <ClInclude Include="lepton\Lepton.h" />
+    <ClInclude Include="lepton\MSVC_erfc.h" />
+    <ClInclude Include="lepton\Operation.h" />
+    <ClInclude Include="lepton\ParsedExpression.h" />
+    <ClInclude Include="lepton\Parser.h" />
+    <ClInclude Include="lepton\windowsIncludes.h" />
     <ClInclude Include="muparser2\muParser.h" />
     <ClInclude Include="muparser2\muParserBase.h" />
     <ClInclude Include="muparser2\muParserBytecode.h" />

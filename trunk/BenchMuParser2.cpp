@@ -11,17 +11,26 @@ using namespace mu;
 
 //-------------------------------------------------------------------------------------------------
 BenchMuParser2::BenchMuParser2(bool bEnableOptimizer)
-  :Benchmark()
+: Benchmark()
 {
   m_sName = "muparser2 V" + mu::Parser().GetVersion();
   m_bEnableOptimizer = bEnableOptimizer;
 }
-  
+
 //-------------------------------------------------------------------------------------------------
 double BenchMuParser2::DoBenchmark(const std::string &sExpr, long iCount)
 {
   Parser p;
-  double fRes(0), fSum(0), a(1), b(2), c(3), d(4), x(1), y(2), z(3), w(4);
+  double fRes(0);
+  double fSum(0);
+  double a(1.1);
+  double b(2.2);
+  double c(3.3);
+  double d(4.4);
+  double x(1.1);
+  double y(2.2);
+  double z(3.3);
+  double w(4.4);
 
   p.SetExpr(sExpr.c_str());
   p.DefineVar("a", &a);
@@ -41,7 +50,7 @@ double BenchMuParser2::DoBenchmark(const std::string &sExpr, long iCount)
                    // (Speed of bytecode creation is irrelevant)
 
   StartTimer();
-  for (int j=0; j<iCount; j++) 
+  for (int j=0; j<iCount; j++)
   {
     std::swap(a,b);
     std::swap(x,y);
