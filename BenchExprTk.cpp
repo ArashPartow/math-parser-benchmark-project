@@ -14,20 +14,18 @@ BenchExprTk::BenchExprTk()
 : Benchmark()
 {
    m_sName = "ExprTk";
-   //exprtk::pgo_primer<double>();
 }
 
 //-------------------------------------------------------------------------------------------------
 double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
 {
-   double a = 1.0;
-   double b = 2.0;
-   double c = 3.0;
-
-   double x = 1.0;
-   double y = 2.0;
-   double z = 3.0;
-   double w = 4.0;
+   double a = 1.1;
+   double b = 2.2;
+   double c = 3.3;
+   double x = 1.1;
+   double y = 2.2;
+   double z = 3.3;
+   double w = 4.4;
 
    exprtk::symbol_table<double> symbol_table;
    exprtk::expression<double> expression;
@@ -50,7 +48,11 @@ double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
 
    {
       exprtk::parser<double> parser;
-      parser.compile(sExpr,expression);
+      if (!parser.compile(sExpr,expression))
+      {
+         StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
+         return std::numeric_limits<double>::max();
+      }
    }
 
    // Calculate/bench and show result finally

@@ -37,6 +37,9 @@
     <Filter Include="Quelldateien\muparser2">
       <UniqueIdentifier>{602171d5-6b33-475c-89c4-a332ae2bd959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\Lepton">
+      <UniqueIdentifier>{4f9ef810-01b3-490b-8f7a-dfdea6a690e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BenchATMSP.cpp">
@@ -224,6 +227,24 @@
     </ClCompile>
     <ClCompile Include="muparser2\muParserError.cpp">
       <Filter>Quelldateien\muparser2</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchLepton.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lepton\ExpressionProgram.cpp">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="lepton\ExpressionTreeNode.cpp">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="lepton\Operation.cpp">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="lepton\ParsedExpression.cpp">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="lepton\Parser.cpp">
+      <Filter>Quelldateien\Lepton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -544,6 +565,39 @@
     </ClInclude>
     <ClInclude Include="muparser2\muParserDef.h">
       <Filter>Quelldateien\muparser2</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchLepton.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\CustomFunction.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\Exception.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\ExpressionProgram.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\ExpressionTreeNode.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\Lepton.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\MSVC_erfc.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\Operation.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\ParsedExpression.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\Parser.h">
+      <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="lepton\windowsIncludes.h">
+      <Filter>Quelldateien\Lepton</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

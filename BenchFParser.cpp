@@ -3,7 +3,7 @@
 #include <cmath>
 #include <windows.h>
 
-// fparser includes 
+// fparser includes
 #include "fparser/fparser.hh"
 
 //-------------------------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ BenchFParser::BenchFParser()
 {
   m_sName = "FParser 4.5";
 }
-  
+
 //-------------------------------------------------------------------------------------------------
 double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
 {
@@ -26,11 +26,11 @@ double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
   if (iRet>=0)
     throw false;
 
-  double vals[] = { 1, 2, 3, 1, 2, 3, 4 };
+  double vals[] = { 1.1, 2.2, 3.3, 1.1, 2.2, 3.3, 4.4 };
   fRes = Parser.Eval(vals);;
 
   StartTimer();
-  for (int j=0; j<iCount; j++) 
+  for (int j=0; j<iCount; j++)
   {
     std::swap(vals[0], vals[1]);
     std::swap(vals[3], vals[4]);

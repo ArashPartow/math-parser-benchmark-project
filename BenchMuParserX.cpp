@@ -10,7 +10,7 @@ BenchMuParserX::BenchMuParserX()
 {
   m_sName = "muparserx" + mup::ParserX().GetVersion();
 }
-  
+
 //-------------------------------------------------------------------------------------------------
 double BenchMuParserX::DoBenchmark(const std::string &sExpr, long iCount)
 {
@@ -19,8 +19,14 @@ double BenchMuParserX::DoBenchmark(const std::string &sExpr, long iCount)
   ParserX p(pckALL_NON_COMPLEX);
 
   Value fRes(0);
-  Value a((float_type)1.0), b((float_type)2.0), c((float_type)3.0), buf(0);
-  Value x((float_type)1.0), y((float_type)2.0), z((float_type)3.0), w((float_type)4.0);
+  Value a((float_type)1.1);
+  Value b((float_type)2.2);
+  Value c((float_type)3.3);
+  Value x((float_type)1.1);
+  Value y((float_type)2.2);
+  Value z((float_type)3.3);
+  Value w((float_type)4.4);
+  Value buf(0);
   double fTime(0);
 
   p.SetExpr(sExpr.c_str());
@@ -42,7 +48,7 @@ double BenchMuParserX::DoBenchmark(const std::string &sExpr, long iCount)
   double fSum = 0;
   fRes = p.Eval();
   StartTimer();
-  for (int j=0; j<iCount; j++) 
+  for (int j=0; j<iCount; j++)
   {
     std::swap(a,b);
     std::swap(x,y);
