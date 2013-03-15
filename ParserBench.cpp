@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdarg>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -169,6 +170,23 @@ std::vector<string> LoadEqn(const std::string &sFile)
 }
 
 //-------------------------------------------------------------------------------------------------
+void output(FILE *pFile, const char *fmt, ...)
+{
+  va_list args;
+  va_start (args, fmt);
+
+  if (pFile!=nullptr)
+  {
+    vfprintf(pFile, fmt, args);
+    fflush(pFile);
+  }
+
+  vprintf(fmt, args);
+
+  va_end (args);
+}
+
+//-------------------------------------------------------------------------------------------------
 void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, int iCount, double fRefDev = 0.0001)
 {
    printf("\nBenchmark (Shootout Mode)\n");
@@ -182,14 +200,16 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    FILE *pRes = fopen(file, "w");
    assert(pRes);
 
+    Benchmark *pRefBench = vBenchmarks[0];
+
    std::map<double, std::vector<Benchmark*>> results;
    for (std::size_t i = 0;i<vExpr.size(); ++i)
    {
-      fprintf(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i, vExpr.size(), vExpr[i].c_str());
-      printf("\nExpression %d of %d: \"%s\"\n", (int)i, vExpr.size(), vExpr[i].c_str());
+      output(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i, vExpr.size(), vExpr[i].c_str());
 
       double fRefResult = 0;
       double fRefSum = 0;
+      double fRefTime = 0;
 
       for (std::size_t j = 0;j<vBenchmarks.size(); ++j)
       {
@@ -219,7 +239,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
             }
           }
 
-         results[time].push_back(pBench);
+          results[time].push_back(pBench);
       }
 
 
@@ -233,42 +253,26 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
             Benchmark *pBench = vBench[i];
 
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
+            pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
             if (i == 0)
             {
-               fprintf(pRes, "%d: %5s %15s (%4.5f 탎, %e, %e)\n",
+               output(pRes, "%d: %5s %15s (%4.5f 탎, %e, %e)\n",
                        ct,
                        (pBench->GetFails().size()>0) ? "DNQ " : "    ",
                        pBench->GetShortName().c_str(),
                        it->first,
                        pBench->GetRes(),
                        pBench->GetSum());
-               fflush(pRes);
-
-               printf("%d: %5s %-15s (%4.5f 탎, %e, %e)\n",
-                      ct,
-                      (pBench->GetFails().size()>0) ? "DNQ " : "    ",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      pBench->GetRes(),
-                      pBench->GetSum());
             }
             else
             {
-               fprintf(pRes, "   %5s %-15s (%4.5f 탎, %e, %e)\n",
+               output(pRes, "   %5s %-15s (%4.5f 탎, %e, %e)\n",
                        (pBench->GetFails().size()>0) ? "DNQ " : "    ",
                        pBench->GetShortName().c_str(),
                        it->first,
                        pBench->GetRes(),
                        pBench->GetSum());
-               fflush(pRes);
-
-               printf("   %5s %-15s (%4.5f 탎, %e, %e)\n",
-                      (pBench->GetFails().size()>0) ? "DNQ " : "    ",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      pBench->GetRes(),
-                      pBench->GetSum());
             }
          }
 
@@ -278,9 +282,28 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
       results.clear();
    }
 
+    output(pRes, "\n\nBenchmark settings:\n");
+    output(pRes, "  - Reference parser is %s\n", pRefBench->GetShortName().c_str());
+    output(pRes, "  - Iterations per expression: %d\n", iCount);
 
-   fprintf(pRes, "\n\nScores:\n");
-   printf("\n\nScores:\n");
+#if defined(_DEBUG)
+    output(pRes, "  - DEBUG build\n");
+#else
+    output(pRes, "  - RELEASE build\n");
+#endif
+
+#if defined (__GNUC__)
+    output(pRes, "  - compiled with GCC Version %d.%d.%d\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ ");
+#elif defined(_MSC_VER)
+    output(pRes, "  - compiled with MSC Version %d\n", _MSC_VER);
+#endif
+
+    output(pRes, "  - IEEE 754 (IEC 559) is %s\n", (std::numeric_limits<double>::is_iec559) ? "available" : " NOT AVAILABLE");
+    output(pRes, "  - %d bit build\n", sizeof(void*)*8);
+
+
+
+   output(pRes, "\n\nScores:\n");
 
    // Dump scores
    bool bHasFailures = false;
@@ -288,28 +311,25 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    {
       Benchmark *pBench = vBenchmarks[i];
       bHasFailures |= pBench->GetFails().size()>0;
-      fprintf(pRes, "   %-15s: %d\n", pBench->GetShortName().c_str(), pBench->GetPoints());
-      printf("   %-15s: %4d\n", pBench->GetShortName().c_str(), pBench->GetPoints());
+
+      output(pRes,  "   %-15s: %4d %4.4lf\n", pBench->GetShortName().c_str(), pBench->GetPoints(), pBench->GetScore());
    }
 
    // Dump failures
    if (bHasFailures)
    {
-     fprintf(pRes, "\n\nFailures:\n");
-     printf("\n\nFailures:\n");
+     output(pRes, "\n\nFailures:\n");
      for (std::size_t i = 0;i<vBenchmarks.size(); ++i)
      {
         Benchmark *pBench = vBenchmarks[i];
         std::vector<std::string> vFail = pBench->GetFails();
         if (vFail.size()>0)
         {
-          fprintf(pRes, "   %-15s:\n", pBench->GetShortName().c_str());
-          printf("   %-15s:\n", pBench->GetShortName().c_str());
+          output(pRes, "   %-15s:\n", pBench->GetShortName().c_str());
 
           for (std::size_t i=0; i<vFail.size(); ++i)
           {
-            fprintf(pRes, "         \"%s\"\n", vFail[i].c_str());
-            printf("         \"%s\"\n", vFail[i].c_str());
+            output(pRes, "         \"%s\"\n", vFail[i].c_str());
           }
         }
      }
@@ -338,7 +358,7 @@ int main(int argc, const char *argv[])
 //   int iCount = 10000000;
    int iCount = 5000000;
 #ifdef _DEBUG
-   iCount   = 2;
+   iCount   = 10000;
 #endif
 
    std::vector<Benchmark*> vBenchmarks;
@@ -354,7 +374,7 @@ int main(int argc, const char *argv[])
    
    //vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
-//   vBenchmarks.push_back(new BenchMuParserX());
+   //vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
    vBenchmarks.push_back(new BenchMuParserSSE());
    vBenchmarks.push_back(new BenchATMSP());
