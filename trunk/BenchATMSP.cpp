@@ -94,8 +94,7 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    if (err)
    {
       StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
-      return std::numeric_limits<double>::max();
-      //throw std::runtime_error(std::string("atmsp: ") + p.errMessage(err));
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
    // Set variable values for x,y,z. Here always 1,2,3

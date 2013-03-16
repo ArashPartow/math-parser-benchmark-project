@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstdio>
 #include <ctime>
+#include <algorithm>
 #include <Windows.h>
 
 using namespace std;
@@ -24,19 +25,19 @@ Benchmark::Benchmark(EBaseType eBaseType)
 //-------------------------------------------------------------------------------------------------
 void Benchmark::AddPoints(int pt)
 {
-  m_nPoints+=pt;
+   m_nPoints+=pt;
 }
 
 //-------------------------------------------------------------------------------------------------
 int Benchmark::GetPoints() const
 {
-  return m_nPoints;
+   return m_nPoints;
 }
 
 //-------------------------------------------------------------------------------------------------
 void Benchmark::AddScore(double fScore)
 {
-  m_fScore += fScore;
+   m_fScore += fScore;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -49,10 +50,10 @@ std::string Benchmark::GetBaseType() const
 {
   switch(m_eBaseType)
   {
-  case FLOAT:       return "float";
-  case DOUBLE:      return "double";
-  case LONG_DOUBLE: return "long double";
-  default:          return "unknown";
+     case FLOAT:       return "float";
+     case DOUBLE:      return "double";
+     case LONG_DOUBLE: return "long double";
+     default:          return "unknown";
   }
 }
 //-------------------------------------------------------------------------------------------------
@@ -62,61 +63,69 @@ void Benchmark::PreprocessExpr(std::vector<std::string> &vExpr)
 //-------------------------------------------------------------------------------------------------
 void Benchmark::DoAll(std::vector<string> vExpr, long num)
 {
-  printf("\n\n\n");
+   printf("\n\n\n");
 
-  PreprocessExpr(vExpr);
+   PreprocessExpr(vExpr);
 
-  char outstr[400], file[400];
-  time_t t = time(NULL);
+   char outstr[400], file[400];
+   time_t t = time(NULL);
 
-#ifdef _DEBUG
-  sprintf(outstr, "Bench_%s_%%Y%%m%%d_%%H%%M%%S_dbg.txt", GetShortName().c_str());
-#else
-  sprintf(outstr, "Bench_%s_%%Y%%m%%d_%%H%%M%%S_rel.txt", GetShortName().c_str());
-#endif
+   #ifdef _DEBUG
+   sprintf(outstr, "Bench_%s_%%Y%%m%%d_%%H%%M%%S_dbg.txt", GetShortName().c_str());
+   #else
+   sprintf(outstr, "Bench_%s_%%Y%%m%%d_%%H%%M%%S_rel.txt", GetShortName().c_str());
+   #endif
 
-  strftime(file, sizeof(file), outstr, localtime(&t));
+   strftime(file, sizeof(file), outstr, localtime(&t));
 
-  FILE *pRes = fopen(file, "w");
-  assert(pRes);
+   FILE *pRes = fopen(file, "w");
+   assert(pRes);
 
-  fprintf(pRes,  "# Benchmark results\n");
-  fprintf(pRes,  "#   Parser:  %s\n", GetName().c_str());
-  fprintf(pRes,  "#   Evals per expr:  %d\n", num);
-  fprintf(pRes,  "#\"ms per eval [ms]\", \"evals per sec\", \"Result\", \"expr_len\", \"Expression\"\n", GetName());
+   fprintf(pRes,  "# Benchmark results\n");
+   fprintf(pRes,  "#   Parser:  %s\n", GetName().c_str());
+   fprintf(pRes,  "#   Evals per expr:  %d\n", num);
+   fprintf(pRes,  "#\"ms per eval [ms]\", \"evals per sec\", \"Result\", \"expr_len\", \"Expression\"\n", GetName());
 
-  std::string sExpr;
+   std::string sExpr;
 
-  Stopwatch timer;
-  timer.Start();
-  for (std::size_t i=0; i<vExpr.size(); ++i)
-  {
-    try
-    {
-      DoBenchmark(vExpr[i], num);
-      fprintf(pRes, "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
-      printf(       "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
-    }
-    catch(...)
-    {
-      fprintf(pRes, "fail: %s\n", vExpr[i].c_str());
-      printf(       "fail: %s\n", vExpr[i].c_str());
-    }
+   Stopwatch timer;
+   timer.Start();
+   for (std::size_t i=0; i<vExpr.size(); ++i)
+   {
+      try
+      {
+         DoBenchmark(vExpr[i], num);
+         fprintf(pRes, "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
+         printf(       "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
+      }
+      catch(...)
+      {
+         fprintf(pRes, "fail: %s\n", vExpr[i].c_str());
+         printf(       "fail: %s\n", vExpr[i].c_str());
+      }
 
-    fflush(pRes);
-  }
-  double dt = timer.Stop() / ((double)vExpr.size()*num);
-  double fnum_per_sec = 1000.0/dt;
+      fflush(pRes);
+   }
+   double dt = timer.Stop() / ((double)vExpr.size()*num);
+   double fnum_per_sec = 1000.0/dt;
 
-  fprintf(pRes,  "# avg. time per expr.: %lf ms;  avg. eval per sec: %lf; total bytecode size: %d", dt, 1000.0/dt, m_nTotalBytecodeSize);
-  printf("\n#\n# avg. time per expr.: %lf ms;  avg. eval per sec: %lf; total bytecode size: %d", dt, 1000.0/dt, m_nTotalBytecodeSize);
-  fclose(pRes);
+   fprintf(pRes,  "# avg. time per expr.: %lf ms;  avg. eval per sec: %lf; total bytecode size: %d",
+           dt,
+           1000.0 / dt,
+           m_nTotalBytecodeSize);
+
+   printf("\n#\n# avg. time per expr.: %lf ms;  avg. eval per sec: %lf; total bytecode size: %d",
+          dt,
+          1000.0 / dt,
+          m_nTotalBytecodeSize);
+
+   fclose(pRes);
 }
 
 //-------------------------------------------------------------------------------------------------
 std::string Benchmark::GetName() const
 {
-  return m_sName;
+   return m_sName;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -128,51 +137,57 @@ std::string Benchmark::GetShortName() const
 //-------------------------------------------------------------------------------------------------
 void Benchmark::Reset()
 {
-  m_fTime1 = 0;
-  m_fResult = 0;
-  m_vFails.clear();
+   m_fTime1  = 0;
+   m_fResult = 0;
+   m_vFails.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
 void Benchmark::StartTimer()
 {
-  m_timer.Start();
+   m_timer.Start();
 }
 
 //-------------------------------------------------------------------------------------------------
 double Benchmark::GetTime() const
 {
-  return m_fTime1;
+   return m_fTime1;
 }
 
 //-------------------------------------------------------------------------------------------------
 void Benchmark::StopTimer(double fRes, double fSum, int iCount)
 {
-  m_fTime1 = m_timer.Stop() / (double)iCount;
-  m_fResult = fRes;
-  m_fSum = fSum;
+   m_fTime1 = m_timer.Stop() / (double)iCount;
+   m_fResult = fRes;
+   m_fSum = fSum;
 }
 
 //-------------------------------------------------------------------------------------------------
 double Benchmark::GetSum() const
 {
-  return m_fSum;
+   return m_fSum;
 }
 
 //-------------------------------------------------------------------------------------------------
 double Benchmark::GetRes() const
 {
-  return m_fResult;
+   return m_fResult;
 }
+
+bool Benchmark::ExpressionFailed(const std::string& expr) const
+{
+   return (m_vFails.end() != std::find(m_vFails.begin(),m_vFails.end(),expr));
+}
+
 
 //-------------------------------------------------------------------------------------------------
 const std::vector<std::string> Benchmark::GetFails() const
 {
-  return m_vFails;
+   return m_vFails;
 }
 
 //-------------------------------------------------------------------------------------------------
 void Benchmark::AddFail(const std::string &sExpr)
 {
-  m_vFails.push_back(sExpr);
+   m_vFails.push_back(sExpr);
 }

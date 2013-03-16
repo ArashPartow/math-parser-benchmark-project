@@ -24,14 +24,9 @@ using namespace std;
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
-   // epsilon was way to low. Disqualification is the result of computing the expression incorrectly. 
-   // If the expression is computed correctly within the bounds of the expected floating point
-   // accuracy there is no reason for disqualification. There is no point in disqualifying parsers
-   // by default by imposing an epsilon with 10 digits which is way beyond the expexted accuracy of 32
-   // bit floating point values. 
-   static const T epsilon = T(0.00001);
-   // Using 6 digits for epsilon is one fewer that the 7 digits provided by 32 bit 
-   // floating point values. Loss of a single digit is possible when computing complex expressions.
+   static const T epsilon = T(0.00000000001);
+   if (v0 != v0) return false;
+   if (v1 != v1) return false;
    return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
 }
 
@@ -119,8 +114,9 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
     Benchmark *pRefBench = vBenchmarks[0];
 
    std::map<double, std::vector<Benchmark*>> results;
-   for (std::size_t i = 0;i<vExpr.size(); ++i)
+   for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
+      const std::string current_expr = vExpr[i];
       output(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i+1, vExpr.size(), vExpr[i].c_str());
 
       double fRefResult = 0;
@@ -136,10 +132,10 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
          double time = 1000 * pBench->DoBenchmark(sExpr + " ", iCount);
 
          // The first parser is used for obtaining reference results.
-         if (j==0)
+         if (j == 0)
          {
             fRefResult = pBench->GetRes();
-            fRefSum = pBench->GetSum();
+            fRefSum    = pBench->GetSum();
          }
          else
          {
@@ -163,7 +159,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
       {
          const std::vector<Benchmark*> &vBench = it->second;
 
-         for (std::size_t i = 0;i<vBench.size(); ++i)
+         for (std::size_t i = 0; i < vBench.size(); ++i)
          {
             Benchmark *pBench = vBench[i];
 
@@ -172,25 +168,41 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
 
             if (i == 0)
             {
-               output(pRes, "%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                       ct,
-                       (pBench->GetFails().size()>0) ? "DNQ " : "    ",
-                       pBench->GetShortName().c_str(),
-                       it->first,
-                       pBench->GetRes(),
-                       pBench->GetSum());
+               fprintf(pRes, "%02d: %5s %15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                  ct,
+                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                  pBench->GetShortName().c_str(),
+                  it->first,
+                  pBench->GetRes(),
+                  pBench->GetSum());
+               fflush(pRes);
+
+               printf("%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                  ct,
+                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                  pBench->GetShortName().c_str(),
+                  it->first,
+                  pBench->GetRes(),
+                  pBench->GetSum());
             }
             else
             {
-               output(pRes, "    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                       (pBench->GetFails().size()>0) ? "DNQ " : "    ",
-                       pBench->GetShortName().c_str(),
-                       it->first,
-                       pBench->GetRes(),
-                       pBench->GetSum());
+               fprintf(pRes, "    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                  pBench->GetShortName().c_str(),
+                  it->first,
+                  pBench->GetRes(),
+                  pBench->GetSum());
+               fflush(pRes);
+
+               printf("    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                  pBench->GetShortName().c_str(),
+                  it->first,
+                  pBench->GetRes(),
+                  pBench->GetSum());
             }
          }
-
          ct += vBench.size();
       }
 
@@ -223,7 +235,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {
       Benchmark *pBench = vBenchmarks[i];
-      bHasFailures |= pBench->GetFails().size()>0;
+      bHasFailures |= (pBench->GetFails().size() > 0);
 
       output(pRes,  "   %-15s (%-10s): %4d %4.0lf\n",
              pBench->GetShortName().c_str(),

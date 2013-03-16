@@ -54,7 +54,7 @@ double BenchMTParser::DoBenchmark(const std::string &sExpr, long iCount)
    catch(...)
    {
       StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
-      return std::numeric_limits<double>::max();
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
    StartTimer();
