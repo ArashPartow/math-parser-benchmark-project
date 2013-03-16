@@ -129,8 +129,10 @@
     <ClCompile Include="BenchFParser.cpp" />
     <ClCompile Include="BenchLepton.cpp" />
     <ClCompile Include="Benchmark.cpp" />
+    <ClCompile Include="BenchMTParser.cpp" />
     <ClCompile Include="BenchMuParser2.cpp" />
     <ClCompile Include="BenchMuParserNT.cpp" />
+    <ClCompile Include="BenchMuParserSSE.cpp" />
     <ClCompile Include="BenchMuParserX.cpp" />
     <ClCompile Include="FormelGenerator.cpp" />
     <ClCompile Include="lepton\ExpressionProgram.cpp" />
@@ -199,8 +201,10 @@
     <ClInclude Include="BenchFParser.h" />
     <ClInclude Include="BenchLepton.h" />
     <ClInclude Include="Benchmark.h" />
+    <ClInclude Include="BenchMTParser.h" />
     <ClInclude Include="BenchMuParser2.h" />
     <ClInclude Include="BenchMuParserNT.h" />
+    <ClInclude Include="BenchMuParserSSE.h" />
     <ClInclude Include="BenchMuParserX.h" />
     <ClInclude Include="exprtk\exprtk.hpp" />
     <ClInclude Include="lepton\CustomFunction.h" />

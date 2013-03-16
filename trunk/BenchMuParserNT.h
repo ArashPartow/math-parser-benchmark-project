@@ -8,12 +8,16 @@
 class BenchMuParserNT : public Benchmark
 {
 public:
-  BenchMuParserNT(bool bEnableOptimizer = true);
-  double DoBenchmark(const std::string &sExpr, long iCount);
-  virtual std::string GetShortName() const;
+
+   BenchMuParserNT(bool bEnableOptimizer = true);
+
+   double DoBenchmark(const std::string &sExpr, long iCount);
+
+   std::string GetShortName() const;
 
 private:
-  bool m_bEnableOptimizer;
+
+   bool m_bEnableOptimizer;
 };
 
 #endif
