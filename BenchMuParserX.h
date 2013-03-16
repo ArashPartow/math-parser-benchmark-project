@@ -11,8 +11,11 @@ class BenchMuParserX : public Benchmark
 public:
 
   BenchMuParserX();
+
   double DoBenchmark(const std::string &sExpr, long iCount);
-  virtual std::string GetShortName() const;
+
+  std::string GetShortName() const;
+
 };
 
 #endif

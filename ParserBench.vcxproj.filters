@@ -246,6 +246,12 @@
     <ClCompile Include="lepton\Parser.cpp">
       <Filter>Quelldateien\Lepton</Filter>
     </ClCompile>
+    <ClCompile Include="BenchMuParserSSE.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchMTParser.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BenchATMSP.h">
@@ -598,6 +604,12 @@
     </ClInclude>
     <ClInclude Include="lepton\windowsIncludes.h">
       <Filter>Quelldateien\Lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchMuParserSSE.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchMTParser.h">
+      <Filter>Quelldateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

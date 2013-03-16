@@ -11,8 +11,10 @@ class BenchLepton : public Benchmark
 {
 public:
 
-  BenchLepton();
-  virtual double DoBenchmark(const std::string &sExpr, long iCount);
+   BenchLepton();
+   
+   double DoBenchmark(const std::string &sExpr, long iCount);
+
 };
 
 #endif

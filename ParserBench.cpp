@@ -6,13 +6,6 @@
 #include <ctime>
 #include "FormelGenerator.h"
 
-// MTParser
-#include "MTParser/MTParserLib/MTParser.h"
-#include "MTParser/MTParserLib/MTParserExcepStrEng.h"
-
-#include "muParserSSE/muParserSSE.h"
-#pragma comment(lib, "muParserSSE.lib")
-
 #include "Benchmark.h"
 #include "BenchMuParserNT.h"
 #include "BenchMuParserX.h"
@@ -21,128 +14,10 @@
 #include "BenchFParser.h"
 #include "BenchExprTk.h"
 #include "BenchLepton.h"
+#include "BenchMuParserSSE.h"
+#include "BenchMTParser.h"
 
 using namespace std;
-
-
-struct BenchMuParserSSE : Benchmark
-{
-   BenchMuParserSSE()
-   : Benchmark()
-   {
-      m_sName = "muparserSSE";
-   }
-
-   double DoBenchmark(const std::string &sExpr, long iCount)
-   {
-      mecFloat_t fRes(0);
-      mecFloat_t a(1.1);
-      mecFloat_t b(2.2);
-      mecFloat_t c(3.3);
-      mecFloat_t d(4.4);
-      mecFloat_t x(1.1);
-      mecFloat_t y(2.2);
-      mecFloat_t z(3.3);
-      mecFloat_t w(4.4);
-      mecFloat_t buf(0);
-      double fSum(0);
-
-      mecParserHandle_t hParser = mecCreate();
-
-      mecSetExpr(hParser, sExpr.c_str());
-      mecDefineVar(hParser, "a", &a);
-      mecDefineVar(hParser, "b", &b);
-      mecDefineVar(hParser, "c", &c);
-
-      mecDefineVar(hParser, "x", &x);
-      mecDefineVar(hParser, "y", &y);
-      mecDefineVar(hParser, "z", &z);
-      mecDefineVar(hParser, "w", &w);
-
-      mecDefineConst(hParser, "pi", (mecFloat_t)M_PI);
-      mecDefineConst(hParser, "e",  (mecFloat_t)M_E);
-
-      mecEvalFun_t ptfun = mecCompile(hParser);
-
-      fRes = ptfun();
-
-      StartTimer();
-      for (int j = 0 ; j < iCount; j++)
-      {
-         std::swap(a,b);
-         std::swap(x,y);
-         fSum += ptfun();
-      }
-
-      StopTimer(fRes, fSum, iCount);
-      return m_fTime1;
-   }
-
-   virtual std::string GetShortName() const
-   {
-      return "muparserSSE";
-   }
-};
-
-struct BenchMTParser : Benchmark
-{
-   BenchMTParser()
-   : Benchmark()
-   {
-      m_sName = "MTParser";
-   }
-
-   double DoBenchmark(const std::string &sExpr, long iCount)
-   {
-      double a = 1.1;
-      double b = 2.2;
-      double c = 3.3;
-      double x = 1.1;
-      double y = 2.2;
-      double z = 3.3;
-      double w = 4.4;
-
-      MTParser p;
-      p.defineVar("a", &a);
-      p.defineVar("b", &b);
-      p.defineVar("c", &b);
-
-      p.defineVar("x", &x);
-      p.defineVar("y", &y);
-      p.defineVar("z", &z);
-      p.defineVar("w", &w);
-
-      p.defineConst("e", M_E);
-      p.defineConst("pi", M_PI);
-
-      double fTime = 0;
-      double fRes = 0;
-      double fSum = 0;
-
-      try
-      {
-         p.compile(sExpr.c_str());
-         fRes = p.evaluate();
-      }
-      catch(...)
-      {
-         StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
-         return std::numeric_limits<double>::max();
-      }
-
-      StartTimer();
-      for (int j = 0;j<iCount; j++)
-      {
-         std::swap(a,b);
-         std::swap(x,y);
-         fSum += p.evaluate();
-      }
-
-      StopTimer(fRes, fSum, iCount);
-      return m_fTime1;
-   }
-};
-
 
 bool predicate( const string &s1, const string &s2 )
 {

@@ -1,5 +1,5 @@
-#ifndef BENCH_EXPR_TK_H
-#define BENCH_EXPR_TK_H
+#ifndef BENCH_MTParser_H
+#define BENCH_MTParser_H
 
 #include <vector>
 #include <string>
@@ -7,13 +7,13 @@
 #include "Benchmark.h"
 
 //-------------------------------------------------------------------------------------------------
-class BenchExprTk : public Benchmark
+class BenchMTParser : public Benchmark
 {
 public:
 
-  BenchExprTk();
+   BenchMTParser();
 
-  double DoBenchmark(const std::string &sExpr, long iCount);
+   double DoBenchmark(const std::string &sExpr, long iCount);
 
 };
 
