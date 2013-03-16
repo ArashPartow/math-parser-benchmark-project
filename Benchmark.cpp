@@ -9,7 +9,7 @@ using namespace std;
 
 
 //-------------------------------------------------------------------------------------------------
-Benchmark::Benchmark()
+Benchmark::Benchmark(EBaseType eBaseType)
   :m_sName()
   ,m_fTime1(0)
   ,m_fResult(0)
@@ -18,6 +18,7 @@ Benchmark::Benchmark()
   ,m_nPoints(0)
   ,m_fScore(0)
   ,m_vFails()
+  ,m_eBaseType(eBaseType)
 {}
 
 //-------------------------------------------------------------------------------------------------
@@ -44,6 +45,16 @@ double Benchmark::GetScore() const
   return m_fScore;
 }
 
+std::string Benchmark::GetBaseType() const
+{
+  switch(m_eBaseType)
+  {
+  case FLOAT:       return "float";
+  case DOUBLE:      return "double";
+  case LONG_DOUBLE: return "long double";
+  default:          return "unknown";
+  }
+}
 //-------------------------------------------------------------------------------------------------
 void Benchmark::PreprocessExpr(std::vector<std::string> &vExpr)
 {}

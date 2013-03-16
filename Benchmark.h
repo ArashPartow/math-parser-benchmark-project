@@ -11,9 +11,16 @@ class Benchmark
 {
 public:
 
+   enum EBaseType
+   {
+     FLOAT,
+     DOUBLE,
+     LONG_DOUBLE
+   };
+
    typedef std::vector<std::string> expr_vec;
 
-   Benchmark();
+   Benchmark(EBaseType eBaseType = DOUBLE);
    void DoAll(std::vector<std::string> vExpr, long num);
 
    virtual double DoBenchmark(const std::string &sExpr, long iCount) = 0;
@@ -21,6 +28,7 @@ public:
    virtual void PreprocessExpr(std::string &vExpr) {};
    virtual std::string GetShortName() const;
    std::string GetName() const;
+   std::string GetBaseType() const;
    void Reset();
 
    void StartTimer();
@@ -52,7 +60,7 @@ protected:
    double m_fResult;
    double m_fSum;
    Stopwatch m_timer;
-
+   EBaseType m_eBaseType;
    std::vector<std::string> m_vFails;
 };
 

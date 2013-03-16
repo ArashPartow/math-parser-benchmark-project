@@ -11,7 +11,7 @@ using namespace std;
 
 //-------------------------------------------------------------------------------------------------
 BenchMuParserSSE::BenchMuParserSSE()
-: Benchmark()
+  : Benchmark(Benchmark::FLOAT)
 {
    m_sName = "muparserSSE";
 }

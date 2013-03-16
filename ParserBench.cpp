@@ -24,7 +24,14 @@ using namespace std;
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
-   static const T epsilon = T(0.00000000001);
+   // epsilon was way to low. Disqualification is the result of computing the expression incorrectly. 
+   // If the expression is computed correctly within the bounds of the expected floating point
+   // accuracy there is no reason for disqualification. There is no point in disqualifying parsers
+   // by default by imposing an epsilon with 10 digits which is way beyond the expexted accuracy of 32
+   // bit floating point values. 
+   static const T epsilon = T(0.00001);
+   // Using 6 digits for epsilon is one fewer that the 7 digits provided by 32 bit 
+   // floating point values. Loss of a single digit is possible when computing complex expressions.
    return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
 }
 
@@ -165,39 +172,22 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
 
             if (i == 0)
             {
-               fprintf(pRes, "%02d: %5s %15s (%8.5f 탎, %26.18f, %26.18f)\n",
+               output(pRes, "%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
                        ct,
                        (pBench->GetFails().size()>0) ? "DNQ " : "    ",
                        pBench->GetShortName().c_str(),
                        it->first,
                        pBench->GetRes(),
                        pBench->GetSum());
-               fflush(pRes);
-
-               printf("%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                      ct,
-                      (pBench->GetFails().size()>0) ? "DNQ " : "    ",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      pBench->GetRes(),
-                      pBench->GetSum());
             }
             else
             {
-               fprintf(pRes, "   %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+               output(pRes, "    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
                        (pBench->GetFails().size()>0) ? "DNQ " : "    ",
                        pBench->GetShortName().c_str(),
                        it->first,
                        pBench->GetRes(),
                        pBench->GetSum());
-               fflush(pRes);
-
-               printf("   %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                      (pBench->GetFails().size()>0) ? "DNQ " : "    ",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      pBench->GetRes(),
-                      pBench->GetSum());
             }
          }
 
@@ -235,8 +225,9 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
       Benchmark *pBench = vBenchmarks[i];
       bHasFailures |= pBench->GetFails().size()>0;
 
-      output(pRes,  "   %-15s: %4d %4.0lf\n",
+      output(pRes,  "   %-15s (%-10s): %4d %4.0lf\n",
              pBench->GetShortName().c_str(),
+             pBench->GetBaseType().c_str(),
              pBench->GetPoints(),
              (pBench->GetScore() / (double)vExpr.size()) * 100.0);
    }
@@ -244,21 +235,18 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    // Dump failures
    if (bHasFailures)
    {
-      fprintf(pRes, "\n\nFailures:\n");
-      printf("\n\nFailures:\n");
+      output(pRes, "\n\nFailures:\n");
       for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
       {
          Benchmark *pBench = vBenchmarks[i];
          std::vector<std::string> vFail = pBench->GetFails();
          if (vFail.size() > 0)
          {
-            fprintf(pRes, "   %-15s:\n", pBench->GetShortName().c_str());
-            printf("   %-15s:\n", pBench->GetShortName().c_str());
+            output(pRes, "   %-15s:\n", pBench->GetShortName().c_str());
 
             for (std::size_t i = 0; i < vFail.size(); ++i)
             {
-               fprintf(pRes, "         \"%s\"\n", vFail[i].c_str());
-               printf("         \"%s\"\n", vFail[i].c_str());
+               output(pRes, "         \"%s\"\n", vFail[i].c_str());
             }
          }
      }
@@ -267,6 +255,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    fclose(pRes);
 }
 
+//-------------------------------------------------------------------------------------------------
 void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, int iCount)
 {
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
@@ -300,6 +289,9 @@ int main(int argc, const char *argv[])
    //            computing properly.
    //
    // Most reliable engines so far:   exprtk and muparser2
+   //
+   // (Reference parser should be in a stable development state as to make sure its performance 
+   // stays the same. This will allow comparing future results against existing ones.)
    //
    vBenchmarks.push_back(new BenchMuParser2());
    vBenchmarks.push_back(new BenchExprTk());
