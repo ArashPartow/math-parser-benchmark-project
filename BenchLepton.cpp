@@ -49,7 +49,7 @@ double BenchLepton::DoBenchmark(const std::string &sExpr, long iCount)
    }
    catch (std::exception& e)
    {
-      return std::numeric_limits<double>::max();
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
    Lepton::ExpressionProgram program = Lepton::Parser::parse(sExpr).optimize().createProgram();

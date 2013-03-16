@@ -45,6 +45,7 @@ public:
    double GetSum() const;
 
    const std::vector<std::string> GetFails() const;
+   bool ExpressionFailed(const std::string& expr) const;
    void AddFail(const std::string &sExpr);
 
 protected:
