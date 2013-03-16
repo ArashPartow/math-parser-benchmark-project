@@ -102,10 +102,10 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    bc.var[0] = 1.1;
    bc.var[1] = 2.2;
    bc.var[2] = 3.3;
-   bc.var[3] = 1.1;
-   bc.var[4] = 2.2;
-   bc.var[5] = 3.3;
-   bc.var[6] = 4.4;
+   bc.var[3] = 2.2;
+   bc.var[4] = 3.3;
+   bc.var[5] = 4.4;
+   bc.var[6] = 5.5;
 
    // Calculate/bench and show result finally
    double fTime(0);
