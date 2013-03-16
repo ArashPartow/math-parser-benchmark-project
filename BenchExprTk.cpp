@@ -22,10 +22,10 @@ double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
    double a = 1.1;
    double b = 2.2;
    double c = 3.3;
-   double x = 2.2;
-   double y = 3.3;
-   double z = 4.4;
-   double w = 5.5;
+   double x = 2.123456;
+   double y = 3.123456;
+   double z = 4.123456;
+   double w = 5.123456;
 
    exprtk::symbol_table<double> symbol_table;
    exprtk::expression<double> expression;

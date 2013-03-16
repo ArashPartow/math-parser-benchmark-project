@@ -26,7 +26,15 @@ double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
   if (iRet>=0)
     throw false;
 
-  double vals[] = { 1.1, 2.2, 3.3, 2.2, 3.3, 4.4, 5.5 };
+  double vals[] = {
+                    1.1,
+                    2.2,
+                    3.3,
+                    2.123456,
+                    3.123456,
+                    4.123456,
+                    5.123456
+                  };
   fRes = Parser.Eval(vals);;
 
   StartTimer();
