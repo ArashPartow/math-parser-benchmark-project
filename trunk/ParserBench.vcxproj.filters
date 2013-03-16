@@ -40,6 +40,9 @@
     <Filter Include="Quelldateien\Lepton">
       <UniqueIdentifier>{4f9ef810-01b3-490b-8f7a-dfdea6a690e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\MathExpr">
+      <UniqueIdentifier>{414c72dd-f0b5-41f1-9e40-db7414edc15c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BenchATMSP.cpp">
@@ -251,6 +254,12 @@
     </ClCompile>
     <ClCompile Include="BenchMTParser.cpp">
       <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BenchMathExpr.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="MathExpr\mathexpr.cpp">
+      <Filter>Quelldateien\MathExpr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +619,12 @@
     </ClInclude>
     <ClInclude Include="BenchMTParser.h">
       <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchMathExpr.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MathExpr\mathexpr.h">
+      <Filter>Quelldateien\MathExpr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

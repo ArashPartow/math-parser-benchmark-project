@@ -129,6 +129,7 @@
     <ClCompile Include="BenchFParser.cpp" />
     <ClCompile Include="BenchLepton.cpp" />
     <ClCompile Include="Benchmark.cpp" />
+    <ClCompile Include="BenchMathExpr.cpp" />
     <ClCompile Include="BenchMTParser.cpp" />
     <ClCompile Include="BenchMuParser2.cpp" />
     <ClCompile Include="BenchMuParserNT.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="lepton\Operation.cpp" />
     <ClCompile Include="lepton\ParsedExpression.cpp" />
     <ClCompile Include="lepton\Parser.cpp" />
+    <ClCompile Include="MathExpr\mathexpr.cpp" />
     <ClCompile Include="muparser2\muParser.cpp" />
     <ClCompile Include="muparser2\muParserBase.cpp" />
     <ClCompile Include="muparser2\muParserBytecode.cpp" />
@@ -201,6 +203,7 @@
     <ClInclude Include="BenchFParser.h" />
     <ClInclude Include="BenchLepton.h" />
     <ClInclude Include="Benchmark.h" />
+    <ClInclude Include="BenchMathExpr.h" />
     <ClInclude Include="BenchMTParser.h" />
     <ClInclude Include="BenchMuParser2.h" />
     <ClInclude Include="BenchMuParserNT.h" />
@@ -217,6 +220,7 @@
     <ClInclude Include="lepton\ParsedExpression.h" />
     <ClInclude Include="lepton\Parser.h" />
     <ClInclude Include="lepton\windowsIncludes.h" />
+    <ClInclude Include="MathExpr\mathexpr.h" />
     <ClInclude Include="muparser2\muParser.h" />
     <ClInclude Include="muparser2\muParserBase.h" />
     <ClInclude Include="muparser2\muParserBytecode.h" />

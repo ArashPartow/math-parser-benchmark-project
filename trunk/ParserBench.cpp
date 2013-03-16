@@ -16,8 +16,17 @@
 #include "BenchLepton.h"
 #include "BenchMuParserSSE.h"
 #include "BenchMTParser.h"
+#include "BenchMathExpr.h"
 
 using namespace std;
+
+
+template <typename T>
+inline bool is_equal(const T v0, const T v1)
+{
+   static const T epsilon = T(0.00000000001);
+   return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
+}
 
 bool predicate( const string &s1, const string &s2 )
 {
@@ -129,11 +138,10 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
          {
             // Check the sum of all results and if the sum is ok, check the last result of
             // the benchmark run.
-            if (std::fabs(pBench->GetSum()-fRefSum) > (std::fabs(fRefSum) * fRefDev))
-            {
-               pBench->AddFail(vExpr[i]);
-            }
-            else if (std::fabs(pBench->GetRes()-fRefResult) > (std::fabs(fRefResult)*fRefDev))
+            if (
+                (!is_equal(pBench->GetSum(),fRefSum   )) ||
+                (!is_equal(pBench->GetRes(),fRefResult))
+               )
             {
                pBench->AddFail(vExpr[i]);
             }
@@ -157,7 +165,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
 
             if (i == 0)
             {
-               fprintf(pRes, "%d: %5s %15s (%8.5f 탎, %26.18f, %26.18f)\n",
+               fprintf(pRes, "%02d: %5s %15s (%8.5f 탎, %26.18f, %26.18f)\n",
                        ct,
                        (pBench->GetFails().size()>0) ? "DNQ " : "    ",
                        pBench->GetShortName().c_str(),
@@ -166,7 +174,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
                        pBench->GetSum());
                fflush(pRes);
 
-               printf("%d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+               printf("%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
                       ct,
                       (pBench->GetFails().size()>0) ? "DNQ " : "    ",
                       pBench->GetShortName().c_str(),
@@ -303,6 +311,7 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchMuParserSSE());
    vBenchmarks.push_back(new BenchATMSP());
    vBenchmarks.push_back(new BenchLepton());
+   vBenchmarks.push_back(new BenchMathExpr());
 
    Shootout(vBenchmarks, vExpr, iCount);
 //  DoBenchmark(vBenchmarks, vExpr, iCount);
