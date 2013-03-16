@@ -21,10 +21,10 @@ double BenchMathExpr::DoBenchmark(const std::string &sExpr, long iCount)
    double a = 1.1;
    double b = 2.2;
    double c = 3.3;
-   double x = 2.2;
-   double y = 3.3;
-   double z = 4.4;
-   double w = 5.5;
+   double x = 2.123456;
+   double y = 3.123456;
+   double z = 4.123456;
+   double w = 5.123456;
 
    double e  = 2.718281828459045235360;
    double pi = 3.141592653589793238462;
