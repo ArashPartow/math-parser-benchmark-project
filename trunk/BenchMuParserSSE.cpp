@@ -24,10 +24,10 @@ double BenchMuParserSSE::DoBenchmark(const std::string &sExpr, long iCount)
    mecFloat_t b(2.2);
    mecFloat_t c(3.3);
    mecFloat_t d(4.4);
-   mecFloat_t x(1.1);
-   mecFloat_t y(2.2);
-   mecFloat_t z(3.3);
-   mecFloat_t w(4.4);
+   mecFloat_t x(2.2);
+   mecFloat_t y(3.3);
+   mecFloat_t z(4.4);
+   mecFloat_t w(5.5);
    mecFloat_t buf(0);
    double fSum(0);
 

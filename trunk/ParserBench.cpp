@@ -281,8 +281,8 @@ int main(int argc, const char *argv[])
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
    //std::vector<string> vExpr = LoadEqn("bench_slow.txt");
-   std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
-   //std::vector<string> vExpr = LoadEqn("bench1.txt");
+   //std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
+   std::vector<string> vExpr = LoadEqn("bench1.txt");
    //std::vector<string> vExpr = LoadEqn("bench_dbg.txt");
    //std::vector<string> vExpr = LoadEqn("bench_expr_hparser.txt");
 

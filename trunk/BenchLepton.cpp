@@ -26,10 +26,10 @@ double BenchLepton::DoBenchmark(const std::string &sExpr, long iCount)
    var_list["a" ] = 1.1;
    var_list["b" ] = 2.2;
    var_list["c" ] = 3.3;
-   var_list["x" ] = 1.1;
-   var_list["y" ] = 2.2;
-   var_list["z" ] = 3.3;
-   var_list["w" ] = 4.4;
+   var_list["x" ] = 2.2;
+   var_list["y" ] = 3.3;
+   var_list["z" ] = 4.4;
+   var_list["w" ] = 5.5;
 
    var_list["e" ] = 2.718281828459045235360;
    var_list["pi"] = 3.141592653589793238462;

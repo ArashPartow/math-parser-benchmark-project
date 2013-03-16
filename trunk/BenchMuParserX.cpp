@@ -22,10 +22,10 @@ double BenchMuParserX::DoBenchmark(const std::string &sExpr, long iCount)
   Value a((float_type)1.1);
   Value b((float_type)2.2);
   Value c((float_type)3.3);
-  Value x((float_type)1.1);
-  Value y((float_type)2.2);
-  Value z((float_type)3.3);
-  Value w((float_type)4.4);
+  Value x((float_type)2.2);
+  Value y((float_type)3.3);
+  Value z((float_type)4.4);
+  Value w((float_type)5.5);
   Value buf(0);
   double fTime(0);
 
