@@ -25,14 +25,11 @@ template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
    static const T epsilon = T(0.00000000001);
+   //static const T epsilon = T(std::numeric_limits<double>::epsilon());
+   //static const T epsilon = T(std::numeric_limits<float>::epsilon());
    if (v0 != v0) return false;
    if (v1 != v1) return false;
    return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
-}
-
-bool predicate( const string &s1, const string &s2 )
-{
-   return s1.length()<s2.length();
 }
 
 void CreateEqnList()
@@ -43,41 +40,39 @@ void CreateEqnList()
    FormelGenerator   fg;
 
    std::vector<string> vExpr;
-   for (int k=1; k < 10; ++k)
+   for (int k = 1; k < 10; ++k)
    {
-      for (int i = 1; i < iLen; i++)
+      for (int i = 1; i < iLen; ++i)
       {
          fg.Make(szExpr, sizeof(szExpr), i, 2);
          vExpr.push_back(szExpr);
       }
    }
 
-   std::sort(vExpr.begin(), vExpr.end(), predicate);
-   for (std::size_t i = 0;i<vExpr.size(); ++i)
+   std::sort(vExpr.begin(), vExpr.end());
+   for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
       ofs <<vExpr[i] << "\n";
    }
 }
 
-std::vector<string> LoadEqn(const std::string &sFile)
+std::vector<std::string> load_expressions(const std::string& file_name)
 {
-   std::vector<string> vExpr;
-   std::ifstream ifs(sFile.c_str());
-
-   char buf[10000];
-   while (ifs.getline(buf, sizeof(buf)))
+   std::ifstream stream(file_name.c_str());
+   std::vector<std::string> result;
+   if (stream)
    {
-      int len = strlen(buf);
-      if (buf[0]=='#' || len==0)
-         continue;
-
-      vExpr.push_back(buf);
+      std::string buffer;
+      while (std::getline(stream,buffer))
+      {
+         if (buffer.empty())
+            continue;
+         if ('#' == buffer[0])
+            continue;
+         result.push_back(buffer);
+      }
    }
-
-   std::string s = vExpr.back();
-   ifs.close();
-
-   return vExpr;
+   return result;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -86,14 +81,13 @@ void output(FILE *pFile, const char *fmt, ...)
   va_list args;
   va_start (args, fmt);
 
-  if (pFile!=nullptr)
+  if (pFile)
   {
-    vfprintf(pFile, fmt, args);
-    fflush(pFile);
+     vfprintf(pFile, fmt, args);
+     fflush(pFile);
   }
 
   vprintf(fmt, args);
-
   va_end (args);
 }
 
@@ -116,14 +110,19 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    std::map<double, std::vector<Benchmark*>> results;
    for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
+      std::size_t failure_count = 0;
       const std::string current_expr = vExpr[i];
-      output(pRes, "\nExpression %d of %d: \"%s\"\n", (int)i+1, vExpr.size(), vExpr[i].c_str());
+
+      output(pRes, "\nExpression %d of %d: \"%s\"\n",
+            (int)i+1,
+            vExpr.size(),
+            vExpr[i].c_str());
 
       double fRefResult = 0;
-      double fRefSum = 0;
-      double fRefTime = 0;
+      double fRefSum    = 0;
+      double fRefTime   = 0;
 
-      for (std::size_t j = 0;j<vBenchmarks.size(); ++j)
+      for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
       {
          Benchmark *pBench = vBenchmarks[j];
 
@@ -147,6 +146,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
                )
             {
                pBench->AddFail(vExpr[i]);
+               ++failure_count;
             }
          }
 
@@ -155,55 +155,66 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
 
 
       int ct = 1;
-      for (auto it = results.begin(); it!=results.end(); ++it)
+      for (auto it = results.begin(); it != results.end(); ++it)
       {
          const std::vector<Benchmark*> &vBench = it->second;
 
-         for (std::size_t i = 0; i < vBench.size(); ++i)
+         for (std::size_t k = 0; k < vBench.size(); ++k)
          {
-            Benchmark *pBench = vBench[i];
+            Benchmark *pBench = vBench[k];
 
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
-            if (i == 0)
+            if (k == 0)
             {
                fprintf(pRes, "%02d: %5s %15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                  ct,
-                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                  pBench->GetShortName().c_str(),
-                  it->first,
-                  pBench->GetRes(),
-                  pBench->GetSum());
+                       ct,
+                       (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                       pBench->GetShortName().c_str(),
+                       it->first,
+                       pBench->GetRes(),
+                       pBench->GetSum());
                fflush(pRes);
 
                printf("%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                  ct,
-                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                  pBench->GetShortName().c_str(),
-                  it->first,
-                  pBench->GetRes(),
-                  pBench->GetSum());
+                      ct,
+                      (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                      pBench->GetShortName().c_str(),
+                      it->first,
+                      pBench->GetRes(),
+                      pBench->GetSum());
             }
             else
             {
                fprintf(pRes, "    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                  pBench->GetShortName().c_str(),
-                  it->first,
-                  pBench->GetRes(),
-                  pBench->GetSum());
+                       (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                       pBench->GetShortName().c_str(),
+                       it->first,
+                       pBench->GetRes(),
+                       pBench->GetSum());
                fflush(pRes);
 
                printf("    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                  (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                  pBench->GetShortName().c_str(),
-                  it->first,
-                  pBench->GetRes(),
-                  pBench->GetSum());
+                      (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
+                      pBench->GetShortName().c_str(),
+                      it->first,
+                      pBench->GetRes(),
+                      pBench->GetSum());
             }
          }
+
          ct += vBench.size();
+      }
+
+      if (failure_count > (std::size_t)(vBenchmarks.size() * 0.15))
+      {
+         fprintf(pRes, "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
+                failure_count);
+         fflush(pRes);
+
+         printf(       "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
+                failure_count);
       }
 
       results.clear();
@@ -281,11 +292,11 @@ int main(int argc, const char *argv[])
 {
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
-   //std::vector<string> vExpr = LoadEqn("bench_slow.txt");
-   //std::vector<string> vExpr = LoadEqn("bench_expr_all.txt");
-   std::vector<string> vExpr = LoadEqn("bench1.txt");
-   //std::vector<string> vExpr = LoadEqn("bench_dbg.txt");
-   //std::vector<string> vExpr = LoadEqn("bench_expr_hparser.txt");
+   //std::vector<string> vExpr = load_expressions("bench_slow.txt");
+   //std::vector<string> vExpr = load_expressions("bench_expr_all.txt");
+     std::vector<string> vExpr = load_expressions("bench1.txt");
+   //std::vector<string> vExpr = load_expressions("bench_dbg.txt");
+   //std::vector<string> vExpr = load_expressions("bench_expr_hparser.txt");
 
    int iCount = 10000000;
 
@@ -302,12 +313,11 @@ int main(int argc, const char *argv[])
    //
    // Most reliable engines so far:   exprtk and muparser2
    //
-   // (Reference parser should be in a stable development state as to make sure its performance 
+   // (Reference parser should be in a stable development state as to make sure its performance
    // stays the same. This will allow comparing future results against existing ones.)
    //
    vBenchmarks.push_back(new BenchMuParser2());
    vBenchmarks.push_back(new BenchExprTk());
-
    vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
    vBenchmarks.push_back(new BenchMuParserX());
