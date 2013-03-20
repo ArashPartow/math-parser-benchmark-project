@@ -37,8 +37,8 @@ double BenchMathExpr::DoBenchmark(const std::string &sExpr, long iCount)
    RVar var_z ( "z" , &z );
    RVar var_w ( "w" , &w );
 
-   RVar var_e  ( "e" , &a );
-   RVar var_pi ( "p" , &a );
+   RVar var_e ( "e" , &e );
+   RVar var_pi( "p" , &pi);
 
    RVar* var_array[9];
 

@@ -27,6 +27,7 @@ inline bool is_equal(const T v0, const T v1)
    static const T epsilon = T(0.00000000001);
    //static const T epsilon = T(std::numeric_limits<double>::epsilon());
    //static const T epsilon = T(std::numeric_limits<float>::epsilon());
+   //Is either a NaN?
    if (v0 != v0) return false;
    if (v1 != v1) return false;
    return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
@@ -292,17 +293,35 @@ int main(int argc, const char *argv[])
 {
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
-   //std::vector<string> vExpr = load_expressions("bench_slow.txt");
-   //std::vector<string> vExpr = load_expressions("bench_expr_all.txt");
-     std::vector<string> vExpr = load_expressions("bench1.txt");
-   //std::vector<string> vExpr = load_expressions("bench_dbg.txt");
-   //std::vector<string> vExpr = load_expressions("bench_expr_hparser.txt");
-
    int iCount = 10000000;
+
+   //std::string benchmark_file = "bench_slow.txt";
+   //std::string benchmark_file = "bench_expr_all.txt";
+   std::string benchmark_file = "bench1.txt";
+   //std::string benchmark_file = "bench_dbg.txt";
+   //std::string benchmark_file = "bench_expr_hparser.txt";
+
+   // Usage:
+   // 1. ParserBench
+   // 2. ParserBench <num iterations>
+   // 3. ParserBench <num iterations> <benchmark expression file>
 
    if (argc == 2)
    {
       iCount = atoi(argv[1]);
+   }
+
+   if (argc == 3)
+   {
+      benchmark_file = argv[2];
+   }
+
+   std::vector<std::string> vExpr = load_expressions(benchmark_file);
+
+   if (vExpr.empty())
+   {
+      std::cout << "ERROR - Failed to load any expressions!\n";
+      return 1;
    }
 
    std::vector<Benchmark*> vBenchmarks;
