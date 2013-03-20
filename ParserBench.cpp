@@ -296,8 +296,8 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_slow.txt";
-   //std::string benchmark_file = "bench_expr_all.txt";
-   std::string benchmark_file = "bench1.txt";
+   std::string benchmark_file = "bench_expr_all.txt";
+   //std::string benchmark_file = "bench1.txt";
    //std::string benchmark_file = "bench_dbg.txt";
    //std::string benchmark_file = "bench_expr_hparser.txt";
 
