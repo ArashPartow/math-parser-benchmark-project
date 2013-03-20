@@ -31,23 +31,30 @@ double BenchMuParser2::DoBenchmark(const std::string &sExpr, long iCount)
    double y = 3.123456;
    double z = 4.123456;
    double w = 5.123456;
+   try
+   {
+      p.SetExpr(sExpr.c_str());
+      p.DefineVar("a", &a);
+      p.DefineVar("b", &b);
+      p.DefineVar("c", &c);
 
-   p.SetExpr(sExpr.c_str());
-   p.DefineVar("a", &a);
-   p.DefineVar("b", &b);
-   p.DefineVar("c", &c);
+      p.DefineVar("x", &x);
+      p.DefineVar("y", &y);
+      p.DefineVar("z", &z);
+      p.DefineVar("w", &w);
 
-   p.DefineVar("x", &x);
-   p.DefineVar("y", &y);
-   p.DefineVar("z", &z);
-   p.DefineVar("w", &w);
+      p.DefineConst("pi", (double)M_PI);
+      p.DefineConst("e", (double)M_E);
 
-   p.DefineConst("pi", (double)M_PI);
-   p.DefineConst("e", (double)M_E);
-
-   fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
-                    // since fparser does it in Parse(...) wich is outside too
-                    // (Speed of bytecode creation is irrelevant)
+      fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
+                       // since fparser does it in Parse(...) wich is outside too
+                       // (Speed of bytecode creation is irrelevant)
+   }
+   catch(...)
+   {
+      StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
+      return std::numeric_limits<double>::quiet_NaN();
+   }
 
    StartTimer();
    for (int j = 0; j < iCount; j++)
