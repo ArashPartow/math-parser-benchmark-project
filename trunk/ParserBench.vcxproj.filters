@@ -261,6 +261,9 @@
     <ClCompile Include="MathExpr\mathexpr.cpp">
       <Filter>Quelldateien\MathExpr</Filter>
     </ClCompile>
+    <ClCompile Include="BenchExprTkFloat.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BenchATMSP.h">
@@ -625,6 +628,9 @@
     </ClInclude>
     <ClInclude Include="MathExpr\mathexpr.h">
       <Filter>Quelldateien\MathExpr</Filter>
+    </ClInclude>
+    <ClInclude Include="BenchExprTkFloat.h">
+      <Filter>Quelldateien</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
