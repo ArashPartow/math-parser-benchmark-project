@@ -4418,10 +4418,10 @@ namespace exprtk
 
          inline T value() const
          {
-            if (0 == function_)
-               return std::numeric_limits<T>::quiet_NaN();
-            else
+            if (function_)
                return (*function_)();
+            else
+               return std::numeric_limits<T>::quiet_NaN();
          }
 
          inline typename expression_node<T>::node_type type() const
@@ -7320,11 +7320,20 @@ namespace exprtk
 
          inline void clear()
          {
+            struct deleter
+            {
+               static inline void process(std::pair<bool,variable_node_t*>& n)  { delete n.second; }
+               static inline void process(std::pair<bool,function_t*>&)         {                  }
+               #ifndef exprtk_disable_string_capabilities
+               static inline void process(std::pair<bool,stringvar_node_t*>& n) { delete n.second; }
+               #endif
+            };
+
             for (std::size_t i = 0; i < lut_size; ++i)
             {
                if (short_type_lut[i].second)
                {
-                  delete (short_type_lut[i]).second;
+                  deleter::process(short_type_lut[i]);
                   short_type_lut[i].first = false;
                   short_type_lut[i].second = reinterpret_cast<type_ptr>(0);
                }
@@ -7336,14 +7345,6 @@ namespace exprtk
                tm_itr_t end = map.end();
                while (end != itr)
                {
-                  struct deleter
-                  {
-                     static inline void process(std::pair<bool,variable_node_t*>& n)  { delete n.second; }
-                     static inline void process(std::pair<bool,function_t*>&)         {                  }
-                     #ifndef exprtk_disable_string_capabilities
-                     static inline void process(std::pair<bool,stringvar_node_t*>& n) { delete n.second; }
-                     #endif
-                  };
 
                   deleter::process((*itr).second);
                   ++itr;
@@ -8952,6 +8953,29 @@ namespace exprtk
          return result;
       }
 
+      inline expression_node_ptr parse_function_call_0(ifunction<T>* function, const std::string& function_name)
+      {
+         next_token();
+         if (!token_is(token_t::e_lbracket))
+         {
+            set_error(
+               make_error(parser_error::e_syntax,
+               current_token_,
+               "ERR10 - Expecting '()' to proceed: '" + function_name + "'"));
+            return error_node();
+         }
+         else if (!token_is(token_t::e_rbracket))
+         {
+            set_error(
+               make_error(parser_error::e_syntax,
+               current_token_,
+               "ERR11 - Expecting '()' to proceed: '" + function_name + "'"));
+            return error_node();
+         }
+         else
+            return expression_generator_.function(function);
+      }
+
       inline expression_node_ptr parse_base_operation()
       {
          typedef std::pair<base_ops_map_t::iterator,base_ops_map_t::iterator> map_range_t;
@@ -8962,7 +8986,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR10 - No entries found for base operation: " + operation_name));
+                          "ERR12 - No entries found for base operation: " + operation_name));
             return error_node();
          }
 
@@ -8985,7 +9009,7 @@ namespace exprtk
                            set_error(
                               make_error(parser_error::e_syntax,
                                          current_token_,
-                                         "ERR11 - Impossible argument count for base function: " + operation_name));
+                                         "ERR13 - Impossible argument count for base function: " + operation_name));
 
                            return error_node();
                         }
@@ -9006,7 +9030,7 @@ namespace exprtk
          set_error(
             make_error(parser_error::e_syntax,
                        current_token_,
-                       "ERR12 - Invalid parameter count for function: " + operation_name));
+                       "ERR14 - Invalid parameter count for function: " + operation_name));
          return error_node();
       }
 
@@ -9026,7 +9050,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR13 - Failed to parse condition for if-statement"));
+                          "ERR15 - Failed to parse condition for if-statement"));
             return error_node();
          }
          else if (!token_is(token_t::e_comma))
@@ -9036,7 +9060,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR14 - Failed to parse consequent for if-statement"));
+                          "ERR16 - Failed to parse consequent for if-statement"));
             return error_node();
          }
          else if (!token_is(token_t::e_comma))
@@ -9046,7 +9070,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR15 - Failed to parse alternative for if-statement"));
+                          "ERR17 - Failed to parse alternative for if-statement"));
             return error_node();
          }
          else if (!token_is(token_t::e_rbracket))
@@ -9068,7 +9092,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR16 - Failed to parse condition for while-loop"));
+                          "ERR18 - Failed to parse condition for while-loop"));
             return error_node();
          }
          else if (!token_is(token_t::e_rbracket))
@@ -9080,7 +9104,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR17 - Failed to parse branch for while-loop"));
+                          "ERR19 - Failed to parse branch for while-loop"));
             return error_node();
          }
          else if (!token_is(token_t::e_rcrlbracket))
@@ -9092,7 +9116,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                current_token_,
-               "ERR18 - Failed to parse branch for while-loop"));
+               "ERR20 - Failed to parse branch for while-loop"));
             return error_node();
          }
          else
@@ -9149,7 +9173,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_token,
                           current_token_,
-                          "ERR19 - Invalid special function[1]: " + current_token_.value));
+                          "ERR21 - Invalid special function[1]: " + current_token_.value));
             return error_node();
          }
 
@@ -9160,7 +9184,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_token,
                           current_token_,
-                          "ERR20 - Invalid special function[2]: " + current_token_.value));
+                          "ERR22 - Invalid special function[2]: " + current_token_.value));
             return error_node();
          }
 
@@ -9227,7 +9251,7 @@ namespace exprtk
             expression_node_ptr func_node = reinterpret_cast<expression_node_ptr>(0);
             switch (function->param_count)
             {
-               case  0 : func_node = expression_generator_.function(function); break;
+               case  0 : func_node = parse_function_call_0  (function,symbol); break;
                case  1 : func_node = parse_function_call< 1>(function,symbol); break;
                case  2 : func_node = parse_function_call< 2>(function,symbol); break;
                case  3 : func_node = parse_function_call< 3>(function,symbol); break;
@@ -9252,7 +9276,7 @@ namespace exprtk
                            set_error(
                               make_error(parser_error::e_syntax,
                                          current_token_,
-                                         "ERR21 - Invalid number of parameters for function: " + symbol));
+                                         "ERR23 - Invalid number of parameters for function: " + symbol));
                            return error_node();
                          }
             }
@@ -9264,7 +9288,7 @@ namespace exprtk
                set_error(
                   make_error(parser_error::e_syntax,
                              current_token_,
-                             "ERR22 - Failed to generate node for function: '" + symbol + "'"));
+                             "ERR24 - Failed to generate node for function: '" + symbol + "'"));
                return error_node();
             }
          }
@@ -9273,7 +9297,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR23 - Undefined variable or function: '" + symbol + "'"));
+                          "ERR25 - Undefined variable or function: '" + symbol + "'"));
             return error_node();
          }
       }
@@ -9313,7 +9337,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_symtab,
                           current_token_,
-                          "ERR24 - Variable or function detected, yet symbol-table is invalid, Symbol: " + current_token_.value));
+                          "ERR26 - Variable or function detected, yet symbol-table is invalid, Symbol: " + current_token_.value));
             return error_node();
          }
       }
@@ -9388,7 +9412,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR25 - Premature end of expression.[1]"));
+                          "ERR27 - Premature end of expression.[1]"));
             return error_node();
          }
          else
@@ -9396,7 +9420,7 @@ namespace exprtk
             set_error(
                make_error(parser_error::e_syntax,
                           current_token_,
-                          "ERR26 - Premature end of expression.[2]"));
+                          "ERR28 - Premature end of expression.[2]"));
             return error_node();
          }
       }
