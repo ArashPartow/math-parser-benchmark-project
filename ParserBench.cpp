@@ -13,6 +13,7 @@
 #include "BenchATMSP.h"
 #include "BenchFParser.h"
 #include "BenchExprTk.h"
+#include "BenchExprTkFloat.h"
 #include "BenchLepton.h"
 #include "BenchMuParserSSE.h"
 #include "BenchMTParser.h"
@@ -141,19 +142,15 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
          {
             // Check the sum of all results and if the sum is ok, check the last result of
             // the benchmark run.
-            if (
-                (!is_equal(pBench->GetSum(),fRefSum   )) ||
-                (!is_equal(pBench->GetRes(),fRefResult))
-               )
+            if (!is_equal(pBench->GetRes(),fRefResult))
             {
                pBench->AddFail(vExpr[i]);
                ++failure_count;
             }
          }
 
-          results[time].push_back(pBench);
+         results[time].push_back(pBench);
       }
-
 
       int ct = 1;
       for (auto it = results.begin(); it != results.end(); ++it)
@@ -306,7 +303,7 @@ int main(int argc, const char *argv[])
    // 2. ParserBench <num iterations>
    // 3. ParserBench <num iterations> <benchmark expression file>
 
-   if (argc == 2)
+   if (argc >= 2)
    {
       iCount = atoi(argv[1]);
    }
@@ -337,6 +334,7 @@ int main(int argc, const char *argv[])
    //
    vBenchmarks.push_back(new BenchMuParser2());
    vBenchmarks.push_back(new BenchExprTk());
+   vBenchmarks.push_back(new BenchExprTkFloat());
    vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
    vBenchmarks.push_back(new BenchMuParserX());

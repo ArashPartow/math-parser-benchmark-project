@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="BenchATMSP.cpp" />
     <ClCompile Include="BenchExprTk.cpp" />
+    <ClCompile Include="BenchExprTkFloat.cpp" />
     <ClCompile Include="BenchFParser.cpp" />
     <ClCompile Include="BenchLepton.cpp" />
     <ClCompile Include="Benchmark.cpp" />
@@ -200,6 +201,7 @@
   <ItemGroup>
     <ClInclude Include="BenchATMSP.h" />
     <ClInclude Include="BenchExprTk.h" />
+    <ClInclude Include="BenchExprTkFloat.h" />
     <ClInclude Include="BenchFParser.h" />
     <ClInclude Include="BenchLepton.h" />
     <ClInclude Include="Benchmark.h" />
