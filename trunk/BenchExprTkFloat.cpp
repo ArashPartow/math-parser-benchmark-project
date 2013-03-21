@@ -57,8 +57,8 @@ double BenchExprTkFloat::DoBenchmark(const std::string &sExpr, long iCount)
 
    // Calculate/bench and show result finally
    double fTime = 0;
-   float fRes   = 0;
-   float fSum   = 0;
+   float  fRes  = 0;
+   double fSum  = 0;
 
    fRes = expression.value();
    StartTimer();
