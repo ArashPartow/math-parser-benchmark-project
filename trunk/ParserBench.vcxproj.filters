@@ -43,6 +43,9 @@
     <Filter Include="Quelldateien\MathExpr">
       <UniqueIdentifier>{414c72dd-f0b5-41f1-9e40-db7414edc15c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\libcpuid">
+      <UniqueIdentifier>{527109b1-c5fa-4f5f-8022-45ed006f18f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BenchATMSP.cpp">
@@ -263,6 +266,27 @@
     </ClCompile>
     <ClCompile Include="BenchExprTkFloat.cpp">
       <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="cpuid.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="libcpuid\asm-bits.c">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClCompile>
+    <ClCompile Include="libcpuid\cpuid_main.c">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClCompile>
+    <ClCompile Include="libcpuid\libcpuid_util.c">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClCompile>
+    <ClCompile Include="libcpuid\rdtsc.c">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClCompile>
+    <ClCompile Include="libcpuid\recog_amd.c">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClCompile>
+    <ClCompile Include="libcpuid\recog_intel.c">
+      <Filter>Quelldateien\libcpuid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -631,6 +655,30 @@
     </ClInclude>
     <ClInclude Include="BenchExprTkFloat.h">
       <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="cpuid.h">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\asm-bits.h">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\libcpuid.h">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\libcpuid_constants.h">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\libcpuid_types.h">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\libcpuid_util.h">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\recog_amd.h">
+      <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="libcpuid\recog_intel.h">
+      <Filter>Quelldateien\libcpuid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -110,7 +110,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)/muParserSSE/muParserSSE.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)/muParserSSE/muParserSSE.lib;Advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)/ParserBench.exe</OutputFile>
       <AdditionalLibraryDirectories>"$(SolutionDir)/muParserDLL";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -136,12 +136,19 @@
     <ClCompile Include="BenchMuParserNT.cpp" />
     <ClCompile Include="BenchMuParserSSE.cpp" />
     <ClCompile Include="BenchMuParserX.cpp" />
+    <ClCompile Include="cpuid.cpp" />
     <ClCompile Include="FormelGenerator.cpp" />
     <ClCompile Include="lepton\ExpressionProgram.cpp" />
     <ClCompile Include="lepton\ExpressionTreeNode.cpp" />
     <ClCompile Include="lepton\Operation.cpp" />
     <ClCompile Include="lepton\ParsedExpression.cpp" />
     <ClCompile Include="lepton\Parser.cpp" />
+    <ClCompile Include="libcpuid\asm-bits.c" />
+    <ClCompile Include="libcpuid\cpuid_main.c" />
+    <ClCompile Include="libcpuid\libcpuid_util.c" />
+    <ClCompile Include="libcpuid\rdtsc.c" />
+    <ClCompile Include="libcpuid\recog_amd.c" />
+    <ClCompile Include="libcpuid\recog_intel.c" />
     <ClCompile Include="MathExpr\mathexpr.cpp" />
     <ClCompile Include="muparser2\muParser.cpp" />
     <ClCompile Include="muparser2\muParserBase.cpp" />
@@ -211,6 +218,7 @@
     <ClInclude Include="BenchMuParserNT.h" />
     <ClInclude Include="BenchMuParserSSE.h" />
     <ClInclude Include="BenchMuParserX.h" />
+    <ClInclude Include="cpuid.h" />
     <ClInclude Include="exprtk\exprtk.hpp" />
     <ClInclude Include="lepton\CustomFunction.h" />
     <ClInclude Include="lepton\Exception.h" />
@@ -222,6 +230,13 @@
     <ClInclude Include="lepton\ParsedExpression.h" />
     <ClInclude Include="lepton\Parser.h" />
     <ClInclude Include="lepton\windowsIncludes.h" />
+    <ClInclude Include="libcpuid\asm-bits.h" />
+    <ClInclude Include="libcpuid\libcpuid.h" />
+    <ClInclude Include="libcpuid\libcpuid_constants.h" />
+    <ClInclude Include="libcpuid\libcpuid_types.h" />
+    <ClInclude Include="libcpuid\libcpuid_util.h" />
+    <ClInclude Include="libcpuid\recog_amd.h" />
+    <ClInclude Include="libcpuid\recog_intel.h" />
     <ClInclude Include="MathExpr\mathexpr.h" />
     <ClInclude Include="muparser2\muParser.h" />
     <ClInclude Include="muparser2\muParserBase.h" />
