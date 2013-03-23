@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <ctime>
 #include "FormelGenerator.h"
+#include "cpuid.h"
 
 #include "Benchmark.h"
 #include "BenchMuParserNT.h"
@@ -223,19 +224,21 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    output(pRes, "  - Iterations per expression: %d\n", iCount);
 
    #if defined(_DEBUG)
-   output(pRes, "  - DEBUG build\n");
+   output(pRes, "  - Debug build\n");
    #else
-   output(pRes, "  - RELEASE build\n");
+   output(pRes, "  - Release build\n");
    #endif
 
    #if defined (__GNUC__)
-   output(pRes, "  - compiled with GCC Version %d.%d.%d\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ ");
+   output(pRes, "  - Compiled with GCC Version %d.%d.%d\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ ");
    #elif defined(_MSC_VER)
-   output(pRes, "  - compiled with MSC Version %d\n", _MSC_VER);
+   output(pRes, "  - Compiled with MSVC Version %d\n", _MSC_VER);
    #endif
 
-   output(pRes, "  - IEEE 754 (IEC 559) is %s\n", (std::numeric_limits<double>::is_iec559) ? "available" : " NOT AVAILABLE");
-   output(pRes, "  - %d bit build\n", sizeof(void*)*8);
+   output(pRes, "  - IEEE 754 (IEC 559) is %s\n", (std::numeric_limits<double>::is_iec559) ? "Available" : " NOT AVAILABLE");
+   output(pRes, "  - %d-bit build\n", sizeof(void*)*8);
+
+   dump_cpuid(pRes);
 
    output(pRes, "\n\nScores:\n");
 
@@ -293,8 +296,8 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_slow.txt";
-   std::string benchmark_file = "bench_expr_all.txt";
-   //std::string benchmark_file = "bench1.txt";
+   //std::string benchmark_file = "bench_expr_all.txt";
+   std::string benchmark_file = "bench1.txt";
    //std::string benchmark_file = "bench_dbg.txt";
    //std::string benchmark_file = "bench_expr_hparser.txt";
 
@@ -334,15 +337,15 @@ int main(int argc, const char *argv[])
    //
    vBenchmarks.push_back(new BenchMuParser2());
    vBenchmarks.push_back(new BenchExprTk());
-   vBenchmarks.push_back(new BenchExprTkFloat());
    vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
    vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
-   vBenchmarks.push_back(new BenchMuParserSSE());
    vBenchmarks.push_back(new BenchATMSP());
    vBenchmarks.push_back(new BenchLepton());
    vBenchmarks.push_back(new BenchMathExpr());
+   vBenchmarks.push_back(new BenchMuParserSSE());
+   vBenchmarks.push_back(new BenchExprTkFloat());
 
    Shootout(vBenchmarks, vExpr, iCount);
 //  DoBenchmark(vBenchmarks, vExpr, iCount);
