@@ -196,7 +196,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
          }
       }
 
-      if (failure_count > (std::size_t)(vBenchmarks.size() * 0.15))
+      if (failure_count > 2)
       {
          fprintf(pRes, "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
                 failure_count);
