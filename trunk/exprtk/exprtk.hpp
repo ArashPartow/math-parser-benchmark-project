@@ -1546,7 +1546,7 @@ namespace exprtk
                return eof_token_;
          }
 
-         inline token_t& operator[](const std::size_t index)
+         inline token_t& operator[](const std::size_t& index)
          {
             if (index < token_list_.size())
                return token_list_[index];
@@ -1554,7 +1554,7 @@ namespace exprtk
                return eof_token_;
          }
 
-         inline token_t operator[](const std::size_t index) const
+         inline token_t operator[](const std::size_t& index) const
          {
             if (index < token_list_.size())
                return token_list_[index];
@@ -1574,6 +1574,7 @@ namespace exprtk
 
          inline void skip_comments()
          {
+            #ifndef exprtk_disable_comments
             if ((s_end_ == s_itr_) || (s_end_ == (s_itr_ + 1)))
                return;
             else if (('/' != *s_itr_) || ('/' != *(s_itr_ + 1)))
@@ -1583,6 +1584,7 @@ namespace exprtk
                ++s_itr_;
             }
             skip_whitespace();
+            #endif
          }
 
          inline void scan_token()
