@@ -57,7 +57,9 @@ double BenchMathExpr::DoBenchmark(const std::string &sExpr, long iCount)
 
    if (op.HasError(&op))
    {
-      StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
+      StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN(),
+                1);
       return std::numeric_limits<double>::quiet_NaN();
    }
 

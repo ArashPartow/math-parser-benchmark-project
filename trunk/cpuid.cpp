@@ -38,11 +38,11 @@ void dump_cpuid(FILE* file)
    fprintf(file, "  - L1 I cache    : %d KB\n", data.l1_instruction_cache);
    fprintf(file, "  - L2 cache      : %d KB\n",        data.l2_cache);
    if (-1 != data.l3_cache)
-      fprintf(file, "  - L3 cache      : %d KB\n",        data.l3_cache);
+   fprintf(file, "  - L3 cache      : %d KB\n",        data.l3_cache);
    fprintf(file, "  - L1D assoc.    : %d-way\n",       data.l1_assoc);
    fprintf(file, "  - L2 assoc.     : %d-way\n",       data.l2_assoc);
    if (-1 != data.l3_assoc)
-      fprintf(file, "  - L3 assoc.     : %d-way\n",       data.l3_assoc);
+   fprintf(file, "  - L3 assoc.     : %d-way\n",       data.l3_assoc);
    fprintf(file, "  - L1D line size : %d bytes\n", data.l1_cacheline);
    fprintf(file, "  - L2 line size  : %d bytes\n", data.l2_cacheline);
    if (-1 != data.l3_cacheline)
