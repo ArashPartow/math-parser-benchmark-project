@@ -1,12 +1,15 @@
-#include <cstdio>
-#include <cstdarg>
-#include <iostream>
-#include <fstream>
 #include <algorithm>
+#include <cassert>
+#include <cstdarg>
+#include <cstdio>
 #include <ctime>
+#include <deque>
+#include <fstream>
+#include <iostream>
+#include <map>
+
 #include "FormelGenerator.h"
 #include "cpuid.h"
-
 #include "Benchmark.h"
 #include "BenchMuParserNT.h"
 #include "BenchMuParserX.h"
@@ -20,8 +23,6 @@
 #include "BenchMTParser.h"
 #include "BenchMathExpr.h"
 
-using namespace std;
-
 
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
@@ -33,30 +34,6 @@ inline bool is_equal(const T v0, const T v1)
    if (v0 != v0) return false;
    if (v1 != v1) return false;
    return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
-}
-
-void CreateEqnList()
-{
-   std::ofstream ofs("bench_expr_with_functions.txt");
-   char szExpr[50000];
-   int iLen = 50;
-   FormelGenerator   fg;
-
-   std::vector<string> vExpr;
-   for (int k = 1; k < 10; ++k)
-   {
-      for (int i = 1; i < iLen; ++i)
-      {
-         fg.Make(szExpr, sizeof(szExpr), i, 2);
-         vExpr.push_back(szExpr);
-      }
-   }
-
-   std::sort(vExpr.begin(), vExpr.end());
-   for (std::size_t i = 0; i < vExpr.size(); ++i)
-   {
-      ofs <<vExpr[i] << "\n";
-   }
 }
 
 std::vector<std::string> load_expressions(const std::string& file_name)
@@ -78,7 +55,6 @@ std::vector<std::string> load_expressions(const std::string& file_name)
    return result;
 }
 
-//-------------------------------------------------------------------------------------------------
 void output(FILE *pFile, const char *fmt, ...)
 {
   va_list args;
@@ -94,8 +70,10 @@ void output(FILE *pFile, const char *fmt, ...)
   va_end (args);
 }
 
-//-------------------------------------------------------------------------------------------------
-void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, int iCount, double fRefDev = 0.0001)
+void Shootout(std::vector<Benchmark*> vBenchmarks,
+              std::vector<std::string> vExpr,
+              int iCount,
+              double fRefDev = 0.0001)
 {
    printf("\nBenchmark (Shootout Mode)\n");
 
@@ -156,54 +134,66 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
       int ct = 1;
       for (auto it = results.begin(); it != results.end(); ++it)
       {
-         const std::vector<Benchmark*> &vBench = it->second;
+         const std::vector<Benchmark*>& vBench = it->second;
 
          for (std::size_t k = 0; k < vBench.size(); ++k)
          {
-            Benchmark *pBench = vBench[k];
+            Benchmark* pBench = vBench[k];
+
+            if (pBench->ExpressionFailed(current_expr))
+               continue;
 
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
-            if (k == 0)
-            {
-               fprintf(pRes, "%02d: %5s %15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                       ct,
-                       (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                       pBench->GetShortName().c_str(),
-                       it->first,
-                       pBench->GetRes(),
-                       pBench->GetSum());
-               fflush(pRes);
+            fprintf(pRes, "    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                    pBench->GetShortName().c_str(),
+                    it->first,
+                    pBench->GetRes(),
+                    pBench->GetSum());
+            fflush(pRes);
 
-               printf("%02d: %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                      ct,
-                      (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      pBench->GetRes(),
-                      pBench->GetSum());
-            }
-            else
-            {
-               fprintf(pRes, "    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                       (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                       pBench->GetShortName().c_str(),
-                       it->first,
-                       pBench->GetRes(),
-                       pBench->GetSum());
-               fflush(pRes);
-
-               printf("    %5s %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
-                      (pBench->ExpressionFailed(current_expr)) ? "DNQ " : "    ",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      pBench->GetRes(),
-                      pBench->GetSum());
-            }
+            printf("    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                   pBench->GetShortName().c_str(),
+                   it->first,
+                   pBench->GetRes(),
+                   pBench->GetSum());
          }
 
          ct += vBench.size();
+      }
+
+      if (failure_count)
+      {
+         output(pRes, "DNQ List\n");
+         for (auto it = results.begin(); it != results.end(); ++it)
+         {
+            const std::vector<Benchmark*>& vBench = it->second;
+
+            for (std::size_t k = 0; k < vBench.size(); ++k)
+            {
+               Benchmark* pBench = vBench[k];
+
+               if (!pBench->ExpressionFailed(current_expr))
+                  continue;
+
+               pBench->AddPoints(0);
+               pBench->AddScore(0);
+
+               fprintf(pRes, "    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                       pBench->GetShortName().c_str(),
+                       it->first,
+                       (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
+                       (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
+               fflush(pRes);
+
+               printf("    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+                      pBench->GetShortName().c_str(),
+                      it->first,
+                      (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
+                      (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
+            }
+         }
       }
 
       if (failure_count > (std::size_t)(vBenchmarks.size() * 0.15))
@@ -243,13 +233,24 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    output(pRes, "\n\nScores:\n");
 
    // Dump scores
-   bool bHasFailures = false;
+
+   std::deque<std::pair<int,Benchmark*> > order_list;
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {
-      Benchmark *pBench = vBenchmarks[i];
+      order_list.push_back(std::make_pair(vBenchmarks[i]->GetPoints(),vBenchmarks[i]));
+   }
+
+   std::sort(order_list.begin(),order_list.end());
+   std::reverse(order_list.begin(),order_list.end());
+
+   bool bHasFailures = false;
+   for (std::size_t i = 0; i < order_list.size(); ++i)
+   {
+      Benchmark* pBench = order_list[i].second;
       bHasFailures |= (pBench->GetFails().size() > 0);
 
-      output(pRes,  "   %-15s (%-10s): %4d %4.0lf\n",
+      output(pRes,  "   %02d  %-15s (%-10s): %5d %5.0lf\n",
+             i,
              pBench->GetShortName().c_str(),
              pBench->GetBaseType().c_str(),
              pBench->GetPoints(),
@@ -279,8 +280,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, in
    fclose(pRes);
 }
 
-//-------------------------------------------------------------------------------------------------
-void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr, int iCount)
+void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<std::string> vExpr, int iCount)
 {
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {
@@ -288,7 +288,6 @@ void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<string> vExpr,
    }
 }
 
-//-------------------------------------------------------------------------------------------------
 int main(int argc, const char *argv[])
 {
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);

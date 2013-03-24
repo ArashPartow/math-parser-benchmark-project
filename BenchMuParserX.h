@@ -2,7 +2,6 @@
 #define BENCH_MUPARSERX_H
 
 #include "Benchmark.h"
-#include "muparserx/mpParser.h"
 
 
 //-------------------------------------------------------------------------------------------------

@@ -50,7 +50,9 @@ double BenchExprTkFloat::DoBenchmark(const std::string &sExpr, long iCount)
       exprtk::parser<float> parser;
       if (!parser.compile(sExpr,expression))
       {
-         StopTimer(std::numeric_limits<float>::max(),std::numeric_limits<float>::max(),0);
+         StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                   std::numeric_limits<double>::quiet_NaN(),
+                   1);
          return std::numeric_limits<float>::quiet_NaN();
       }
    }

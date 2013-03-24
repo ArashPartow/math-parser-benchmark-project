@@ -93,7 +93,9 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    unsigned int err = p.parse(bc, sExpr, "a, b, c, x, y, z, w");
    if (err)
    {
-      StopTimer(std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),0);
+      StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN(),
+                1);
       return std::numeric_limits<double>::quiet_NaN();
    }
 
