@@ -29,16 +29,15 @@ double BenchMathExpr::DoBenchmark(const std::string &sExpr, long iCount)
    double e  = 2.718281828459045235360;
    double pi = 3.141592653589793238462;
 
-   RVar var_a ( "a" , &a );
-   RVar var_b ( "b" , &b );
-   RVar var_c ( "c" , &c );
-   RVar var_x ( "x" , &x );
-   RVar var_y ( "y" , &y );
-   RVar var_z ( "z" , &z );
-   RVar var_w ( "w" , &w );
-
-   RVar var_e ( "e" , &e );
-   RVar var_pi( "p" , &pi);
+   RVar var_a ( "a"  , &a );
+   RVar var_b ( "b"  , &b );
+   RVar var_c ( "c"  , &c );
+   RVar var_x ( "x"  , &x );
+   RVar var_y ( "y"  , &y );
+   RVar var_z ( "z"  , &z );
+   RVar var_w ( "w"  , &w );
+   RVar var_e ( "e"  , &e );
+   RVar var_pi( "pi" , &pi);
 
    RVar* var_array[9];
 
