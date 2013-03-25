@@ -249,7 +249,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
       Benchmark* pBench = order_list[i].second;
       bHasFailures |= (pBench->GetFails().size() > 0);
 
-      output(pRes,  "   %02d  %-15s (%-10s): %5d %5.0lf\n",
+      output(pRes,  "  %02d  %-15s (%-10s): %5d %5.0lf\n",
              i,
              pBench->GetShortName().c_str(),
              pBench->GetBaseType().c_str(),
@@ -267,7 +267,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
          std::vector<std::string> vFail = pBench->GetFails();
          if (vFail.size() > 0)
          {
-            output(pRes, "   %-15s:\n", pBench->GetShortName().c_str());
+            output(pRes, "  %-15s:\n", pBench->GetShortName().c_str());
 
             for (std::size_t i = 0; i < vFail.size(); ++i)
             {
