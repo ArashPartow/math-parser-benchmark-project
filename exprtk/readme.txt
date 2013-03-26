@@ -136,7 +136,7 @@ Expression Library can be found at:
 +-----------+--------------------------------------------------------+
 | OPERATOR  | DEFINITION                                             |
 +-----------+--------------------------------------------------------+
-| == or =   | True only if x is strictly equal to y. (eg: x == y)   |
+| == or =   | True only if x is strictly equal to y. (eg: x == y)    |
 +-----------+--------------------------------------------------------+
 | <> or !=  | True only if x does not equal y (eg: x <> y or x != y) |
 +-----------+--------------------------------------------------------+
@@ -300,13 +300,10 @@ Expression Library can be found at:
 
 
 [SPECIAL FUNCTIONS]
-Special functions dramatically decrease  the total evaluation time  of
-expressions, which would otherwise have been written using the  common
-form, by reducing the total number of nodes in the evaluation tree  of
-an expression  and by  also leveraging  the C++  compiler's ability to
-select an appropriate set of instructions for the given expression and
-architecture so as to provide the most optimal and precision sensitive
-result.
+The purpose  of special  functions in  ExprTk is  to provide  compiler
+generated equivalents of common mathematical expressions which can  be
+invoked by  using the  'special function'  syntax (eg:  $f12(x,y,z) or
+$f24(x,y,z,w)).
 
 Special functions dramatically decrease  the total evaluation time  of
 expressions which would otherwise  have been written using  the common
@@ -406,7 +403,7 @@ correctly optimize such expressions for a given architecture.
 
  (10) User defined functions can have up to 20 parameters.
 
- (11) The inbuilt polynomial functions can be at most of degree 10.
+ (11) The inbuilt polynomial functions can be at most of degree 12.
 
  (12) Where appropriate constant folding optimisations will be
       applied. (eg: The expression '2+(3-(x/y))' becomes '5-(x/y)')
@@ -415,11 +412,10 @@ correctly optimize such expressions for a given architecture.
       To turn them off, the following needs to be defined at
       compile time: exprtk_disable_string_capabilities
 
- (14) Expressions may contain trailing comments that must be prefixed
-      with '//' and are terminated by the next occurrence of new-line
-      or line-break. To disallow comments, the following needs to be
-      defined at compile time: exprtk_disable_comments
-      (eg: '2+(3-(x/y)) // This is an expression')
+ (14) Expressions may contain any of the following comment styles:
+      1. // .... \n
+      2. #  .... \n
+      3. /* .... */
 
 
 
