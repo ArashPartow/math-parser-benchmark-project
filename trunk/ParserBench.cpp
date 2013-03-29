@@ -250,12 +250,13 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
       Benchmark* pBench = order_list[i].second;
       bHasFailures |= (pBench->GetFails().size() > 0);
 
-      output(pRes,  "  %02d  %-15s (%-10s): %5d %5.0lf\n",
+      output(pRes,  "  %02d  %-15s (%-10s): %5d %5.0lf %3d\n",
              i,
              pBench->GetShortName().c_str(),
              pBench->GetBaseType().c_str(),
              pBench->GetPoints(),
-             (pBench->GetScore() / (double)vExpr.size()) * 100.0);
+             (pBench->GetScore() / (double)vExpr.size()) * 100.0,
+             pBench->GetFails().size());
    }
 
    // Dump failures
@@ -266,16 +267,18 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
       {
          Benchmark *pBench = vBenchmarks[i];
          std::vector<std::string> vFail = pBench->GetFails();
-         if (vFail.size() > 0)
+         if (!vFail.empty())
          {
-            output(pRes, "  %-15s:\n", pBench->GetShortName().c_str());
+            output(pRes, "  %-15s (%3d):\n", 
+                   pBench->GetShortName().c_str(),
+                   vFail.size());
 
             for (std::size_t i = 0; i < vFail.size(); ++i)
             {
                output(pRes, "         \"%s\"\n", vFail[i].c_str());
             }
          }
-     }
+      }
    }
 
    fclose(pRes);
