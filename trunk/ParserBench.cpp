@@ -27,7 +27,7 @@
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
-   static const T epsilon = T(0.00000000001);
+   static const T epsilon = T(0.00000001);
    //static const T epsilon = T(std::numeric_limits<double>::epsilon());
    //static const T epsilon = T(std::numeric_limits<float>::epsilon());
    //Is either a NaN?
@@ -47,9 +47,10 @@ std::vector<std::string> load_expressions(const std::string& file_name)
       {
          if (buffer.empty())
             continue;
-         if ('#' == buffer[0])
+         else if ('#' == buffer[0])
             continue;
-         result.push_back(buffer);
+         else
+            result.push_back(buffer);
       }
    }
    return result;
@@ -146,14 +147,14 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
-            fprintf(pRes, "    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+            fprintf(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
                     pBench->GetShortName().c_str(),
                     it->first,
                     pBench->GetRes(),
                     pBench->GetSum());
             fflush(pRes);
 
-            printf("    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+            printf("    %-15s (%8.5f us, %26.18f, %26.18f)\n",
                    pBench->GetShortName().c_str(),
                    it->first,
                    pBench->GetRes(),
@@ -180,14 +181,14 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
                pBench->AddPoints(0);
                pBench->AddScore(0);
 
-               fprintf(pRes, "    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+               fprintf(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
                        pBench->GetShortName().c_str(),
                        it->first,
                        (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
                        (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
                fflush(pRes);
 
-               printf("    %-15s (%8.5f 탎, %26.18f, %26.18f)\n",
+               printf("    %-15s (%8.5f us, %26.18f, %26.18f)\n",
                       pBench->GetShortName().c_str(),
                       it->first,
                       (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
@@ -220,7 +221,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
    #endif
 
    #if defined (__GNUC__)
-   output(pRes, "  - Compiled with GCC Version %d.%d.%d\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ ");
+   output(pRes, "  - Compiled with GCC Version %d.%d.%d\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
    #elif defined(_MSC_VER)
    output(pRes, "  - Compiled with MSVC Version %d\n", _MSC_VER);
    #endif
@@ -294,11 +295,11 @@ int main(int argc, const char *argv[])
 
    int iCount = 10000000;
 
-   //std::string benchmark_file = "bench_slow.txt";
+   //std::string benchmark_file = "bench_expr.txt";
    //std::string benchmark_file = "bench_expr_all.txt";
-   std::string benchmark_file = "bench1.txt";
-   //std::string benchmark_file = "bench_dbg.txt";
-   //std::string benchmark_file = "bench_expr_hparser.txt";
+     std::string benchmark_file = "bench_expr_extensive.txt";
+   //std::string benchmark_file = "bench_expr_random.txt";
+   //std::string benchmark_file = "bench_precedence.txt";
 
    // Usage:
    // 1. ParserBench
@@ -325,15 +326,18 @@ int main(int argc, const char *argv[])
 
    std::vector<Benchmark*> vBenchmarks;
 
-   // Important: The first parser in the list becomes the reference parser. Engines producing
-   //            deviating results are disqualified so make sure the reference parser is
-   //            computing properly.
+   // Important: The first parser in the list becomes the reference parser.
+   //            Engines producing deviating results are disqualified so make
+   //            sure the reference parser is computing properly.
    //
-   // Most reliable engines so far:   exprtk and muparser2
+   // Most reliable engines so far: muparser2 and exprtk
    //
-   // (Reference parser should be in a stable development state as to make sure its performance
-   // stays the same. This will allow comparing future results against existing ones.)
+   // The overall guiding principle is that the reference parser should be in
+   // a stable development state so as to make sure its performance stays the
+   // same. This will allow for the comparison of future results against existing
+   // ones.
    //
+
    vBenchmarks.push_back(new BenchMuParser2());
    vBenchmarks.push_back(new BenchExprTk());
    vBenchmarks.push_back(new BenchMTParser());
@@ -347,10 +351,12 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchExprTkFloat());
 
    Shootout(vBenchmarks, vExpr, iCount);
-//  DoBenchmark(vBenchmarks, vExpr, iCount);
+   //DoBenchmark(vBenchmarks, vExpr, iCount);
 
-   for (std::size_t i = 0; i<vBenchmarks.size(); ++i)
+   for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
+   {
       delete vBenchmarks[i];
+   }
 
    return 0;
 }
