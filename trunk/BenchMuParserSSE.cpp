@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <cmath>
+#include <cassert>
 
 #include "muParserSSE/muParserSSE.h"
 #pragma comment(lib, "muParserSSE.lib")
@@ -50,7 +51,13 @@ double BenchMuParserSSE::DoBenchmark(const std::string &sExpr, long iCount)
       mecDefineConst(hParser, "e",  (mecFloat_t)M_E);
 
       mecEvalFun_t ptfun = mecCompile(hParser);
+      if (mecError(hParser))
+      {
+        const char *szMsg = mecGetErrorMsg(hParser);
+        throw std::runtime_error(szMsg);
+      }
 
+      assert(ptfun!=NULL);
       fRes = ptfun();
 
       StartTimer();
