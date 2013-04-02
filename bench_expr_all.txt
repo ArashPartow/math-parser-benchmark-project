@@ -57,6 +57,16 @@ a^2+1
 1.1+a^2
 b^2*2
 2.2*b^2
+a^2^3
+a^2^3-a^8
+#+a^+2^+3-a^+8 ??????
+a^-2^3-1/a^8
+a^-2^-3-1/a^1/8
+-a^2^3-a^8
+(-1+a^2^3)-(a^2^3-1)
+(-1*a^2^3)-(a^2^3*-1)
+(a^2^3/4)-(a^2^3/4)
+a^2.2^3.3-a^13.4894687605338489
 
 # Gleichungen, die Mängel in der optimierung sichtbar machen
 # -> muParserSSE beschränkte Registerzahl bremst die 2. Gleichung

@@ -32,8 +32,8 @@ typedef std::pair<std::string,double> test_t;
 
 static const test_t test_list[] =
                   {
-                     // Note: The each of following tests should
-                     // all compile down to a single literal node.
+                     // Note: Each of following tests should all
+                     // compile down to a single literal node.
                      test_t("0",0.0),
                      test_t("1",1.0),
                      test_t("2",2.0),
@@ -889,6 +889,74 @@ static const test_t test_list[] =
                      test_t("equal(poly11(1.37,3.3,2.2,1.1,9.9,8.8,7.7,6.6,5.5,4.4,3.3,2.2,1.1),(3.3*1.37^11+2.2*1.37^10+1.1*1.37^9+9.9*1.37^8+8.8*1.37^7+7.7*1.37^6+6.6*1.37^5+5.5*1.37^4+4.4*1.37^3+3.3*1.37^2+2.2*1.37^1+1.1))",1.0),
                      test_t("equal(poly12(1.37,4.4,3.3,2.2,1.1,9.9,8.8,7.7,6.6,5.5,4.4,3.3,2.2,1.1),(4.4*1.37^12+3.3*1.37^11+2.2*1.37^10+1.1*1.37^9+9.9*1.37^8+8.8*1.37^7+7.7*1.37^6+6.6*1.37^5+5.5*1.37^4+4.4*1.37^3+3.3*1.37^2+2.2*1.37^1+1.1))",1.0),
                      test_t("equal(\t \n(\n \r1.1\t\t - \n\n 2.2\n\n/\r3.3\t),(1.1-2.2/3.3))",1.0),
+                     test_t("equal((pi^2^3),(pi^8))",1.0),
+                     test_t("equal((pi^(2^3)),(pi^8))",1.0),
+                     test_t("equal(pi^2^3-pi^8,0)",1.0),
+                     test_t("equal((2*pi^2^3),2*(pi^8))",1.0),
+                     test_t("equal((pi^2^3*2),2*(pi^8))",1.0),
+                     test_t("equal((pi^2^3/2),(pi^8)/2)",1.0),
+                     test_t("equal((pi^2.2^3.3),(pi^13.4894687605338489))",1.0),
+                     test_t("equal((pi^(2.2^3.3)),(pi^13.4894687605338489))",1.0),
+                     test_t("equal((2.2*pi^2.2^3.3),2.2*(pi^13.4894687605338489))",1.0),
+                     test_t("equal((pi^2.2^3.3*2),2*(pi^13.4894687605338489))",1.0),
+                     test_t("equal((pi^2.2^3.3/2.2),(pi^13.4894687605338489)/2.2)",1.0),
+                     test_t("equal((pi^-2^3),1/(pi^8))",1.0),
+                     test_t("equal((pi^(-2^3)),1/(pi^8))",1.0),
+                     test_t("equal((pi^2^-3),(pi^(1/8)))",1.0),
+                     test_t("equal((pi^(2^-3)),(pi^(1/8)))",1.0),
+                     test_t("equal((pi^-2^-3),1/(pi^(1/8)))",1.0),
+                     test_t("equal((pi^(-2^-3)),1/(pi^(1/8)))",1.0),
+                     test_t("equal((-pi^2^3),(-pi^8))",1.0),
+                     test_t("equal((-pi^(2^3)),(-pi^8))",1.0),
+                     test_t("equal(-pi^2^3--pi^8,0)",1.0),
+                     test_t("equal((2*-pi^2^3),2*(-pi^8))",1.0),
+                     test_t("equal((-pi^2^3*2),2*(-pi^8))",1.0),
+                     test_t("equal((-pi^2^3/2),(-pi^8)/2)",1.0),
+                     test_t("equal((-pi^2.2^3.3),(-pi^13.4894687605338489))",1.0),
+                     test_t("equal((-pi^(2.2^3.3)),(-pi^13.4894687605338489))",1.0),
+                     test_t("equal((2.2*-pi^2.2^3.3),2.2*(-pi^13.4894687605338489))",1.0),
+                     test_t("equal((-pi^2.2^3.3*2),2*(-pi^13.4894687605338489))",1.0),
+                     test_t("equal((-pi^2.2^3.3/2.2),(-pi^13.4894687605338489)/2.2)",1.0),
+                     test_t("equal((-pi^-2^3),1/(-pi^8))",1.0),
+                     test_t("equal((-pi^(-2^3)),1/(-pi^8))",1.0),
+                     test_t("equal((-pi^2^-3),(-pi^(1/8)))",1.0),
+                     test_t("equal((-pi^(2^-3)),(-pi^(1/8)))",1.0),
+                     test_t("equal((-pi^-2^-3),1/(-pi^(1/8)))",1.0),
+                     test_t("equal((-pi^(-2^-3)),1/(-pi^(1/8)))",1.0),
+                     test_t("equal((+pi^+2^+3),(+pi^+8))",1.0),
+                     test_t("equal((+pi^(2^3)),(+pi^+8))",1.0),
+                     test_t("equal(+pi^+2^+3-+pi^+8,0)",1.0),
+                     test_t("equal((+2*+pi^+2^+3),+2*(+pi^+8))",1.0),
+                     test_t("equal((+pi^+2^+3*+2),+2*(+pi^+8))",1.0),
+                     test_t("equal((+pi^+2^+3/+2),(+pi^+8)/+2)",1.0),
+                     test_t("equal((+pi^+2.2^+3.3),(+pi^+13.4894687605338489))",1.0),
+                     test_t("equal((+pi^(+2.2^+3.3)),(+pi^+13.4894687605338489))",1.0),
+                     test_t("equal((+2.2*+pi^+2.2^+3.3),+2.2*(+pi^+13.4894687605338489))",1.0),
+                     test_t("equal((+pi^+2.2^+3.3*+2),+2*(+pi^+13.4894687605338489))",1.0),
+                     test_t("equal((+pi^+2.2^+3.3/+2.2),(+pi^+13.4894687605338489)/+2.2)",1.0),
+                     test_t("equal((+pi^-2^3),1/(+pi^+8))",1.0),
+                     test_t("equal((+pi^(-2^3)),1/(+pi^+8))",1.0),
+                     test_t("equal((+pi^2^-3),(+pi^(+1/+8)))",1.0),
+                     test_t("equal((+pi^(2^-3)),(+pi^(+1/+8)))",1.0),
+                     test_t("equal((+pi^-2^-3),1/(+pi^(+1/+8)))",1.0),
+                     test_t("equal((+pi^(-2^-3)),1/(+pi^(+1/+8)))",1.0),
+                     test_t("equal((-pi^+2^+3),(-pi^+8))",1.0),
+                     test_t("equal((-pi^(2^3)),(-pi^+8))",1.0),
+                     test_t("equal(-pi^+2^+3--pi^+8,0)",1.0),
+                     test_t("equal((+2*-pi^+2^+3),2*(-pi^+8))",1.0),
+                     test_t("equal((-pi^+2^+3*2),2*(-pi^+8))",1.0),
+                     test_t("equal((-pi^+2^+3/+2),(-pi^+8)/+2)",1.0),
+                     test_t("equal((-pi^+2.2^+3.3),(-pi^+13.4894687605338489))",1.0),
+                     test_t("equal((-pi^(2.2^3.3)),(-pi^+13.4894687605338489))",1.0),
+                     test_t("equal((+2.2*-pi^+2.2^+3.3),2.2*(-pi^+13.4894687605338489))",1.0),
+                     test_t("equal((-pi^+2.2^+3.3*2),2*(-pi^+13.4894687605338489))",1.0),
+                     test_t("equal((-pi^+2.2^+3.3/+2.2),(-pi^+13.4894687605338489)/+2.2)",1.0),
+                     test_t("equal((-pi^-2^3),1/(-pi^+8))",1.0),
+                     test_t("equal((-pi^(-2^3)),1/(-pi^+8))",1.0),
+                     test_t("equal((-pi^2^-3),(-pi^(+1/+8)))",1.0),
+                     test_t("equal((-pi^(2^-3)),(-pi^(+1/+8)))",1.0),
+                     test_t("equal((-pi^-2^-3),1/(-pi^(+1/+8)))",1.0),
+                     test_t("equal((-pi^(-2^-3)),1/(-pi^(+1/+8)))",1.0)
                   };
 
 static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_t);
@@ -3234,7 +3302,11 @@ inline bool run_test18()
                                   "equal(va_func(x+t,y+v,z+u,w+w,u+z,v+y,t+x),2*(x+y+z+w+u+v+t))",
                                   "equal(1+va_func(1,x,3,y,5,z,7,w,9),(1+x+3+y+5+z+7+w+9)+1)",
                                   "equal(va_func(va_func(x,y,z,w,u,v,t),va_func(x,y,z,w,u,v,t)),2*(x+y+z+w+u+v+t))",
-                                  "equal(va_func(va_func(x),va_func(y),va_func(z)),va_func(x,y,z))"
+                                  "equal(va_func(va_func(x),va_func(y),va_func(z)),va_func(x,y,z))",
+                                  "equal(va_func(va_func(va_func(va_func(va_func(va_func(va_func(va_func(x)))))))),x)",
+                                  "equal(va_func(va_func(va_func(va_func(va_func(va_func(va_func(va_func(123.456)))))))),123.456)",
+                                  "equal(va_func(va_func(va_func(va_func(va_func(va_func(va_func(va_func(x+1)))))))),x+1)",
+                                  "equal(va_func(va_func(va_func(va_func(va_func(va_func(va_func(va_func(x+y)))))))),x+y)"
                                };
    static const std::size_t expr_str_list_size = sizeof(expr_str_list) / sizeof(std::string);
 
