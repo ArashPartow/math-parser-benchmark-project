@@ -30,33 +30,43 @@ double BenchMuParserX::DoBenchmark(const std::string &sExpr, long iCount)
    Value buf(0);
    double fTime(0);
 
-   p.SetExpr(sExpr.c_str());
-   p.DefineVar("a", Variable(&a));
-   p.DefineVar("b", Variable(&b));
-   p.DefineVar("c", Variable(&c));
+   try
+   {
+      p.SetExpr(sExpr.c_str());
+      p.DefineVar("a", Variable(&a));
+      p.DefineVar("b", Variable(&b));
+      p.DefineVar("c", Variable(&c));
 
-   p.DefineVar("x", Variable(&x));
-   p.DefineVar("y", Variable(&y));
-   p.DefineVar("z", Variable(&z));
-   p.DefineVar("w", Variable(&w));
+      p.DefineVar("x", Variable(&x));
+      p.DefineVar("y", Variable(&y));
+      p.DefineVar("z", Variable(&z));
+      p.DefineVar("w", Variable(&w));
 
-   p.DefineConst("pi", (float_type)M_PI);
-   p.DefineConst("e", (float_type)M_E);
-   p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
-             // since fparser does it in Parse(...) wich is outside too
-             // (Speed of bytecode creation is irrelevant)
+      p.DefineConst("pi", (float_type)M_PI);
+      p.DefineConst("e", (float_type)M_E);
+      p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
+                // since fparser does it in Parse(...) wich is outside too
+                // (Speed of bytecode creation is irrelevant)
 
-  double fSum = 0;
-  fRes = p.Eval();
-  StartTimer();
-  for (int j = 0; j < iCount; j++)
-  {
-     std::swap(a,b);
-     std::swap(x,y);
-     fSum += p.Eval().GetFloat();
+     double fSum = 0;
+     fRes = p.Eval();
+     StartTimer();
+     for (int j = 0; j < iCount; j++)
+     {
+        std::swap(a,b);
+        std::swap(x,y);
+        fSum += p.Eval().GetFloat();
+     }
+
+     StopTimer(fRes.GetFloat(), fSum, iCount);
   }
-
-  StopTimer(fRes.GetFloat(), fSum, iCount);
+  catch(...)
+  {
+     StopTimer(std::numeric_limits<double>::quiet_NaN(),
+               std::numeric_limits<double>::quiet_NaN(),
+               1);
+     return std::numeric_limits<double>::quiet_NaN();
+  }
 
   return m_fTime1;
 }

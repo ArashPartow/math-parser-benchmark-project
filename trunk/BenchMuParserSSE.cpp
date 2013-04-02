@@ -33,32 +33,44 @@ double BenchMuParserSSE::DoBenchmark(const std::string &sExpr, long iCount)
 
    mecParserHandle_t hParser = mecCreate();
 
-   mecSetExpr(hParser, sExpr.c_str());
-   mecDefineVar(hParser, "a", &a);
-   mecDefineVar(hParser, "b", &b);
-   mecDefineVar(hParser, "c", &c);
-
-   mecDefineVar(hParser, "x", &x);
-   mecDefineVar(hParser, "y", &y);
-   mecDefineVar(hParser, "z", &z);
-   mecDefineVar(hParser, "w", &w);
-
-   mecDefineConst(hParser, "pi", (mecFloat_t)M_PI);
-   mecDefineConst(hParser, "e",  (mecFloat_t)M_E);
-
-   mecEvalFun_t ptfun = mecCompile(hParser);
-
-   fRes = ptfun();
-
-   StartTimer();
-   for (int j = 0 ; j < iCount; j++)
+   try
    {
-      std::swap(a,b);
-      std::swap(x,y);
-      fSum += ptfun();
+
+      mecSetExpr(hParser, sExpr.c_str());
+      mecDefineVar(hParser, "a", &a);
+      mecDefineVar(hParser, "b", &b);
+      mecDefineVar(hParser, "c", &c);
+
+      mecDefineVar(hParser, "x", &x);
+      mecDefineVar(hParser, "y", &y);
+      mecDefineVar(hParser, "z", &z);
+      mecDefineVar(hParser, "w", &w);
+
+      mecDefineConst(hParser, "pi", (mecFloat_t)M_PI);
+      mecDefineConst(hParser, "e",  (mecFloat_t)M_E);
+
+      mecEvalFun_t ptfun = mecCompile(hParser);
+
+      fRes = ptfun();
+
+      StartTimer();
+      for (int j = 0 ; j < iCount; j++)
+      {
+         std::swap(a,b);
+         std::swap(x,y);
+         fSum += ptfun();
+      }
+
+      StopTimer(fRes, fSum, iCount);
+   }
+   catch (...)
+   {
+      StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN(),
+                1);
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
-   StopTimer(fRes, fSum, iCount);
    return m_fTime1;
 }
 
