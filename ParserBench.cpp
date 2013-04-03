@@ -269,7 +269,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
          std::vector<std::string> vFail = pBench->GetFails();
          if (!vFail.empty())
          {
-            output(pRes, "  %-15s (%3d):\n", 
+            output(pRes, "  %-15s (%3d):\n",
                    pBench->GetShortName().c_str(),
                    vFail.size());
 
@@ -341,9 +341,9 @@ int main(int argc, const char *argv[])
    // ones.
    //
 
-   vBenchmarks.push_back(new BenchMuParser2());
    vBenchmarks.push_back(new BenchExprTk());
-   //vBenchmarks.push_back(new BenchMTParser());
+   vBenchmarks.push_back(new BenchMuParser2());
+   vBenchmarks.push_back(new BenchMTParser());
    vBenchmarks.push_back(new BenchFParser());
    vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
