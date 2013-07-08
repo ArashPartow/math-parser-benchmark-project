@@ -968,7 +968,15 @@ static const test_t test_list[] =
                      test_t("switch { case {1 <= 2} : switch { case {1 <= 2} : 1; default: 1.12345; }; default: 1.12345; }",1.0),
                      test_t("switch { case [(1 <= 2)] : {1}; default: 1.12345; }",1.0),
                      test_t("switch { case ([1 >  2]) : [0]; case ([1 <= 2]) : 1; default: 1.12345; }",1.0),
-                     test_t("switch { case {(1 <= 2)} : switch { case ({1 <= 2}) : 1; default: 1.12345; }; default: 1.12345; }",1.0)
+                     test_t("switch { case {(1 <= 2)} : switch { case ({1 <= 2}) : 1; default: 1.12345; }; default: 1.12345; }",1.0),
+                     test_t("repeat 1.1 + 2.2 until (1 < 2)",3.3),
+                     test_t("repeat (1.1 + 2.2) until (1 < 2)",3.3),
+                     test_t("repeat 1.1 + 2.2; until (1 < 2)",3.3),
+                     test_t("repeat (1.1 + 2.2); until (1 < 2)",3.3),
+                     test_t("repeat 1.1234; 1 < 2; 1.1 + 2.2 until (1 < 2)",3.3),
+                     test_t("repeat 1.1234; 1 < 2; (1.1 + 2.2) until (1 < 2)",3.3),
+                     test_t("repeat 1.1234; 1 < 2; 1.1 + 2.2; until (1 < 2)",3.3),
+                     test_t("repeat 1.1234; 1 < 2; (1.1 + 2.2); until (1 < 2)",3.3)
                   };
 
 static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_t);
@@ -1401,6 +1409,173 @@ inline bool run_test02()
                               test_ab<T>("inrange(a,b,'ccc')"          ,"aaa","bbb",T(1.0)),
                               test_ab<T>("inrange('aaa',b,c)"          ,"aaa","bbb",T(1.0)),
                               test_ab<T>("inrange('aaa',b,c)"          ,"aaa","bbb",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == '0123456789'    ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == '0123456789'[:] ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == '0123456789'[0:]","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == '0123456789'[:9]","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[:9]  == '0123456789'[:9]","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[10:] == '0123456789'[:] ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != '123456789'     ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != '123456789'[:]  ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != '123456789'[0:] ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != '123456789'[:8] ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[:9]  != '123456789'[:8] ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[10:] != '123456789'[:]  ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[2*6:10+6] == '23456'    ","","",T(1.0)),
+                              test_ab<T>("'0123456789'     == '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'0123456789'[:]  == '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'0123456789'[0:] == '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'0123456789'[:9] == '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'0123456789'[:9] == '01234567890123456789'[:9] ","","",T(1.0)),
+                              test_ab<T>("'0123456789'[:]  == '01234567890123456789'[10:]","","",T(1.0)),
+                              test_ab<T>("'123456789'      != '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'123456789'[:]   != '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'123456789'[0:]  != '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'123456789'[:8]  != '01234567890123456789'[0:9]","","",T(1.0)),
+                              test_ab<T>("'123456789'[:8]  != '01234567890123456789'[:9] ","","",T(1.0)),
+                              test_ab<T>("'123456789'[:]   != '01234567890123456789'[10:]","","",T(1.0)),
+                              test_ab<T>("'23456' == '01234567890123456789'[2*6:10+6]    ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r0: 6]   == '23456'              ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[2: r1]   == '23456'              ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r0:3*2]  == '23456'              ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[1+1:r1]  == '23456'              ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r0:  ]   == '234567890123456789' ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[:  r1]   == '0123456'            ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r0:r1]   == '23456'              ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r0:r1+2] == '2345678'            ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r0+2:r1] == '456'                ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[r1-r0:]  == '4567890123456789'   ","","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[:r1-r0]  == '01234'              ","","",T(1.0)),
+                              test_ab<T>("'23456'              == '01234567890123456789'[r0: 6]   ","","",T(1.0)),
+                              test_ab<T>("'23456'              == '01234567890123456789'[2: r1]   ","","",T(1.0)),
+                              test_ab<T>("'23456'              == '01234567890123456789'[r0:3*2]  ","","",T(1.0)),
+                              test_ab<T>("'23456'              == '01234567890123456789'[1+1:r1]  ","","",T(1.0)),
+                              test_ab<T>("'234567890123456789' == '01234567890123456789'[r0:  ]   ","","",T(1.0)),
+                              test_ab<T>("'0123456'            == '01234567890123456789'[:  r1]   ","","",T(1.0)),
+                              test_ab<T>("'23456'              == '01234567890123456789'[r0:r1]   ","","",T(1.0)),
+                              test_ab<T>("'2345678'            == '01234567890123456789'[r0:r1+2] ","","",T(1.0)),
+                              test_ab<T>("'456'                == '01234567890123456789'[r0+2:r1] ","","",T(1.0)),
+                              test_ab<T>("'4567890123456789'   == '01234567890123456789'[r1-r0:]  ","","",T(1.0)),
+                              test_ab<T>("'01234'              == '01234567890123456789'[:r1-r0]  ","","",T(1.0)),
+                              test_ab<T>("a[r0: 6]   == '23456'              ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[2: r1]   == '23456'              ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r0:3*2]  == '23456'              ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[1+1:r1]  == '23456'              ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r0:  ]   == '234567890123456789' ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[:  r1]   == '0123456'            ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r0:r1]   == '23456'              ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r0:r1+2] == '2345678'            ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r0+2:r1] == '456'                ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r1-r0:]  == '4567890123456789'   ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[:r1-r0]  == '01234'              ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'23456'              == a[r0: 6]   ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'23456'              == a[2: r1]   ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'23456'              == a[r0:3*2]  ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'23456'              == a[1+1:r1]  ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'234567890123456789' == a[r0:  ]   ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'0123456'            == a[:  r1]   ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'23456'              == a[r0:r1]   ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'2345678'            == a[r0:r1+2] ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'456'                == a[r0+2:r1] ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'4567890123456789'   == a[r1-r0:]  ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("'01234'              == a[:r1-r0]  ","01234567890123456789","",T(1.0)),
+                              test_ab<T>("a[r0: 6]   == b "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("a[2: r1]   == b "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("a[r0:3*2]  == b "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("a[1+1:r1]  == b "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("a[r0:  ]   == b "                   ,"01234567890123456789","234567890123456789",T(1.0)),
+                              test_ab<T>("a[:  r1]   == b "                   ,"01234567890123456789","0123456",T(1.0)),
+                              test_ab<T>("a[r0:r1]   == b "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("a[r0:r1+2] == b "                   ,"01234567890123456789","2345678",T(1.0)),
+                              test_ab<T>("a[r0+2:r1] == b "                   ,"01234567890123456789","456",T(1.0)),
+                              test_ab<T>("a[r1-r0:]  == b "                   ,"01234567890123456789","4567890123456789",T(1.0)),
+                              test_ab<T>("a[:r1-r0]  == b "                   ,"01234567890123456789","01234",T(1.0)),
+                              test_ab<T>("b == a[r0: 6]   "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("b == a[2: r1]   "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("b == a[r0:3*2]  "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("b == a[1+1:r1]  "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("b == a[r0:  ]   "                   ,"01234567890123456789","234567890123456789",T(1.0)),
+                              test_ab<T>("b == a[:  r1]   "                   ,"01234567890123456789","0123456",T(1.0)),
+                              test_ab<T>("b == a[r0:r1]   "                   ,"01234567890123456789","23456",T(1.0)),
+                              test_ab<T>("b == a[r0:r1+2] "                   ,"01234567890123456789","2345678",T(1.0)),
+                              test_ab<T>("b == a[r0+2:r1] "                   ,"01234567890123456789","456",T(1.0)),
+                              test_ab<T>("b == a[r1-r0:]  "                   ,"01234567890123456789","4567890123456789",T(1.0)),
+                              test_ab<T>("b == a[:r1-r0]  "                   ,"01234567890123456789","01234",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == a     ","0123456789","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == a[:]  ","0123456789","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == a[0:] ","0123456789","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] == a[:9] ","0123456789","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[:9]  == a[:9] ","0123456789","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[10:] == a[:]  ","0123456789","",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != a     ","123456789" ,"",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != a[:]  ","123456789" ,"",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != a[0:] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[0:9] != a[:8] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[:9]  != a[:8] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[10:] != a[:]  ","123456789" ,"",T(1.0)),
+                              test_ab<T>("'01234567890123456789'[2*6:10+6] == a","23456"     ,"",T(1.0)),
+                              test_ab<T>("'23456' == a[:]                      ","23456"     ,"",T(1.0)),
+                              test_ab<T>("a     == '01234567890123456789'[0:9] ","0123456789","",T(1.0)),
+                              test_ab<T>("a[:]  == '01234567890123456789'[0:9] ","0123456789","",T(1.0)),
+                              test_ab<T>("a[0:] == '01234567890123456789'[0:9] ","0123456789","",T(1.0)),
+                              test_ab<T>("a[:9] == '01234567890123456789'[0:9] ","0123456789","",T(1.0)),
+                              test_ab<T>("a[:9] == '01234567890123456789'[:9]  ","0123456789","",T(1.0)),
+                              test_ab<T>("a[:]  == '01234567890123456789'[10:] ","0123456789","",T(1.0)),
+                              test_ab<T>("a     != '01234567890123456789'[0:9] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("a[:]  != '01234567890123456789'[0:9] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("a[0:] != '01234567890123456789'[0:9] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("a[:8] != '01234567890123456789'[0:9] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("a[:8] != '01234567890123456789'[:9]  ","123456789" ,"",T(1.0)),
+                              test_ab<T>("a[:]  != '01234567890123456789'[10:] ","123456789" ,"",T(1.0)),
+                              test_ab<T>("a == '01234567890123456789'[2*6:10+6]","23456"     ,"",T(1.0)),
+                              test_ab<T>("a[:] == '23456'                      ","23456"     ,"",T(1.0)),
+                              test_ab<T>("a[0:9] == b      ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("a[0:9] == b[:]   ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("a[0:9] == b[0:]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("a[0:9] == b[:9]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("a[:9]  == b[:9]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("a[10:] == b[:]   ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("a[0:9] != b      ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("a[0:9] != b[:]   ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("a[0:9] != b[0:]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("a[0:9] != b[:8]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("a[:9]  != b[:8]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("a[10:] != b[:]   ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("a[2*6:10+6] == b ","01234567890123456789","23456"     ,T(1.0)),
+                              test_ab<T>("b     == a[0:9]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("b[:]  == a[0:9]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("b[0:] == a[0:9]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("b[:9] == a[0:9]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("b[:9] == a[:9]   ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("b[:]  == a[10:]  ","01234567890123456789","0123456789",T(1.0)),
+                              test_ab<T>("b     != a[0:9]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("b[:]  != a[0:9]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("b[0:] != a[0:9]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("b[:8] != a[0:9]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("b[:8] != a[:9]   ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("b[:]  != a[10:]  ","01234567890123456789","123456789" ,T(1.0)),
+                              test_ab<T>("b == a[2*6:10+6] ","01234567890123456789","23456"     ,T(1.0)),
+                              test_ab<T>("a[2:6] == b"         ,"0123456789","23456"  ,T(1.0)),
+                              test_ab<T>("a == b[2:6]"         ,"23456","0123456789"  ,T(1.0)),
+                              test_ab<T>("a[1+1:2*3] == b"     ,"0123456789","23456"  ,T(1.0)),
+                              test_ab<T>("a == b[4/2:sqrt(36)]","23456","0123456789"  ,T(1.0)),
+                              test_ab<T>("a[0:6] == b"         ,"0123456789","0123456",T(1.0)),
+                              test_ab<T>("a[:6] == b"          ,"0123456789","0123456",T(1.0)),
+                              test_ab<T>("a[4/2-2:2+4] == b"   ,"0123456789","0123456",T(1.0)),
+                              test_ab<T>("a[:12/2] == b"       ,"0123456789","0123456",T(1.0)),
+                              test_ab<T>("a[0:] == b"          ,"0123456","0123456"   ,T(1.0)),
+                              test_ab<T>("a[:] == b"           ,"0123456","0123456"   ,T(1.0)),
+                              test_ab<T>("a == b[0:6]"         ,"0123456","0123456789",T(1.0)),
+                              test_ab<T>("a == b[:6]"          ,"0123456","0123456789",T(1.0)),
+                              test_ab<T>("a == b[4/2-2:2+4]"   ,"0123456","0123456789",T(1.0)),
+                              test_ab<T>("a == b[:12/2]"       ,"0123456","0123456789",T(1.0)),
+                              test_ab<T>("a == b[0:]"          ,"0123456","0123456"   ,T(1.0)),
+                              test_ab<T>("a == b[:]"           ,"0123456","0123456"   ,T(1.0)),
+                              test_ab<T>("a[:9] == b[0:9]"     ,"0123456789","01234567890123456789",T(1.0)),
+                              test_ab<T>("a[0:9] == b[0:9]"    ,"0123456789","01234567890123456789",T(1.0)),
+                              test_ab<T>("a[0:] == b[0:9]"     ,"0123456789","01234567890123456789",T(1.0)),
+                              test_ab<T>("a[:] == b[0:9]"      ,"0123456789","01234567890123456789",T(1.0)),
+                              test_ab<T>("a[:] == b[10:]"      ,"0123456789","01234567890123456789",T(1.0)),
                               test_ab<T>("'!@#$%^&*([{}])-=' != ')]}{[(*&^%$#@!'","","",T(1.0)),
                               test_ab<T>("('!@#$%^&*([{}])-=') != (')]}{[(*&^%$#@!')","","",T(1.0)),
                               test_ab<T>("{[('a')]} == [{('a')}]","","",T(1.0)),
@@ -1419,10 +1594,19 @@ inline bool run_test02()
       {
          test_ab<T>& test = const_cast<test_ab<T>&>(test_list[i]);
 
+         std::string str_a;
+         std::string str_b;
+         std::string str_c;
+
+         T r0 = T(2);
+         T r1 = T(6);
+
          exprtk::symbol_table<T> symbol_table;
-         symbol_table.add_stringvar("a",test.a);
-         symbol_table.add_stringvar("b",test.b);
-         symbol_table.add_stringvar("c",test.c);
+         symbol_table.add_stringvar("a" ,str_a);
+         symbol_table.add_stringvar("b" ,str_b);
+         symbol_table.add_stringvar("c" ,str_c);
+         symbol_table.add_variable ("r0",   r0);
+         symbol_table.add_variable ("r1",   r1);
 
          exprtk::expression<T> expression;
          expression.register_symbol_table(symbol_table);
@@ -1438,6 +1622,10 @@ inline bool run_test02()
                return false;
             }
          }
+
+         str_a = test.a;
+         str_b = test.b;
+         str_c = test.c;
 
          T result = expression.value();
 
@@ -2939,11 +3127,11 @@ inline bool run_test15()
                                   "/* Comment 11*/2 - (x + y) / z/* Comment 12*/",
                                   "/* Comment 13*/2 - (x + y) / z/* Comment 14*/\n",
                                   "2 - /* Comment 15 */(x + y) / z",
-                                  "2 - /* Comment 15 */(x + y) /* Comment 16 *// z \n",
-                                  "2 - /* Comment 17 */(x + y) /* Comment 18 */ / z //Comment 19\n",
-                                  "2 - /* Comment 20 */(x + y) /* Comment 21 */ / z #Comment 22\n",
-                                  "2 - /* Comment 23 */(x + y) /* Comment 24 */ / z //Comment 25",
-                                  "2 - /* Comment 26 */(x + y) /* Comment 27 */ / z #Comment 28"
+                                  "2 - /* Comment 16 */(x + y) /* Comment 17 *// z \n",
+                                  "2 - /* Comment 18 */(x + y) /* Comment 19 */ / z //Comment 20\n",
+                                  "2 - /* Comment 21 */(x + y) /* Comment 22 */ / z #Comment 23\n",
+                                  "2 - /* Comment 24 */(x + y) /* Comment 25 */ / z //Comment 26",
+                                  "2 - /* Comment 27 */(x + y) /* Comment 28 */ / z #Comment 29"
                                };
    static const std::size_t expr_str_list_size = sizeof(expr_str_list) / sizeof(std::string);
 
@@ -3574,15 +3762,15 @@ inline bool run_test19()
 
       compositor
          .add("is_prime_impl3",
-              "while (y > 0)                            "
-              "{                                        "
-              "  switch                                 "
-              "  {                                      "
-              "    case y == 1       : true  + (y := 0);"
-              "    case (x % y) == 0 : false + (y := 0);"
-              "    default           : y := y - 1;      "
-              "  }                                      "
-              "}                                        ",
+              "while (y > 0)                           "
+              "{                                       "
+              "  switch                                "
+              "  {                                     "
+              "    case y == 1       : ~(y := 0, true);"
+              "    case (x % y) == 0 : ~(y := 0,false);"
+              "    default           : y := y - 1;     "
+              "  }                                     "
+              "}                                       ",
               "x","y");
 
       compositor
@@ -3671,7 +3859,7 @@ inline bool run_test19()
          {
             printf("run_test19() - Error in evaluation! (3)  Results don't match!  Prime: %d  "
                    "Expression1: %s  Expression2: %s  Expression3: %s\n",
-                   prime_list[i],
+                   static_cast<unsigned int>(prime_list[i]),
                    expression_str1.c_str(),
                    expression_str2.c_str(),
                    expression_str3.c_str());
@@ -3682,7 +3870,7 @@ inline bool run_test19()
          {
             printf("run_test19() - Error in evaluation! (3)  Prime: %d  "
                    "Expression1: %s  Expression2: %s  Expression3: %s\n",
-                   (int)prime_list[i],
+                   static_cast<unsigned int>(prime_list[i]),
                    expression_str1.c_str(),
                    expression_str2.c_str(),
                    expression_str3.c_str());
@@ -3716,17 +3904,66 @@ inline bool run_test19()
               "}                                                      ",
               "x");
 
+      compositor
+         .add("fibonacci_impl3",
+              "switch                                "
+              "{                                     "
+              "  case x == 0 : 0;                    "
+              "  case x == 1 : 1;                    "
+              "  default : while ((x := (x - 1)) > 0)"
+              "            {                         "
+              "              w := z;                 "
+              "              z := z + y;             "
+              "              y := w;                 "
+              "              z                       "
+              "            };                        "
+              "}                                     ",
+              "x","y","z","w");
+
+      compositor
+         .add("fibonacci3",
+              "fibonacci_impl3(x,0,1,0)",
+              "x");
+
+      compositor
+         .add("fibonacci_impl4",
+              "switch                     "
+              "{                          "
+              "  case x == 0 : 0;         "
+              "  case x == 1 : 1;         "
+              "  default : repeat         "
+              "              w := z;      "
+              "              z := z + y;  "
+              "              y := w;      "
+              "              x := x - 1;  "
+              "              z            "
+              "            until (x <= 1);"
+              "}                          ",
+              "x","y","z","w");
+
+      compositor
+         .add("fibonacci4",
+              "fibonacci_impl4(x,0,1,0)",
+              "x");
+
+
       exprtk::symbol_table<T>& symbol_table = compositor.symbol_table();
       symbol_table.add_constants();
       symbol_table.add_variable("x",x);
 
       std::string expression_str1 = "fibonacci1(x)";
       std::string expression_str2 = "fibonacci2(x)";
+      std::string expression_str3 = "fibonacci3(x)";
+      std::string expression_str4 = "fibonacci4(x)";
 
       expression_t expression1;
       expression_t expression2;
+      expression_t expression3;
+      expression_t expression4;
       expression1.register_symbol_table(symbol_table);
       expression2.register_symbol_table(symbol_table);
+      expression3.register_symbol_table(symbol_table);
+      expression4.register_symbol_table(symbol_table);
 
       exprtk::parser<T> parser;
 
@@ -3746,18 +3983,34 @@ inline bool run_test19()
          return false;
       }
 
+      if (!parser.compile(expression_str3,expression3))
+      {
+         printf("run_test19() - Error: %s   Expression3: %s\n",
+                parser.error().c_str(),
+                expression_str3.c_str());
+         return false;
+      }
+
+      if (!parser.compile(expression_str4,expression4))
+      {
+         printf("run_test19() - Error: %s   Expression4: %s\n",
+                parser.error().c_str(),
+                expression_str4.c_str());
+         return false;
+      }
+
       bool failure = false;
 
       const std::size_t fibonacci_list[] =
                            {
-                                    0,       1,      1,       2,
-                                    3,       5,      8,      13,
-                                   21,      34,     55,      89,
-                                  144,     233,    377,     610,
-                                  987,    1597,   2584,    4181,
-                                 6765,   10946,  17711,   28657,
-                                46368,   75025, 121393,  196418,
-                               317811,  514229, 832040, 1346269
+                                  0,       1,      1,       2,
+                                  3,       5,      8,      13,
+                                 21,      34,     55,      89,
+                                144,     233,    377,     610,
+                                987,    1597,   2584,    4181,
+                               6765,   10946,  17711,   28657,
+                              46368,   75025, 121393,  196418,
+                             317811,  514229, 832040, 1346269
                            };
       const std::size_t fibonacci_list_size = sizeof(fibonacci_list) / sizeof(std::size_t);
 
@@ -3766,28 +4019,209 @@ inline bool run_test19()
          x = i;
          T result1 = expression1.value();
          T result2 = expression2.value();
-         if (result1 != result2)
+         T result3 = expression3.value();
+         T result4 = expression4.value();
+
+         if (
+              (result1 != result2) ||
+              (result1 != result3) ||
+              (result1 != result4)
+            )
          {
-            printf("run_test19() - Error in evaluation! (3)  Results don't match!  Prime: %d  Expression1: %s  Expression2: %s\n",
-                   fibonacci_list[i],
+            printf("run_test19() - Error in evaluation! (3)  Results don't match!  fibonacci(%d) = %d "
+                   "Expression1: %s = %d  Expression2: %s = %d  Expression3: %s = %d  Expression4: %s = %d\n",
+                   static_cast<unsigned int>(i),
+                   static_cast<unsigned int>(fibonacci_list[i]),
                    expression_str1.c_str(),
-                   expression_str2.c_str());
+                   static_cast<unsigned int>(result1),
+                   expression_str2.c_str(),
+                   static_cast<unsigned int>(result2),
+                   expression_str3.c_str(),
+                   static_cast<unsigned int>(result3),
+                   expression_str4.c_str(),
+                   static_cast<unsigned int>(result4));
             failure = true;
          }
 
          if (fibonacci_list[i] != expression1.value())
          {
-            printf("run_test19() - Error in evaluation! (4)  fibonacci(%d) = %d Expression1: %s  Expression2: %s\n",
-                    i,
-                   fibonacci_list[i],
+            printf("run_test19() - Error in evaluation! (4)  fibonacci(%d) = %d "
+                   "Expression1: %s = %d  Expression2: %s = %d  Expression3: %s = %d  Expression4: %s = %d\n",
+                   static_cast<unsigned int>(i),
+                   static_cast<unsigned int>(fibonacci_list[i]),
                    expression_str1.c_str(),
-                   expression_str2.c_str());
+                   static_cast<unsigned int>(result1),
+                   expression_str2.c_str(),
+                   static_cast<unsigned int>(result2),
+                   expression_str3.c_str(),
+                   static_cast<unsigned int>(result3),
+                   expression_str4.c_str(),
+                   static_cast<unsigned int>(result4));
             failure = true;
          }
       }
 
       if (failure)
          return false;
+   }
+
+   {
+      T x = T(0);
+
+      exprtk::symbol_table<T> symbol_table;
+
+      symbol_table.add_constants();
+      symbol_table.add_variable("x",x);
+
+      compositor_t compositor(symbol_table);
+
+      compositor
+         .add("newton_sqrt_impl",
+              "switch                                "
+              "{                                     "
+              "  case x < 0  : -inf;                 "
+              "  case x == 0 : 0;                    "
+              "  case x == 1 : 1;                    "
+              "  default:                            "
+              "  ~{                                  "
+              "     z := 100;                        "
+              "     y := x / 2;                      "
+              "     while ((z := (z - 1)) > 0)       "
+              "     {                                "
+              "       if (equal(y * y,x), z := 0, 0);"
+              "       y := (1 / 2) * (y + (x / y))   "
+              "     }                                "
+              "   };                                 "
+              "}                                     ",
+              "x","y","z");
+
+      compositor
+         .add("newton_sqrt",
+              "newton_sqrt_impl(x,0,0)","x");
+
+      std::string expression_str = "newton_sqrt(x)";
+
+      expression_t expression;
+
+      expression.register_symbol_table(symbol_table);
+
+      exprtk::parser<T> parser;
+
+      if (!parser.compile(expression_str,expression))
+      {
+         printf("run_test19() - Error: %s   Expression: %s\n",
+                parser.error().c_str(),
+                expression_str.c_str());
+         return false;
+      }
+
+      bool failure = false;
+
+      for (std::size_t i = 0; i < 100; ++i)
+      {
+         x = i;
+         T result = expression.value();
+
+         if (not_equal(result,std::sqrt(x),T(0.0000001)))
+         {
+            printf("run_test19() - Computation Error  "
+                   "Expression: [%s]\tExpected: %12.8f\tResult: %12.8f\n",
+                   expression_str.c_str(),
+                   std::sqrt(x),
+                   result);
+            failure = true;
+         }
+      }
+
+      if (failure)
+         return false;
+   }
+
+   return true;
+}
+
+template <typename T>
+struct my_usr : public exprtk::parser<T>::unknown_symbol_resolver
+{
+
+   typedef typename exprtk::parser<T>::unknown_symbol_resolver usr_t;
+
+   bool process(const std::string& unknown_symbol,
+                typename usr_t::symbol_type& st,
+                T& default_value,
+                std::string& error_message)
+   {
+      if (unknown_symbol[0] == 'v')
+      {
+         st = usr_t::e_variable_type;
+         default_value = next_value();
+         error_message = "";
+         return true;
+      }
+      else if (unknown_symbol[0] == 'c')
+      {
+         st = usr_t::e_constant_type;
+         default_value = next_value();
+         error_message = "";
+         return true;
+      }
+      else
+      {
+         error_message = "Unknown symbol...";
+         return false;
+      }
+   }
+
+   T next_value(const bool reset = false)
+   {
+      static T value = 0;
+      if (reset)
+         return (value = 0);
+      else
+         return ++value;
+   }
+};
+
+template <typename T>
+inline bool run_test20()
+{
+   typedef exprtk::expression<T> expression_t;
+
+   for (std::size_t i = 0; i < 400; ++i)
+   {
+      exprtk::symbol_table<T> symbol_table;
+      symbol_table.add_constants();
+
+      expression_t expression;
+      expression.register_symbol_table(symbol_table);
+
+      exprtk::parser<T> parser;
+
+      my_usr<T> musr;
+      musr.next_value(true);
+      parser.enable_unknown_symbol_resolver(&musr);
+
+      std::string expr_str = "v01+c02+v03+c04+v05+c06+v07+c08+v09+c10+"
+                             "v11+c12+v13+c14+v15+c16+v17+c18+v19+c20+"
+                             "v21+c22+v23+c24+v25+c26+v27+c28+v29+c30 ";
+
+      if (!parser.compile(expr_str,expression))
+      {
+         printf("run_test20() - Error: %s   Expression: %s\n",
+                parser.error().c_str(),
+                expr_str.c_str());
+         return false;
+      }
+
+      T sum_1_30 = T((1 + 30) * 15);
+      T result   = expression.value();
+
+      if (sum_1_30 != result)
+      {
+         printf("run_test20() - Error in evaluation! (1) Expression: %s\n",
+                expr_str.c_str());
+         return false;
+      }
    }
 
    return true;
@@ -3830,6 +4264,7 @@ int main()
    perform_test(double,17)
    perform_test(double,18)
    perform_test(double,19)
+   perform_test(double,20)
 
    #undef perform_test
 
