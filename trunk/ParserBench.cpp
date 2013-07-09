@@ -27,7 +27,8 @@
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
-   static const T epsilon = T(0.00000001);
+   static const T epsilon = T(0.0001);
+   //static const T epsilon = T(0.00000001);
    //static const T epsilon = T(std::numeric_limits<double>::epsilon());
    //static const T epsilon = T(std::numeric_limits<float>::epsilon());
    //Is either a NaN?
@@ -182,6 +183,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
                pBench->AddScore(0);
 
                fprintf(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
+
                        pBench->GetShortName().c_str(),
                        it->first,
                        (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
@@ -299,8 +301,8 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_expr.txt";
-   //std::string benchmark_file = "bench_expr_all.txt";
-     std::string benchmark_file = "bench_expr_extensive.txt";
+   std::string benchmark_file = "bench_expr_all.txt";
+   //std::string benchmark_file = "bench_expr_extensive.txt";
    //std::string benchmark_file = "bench_expr_random.txt";
    //std::string benchmark_file = "bench_precedence.txt";
 
