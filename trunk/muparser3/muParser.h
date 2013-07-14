@@ -108,6 +108,7 @@ MUP_NAMESPACE_START
     void InitOprt() 
     {
       DefineInfixOprt( _SL("-"), MathImpl<TValue, TString>::UnaryMinus);
+//      DefineInfixOprt( _SL("+"), MathImpl<TValue, TString>::UnaryPlus);
 
       DefineOprt( _SL("&&"), MathImpl<TValue, TString>::And,       prLOGIC);
       DefineOprt( _SL("||"), MathImpl<TValue, TString>::Or,        prLOGIC);

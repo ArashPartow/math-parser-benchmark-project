@@ -124,6 +124,10 @@ MUP_NAMESPACE_START
       {
         ++m_iStackPos;
 
+        tok.Val.ptr2 = nullptr;  // NUR nullptr, steht für uninitialisiert!
+        tok.Val.mul2 = 0;
+        tok.Val.fixed2 = 0;
+
         m_iMaxStackSize = std::max(m_iMaxStackSize, (size_t)m_iStackPos);
         AddTok(tok);
       }
@@ -209,6 +213,9 @@ MUP_NAMESPACE_START
       {
         Substitute();
         
+        // reduce the number of tokens by sqeezing multiple tokens into a single one
+        Compress();
+
         // Add end marker
         token_type tok;
         tok.Cmd = cmEND;
@@ -224,11 +231,11 @@ MUP_NAMESPACE_START
 
           // Reintroduce cmVAL and cmVAR codes, they can be evaluated more 
           // efficiently (compared to cmVAL_EX)
-          if (tok.Val.mul==0 && tok.Cmd==cmVAL_EX)
+          if (tok.Val.mul==0 && tok.Cmd==cmVAL_EX && tok.Val.ptr2==nullptr)
           {
             tok.Cmd = cmVAL;
           }
-          else if (tok.Val.fixed==0 && tok.Val.mul==1 && tok.Cmd==cmVAL_EX)
+          else if (tok.Val.fixed==0 && tok.Val.mul==1 && tok.Cmd==cmVAL_EX && tok.Val.ptr2==nullptr)
           {
             tok.Cmd = cmVAR;
           }
@@ -289,6 +296,9 @@ MUP_NAMESPACE_START
           m_eEngineCode = (EEngineCode)(nEngineCode | ecNO_MUL);
         else
           m_eEngineCode = (EEngineCode)nEngineCode;
+
+        // reduce the number of tokens by sqeezing multiple tokens into a single one
+//        Compress();
       }
 
       //-------------------------------------------------------------------------------------------
@@ -348,16 +358,34 @@ MUP_NAMESPACE_START
                
                 if (m_vRPN[i].Val.ptr==&ParserBase<TValue, TString>::g_NullValue)
                 {
-                  _OUT << _SL("[ADDR: &ParserBase::g_NullValue]"); 
+	                _OUT << _SL("[ADDR: &ParserBase::g_NullValue]"); 
                 }
                 else
                 {
-                  _OUT << _SL("[ADDR: 0x") << std::hex << m_vRPN[i].Val.ptr << _SL("]"); 
+	                _OUT << _SL("[ADDR: 0x") << std::hex << m_vRPN[i].Val.ptr << _SL("]"); 
                   _OUT << _SL("[IDENT:")   << m_vRPN[i].Ident << _SL("]"); 
                 }
 
-                _OUT << _SL("[MUL: ") << m_vRPN[i].Val.mul   << _SL("]"); 
+	              _OUT << _SL("[MUL: ") << m_vRPN[i].Val.mul   << _SL("]"); 
                 _OUT << _SL("[ADD:")  << m_vRPN[i].Val.fixed << _SL("]\n");
+
+                if (m_vRPN[i].Val.ptr2!=nullptr)
+                {
+                  _OUT << _SL("\tVAL_EX \t");
+
+                  if (m_vRPN[i].Val.ptr2==&ParserBase<TValue, TString>::g_NullValue)
+                  {
+	                  _OUT << _SL("[ADDR:  &ParserBase::g_NullValue]"); 
+                  }
+                  else
+                  {
+	                  _OUT << _SL("[ADDR: 0x") << std::hex << m_vRPN[i].Val.ptr2 << _SL("]"); 
+                    _OUT << _SL("[IDENT:")   << m_vRPN[i].Ident << _SL("]"); 
+                  }
+
+	                _OUT << _SL("[MUL: ") << m_vRPN[i].Val.mul2   << _SL("]"); 
+                  _OUT << _SL("[ADD:")  << m_vRPN[i].Val.fixed2 << _SL("]\n");
+                }
                 break;
 
           case  cmVAL:   
@@ -378,6 +406,24 @@ MUP_NAMESPACE_START
                 _OUT << _SL("[ARG:")     << std::dec << m_vRPN[i].Fun.argc << _SL("]"); 
                 _OUT << _SL("[ADDR: 0x") << std::hex << m_vRPN[i].Fun.ptr  << _SL("]"); 
                 _OUT << _SL("\n");
+
+                if (m_vRPN[i].Fun.ptr2!=nullptr)
+                {
+                  _OUT << _SL("\tCALL\t");
+                  _OUT << _SL("[IDENT: \"\"]"); 
+                  _OUT << _SL("[ARG:")     << std::dec << m_vRPN[i].Fun.argc2 << _SL("]"); 
+                  _OUT << _SL("[ADDR: 0x") << std::hex << m_vRPN[i].Fun.ptr2  << _SL("]"); 
+                  _OUT << _SL("\n");
+                }
+
+                if (m_vRPN[i].Fun.ptr3!=nullptr)
+                {
+                  _OUT << _SL("\tCALL\t");
+                  _OUT << _SL("[IDENT: \"\"]"); 
+                  _OUT << _SL("[ARG:")     << std::dec << m_vRPN[i].Fun.argc3 << _SL("]"); 
+                  _OUT << _SL("[ADDR: 0x") << std::hex << m_vRPN[i].Fun.ptr3  << _SL("]"); 
+                  _OUT << _SL("\n");
+                }
                 break;
 
           case  cmIF:    
@@ -416,12 +462,10 @@ MUP_NAMESPACE_START
       bool TryOptimizeAddSub(token_type &tok)
       {
         std::size_t sz = m_vRPN.size();
-        if (sz<2)
-          return false;
 
         // 0.) Transform minus operations into an addition of a negative value. This will make 
         //     further optimization easier since i only have to deal with additions.
-        if (m_vRPN[sz-1].Cmd == cmVAL_EX && tok.Cmd == cmOPRT_BIN && tok.Ident==_SL("-") ) 
+        if (sz>=1 && m_vRPN[sz-1].Cmd == cmVAL_EX && tok.Cmd == cmOPRT_BIN && tok.Ident==_SL("-") ) 
         {
           // change sign of the last value
           if (m_vRPN[sz-1].Val.mul!=0)
@@ -435,7 +479,7 @@ MUP_NAMESPACE_START
           tok.Ident = _SL("+");
 
           // maybe there is another addition directly in front?
-          if (m_vRPN.size()>=3 && m_vRPN[sz-2].Cmd==cmFUNC && m_vRPN[sz-2].Ident==_SL("+") && m_vRPN[sz-1].Cmd==cmVAL_EX)
+          if (sz>=2 && m_vRPN[sz-2].Cmd==cmFUNC && m_vRPN[sz-2].Ident==_SL("+") && m_vRPN[sz-1].Cmd==cmVAL_EX)
           {
             token_type t1 = m_vRPN[sz-1];
             token_type t2 = m_vRPN[sz-2];
@@ -444,6 +488,8 @@ MUP_NAMESPACE_START
 
             AddVal(t1);
             AddFun(t2);
+
+            sz = m_vRPN.size(); // update size; AddFun may have been optimized away
           }
           else
           {
@@ -460,7 +506,7 @@ MUP_NAMESPACE_START
         //
         // If possible Addition/Subtraction is applied immediately and the value tokens
         // are joined.
-        if (m_vRPN[sz-1].Cmd == cmVAL_EX && m_vRPN[sz-2].Cmd == cmVAL_EX) 
+        if (sz>=2 && m_vRPN[sz-1].Cmd == cmVAL_EX && m_vRPN[sz-2].Cmd == cmVAL_EX) 
         {
           if ( (m_vRPN[sz-1].Val.mul==0 && m_vRPN[sz-2].Val.mul==0) || 
                (m_vRPN[sz-1].Val.mul==0 && m_vRPN[sz-2].Val.mul!=0) || 
@@ -676,6 +722,81 @@ MUP_NAMESPACE_START
           default:
                 newRPN.push_back(tokOrig);
                 continue;
+          }
+        }
+
+        m_vRPN = newRPN;
+      }
+
+      //-------------------------------------------------------------------------------------------
+      /** \brief Try to shorten the bytecode.
+      
+        This function will try shortening the bytecode by merging successive 
+        entries into a single one. Successive arithmetic operations will
+        be replaced with ternary function calls if applicable. 
+
+        a+b+c -> add(a,b,c)
+      */
+      void Compress()
+      {
+        rpn_type  newRPN;
+
+        if (m_bEnableOptimizer)
+        {
+          for (std::size_t i=0; i<m_vRPN.size(); ++i)
+          {
+            token_type &tokOrig = m_vRPN[i];
+
+            if (!newRPN.size())
+            {
+              newRPN.push_back(tokOrig);
+              continue;
+            }
+
+            token_type &tokNew = newRPN.back();
+            switch(tokOrig.Cmd)
+            {
+            case  cmFUNC:
+                  if (tokNew.Cmd==cmFUNC)
+                  {
+                    if (tokNew.Fun.ptr2==nullptr)
+                    {
+                      // Join the two function tokens
+                      tokNew.Fun.ptr2  = tokOrig.Fun.ptr;
+                      tokNew.Fun.argc2 = tokOrig.Fun.argc;
+                      continue;
+                    }
+                    else if (tokNew.Fun.ptr3==nullptr)
+                    {
+                      // Joint with 3rd function
+                      tokNew.Fun.ptr3  = tokOrig.Fun.ptr;
+                      tokNew.Fun.argc3 = tokOrig.Fun.argc;
+                      continue;
+                    }
+                  }
+
+                  // Function tokens can't be joined
+                  newRPN.push_back(tokOrig);
+                  continue;
+
+            case  cmVAL_EX:
+                  if (tokNew.Cmd==cmVAL_EX && tokNew.Val.ptr2==nullptr)
+                  {
+                    // Join the two function tokens
+                    tokNew.Val.ptr2   = tokOrig.Val.ptr;
+                    tokNew.Val.fixed2 = tokOrig.Val.fixed;
+                    tokNew.Val.mul2   = tokOrig.Val.mul;
+                    continue;
+                  }
+
+                  // Function tokens can't be joined
+                  newRPN.push_back(tokOrig);
+                  continue;
+
+            default:
+                  newRPN.push_back(tokOrig);
+                  continue;
+            }
           }
         }
 

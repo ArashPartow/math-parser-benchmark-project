@@ -5,22 +5,32 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 */
 #include "mpOprtNonCmplx.h"
 
@@ -67,13 +77,63 @@ MUP_NAMESPACE_START
   //------------------------------------------------------------------------------
   const char_type* OprtSign::GetDesc() const 
   { 
-    return _T("unit multiplicator 1e-9"); 
+    return _T("-x - negative sign operator"); 
   }
 
   //------------------------------------------------------------------------------
   IToken* OprtSign::Clone() const 
   { 
     return new OprtSign(*this); 
+  }
+
+  //------------------------------------------------------------------------------
+  //
+  //  Sign operator
+  //
+  //------------------------------------------------------------------------------
+
+  OprtSignPos::OprtSignPos()
+    :IOprtInfix( _T("+"))
+  {}
+
+  //------------------------------------------------------------------------------
+  void OprtSignPos::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int a_iArgc)  
+  { 
+    MUP_ASSERT(a_iArgc==1);
+
+    if (a_pArg[0]->IsScalar())
+    {
+      *ret = a_pArg[0]->GetFloat();
+    }
+    else if (a_pArg[0]->GetType()=='m')
+    {
+      Value v(a_pArg[0]->GetRows(), 0);
+      for (int i=0; i<a_pArg[0]->GetRows(); ++i)
+      {
+        v.At(i) = a_pArg[0]->At(i).GetFloat();
+      }
+      *ret = v;
+    }
+    else
+    {
+        ErrorContext err;
+        err.Errc = ecINVALID_TYPE;
+        err.Type1 = a_pArg[0]->GetType();
+        err.Type2 = 's';
+        throw ParserError(err);
+    }
+  }
+
+  //------------------------------------------------------------------------------
+  const char_type* OprtSignPos::GetDesc() const 
+  { 
+    return _T("+x - positive sign operator"); 
+  }
+
+  //------------------------------------------------------------------------------
+  IToken* OprtSignPos::Clone() const 
+  { 
+    return new OprtSignPos(*this); 
   }
 
 //-----------------------------------------------------------
@@ -337,22 +397,22 @@ MUP_NAMESPACE_START
     {
       switch (ib)
       {
-      case 1: *ret = a; return;
-      case 2: *ret = a*a; return;
-      case 3: *ret = a*a*a; return;
-      case 4: *ret = a*a*a*a; return;
-      case 5: *ret = a*a*a*a*a; return;
-      default: *ret = pow(a, ib); return;
+      case 1:  *ret = a; return;
+      case 2:  *ret = a*a; return;
+      case 3:  *ret = a*a*a; return;
+      case 4:  *ret = a*a*a*a; return;
+      case 5:  *ret = a*a*a*a*a; return;
+      default: *ret = std::pow(a, ib); return;
       }
     }
     else
-      *ret = pow(a, b);
+      *ret = std::pow(a, b);
   }
 
   //-----------------------------------------------------------
   const char_type* OprtPow::GetDesc() const 
   { 
-    return _T("x^y - Raises x to the power of y"); 
+    return _T("x^y - Raises x to the power of y.");
   }
 
   //-----------------------------------------------------------

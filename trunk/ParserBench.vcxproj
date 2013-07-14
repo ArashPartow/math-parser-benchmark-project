@@ -59,7 +59,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParserDLL;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\ucalc;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\MTParser\MTParserLib;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParser;$(SolutionDir)\asmjit\Asmjit-1.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;MUP_USE_OPENMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -94,12 +94,12 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParserDLL;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\ucalc;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\MTParser\MTParserLib;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParser;C:\Dokumente und Einstellungen\Ingo Berg\Eigene Dateien\Projekte\ParserBench\muParser3;$(SolutionDir)\asmjit\Asmjit-1.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_WIN32;_USE_MATH_DEFINES;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_WIN32;_USE_MATH_DEFINES;NOMINMAX;MUP_USE_OPENMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <OpenMPSupport>false</OpenMPSupport>
+      <OpenMPSupport>true</OpenMPSupport>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -114,7 +114,7 @@
       <AdditionalDependencies>$(SolutionDir)/muParserSSE/muParserSSE.lib;Advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)/ParserBench.exe</OutputFile>
       <AdditionalLibraryDirectories>"$(SolutionDir)/muParserDLL";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -158,6 +158,8 @@
     <ClCompile Include="muparser2\muParserCallback.cpp" />
     <ClCompile Include="muparser2\muParserError.cpp" />
     <ClCompile Include="muparser2\muParserTokenReader.cpp" />
+    <ClCompile Include="muparserx\mpOprtPostfixCommon.cpp" />
+    <ClCompile Include="muparserx\mpParserMessageProvider.cpp" />
     <ClCompile Include="ParserBench.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
     <ClCompile Include="fparser\fparser.cc" />
@@ -261,6 +263,9 @@
     <ClInclude Include="muparser3\muParserTest.h" />
     <ClInclude Include="muparser3\muParserToken.h" />
     <ClInclude Include="muparser3\muParserTokenReader.h" />
+    <ClInclude Include="muparserx\mpOprtPostfixCommon.h" />
+    <ClInclude Include="muparserx\mpParserMessageProvider.h" />
+    <ClInclude Include="muparserx\suStringTokens.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="muparserx\mpDefines.h" />
     <ClInclude Include="muparserx\mpError.h" />

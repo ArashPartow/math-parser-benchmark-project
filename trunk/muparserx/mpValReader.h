@@ -8,22 +8,32 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
   </pre>
 */
 #ifndef MU_PARSER_IMPL_READER_H
@@ -37,7 +47,7 @@ MUP_NAMESPACE_START
 
   //------------------------------------------------------------------------------
   //
-  //  Reader for double values
+  //  Reader for floating point values
   //
   //------------------------------------------------------------------------------
 
@@ -49,8 +59,8 @@ MUP_NAMESPACE_START
   public:    
       DblValReader();
       virtual ~DblValReader();
-      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal);
-      virtual IValueReader* Clone(TokenReader *pTokenReader) const;
+      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal) override;
+      virtual IValueReader* Clone(TokenReader *pTokenReader) const override;
   };
 
   //------------------------------------------------------------------------------
@@ -67,8 +77,8 @@ MUP_NAMESPACE_START
   public:    
       BoolValReader();
       virtual ~BoolValReader();
-      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal);
-      virtual IValueReader* Clone(TokenReader *pTokenReader) const;
+      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal) override;
+      virtual IValueReader* Clone(TokenReader *pTokenReader) const override;
   };
 
   //------------------------------------------------------------------------------
@@ -84,8 +94,8 @@ MUP_NAMESPACE_START
   {
   public:    
       HexValReader();
-      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal);
-      virtual IValueReader* Clone(TokenReader *pTokenReader) const;
+      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal) override;
+      virtual IValueReader* Clone(TokenReader *pTokenReader) const override;
   };
 
   //------------------------------------------------------------------------------
@@ -102,8 +112,8 @@ MUP_NAMESPACE_START
   public:    
       BinValReader();
       virtual ~BinValReader();
-      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal);
-      virtual IValueReader* Clone(TokenReader *pTokenReader) const;
+      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal) override;
+      virtual IValueReader* Clone(TokenReader *pTokenReader) const override;
   };
 
   //------------------------------------------------------------------------------
@@ -120,8 +130,11 @@ MUP_NAMESPACE_START
   public:    
       StrValReader();
       virtual ~StrValReader();
-      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal);
-      virtual IValueReader* Clone(TokenReader *pTokenReader) const;
+      virtual bool IsValue(const char_type *a_szExpr, int &a_iPos, Value &a_fVal) override;
+      virtual IValueReader* Clone(TokenReader *pTokenReader) const override;
+
+  private:
+      string_type Unescape(const char_type *szExpr, int &len);
   };
 
 MUP_NAMESPACE_END

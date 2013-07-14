@@ -162,7 +162,7 @@ namespace mu
 
 #if defined(MUP_MATH_EXCEPTIONS)
         if (y==0)
-          throw ParserError(ecDIV_BY_ZERO);
+          throw ParserError(ecDIV_BY_ZERO, _T("0"));
 #endif
 
         x = x / y;   

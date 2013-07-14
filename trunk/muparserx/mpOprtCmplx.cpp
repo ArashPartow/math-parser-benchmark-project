@@ -5,45 +5,55 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 */
 #include "mpOprtCmplx.h"
 #include <iomanip>
-
+#include <limits>
 
 MUP_NAMESPACE_START
 
-//------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 //
 //  class  OprtSignCmplx
 //
-//------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 
   OprtSignCmplx::OprtSignCmplx()
     :IOprtInfix( _T("-"))
   {}
 
-  //------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void OprtSignCmplx::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int a_iArgc)  
   { 
     MUP_ASSERT(a_iArgc==1);
 
-    if (a_pArg[0]->IsScalar())
+    if (a_pArg[0]->IsScalar() )
     {
       float_type re = a_pArg[0]->GetFloat();
       float_type im = a_pArg[0]->GetImag();
@@ -62,7 +72,7 @@ MUP_NAMESPACE_START
       Value v(a_pArg[0]->GetRows(), 0);
       for (int i=0; i<a_pArg[0]->GetRows(); ++i)
       {
-        v.At(i) = a_pArg[0]->At(i).GetComplex() * -1.0;
+        v.At(i) = a_pArg[0]->At(i).GetComplex() * (float_type)-1.0;
       }
       *ret = v;
     }
@@ -76,29 +86,29 @@ MUP_NAMESPACE_START
     }
   }
 
-  //------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   const char_type* OprtSignCmplx::GetDesc() const 
   { 
-    return _T("unit multiplicator 1e-9"); 
+    return _T("negative sign operator"); 
   }
 
-  //------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   IToken* OprtSignCmplx::Clone() const 
   { 
     return new OprtSignCmplx(*this); 
   }
 
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 //
 // class OprtAddCmplx
 //
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 
   OprtAddCmplx::OprtAddCmplx() 
     :IOprtBin(_T("+"), (int)prADD_SUB, oaLEFT) 
   {}
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void OprtAddCmplx::Eval(ptr_val_type& ret, const ptr_val_type *a_pArg, int num)
   { 
     assert(num==2);
@@ -128,29 +138,29 @@ MUP_NAMESPACE_START
     }
   }
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   const char_type* OprtAddCmplx::GetDesc() const 
   { 
     return _T("addition"); 
   }
   
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   IToken* OprtAddCmplx::Clone() const
   { 
     return new OprtAddCmplx(*this); 
   }
 
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 //
 // class OprtSubCmplx
 //
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 
   OprtSubCmplx::OprtSubCmplx() 
     :IOprtBin(_T("-"), (int)prADD_SUB, oaLEFT) 
   {}
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void OprtSubCmplx::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int num)
   { 
     assert(num==2);
@@ -179,29 +189,29 @@ MUP_NAMESPACE_START
     }
   }
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   const char_type* OprtSubCmplx::GetDesc() const 
   { 
     return _T("subtraction"); 
   }
   
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   IToken* OprtSubCmplx::Clone() const
   { 
     return new OprtSubCmplx(*this); 
   }
 
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 //
 // class OprtMulCmplx
 //
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
     
   OprtMulCmplx::OprtMulCmplx() 
     :IOprtBin(_T("*"), (int)prMUL_DIV, oaLEFT) 
   {}
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void OprtMulCmplx::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int num)
   { 
     assert(num==2);
@@ -210,30 +220,30 @@ MUP_NAMESPACE_START
    *ret = (*arg1) * (*arg2);
   }
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   const char_type* OprtMulCmplx::GetDesc() const 
   { 
     return _T("foo*bar - multiplication"); 
   }
   
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   IToken* OprtMulCmplx::Clone() const
   { 
     return new OprtMulCmplx(*this); 
   }
 
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 //
 // class OprtDivCmplx
 //
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 
 
   OprtDivCmplx::OprtDivCmplx() 
     :IOprtBin(_T("/"), (int)prMUL_DIV, oaLEFT) 
   {}
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   /** \brief Implements the Division operator. 
       \throw ParserError in case one of the arguments if 
              nonnumeric or an array.
@@ -259,48 +269,61 @@ MUP_NAMESPACE_START
     }
   }
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   const char_type* OprtDivCmplx::GetDesc() const 
   { 
     return _T("division"); 
   }
   
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   IToken* OprtDivCmplx::Clone() const
   { 
     return new OprtDivCmplx(*this); 
   }
 
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 //
 // class OprtPowCmplx
 //
-//-----------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 
   OprtPowCmplx::OprtPowCmplx() 
     :IOprtBin(_T("^"), (int)prPOW, oaRIGHT) 
   {}
                                                                         
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void OprtPowCmplx::Eval(ptr_val_type& ret, const ptr_val_type *arg, int argc)
   {
     assert(argc==2);
-    // Its necessary to branch here since the exp/log expression will
-    // introduce very small imaginary parts into expressions using 
-    // only real values.
-    if (arg[1]->IsComplex() && arg[1]->IsComplex())
-      *ret = exp(arg[1]->GetComplex() * log(arg[0]->GetComplex()));
+
+    // Problem: -2^3   will introduce small imaginary parts due to computational errors.
+    //			-1^0.5 will introduce small real parts due to computational errors.
+    //
+    // Fix: If roots of negative values are calculated (exponents are non integer) or complex numbers 
+    //      are involved the complex version of pow is used. The float version is used otherwise.
+    if (arg[0]->IsComplex() || arg[1]->IsComplex() || (arg[0]->GetFloat()<0 && !arg[1]->IsInteger()) )
+    {
+      cmplx_type res = std::pow(arg[0]->GetComplex(), arg[1]->GetComplex());
+
+      // remove obviousely bogus real/imaginary parts from the result
+      if (std::abs(res.imag()) < std::numeric_limits<mup::float_type>::epsilon())
+        res = res.real();
+      else if (std::abs(res.real()) < std::numeric_limits<mup::float_type>::epsilon())
+        res = cmplx_type(0, res.imag());
+
+      *ret = res;
+    }
     else
       *ret = std::pow(arg[0]->GetFloat(), arg[1]->GetFloat());
   }
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   const char_type* OprtPowCmplx::GetDesc() const 
   { 
     return _T("raise x to the power of y"); 
   }
 
-  //-----------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   IToken* OprtPowCmplx::Clone() const            
   { 
     return new OprtPowCmplx(*this); 
