@@ -72,13 +72,12 @@ void output(FILE *pFile, const char *fmt, ...)
   va_end (args);
 }
 
-void Shootout(std::vector<Benchmark*> vBenchmarks,
+void Shootout(const std::string &sCaption,
+              std::vector<Benchmark*> vBenchmarks,
               std::vector<std::string> vExpr,
               int iCount,
               double fRefDev = 0.0001)
 {
-   printf("\nBenchmark (Shootout Mode)\n");
-
    char outstr[400], file[400];
    time_t t = time(NULL);
 
@@ -88,7 +87,9 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
    FILE *pRes = fopen(file, "w");
    assert(pRes);
 
-    Benchmark *pRefBench = vBenchmarks[0];
+   output(pRes, "Benchmark (Shootout for file \"%s\")\n", sCaption.c_str());
+
+   Benchmark *pRefBench = vBenchmarks[0];
 
    std::map<double, std::vector<Benchmark*>> results;
    for (std::size_t i = 0; i < vExpr.size(); ++i)
@@ -96,7 +97,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
       std::size_t failure_count = 0;
       const std::string current_expr = vExpr[i];
 
-      output(pRes, "\nExpression %d of %d: \"%s\"\n",
+      output(pRes, "\nExpression %d of %d: \"%s\"; Progress: ",
             (int)i+1,
             vExpr.size(),
             vExpr[i].c_str());
@@ -107,6 +108,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
 
       for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
       {
+         output(pRes, ".");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one 
          Benchmark *pBench = vBenchmarks[j];
 
          std::string sExpr = vExpr[i];   // get the original expression anew for each parser
@@ -132,6 +134,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
 
          results[time].push_back(pBench);
       }
+      output(pRes, "\n");
 
       int ct = 1;
       for (auto it = results.begin(); it != results.end(); ++it)
@@ -148,22 +151,16 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
-            fprintf(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
+            output(pRes, "    %-20s (%8.5f us, %26.18f, %26.18f)\n",
                     pBench->GetShortName().c_str(),
                     it->first,
                     pBench->GetRes(),
                     pBench->GetSum());
-            fflush(pRes);
-
-            printf("    %-15s (%8.5f us, %26.18f, %26.18f)\n",
-                   pBench->GetShortName().c_str(),
-                   it->first,
-                   pBench->GetRes(),
-                   pBench->GetSum());
          }
 
          ct += vBench.size();
       }
+
 
       if (failure_count)
       {
@@ -182,30 +179,18 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
                pBench->AddPoints(0);
                pBench->AddScore(0);
 
-               fprintf(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
-
+               output(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
                        pBench->GetShortName().c_str(),
                        it->first,
                        (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
                        (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
-               fflush(pRes);
-
-               printf("    %-15s (%8.5f us, %26.18f, %26.18f)\n",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
-                      (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
             }
          }
       }
 
       if (failure_count > 2)
       {
-         fprintf(pRes, "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
-                failure_count);
-         fflush(pRes);
-
-         printf(       "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
+         output(pRes, "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
                 failure_count);
       }
 
@@ -213,6 +198,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
    }
 
    output(pRes, "\n\nBenchmark settings:\n");
+   output(pRes, "  - Expressions File is \"%s\"\n", sCaption.c_str());
    output(pRes, "  - Reference parser is %s\n", pRefBench->GetShortName().c_str());
    output(pRes, "  - Iterations per expression: %d\n", iCount);
 
@@ -252,7 +238,7 @@ void Shootout(std::vector<Benchmark*> vBenchmarks,
       Benchmark* pBench = order_list[i].second;
       bHasFailures |= (pBench->GetFails().size() > 0);
 
-      output(pRes,  "  %02d  %-15s (%-10s): %5d %5.0lf %3d\n",
+      output(pRes,  "  %02d  %-20s (%-10s): %5d %5.0lf %3d\n",
              i,
              pBench->GetShortName().c_str(),
              pBench->GetBaseType().c_str(),
@@ -301,7 +287,7 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_expr.txt";
-   std::string benchmark_file = "bench_expr_all.txt";
+   std::string benchmark_file = "bench_expr_weird.txt"; //"bench_expr_all.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
    //std::string benchmark_file = "bench_expr_random.txt";
    //std::string benchmark_file = "bench_precedence.txt";
@@ -334,18 +320,10 @@ int main(int argc, const char *argv[])
    // Important: The first parser in the list becomes the reference parser.
    //            Engines producing deviating results are disqualified so make
    //            sure the reference parser is computing properly.
-   //
-   // Most reliable engines so far: muparser2 and exprtk
-   //
-   // The overall guiding principle is that the reference parser should be in
-   // a stable development state so as to make sure its performance stays the
-   // same. This will allow for the comparison of future results against existing
-   // ones.
-   //
-
-   vBenchmarks.push_back(new BenchExprTk());
-   vBenchmarks.push_back(new BenchMuParser2());
-   vBenchmarks.push_back(new BenchMTParser());
+   vBenchmarks.push_back(new BenchExprTk());            // <- Note: first parser becomes the reference!
+   vBenchmarks.push_back(new BenchMuParser2(false));    
+   vBenchmarks.push_back(new BenchMuParser2(true));     
+//   vBenchmarks.push_back(new BenchMTParser());      // <- Crash for expression "1"
    vBenchmarks.push_back(new BenchFParser());
    vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
@@ -355,7 +333,7 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchMuParserSSE());
    vBenchmarks.push_back(new BenchExprTkFloat());
 
-   Shootout(vBenchmarks, vExpr, iCount);
+   Shootout(benchmark_file, vBenchmarks, vExpr, iCount);
    //DoBenchmark(vBenchmarks, vExpr, iCount);
 
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)

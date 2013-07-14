@@ -54,10 +54,14 @@ a/b/c
 
 #
 a+-b
-a+-+b
--a+-+b
-+a*+b
-+a/+b
+# <ibg 20130714> commented: 
+# There is no consensus regarding this syntax. We should not include
+# expressions syntax that is only supported by a single parser.
+#a+-+b
+#-a+-+b
+#+a*+b
+#+a/+b
+# </ibg>
 a^2+1
 1.1+a^2
 b^2*2
@@ -213,3 +217,10 @@ sin((1.1+2.2/2.2*3.3)*4.4^5.5)+cos(6.6*pi)
 ((2.2/3.3)*((3.3/4.4)*((4.4/5.5)*((5.5/6.6)*(((((123.456*654.321)+(9.9/10.10))+(8.8/9.9))+(7.7/8.8))+(6.6/8.8))))))
 (1.1*(2.2*(3.3*(4.4+(5.5+(6.6+(7.7*(8.8*(9.9*(10.10*(123.456+654.321)))))))))))
 (((((((((((123.456-654.321)*1.1)*2.2)*3.3)+4.4)+5.5)+6.6)*7.7)*8.8)+9.9)+10.10)
+
+# conditional expressions
+# step function
+#if(x<0, -10, 10)
+#if(((y + 5) <= 9),1 + w, 2 / z)
+# short cut evaluation?
+#if(x<0, (((((((7*a+6)*a+5)*a+4)*a+3)*a+2)*a+1)*a+ 0.1), sqrt(1 - sin(2.2 * a) + cos(pi / b) / 3.3))

@@ -8,22 +8,32 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 </pre>
 */
 #include "mpFuncMatrix.h"
@@ -58,37 +68,22 @@ MUP_NAMESPACE_START
   //-----------------------------------------------------------------------
   void FunMatrixOnes::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int argc)
   {
-    switch(argc)
+    if (argc<0 || argc>2)
     {
-    case 1: // Return a vector
-            {
-              int m = a_pArg[0]->GetInteger();
-              if (m==1)
-                *ret = 1.0;
-              else
-                *ret = matrix_type(a_pArg[0]->GetInteger(), 1, 1.0);
-            }
-            break;
-
-    case 2: // Return a matrix
-            {
-              int m = a_pArg[0]->GetInteger(),
-                  n = a_pArg[1]->GetInteger();
-
-              if (m==n && m==1)
-                *ret = 1.0;
-              else
-                *ret = matrix_type(a_pArg[0]->GetInteger(), a_pArg[1]->GetInteger(), 1.0);
-            }
-            break;
-    
-    default:
-            ErrorContext err;
-            err.Errc = ecINVALID_NUMBER_OF_PARAMETERS;
-            err.Arg = 2;
-            err.Ident = GetIdent();
-            throw ParserError(err);
+      ErrorContext err;
+      err.Errc = ecINVALID_NUMBER_OF_PARAMETERS;
+      err.Arg = argc;
+      err.Ident = GetIdent();
+      throw ParserError(err);
     }
+
+    int m = a_pArg[0]->GetInteger(),
+        n = (argc==1) ? m  : a_pArg[1]->GetInteger();
+
+    if (m==n && n==1)
+      *ret = 1; // unboxing of 1x1 matrices
+    else
+      *ret = matrix_type(m,n,1);
   }
 
   //-----------------------------------------------------------------------
@@ -103,4 +98,146 @@ MUP_NAMESPACE_START
     return new FunMatrixOnes(*this);
   }
 
+
+  //-----------------------------------------------------------------------
+  //
+  //  class FunMatrixZeros
+  //
+  //-----------------------------------------------------------------------
+
+  FunMatrixZeros::FunMatrixZeros(IPackage *package)
+    :ICallback(cmFUNC, _T("zeros"), -1, package)
+  {}
+
+  //-----------------------------------------------------------------------
+  FunMatrixZeros::~FunMatrixZeros()
+  {}
+
+  //-----------------------------------------------------------------------
+  void FunMatrixZeros::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int argc)
+  {
+    if (argc<0 || argc>2)
+    {
+      ErrorContext err;
+      err.Errc = ecINVALID_NUMBER_OF_PARAMETERS;
+      err.Arg = argc;
+      err.Ident = GetIdent();
+      throw ParserError(err);
+    }
+
+    int m = a_pArg[0]->GetInteger(),
+        n = (argc==1) ? m  : a_pArg[1]->GetInteger();
+
+    if (m==n && n==1)
+      *ret = 0;  // unboxing of 1x1 matrices
+    else
+      *ret = matrix_type(m,n,0);
+  }
+
+  //-----------------------------------------------------------------------
+  const char_type* FunMatrixZeros::GetDesc() const
+  {
+    return _T("zeros(x [, y]) - Returns a matrix whose elements are all 0.");
+  }
+
+  //-----------------------------------------------------------------------
+  IToken* FunMatrixZeros::Clone() const
+  {
+    return new FunMatrixZeros(*this);
+  }
+
+  //-----------------------------------------------------------------------
+  //
+  //  class FunMatrixEye
+  //
+  //-----------------------------------------------------------------------
+
+  FunMatrixEye::FunMatrixEye(IPackage *package)
+    :ICallback(cmFUNC, _T("eye"), -1, package)
+  {}
+
+  //-----------------------------------------------------------------------
+  FunMatrixEye::~FunMatrixEye()
+  {}
+
+  //-----------------------------------------------------------------------
+  void FunMatrixEye::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int argc)
+  {
+    if (argc<0 || argc>2)
+    {
+      ErrorContext err;
+      err.Errc = ecINVALID_NUMBER_OF_PARAMETERS;
+      err.Arg = argc;
+      err.Ident = GetIdent();
+      throw ParserError(err);
+    }
+
+    int m = a_pArg[0]->GetInteger(),
+        n = (argc==1) ? m  : a_pArg[1]->GetInteger();
+
+    matrix_type eye(m, n, 0);
+
+    for (int i=0; i<std::min(m,n); ++i)
+    {
+      eye.At(i,i) = 1;
+    }
+
+    *ret = eye;
+  }
+
+  //-----------------------------------------------------------------------
+  const char_type* FunMatrixEye::GetDesc() const
+  {
+    return _T("eye(x, y) - returns a matrix with ones on its diagonal and zeros elsewhere.");
+  }
+
+  //-----------------------------------------------------------------------
+  IToken* FunMatrixEye::Clone() const
+  {
+    return new FunMatrixEye(*this);
+  }
+
+  //-----------------------------------------------------------------------
+  //
+  //  class FunMatrixSize
+  //
+  //-----------------------------------------------------------------------
+
+  FunMatrixSize::FunMatrixSize(IPackage *package)
+    :ICallback(cmFUNC, _T("size"), -1, package)
+  {}
+
+  //-----------------------------------------------------------------------
+  FunMatrixSize::~FunMatrixSize()
+  {}
+
+  //-----------------------------------------------------------------------
+  void FunMatrixSize::Eval(ptr_val_type &ret, const ptr_val_type *a_pArg, int argc)
+  {
+    if (argc!=1)
+    {
+      ErrorContext err;
+      err.Errc = ecINVALID_NUMBER_OF_PARAMETERS;
+      err.Arg = argc;
+      err.Ident = GetIdent();
+      throw ParserError(err);
+    }
+
+    matrix_type sz(1, 2, 0);
+    sz.At(0,0) = a_pArg[0]->GetRows();
+    sz.At(0,1) = a_pArg[0]->GetCols();
+    *ret = sz;
+  }
+
+  //-----------------------------------------------------------------------
+  const char_type* FunMatrixSize::GetDesc() const
+  {
+    return _T("size(x) - returns the matrix dimensions.");
+  }
+
+  //-----------------------------------------------------------------------
+  IToken* FunMatrixSize::Clone() const
+  {
+    return new FunMatrixSize(*this);
+  }
 MUP_NAMESPACE_END

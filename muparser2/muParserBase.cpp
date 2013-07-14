@@ -579,8 +579,8 @@ namespace mu
 
     CheckName(a_strName, ValidNameChars());
     
-    m_vStringVarBuf.push_back(a_strVal);           // Store variable string in internal buffer
-    m_StrVarDef[a_strName] = m_vStringBuf.size();  // bind buffer index to variable name
+    m_vStringVarBuf.push_back(a_strVal);                // Store variable string in internal buffer
+    m_StrVarDef[a_strName] = m_vStringVarBuf.size()-1;  // bind buffer index to variable name
 
     ReInit();
   }
@@ -1420,9 +1420,17 @@ namespace mu
   */
   value_type ParserBase::ParseString() const
   {
-    CreateRPN();
-    m_pParseFormula = &ParserBase::ParseCmdCode;
-    return (this->*m_pParseFormula)(); 
+    try
+    {
+      CreateRPN();
+      m_pParseFormula = &ParserBase::ParseCmdCode;
+      return (this->*m_pParseFormula)(); 
+    }
+    catch(ParserError &exc)
+    {
+      exc.SetFormula(m_pTokenReader->GetExpr());
+      throw;
+    }
   }
 
   //---------------------------------------------------------------------------

@@ -8,22 +8,32 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
   </pre>
 */
 #include "mpValReader.h"
@@ -51,22 +61,26 @@ MUP_NAMESPACE_START
   {
     stringstream_type stream(a_szExpr + a_iPos);
     float_type fVal(0);
-    std::streamoff iStart(0), iEnd(0);
+    std::streamoff iEnd(0);
 
-    iStart = stream.tellg(); // Record position before reading
     stream >> fVal;
 
-	// todo: check against GCC 4.6 implement using stream.fail(), remove space
-	//		 that is always inserted at the end of an expression
-	// if(stream.fail())
-    //   return false;
-
-    iEnd = stream.tellg();   // Position after reading
-
-    if (iEnd==-1)
+    if (stream.fail())
       return false;
 
-    a_iPos += (int)iEnd;
+    if (stream.eof())
+    {
+        // This part sucks but tellg will return -1 if eof is set,
+        // so i need a special treatment for the case that the number
+        // just read here is the last part of the string
+        for (; a_szExpr[a_iPos]!=0; ++a_iPos);
+    }
+    else
+    {
+        iEnd = stream.tellg();   // Position after reading
+        assert(iEnd>0);
+        a_iPos += (int)iEnd;
+    }
     
     // Finally i have to check if the next sign is the "i" for a imaginary unit
     // if so this is an imaginary value
@@ -166,14 +180,25 @@ MUP_NAMESPACE_START
     stringstream_type::pos_type nPos(0);
     stringstream_type ss(a_szExpr + a_iPos + 2);
     ss >> std::hex >> iVal;
-    nPos = ss.tellg();
 
-    if (nPos==(stringstream_type::pos_type)0)
-      return 1;
+    if (ss.fail())
+        return false;
 
-    a_iPos += (int)(2 + nPos);
+    if (ss.eof())
+    {
+        // This part sucks but tellg will return -1 if eof is set,
+        // so i need a special treatment for those cases.
+        for (; a_szExpr[a_iPos]!=0; ++a_iPos);
+    }
+    else
+    {
+        nPos = ss.tellg();
+        assert(nPos>0);
+        a_iPos += (int)(2 + nPos);
+    }
+
     a_val = (int)iVal;
-    return 1;
+    return true;
   }
 
   //------------------------------------------------------------------------------
@@ -246,31 +271,65 @@ MUP_NAMESPACE_START
   {}
 
   //------------------------------------------------------------------------------
+  string_type StrValReader::Unescape(const char_type *szExpr, int &nPos)
+  {
+    string_type out;
+    bool bEscape = false;
+
+    for (char_type c = szExpr[nPos]; c!=0; c = szExpr[++nPos])
+    {
+      switch(c)
+      {
+      case '\\':
+        if (!bEscape)
+        {
+          bEscape = true;
+          break;
+        }
+        // fall throught!
+
+      case '"':
+        if (!bEscape)
+        {
+          ++nPos;
+          return out;
+        }
+        // fall through!
+
+      default:
+        if (bEscape)
+        {
+          switch(c)
+          {
+          case 'n':  out += '\n'; break;
+          case 'r':  out += '\r'; break;
+          case 't':  out += '\t'; break;
+          case '"':  out += '\"'; break;
+          case '\\': out += '\\'; break;
+          default:
+                throw ParserError( ErrorContext(ecUNKNOWN_ESCAPE_SEQUENCE, nPos) );
+          }
+
+          bEscape = false;
+        }
+        else
+        {
+          out += c; 
+        }
+      }
+    }
+
+    throw ParserError( ErrorContext(ecUNTERMINATED_STRING, nPos) );
+  }
+
+  //------------------------------------------------------------------------------
   bool StrValReader::IsValue(const char_type *a_pszExpr, int &a_iPos, Value &a_Val)
   {
     const char_type *szExpr = a_pszExpr + a_iPos;
-
-    
     if (szExpr[0]!='"') 
       return false;
 
-    string_type sBuf(&szExpr[1]);
-    std::size_t iEnd(0), iSkip(0);
-
-    // parser over escaped '\"' end replace them with '"'
-    for(iEnd=sBuf.find(_T("\"")); iEnd!=string_type::npos; iEnd=sBuf.find(_T("\""), iEnd))
-    {
-      if (sBuf[iEnd-1]!='\\') break;
-      sBuf.replace(iEnd-1, 2, _T("\""));
-      iSkip++;
-    }
-
-    if (iEnd==string_type::npos)
-      throw ParserError( ErrorContext(ecUNTERMINATED_STRING, a_iPos) );
-
-    string_type sTok(sBuf.begin(), sBuf.begin()+iEnd);
-    a_Val = sTok;
-    a_iPos += (int)(sTok.length() + 2 + iSkip);  // +2 wg Anführungszeichen; +iSkip für entfernte escape zeichen
+    a_Val = Unescape(a_pszExpr, ++a_iPos);
     return true;
   }
 

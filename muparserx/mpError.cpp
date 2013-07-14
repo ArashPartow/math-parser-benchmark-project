@@ -5,41 +5,71 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 */
 #include "mpError.h"
 #include "mpIToken.h"
+#include "mpParserMessageProvider.h"
 
 
 MUP_NAMESPACE_START
 
-  const ParserErrorMsg ParserErrorMsg::m_Instance;
+  std::unique_ptr<ParserMessageProviderBase> ParserErrorMsg::m_pInstance;
 
   //------------------------------------------------------------------------------
-  const ParserErrorMsg& ParserErrorMsg::Instance()
+  const ParserMessageProviderBase& ParserErrorMsg::Instance()
   {
-    return m_Instance;
+    if (!m_pInstance.get())
+    {
+      m_pInstance.reset(new ParserMessageProviderEnglish);
+      m_pInstance->Init();
+    }
+
+    return *m_pInstance;
   }
 
   //------------------------------------------------------------------------------
-  string_type ParserErrorMsg::operator[](unsigned a_iIdx) const
+  void ParserErrorMsg::Reset(ParserMessageProviderBase *pProvider)
   {
-    return (a_iIdx<m_vErrMsg.size()) ? m_vErrMsg[a_iIdx] : string_type();
+    if (pProvider!=nullptr)
+    {
+      m_pInstance.reset(pProvider);
+      m_pInstance->Init();
+    }
+  }
+
+  //------------------------------------------------------------------------------
+  string_type ParserErrorMsg::GetErrorMsg(EErrorCodes eError) const
+  {
+    if (!m_pInstance.get())
+      return string_type();
+    else
+      return m_pInstance->GetErrorMsg(eError);
   }
 
 
@@ -48,78 +78,8 @@ MUP_NAMESPACE_START
   {}
 
   //---------------------------------------------------------------------------
-  /** \brief Assignement operator is deactivated.
-  */
-  ParserErrorMsg& ParserErrorMsg::operator=(const ParserErrorMsg& )
-  {
-    assert(false);
-    return *this;
-  }
-
-  //---------------------------------------------------------------------------
-  ParserErrorMsg::ParserErrorMsg(const ParserErrorMsg&)
-  {}
-
-  //---------------------------------------------------------------------------
   ParserErrorMsg::ParserErrorMsg()
-    :m_vErrMsg(0)
-  {
-    m_vErrMsg.resize(ecCOUNT);
-
-    m_vErrMsg[ecUNASSIGNABLE_TOKEN]      = _T("Undefined token \"$IDENT$\" found at position $POS$");
-    m_vErrMsg[ecINTERNAL_ERROR]          = _T("Internal error");
-    m_vErrMsg[ecINVALID_NAME]            = _T("Invalid function-, variable- or constant name");
-    m_vErrMsg[ecINVALID_FUN_PTR]         = _T("Invalid pointer to callback function");
-    m_vErrMsg[ecINVALID_VAR_PTR]         = _T("Invalid pointer to variable");
-    m_vErrMsg[ecUNEXPECTED_OPERATOR]     = _T("Unexpected operator \"$IDENT$\" found at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_EOF]          = _T("Unexpected end of expression at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_COMMA]        = _T("Unexpected comma at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_PARENS  ]     = _T("Unexpected parenthesis \"$IDENT$\" at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_FUN]          = _T("Unexpected function \"$IDENT$\" at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_VAL]          = _T("Unexpected value \"$IDENT$\" found at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_VAR]          = _T("Unexpected variable \"$IDENT$\" found at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_STR]          = _T("Unexpected string token found at position $POS$");
-    m_vErrMsg[ecUNEXPECTED_CONDITIONAL]  = _T("The \"$IDENT$\" operator must be preceeded by a closing bracket");
-    m_vErrMsg[ecUNEXPECTED_NEWLINE]      = _T("Unexprected newline");
-    m_vErrMsg[ecMISSING_PARENS]          = _T("Missing parenthesis");
-    m_vErrMsg[ecMISSING_ELSE_CLAUSE]     = _T("If-then-else operator is missing an else clause");
-    m_vErrMsg[ecMISPLACED_COLON]         = _T("Misplaced colon at position $POS$");
-    m_vErrMsg[ecTOO_MANY_PARAMS]         = _T("Too many parameters for function \"$IDENT$\"");
-    m_vErrMsg[ecTOO_FEW_PARAMS]          = _T("Too few parameters for function \"$IDENT$\"");
-    m_vErrMsg[ecDIV_BY_ZERO]             = _T("Divide by zero");
-    m_vErrMsg[ecDOMAIN_ERROR]            = _T("Domain error");
-    m_vErrMsg[ecNAME_CONFLICT]           = _T("Name conflict");
-    m_vErrMsg[ecOPT_PRI]                 = _T("Invalid value for operator priority (must be greater or equal to zero)");
-    m_vErrMsg[ecBUILTIN_OVERLOAD]        = _T("Binary operator identifier conflicts with a built in operator");
-    m_vErrMsg[ecUNTERMINATED_STRING]     = _T("Unterminated string starting at position $POS$");
-    m_vErrMsg[ecSTRING_EXPECTED]         = _T("String function called with a non string type of argument");
-    m_vErrMsg[ecVAL_EXPECTED]            = _T("Numerical function called with a non value type of argument");
-    m_vErrMsg[ecTYPE_CONFLICT]           = _T("Value \"$IDENT$\" is of type '$TYPE1$'. There is no implicit conversion to type '$TYPE2$'");
-    m_vErrMsg[ecTYPE_CONFLICT_FUN]       = _T("Argument $ARG$ of function/operator \"$IDENT$\" is of type '$TYPE1$' whereas type '$TYPE2$' was expected");
-    m_vErrMsg[ecTYPE_CONFLICT_IDX]       = _T("Index to \"$IDENT$\" must be a positive integer value. '$TYPE1$' is not an acceptable type.");
-    m_vErrMsg[ecGENERIC]                 = _T("Parser error");
-    m_vErrMsg[ecINVALID_TYPE]            = _T("Invalid argument type");
-    m_vErrMsg[ecINVALID_TYPECAST]        = _T("Value type conversion from type '$TYPE1$' to '$TYPE2$' is not supported!");
-    m_vErrMsg[ecARRAY_SIZE_MISMATCH]     = _T("Array size mismatch");
-    m_vErrMsg[ecNOT_AN_ARRAY]            = _T("Using the index operator on the scalar variable \"$IDENT$\" is not allowed");
-    m_vErrMsg[ecUNEXPECTED_SQR_BRACKET]  = _T("Unexpected \"]\"");
-    m_vErrMsg[ecAPI_INVALID_PROTOTYPE]   = _T("Invalid prototype (use something like: \"f:fff\")");
-    m_vErrMsg[ecAPI_NOT_AN_ARRAY]        = _T("Not an array");
-    m_vErrMsg[ecAPI_INVALID_DIMENSION]   = _T("Invalid matrix dimensions");
-    m_vErrMsg[ecINDEX_OUT_OF_BOUNDS]     = _T("Index to variable \"$IDENT$\" is out of bounds");
-    m_vErrMsg[ecINDEX_DIMENSION]         = _T("Index operator dimension error");
-    m_vErrMsg[ecMISSING_SQR_BRACKET]     = _T("Missing \"]\"");
-    m_vErrMsg[ecASSIGNEMENT_TO_VALUE]    = _T("Assignment operator \"$IDENT$\" can't be used in this context");
-    m_vErrMsg[ecEVAL]                    = _T("Can't evaluate function/operator \"$IDENT$\": $HINT$");
-    m_vErrMsg[ecINVALID_PARAMETER]       = _T("Parameter $ARG$ of function \"$IDENT$\" is invalid");
-    m_vErrMsg[ecINVALID_NUMBER_OF_PARAMETERS] = _T("Invalid number of function arguments");
-
-    #if defined(_DEBUG)
-      for (int i=0; i<ecCOUNT; ++i)
-        if (!m_vErrMsg[i].length())
-          assert(false);
-    #endif
-  }
+  {}
 
   //---------------------------------------------------------------------------
   //
@@ -183,7 +143,7 @@ MUP_NAMESPACE_START
     ,m_sMsg()
     ,m_ErrMsg(ParserErrorMsg::Instance())
   {
-    m_sMsg = m_ErrMsg[a_Err.Errc];
+    m_sMsg = m_ErrMsg.GetErrorMsg(a_Err.Errc);
   }
 
   //------------------------------------------------------------------------------

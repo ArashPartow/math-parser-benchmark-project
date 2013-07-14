@@ -288,6 +288,12 @@
     <ClCompile Include="libcpuid\recog_intel.c">
       <Filter>Quelldateien\libcpuid</Filter>
     </ClCompile>
+    <ClCompile Include="muparserx\mpOprtPostfixCommon.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
+    <ClCompile Include="muparserx\mpParserMessageProvider.cpp">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BenchATMSP.h">
@@ -679,6 +685,15 @@
     </ClInclude>
     <ClInclude Include="libcpuid\recog_intel.h">
       <Filter>Quelldateien\libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpOprtPostfixCommon.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\mpParserMessageProvider.h">
+      <Filter>Quelldateien\muparserx</Filter>
+    </ClInclude>
+    <ClInclude Include="muparserx\suStringTokens.h">
+      <Filter>Quelldateien\muparserx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -153,22 +153,10 @@ MUP_NAMESPACE_START
       int TestOptimizer()
       {
         int iStat = 0;
-        double b=2;
-
         _OUT << _SL("testing optimizer...");
     
         // Test substitution of consequtive binary operators:
         iStat += EqnTest(_SL("b*(a-b/a)"), -2, true);
-
-        // optimizing addition 1+a+1      == 2+a
-        // Problematic cases:  sin(1+a)+9 != sin(10+a)
-        iStat += EqnTest(_SL("max(a+11,9)+200"), 212, true);
-        iStat += EqnTest(_SL("max(sin(a+11), 9)+200"), 209, true);
-        iStat += EqnTest(_SL("(a+10)+200"), 211, true);
-        iStat += EqnTest(_SL("2*(a+10)+200"), 222, true);
-        iStat += EqnTest(_SL("(b+1)*(b+2)"), 12, true);
-        iStat += EqnTest(_SL("(a+2)*b+1.1"), 7.1, true);
-        iStat += EqnTest(_SL("cos(7/b)+6+5"), cos(7/b)+6+5, true);
 
         if (iStat==0)
           _OUT << _SL("passed") << endl;
@@ -638,7 +626,6 @@ MUP_NAMESPACE_START
         iStat += EqnTest( _SL("(e^(ln(7)))"), 7, true);
         iStat += EqnTest( _SL("1-(e^(ln(7)))"), -6, true);
         iStat += EqnTest( _SL("2*(e^(ln(7)))"), 14, true);
-        iStat += EqnTest( _SL("10^log(5)"), std::pow(10.0, std::log(5.0)), true);
         iStat += EqnTest( _SL("10^log10(5)"), 5, true);
         iStat += EqnTest( _SL("2^log2(4)"), 4, true);
         iStat += EqnTest( _SL("-(sin(0)+1)"), -1, true);

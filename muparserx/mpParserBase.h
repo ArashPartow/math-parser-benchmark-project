@@ -1,3 +1,6 @@
+#ifndef MUP_PARSERBASE_H
+#define MUP_PARSERBASE_H
+
 /** \file
     \brief Definition of the muParserX engine.
 
@@ -8,26 +11,34 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 </pre>
 */
-#ifndef MUP_PARSERBASE_H
-#define MUP_PARSERBASE_H
 
 #include <cmath>
 #include <string>
@@ -62,7 +73,6 @@ MUP_NAMESPACE_START
 
   private:
 
-    //typedef Value (ParserXBase::*parse_function_type)() const;  
     typedef const IValue& (ParserXBase::*parse_function_type)() const;  
     static const char_type *c_DefaultOprt[]; 
     static bool s_bDumpStack;
@@ -79,21 +89,34 @@ MUP_NAMESPACE_START
     virtual ~ParserXBase();
     
     const IValue& Eval() const;
+    ptr_val_type* Eval(int &nNumResults);
+    int GetNumResults() const;
 
     void SetExpr(const string_type &a_sExpr);
     void AddValueReader(IValueReader *a_pReader);
 
     void AddPackage(IPackage *p);
-    void RemovePackage(IPackage *p);
 
-    void DefineFun(ICallback *a_pCallback);
-    void DefineConst(const string_type &a_sName, const Value &a_Val);
-    void DefineVar(const string_type &a_sName, const Variable &a_fVar);
-    
-    // adding operators
-    void DefineOprt(IOprtBin *a_pCallback);
-    void DefinePostfixOprt(IOprtPostfix *a_pCallback);
-    void DefineInfixOprt(IOprtInfix *a_pCallback);
+    void DefineConst(const string_type &ident, const Value &val);
+    void DefineVar(const string_type &ident, const Variable &var);
+    void DefineFun(const ptr_cal_type &fun);
+    void DefineOprt(const TokenPtr<IOprtBin> &oprt);
+    void DefinePostfixOprt(const TokenPtr<IOprtPostfix> &oprt);
+    void DefineInfixOprt(const TokenPtr<IOprtInfix> &oprt);
+
+    bool IsVarDefined(const string_type &ident) const;
+    bool IsConstDefined(const string_type &ident) const;
+    bool IsFunDefined(const string_type &ident) const;
+    bool IsOprtDefined(const string_type &ident) const;
+    bool IsPostfixOprtDefined(const string_type &ident) const;
+    bool IsInfixOprtDefined(const string_type &ident) const;
+
+    void RemoveVar(const string_type &ident) ;
+    void RemoveConst(const string_type &ident);
+    void RemoveFun(const string_type &ident);
+    void RemoveOprt(const string_type &ident);
+    void RemovePostfixOprt(const string_type &ident);
+    void RemoveInfixOprt(const string_type &ident);
 
     // Clear user defined variables, constants or functions
     void ClearVar();
@@ -104,7 +127,6 @@ MUP_NAMESPACE_START
     void ClearOprt();
     void DumpRPN() const;
 
-    void RemoveVar(const string_type &a_sVarName);
     const var_maptype& GetExprVar() const;
     const var_maptype& GetVar() const;
     const val_maptype& GetConst() const;
@@ -128,43 +150,51 @@ MUP_NAMESPACE_START
                 int a_iPos = -1,
                 const IToken *a_pTok = 0) const;
 
+    // Allow clients to check syntacticaly correctnes of name against character set.
+    void  CheckName(const string_type &a_sName, const string_type &a_CharSet) const;
+
+  protected:
+
+    fun_maptype  m_FunDef;           ///< Function definitions
+    oprt_pfx_maptype m_PostOprtDef;  ///< Postfix operator callbacks
+    oprt_ifx_maptype m_InfixOprtDef; ///< Infix operator callbacks.
+    oprt_bin_maptype m_OprtDef;      ///< Binary operator callbacks
+    val_maptype  m_valDef;         ///< Definition of parser constants
+    var_maptype  m_varDef;           ///< user defind variables.
+
   private:
+
+    void  ReInit() const;
+    void  ClearExpr();
+    void  CreateRPN() const;
+    void  StackDump(const Stack<ptr_val_type> &a_stVal, 
+                     const Stack<ptr_tok_type> &a_stOprt) const;
+
+    // Used by by DefineVar and DefineConst methods
+    // for better checking of var/const/oprt/fun existence.
+    void CheckForEntityExistence(const string_type & ident, EErrorCodes error_code);
 
     void Assign(const ParserXBase &a_Parser);
     void InitTokenReader();
-    void ReInit() const;
 
     void ApplyFunc(Stack<ptr_tok_type> &a_stOpt, Stack<ptr_val_type> &a_stVal, int a_iArgCount) const;
     void ApplyIfElse(Stack<ptr_tok_type> &a_stOpt, Stack<ptr_val_type> &a_stVal) const;
     void ApplyRemainingOprt(Stack<ptr_tok_type> &a_stOpt,
                                 Stack<ptr_val_type> &a_stVal) const;
-
     const IValue& ParseFromString() const; 
     const IValue& ParseFromRPN() const; 
 
-    void  ClearExpr();
-    void  CheckName(const string_type &a_sName, const string_type &a_CharSet) const;
-    void  CreateRPN() const;
-    void  StackDump( const Stack<ptr_val_type> &a_stVal, 
-                     const Stack<ptr_tok_type> &a_stOprt ) const;
-
     /** \brief Pointer to the parser function. 
     
+
       Eval() calls the function whose address is stored there.
     */
     mutable parse_function_type m_pParserEngine;
 
     /** \brief Managed pointer to the token reader object. */
-    std::auto_ptr<TokenReader> m_pTokenReader; 
+    std::unique_ptr<TokenReader> m_pTokenReader;
 
-    fun_maptype  m_FunDef;           ///< Function definitions
-    oprt_pfx_maptype m_PostOprtDef;  ///< Postfix operator callbacks
-    oprt_ifx_maptype m_InfixOprtDef; ///< Infix operator callbacks.
-    oprt_bin_multimap m_OprtDef;     ///< Binary operator callbacks
-    val_maptype  m_valConst;         ///< Definition of parser constants
     val_vec_type m_valDynVarShadow;  ///< Value objects referenced by variables created at parser runtime
-    var_maptype  m_VarDef;           ///< user defind variables.
-
     string_type m_sNameChars;        ///< Charset for names
     string_type m_sOprtChars;        ///< Charset for postfix/ binary operator tokens
     string_type m_sInfixOprtChars;   ///< Charset for infix operator tokens
@@ -174,15 +204,18 @@ MUP_NAMESPACE_START
       The parser supports expressions using with commas for seperating
       multiple expression. Each comma will increase this number.
       (i.e. "a=10,b=15,c=a*b")
+
     */
     mutable int m_nFinalResultIdx;          
 
     /** \brief A flag indicating querying of expression variables is underway.
       
+
       If this flag is set the parser is momentarily querying the expression 
       variables. In these cases undefined variable errors must be ignored cause 
       the whole point of querying the expression variables is for finding out 
       which variables mut be defined.
+
     */
     mutable bool m_bIsQueryingExprVar;    
 
@@ -191,6 +224,7 @@ MUP_NAMESPACE_START
     mutable RPN m_rpn;                  ///< reverse polish notation
     mutable val_vec_type m_vStackBuffer;
     mutable ValueCache m_cache;         ///< A cache for recycling value items instead of deleting them
+
   };
 } // namespace mu
 

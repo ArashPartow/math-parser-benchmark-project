@@ -9,22 +9,32 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2011 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
   </pre>
 */
 
@@ -91,7 +101,7 @@ MUP_NAMESPACE_START
     m_vTokens             = obj.m_vTokens;
 
     // Reader klassen klonen 
-    DeleteValReader();
+    DeleteValReader(); 
     std::size_t i, iSize = obj.m_vValueReader.size();
     for (i=0; i<iSize; ++i)
     {
@@ -104,7 +114,7 @@ MUP_NAMESPACE_START
         
       Create a Token reader and bind it to a parser object. 
 
-      \pre [assert] a_pParser may not be NULL
+      \pre [assert] a_pParser may not be nullptr
       \post #m_pParser==a_pParser
       \param a_pParent Parent parser object of the token reader.
   */
@@ -118,13 +128,13 @@ MUP_NAMESPACE_START
     ,m_nSynFlags(0)
     ,m_vTokens()
     ,m_eLastTokCode(cmUNKNOWN)
-    ,m_pFunDef(NULL)
-    ,m_pOprtDef(NULL)
-    ,m_pInfixOprtDef(NULL)
-    ,m_pPostOprtDef(NULL)
-    ,m_pConstDef(NULL)
-    ,m_pDynVarShadowValues(NULL)
-    ,m_pVarDef(NULL)
+    ,m_pFunDef(nullptr)
+    ,m_pOprtDef(nullptr)
+    ,m_pInfixOprtDef(nullptr)
+    ,m_pPostOprtDef(nullptr)
+    ,m_pConstDef(nullptr)
+    ,m_pDynVarShadowValues(nullptr)
+    ,m_pVarDef(nullptr)
     ,m_vValueReader()
     ,m_UsedVar()
     ,m_fZero(0)
@@ -164,7 +174,7 @@ MUP_NAMESPACE_START
   */
   TokenReader* TokenReader::Clone(ParserXBase *a_pParent) const
   {
-    std::auto_ptr<TokenReader> ptr(new TokenReader(*this));
+    std::unique_ptr<TokenReader> ptr(new TokenReader(*this));
     ptr->SetParent(a_pParent);
     return ptr.release();
   }
@@ -225,8 +235,7 @@ MUP_NAMESPACE_START
   */
   void TokenReader::SetExpr(const string_type &a_sExpr)
   {
-	m_sExpr = a_sExpr + string_type(_T(" "));
-    m_vTokens.clear();
+    m_sExpr = a_sExpr; // + string_type(_T(" "));
     ReInit();
   }
 
@@ -249,6 +258,7 @@ MUP_NAMESPACE_START
     m_nSynFlags = noOPT | noBC | noPFX | noCOMMA | noIO | noIC | noIF | noELSE;
     m_UsedVar.clear();
     m_eLastTokCode = cmUNKNOWN;
+	m_vTokens.clear();
   }
 
   //---------------------------------------------------------------------------
@@ -354,8 +364,8 @@ MUP_NAMESPACE_START
     m_pOprtDef            = &a_pParent->m_OprtDef;
     m_pInfixOprtDef       = &a_pParent->m_InfixOprtDef;
     m_pPostOprtDef        = &a_pParent->m_PostOprtDef;
-    m_pVarDef             = &a_pParent->m_VarDef;
-    m_pConstDef           = &a_pParent->m_valConst;
+    m_pVarDef             = &a_pParent->m_varDef;
+    m_pConstDef           = &a_pParent->m_valDef;
     m_pDynVarShadowValues = &a_pParent->m_valDynVarShadow;
   }
 
@@ -508,7 +518,7 @@ MUP_NAMESPACE_START
   bool TokenReader::IsNewline(ptr_tok_type &a_Tok)
   {
     // nicht nach:  bionop, infixop, argumentseparator, 
-    // erlaubt nach:   Werten, variablen, schließenden klammern, schliessendem index
+    // erlaubt nach:   Werten, variablen, schlieÃŸenden klammern, schliessendem index
     bool bRet(false);
     try
     {
@@ -613,7 +623,7 @@ MUP_NAMESPACE_START
         if (m_nSynFlags & noIFX)
           throw ecUNEXPECTED_OPERATOR;
 
-        m_nSynFlags = noPFX | noIFX | noOPT | noBC | noIC | noIO | noEND | noCOMMA | noNEWLINE; 
+        m_nSynFlags = noPFX | noIFX | noOPT | noBC | noIC | noIO | noEND | noCOMMA | noNEWLINE | noIF; 
         return true;
       }
       
@@ -703,7 +713,7 @@ MUP_NAMESPACE_START
         if (m_nSynFlags & noPFX)
           throw ecUNEXPECTED_OPERATOR;
 
-        m_nSynFlags = noVAL | noVAR | noFUN | noBO | noPFX | noIO;
+        m_nSynFlags = noVAL | noVAR | noFUN | noBO | noPFX | noIO  | noIF;;
         return true;
       }
       
@@ -729,7 +739,7 @@ MUP_NAMESPACE_START
     if (iEnd==m_nPos)
       return false;
 
-    oprt_bin_multimap::reverse_iterator item;
+    oprt_bin_maptype::reverse_iterator item;
     try
     {
       // Note:
@@ -762,7 +772,7 @@ MUP_NAMESPACE_START
           a_Tok = ptr_tok_type(item->second->Clone());
 
           m_nPos += (int)a_Tok->GetIdent().length(); 
-          m_nSynFlags  = noBC | noIO | noIC | noOPT | noCOMMA | noEND | noNEWLINE | noPFX;
+          m_nSynFlags  = noBC | noIO | noIC | noOPT | noCOMMA | noEND | noNEWLINE | noPFX | noIF;
           return true;
         }
       }
@@ -847,7 +857,7 @@ MUP_NAMESPACE_START
     try
     {
       iEnd = ExtractToken(m_pParser->ValidNameChars(), sTok, m_nPos);
-      if (iEnd==m_nPos)
+      if (iEnd==m_nPos || (sTok.size()>0 && sTok[0]>= _T('0') && sTok[0]<= _T('9')) )
         return false;
 
       // Check for variables
@@ -878,8 +888,6 @@ MUP_NAMESPACE_START
         a_Tok->SetIdent(sTok);
         return true;
       }
-
-      return false;
     }
     catch(EErrorCodes e)
     {
@@ -891,7 +899,7 @@ MUP_NAMESPACE_START
       throw ParserError(err);
     }
 
-    return true;
+    return false;
   }
 
   //---------------------------------------------------------------------------
@@ -910,7 +918,7 @@ MUP_NAMESPACE_START
   {
     string_type sTok;
     int iEnd = ExtractToken(m_pParser->ValidNameChars(), sTok, m_nPos);
-    if (iEnd==m_nPos)
+    if (iEnd==m_nPos || (sTok.size()>0 && sTok[0]>= _T('0') && sTok[0]<= _T('9')) )
       return false;
 
     if (m_nSynFlags & noVAR)
@@ -919,7 +927,7 @@ MUP_NAMESPACE_START
       err.Errc = ecUNEXPECTED_VAR;
       err.Ident = sTok;
       err.Expr = m_sExpr;
-      err.Pos = m_nPos - (int)sTok.length();
+      err.Pos = m_nPos;
       throw ParserError(err);
     }
 
@@ -932,7 +940,7 @@ MUP_NAMESPACE_START
       (*m_pVarDef)[sTok] = a_Tok;                    // add new variable to the variable list
     }
     else
-      a_Tok = ptr_tok_type(new Variable(NULL));      // bind variable to empty variable
+      a_Tok = ptr_tok_type(new Variable(nullptr));      // bind variable to empty variable
 
     a_Tok->SetIdent(sTok);
     m_UsedVar[sTok] = a_Tok;     // add new variable to used-var-list

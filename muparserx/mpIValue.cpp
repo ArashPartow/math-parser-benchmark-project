@@ -8,28 +8,41 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 </pre>
 */
 #include "mpIValue.h"
 
 //--- Standard includes ------------------------------------------------------
 #include <cassert>
+#include <iostream>
+#include <iomanip>
+#include <limits>
 
 //--- muParserX framework -----------------------------------------------------
 #include "mpValue.h"
@@ -80,14 +93,14 @@ MUP_NAMESPACE_START
   IValue::IValue(ECmdCode a_iCode)
     :IToken(a_iCode)
   {
-    assert(a_iCode==cmVAL || a_iCode==cmVAR);
+    assert(a_iCode==cmVAL);
   }
 
   //---------------------------------------------------------------------------
   IValue::IValue(ECmdCode a_iCode, const string_type &a_sIdent)
     :IToken(a_iCode, a_sIdent)
   {
-    assert(a_iCode==cmVAL || a_iCode==cmVAR);
+    assert(a_iCode==cmVAL);
   }
 
   //---------------------------------------------------------------------------
@@ -97,7 +110,7 @@ MUP_NAMESPACE_START
   //---------------------------------------------------------------------------
   ICallback* IValue::AsICallback()
   {
-    return NULL;
+    return nullptr;
   }
 
   //---------------------------------------------------------------------------
@@ -166,7 +179,7 @@ MUP_NAMESPACE_START
               break;
             
     case 'i':  
-    case 'f':  ss << GetFloat(); break;
+    case 'f':  ss << std::setprecision(std::numeric_limits<float_type>::digits10) << GetFloat(); break;
     case 's':  ss << _T("\"") << GetString() << _T("\""); break;
     case 'b':  ss << ((GetBool()==true) ? _T("true"):_T("false")); break;
     case 'v':  ss << _T("void"); break;
@@ -182,7 +195,7 @@ MUP_NAMESPACE_START
     char_type type1 = GetType(),
               type2 = a_Val.GetType(); 
 
-    if (type1==type2 || IsScalar() && a_Val.IsScalar())
+    if (type1==type2 || (IsScalar() && a_Val.IsScalar()) )
     {
       switch(GetType())
       {
@@ -227,7 +240,7 @@ MUP_NAMESPACE_START
       char_type type1 = GetType(),
                 type2 = a_Val.GetType(); 
 
-    if (type1==type2 || IsScalar() && a_Val.IsScalar())
+    if (type1==type2 || (IsScalar() && a_Val.IsScalar()) )
     {
       switch(GetType())
       {
@@ -272,7 +285,7 @@ MUP_NAMESPACE_START
     char_type type1 = GetType(),
               type2 = a_Val.GetType(); 
 
-    if (type1==type2 || IsScalar() && a_Val.IsScalar())
+    if (type1==type2 || (IsScalar() && a_Val.IsScalar()) )
     {
       switch(GetType())
       {
@@ -308,7 +321,7 @@ MUP_NAMESPACE_START
     char_type type1 = GetType(),
               type2 = a_Val.GetType(); 
 
-    if (type1==type2 || IsScalar() && a_Val.IsScalar())
+    if (type1==type2 || (IsScalar() && a_Val.IsScalar()) )
     {
       switch(GetType())
       {
@@ -344,7 +357,7 @@ MUP_NAMESPACE_START
     char_type type1 = GetType(),
               type2 = a_Val.GetType(); 
 
-    if (type1==type2 || IsScalar() && a_Val.IsScalar())
+    if (type1==type2 || (IsScalar() && a_Val.IsScalar()) )
     {
       switch(GetType())
       {
@@ -380,7 +393,7 @@ MUP_NAMESPACE_START
     char_type type1 = GetType(),
               type2 = a_Val.GetType(); 
 
-    if (type1==type2 || IsScalar() && a_Val.IsScalar())
+    if (type1==type2 || (IsScalar() && a_Val.IsScalar()) )
     {
       switch(GetType())
       {
@@ -431,5 +444,6 @@ MUP_NAMESPACE_START
       throw ParserError(_T("Internal error: unexpected data type identifier in IValue& operator=(const IValue &ref)"));
     }
   }
+
 
 MUP_NAMESPACE_END

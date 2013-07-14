@@ -859,6 +859,9 @@ protected:
               { 
                 pVal = &(pTok->Val);
                 Stack[++sidx] = *pVal->ptr * pVal->mul + pVal->fixed; 
+
+                if (pVal->ptr2!=nullptr)
+                  Stack[++sidx] = *pVal->ptr2 * pVal->mul2 + pVal->fixed2; 
               }
               continue;
 
@@ -869,6 +872,18 @@ protected:
                 pFun = &(pTok->Fun);
                 sidx -= pFun->argc - 1;
                 (*pFun->ptr)(&Stack[sidx], pFun->argc);
+
+                if (pFun->ptr2!=nullptr)
+                {
+                  sidx -= pFun->argc2 - 1;
+                  (*pFun->ptr2)(&Stack[sidx], pFun->argc2);
+
+                  if (pFun->ptr3!=nullptr)
+                  {
+                    sidx -= pFun->argc3 - 1;
+                    (*pFun->ptr3)(&Stack[sidx], pFun->argc3);
+                  }
+                }
               }
               continue;
       
@@ -885,15 +900,26 @@ protected:
         register int sidx = 0;
 
   #define SXO_VAX(TOK) \
-          m_pStack[++sidx] = (TOK)->Val.mul * *(TOK)->Val.ptr + (TOK)->Val.fixed;
+          m_pStack[++sidx] = (TOK)->Val.mul * *(TOK)->Val.ptr + (TOK)->Val.fixed;        \
+          if ((TOK)->Val.ptr2!=nullptr)                                                  \
+            m_pStack[++sidx] = (TOK)->Val.mul2 * *(TOK)->Val.ptr2 + (TOK)->Val.fixed2;
 
   #define SXO_VAL(TOK) \
-          m_pStack[++sidx] = *(TOK)->Val.ptr + (TOK)->Val.fixed; 
+          m_pStack[++sidx] = *(TOK)->Val.ptr + (TOK)->Val.fixed;         \
+          if ((TOK)->Val.ptr2!=nullptr)                                  \
+            m_pStack[++sidx] = *(TOK)->Val.ptr2 + (TOK)->Val.fixed2;
 
   #define SXO_FUN(TOK) \
           {                                                               \
             const token_type::SFunDef &fun = (TOK)->Fun;                  \
             (*fun.ptr)(&m_pStack[sidx -= fun.argc - 1], fun.argc);        \
+            if (fun.ptr2!=nullptr)                                        \
+            {                                                             \
+              (*fun.ptr2)(&m_pStack[sidx -= fun.argc2 - 1], fun.argc2);   \
+                                                                          \
+              if (fun.ptr3!=nullptr)                                      \
+                (*fun.ptr3)(&m_pStack[sidx -= fun.argc3 - 1], fun.argc3); \
+            }                                                             \
           }
 
   #define SXO_RET   \

@@ -6,22 +6,32 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
+                                       Copyright (C) 2013 Ingo Berg
+                                       All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright 2010 Ingo Berg
+  Copyright (c) 2013, Ingo Berg
+  All rights reserved.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE
-  as published by the Free Software Foundation, either version 3 of 
-  the License, or (at your option) any later version.
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met:
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+   * Redistributions of source code must retain the above copyright notice, 
+     this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
+     and/or other materials provided with the distribution.
 
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program.  If not, see http://www.gnu.org/licenses.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+  POSSIBILITY OF SUCH DAMAGE.
 </pre>
 */
 #include "mpValue.h"
@@ -38,11 +48,11 @@ MUP_NAMESPACE_START
   Value::Value(char_type cType)
     :IValue(cmVAL)
     ,m_val(0,0)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
     ,m_cType(cType)
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {
     // strings and arrays must allocate their memory
     switch (cType)
@@ -56,22 +66,22 @@ MUP_NAMESPACE_START
   Value::Value(int_type a_iVal)
     :IValue(cmVAL)
     ,m_val((float_type)a_iVal, 0)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
     ,m_cType('i')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
   Value::Value(bool_type a_bVal)
     :IValue(cmVAL)
     ,m_val((float_type)a_bVal, 0)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
     ,m_cType('b')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
@@ -79,21 +89,21 @@ MUP_NAMESPACE_START
     :IValue(cmVAL)
     ,m_val()
     ,m_psVal(new string_type(a_sVal))
-    ,m_pvVal(NULL)
+    ,m_pvVal(nullptr)
     ,m_cType('s')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
   Value::Value(int_type array_size, float_type v)
     :IValue(cmVAL)
     ,m_val()
-    ,m_psVal(NULL)
+    ,m_psVal(nullptr)
     ,m_pvVal(new matrix_type(array_size, Value(v)))
     ,m_cType('m')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
@@ -102,11 +112,11 @@ MUP_NAMESPACE_START
   Value::Value(int_type m, int_type n, float_type v)
     :IValue(cmVAL)
     ,m_val()
-    ,m_psVal(NULL)
+    ,m_psVal(nullptr)
     ,m_pvVal(new matrix_type(m, n, Value(v)))
     ,m_cType('m')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
@@ -114,21 +124,21 @@ MUP_NAMESPACE_START
     :IValue(cmVAL)
     ,m_val()
     ,m_psVal(new string_type(a_szVal))
-    ,m_pvVal(NULL)
+    ,m_pvVal(nullptr)
     ,m_cType('s')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
   Value::Value(const cmplx_type &v)
     :IValue(cmVAL)
     ,m_val(v)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
     ,m_cType('c')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {
     if ( (m_val.real()==(int_type)m_val.real()) && (m_val.imag()==0) )
       m_cType = 'i';
@@ -140,30 +150,30 @@ MUP_NAMESPACE_START
   Value::Value(float_type val)
     :IValue(cmVAL)
     ,m_val(val, 0)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
     ,m_cType((val==(int_type)val) ? 'i' : 'f')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
   Value::Value(const matrix_type &val)
     :IValue(cmVAL)
     ,m_val()
-    ,m_psVal(NULL)
+    ,m_psVal(nullptr)
     ,m_pvVal(new matrix_type(val))
     ,m_cType('m')
     ,m_iFlags(flNONE)
-    ,m_pCache(NULL)
+    ,m_pCache(nullptr)
   {}
 
   //---------------------------------------------------------------------------
   Value::Value(const Value &a_Val)
     :IValue(cmVAL)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
-    ,m_pCache(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
+    ,m_pCache(nullptr)
   {
     Assign(a_Val);
   }
@@ -171,9 +181,9 @@ MUP_NAMESPACE_START
   //---------------------------------------------------------------------------
   Value::Value(const IValue &a_Val)
     :IValue(cmVAL)
-    ,m_psVal(NULL)
-    ,m_pvVal(NULL)
-    ,m_pCache(NULL)
+    ,m_psVal(nullptr)
+    ,m_pvVal(nullptr)
+    ,m_pCache(nullptr)
   {
     Reset();
 
@@ -226,7 +236,6 @@ MUP_NAMESPACE_START
     if (!row.IsInteger() || !col.IsInteger())
     {
       ErrorContext errc(ecTYPE_CONFLICT_IDX, GetExprPos());
-      errc.Hint = _T("Array index must be an integer value.");
       errc.Type1 = (!row.IsInteger()) ? row.GetType() : col.GetType();
       errc.Type2 = 'i';
       throw ParserError(errc);
@@ -296,13 +305,13 @@ MUP_NAMESPACE_START
     else
     {
       delete m_psVal;
-      m_psVal = NULL;
+      m_psVal = nullptr;
     }
 
     // allocate room for a vector
     if (ref.m_pvVal)
     {
-      if (m_pvVal==NULL)
+      if (m_pvVal==nullptr)
         m_pvVal = new matrix_type(*ref.m_pvVal);
       else
        *m_pvVal = *ref.m_pvVal;
@@ -310,7 +319,7 @@ MUP_NAMESPACE_START
     else
     {
       delete m_pvVal;
-      m_pvVal = NULL;
+      m_pvVal = nullptr;
     }
 
     // Do NOT access ref beyound this point! If you do, "unboxing" of
@@ -328,10 +337,10 @@ MUP_NAMESPACE_START
     m_val = cmplx_type(0,0);
 
     delete m_psVal;
-    m_psVal = NULL;
+    m_psVal = nullptr;
 		
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = 'f';
     m_iFlags = flNONE;
@@ -343,10 +352,10 @@ MUP_NAMESPACE_START
     m_val = cmplx_type((float_type)val,0);
 
     delete m_psVal;
-    m_psVal = NULL;
+    m_psVal = nullptr;
 
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = 'b';
     m_iFlags = flNONE;
@@ -359,10 +368,10 @@ MUP_NAMESPACE_START
     m_val = cmplx_type(a_iVal,0);
 
     delete m_psVal;
-    m_psVal = NULL;
+    m_psVal = nullptr;
 
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = 'i';
     m_iFlags = flNONE;
@@ -375,10 +384,10 @@ MUP_NAMESPACE_START
     m_val = cmplx_type(val, 0);
 
     delete m_psVal;
-    m_psVal = NULL;
+    m_psVal = nullptr;
 
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = (val==(int_type)val) ? 'i' : 'f';
     m_iFlags = flNONE;
@@ -396,7 +405,7 @@ MUP_NAMESPACE_START
      *m_psVal = a_sVal;
 
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = 's';
     m_iFlags = flNONE;
@@ -414,7 +423,7 @@ MUP_NAMESPACE_START
      *m_psVal = a_szVal;
 
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = 's';
     m_iFlags = flNONE;
@@ -427,9 +436,9 @@ MUP_NAMESPACE_START
     m_val = cmplx_type(0,0);
 
     delete m_psVal;
-    m_psVal = NULL;
+    m_psVal = nullptr;
 		
-    if (m_pvVal==NULL)
+    if (m_pvVal==nullptr)
       m_pvVal = new matrix_type(a_vVal);
     else
       *m_pvVal = a_vVal;
@@ -446,10 +455,10 @@ MUP_NAMESPACE_START
     m_val = val;
 
     delete m_psVal;
-    m_psVal = NULL;
+    m_psVal = nullptr;
 
     delete m_pvVal;
-    m_pvVal = NULL;
+    m_pvVal = nullptr;
 
     m_cType = (m_val.imag()==0) ? ( (m_val.real()==(int)m_val.real()) ? 'i' : 'f' ) : 'c';
     m_iFlags = flNONE;
@@ -529,7 +538,7 @@ MUP_NAMESPACE_START
       // type flag accordingly
       if (m_val.imag()!=0)
         m_cType = 'c';
-      else if ((double)(int)m_val.real()==m_val.real())
+      else if ((float_type)(int)m_val.real()==m_val.real())
         m_cType = 'i';
     }
     else if (IsMatrix() && val.IsMatrix())
@@ -689,7 +698,7 @@ MUP_NAMESPACE_START
   const string_type& Value::GetString() const
   {
     CheckType('s');
-    assert(m_psVal!=NULL);
+    assert(m_psVal!=nullptr);
     return *m_psVal;
   }
 
@@ -704,7 +713,7 @@ MUP_NAMESPACE_START
   const matrix_type& Value::GetArray() const
   {
     CheckType('m');
-    assert(m_pvVal!=NULL);
+    assert(m_pvVal!=nullptr);
     return *m_pvVal;
   }
 
@@ -717,7 +726,7 @@ MUP_NAMESPACE_START
   //---------------------------------------------------------------------------
   int Value::GetCols() const
   {
-    return 1;
+    return (GetType()!='m') ? 1 : GetArray().GetCols();
   }
 
   //---------------------------------------------------------------------------
@@ -746,10 +755,9 @@ MUP_NAMESPACE_START
   }
 
   //---------------------------------------------------------------------------
-  bool Value::IsVolatile() const
+  bool Value::IsVariable() const
   {
-    return IsFlagSet(IValue::flVOLATILE);
-//    return true;
+    return false;
   }
 
   //---------------------------------------------------------------------------
@@ -768,7 +776,7 @@ MUP_NAMESPACE_START
     case 'f': ss << m_val.real(); break;
     case 'm': ss << _T("(matrix)"); break;
     case 's': 
-              assert(m_psVal!=NULL);
+              assert(m_psVal!=nullptr);
               ss << _T("\"") << m_psVal << _T("\""); break;
     }
 
@@ -778,7 +786,7 @@ MUP_NAMESPACE_START
     return ss.str();
   }
 
-  //---------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void Value::Release()
   {
     if (m_pCache)
@@ -787,9 +795,39 @@ MUP_NAMESPACE_START
       delete this;
   }
 
-  //---------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------------------
   void Value::BindToCache(ValueCache *pCache)
   {
     m_pCache = pCache;
+  }
+
+  //-----------------------------------------------------------------------------------------------
+  Value::operator cmplx_type ()
+  { 
+	  return GetComplex(); 
+  }
+  
+  //-----------------------------------------------------------------------------------------------
+  Value::operator int ()
+  { 
+	  return GetInteger(); 
+  }
+
+  //-----------------------------------------------------------------------------------------------
+  Value::operator string_type()
+  { 
+	  return GetString(); 
+  }
+
+  //-----------------------------------------------------------------------------------------------
+  Value::operator float_type()
+  { 
+	  return GetFloat(); 
+  }
+
+  //-----------------------------------------------------------------------------------------------
+  Value::operator bool()
+  {
+	  return GetBool();
   }
 }  // namespace mu

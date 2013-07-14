@@ -42,23 +42,6 @@ void BenchATMSP::PreprocessExpr(std::vector<std::string> &vExpr)
    for (std::size_t i=0; i<vExpr.size(); ++i)
    {
       PreprocessExpr(vExpr[i]);
-      //string s = vExpr[i];
-      //s = replaceAll(s, string("pi"), string("$pi"));
-      //s = replaceAll(s, string("-e*"), string("-$e*"));
-      //s = replaceAll(s, string("/e*"), string("/$e*"));
-      //s = replaceAll(s, string("(e*"), string("($e*"));
-      //s = replaceAll(s, string("-e/"), string("-$e/"));
-      //s = replaceAll(s, string("e^"), string("$e^"));
-      //s = replaceAll(s, string("+e)"), string("+$e)"));
-      //s = replaceAll(s, string("(e+"), string("($e+"));
-      //s = replaceAll(s, string("(e-"), string("($e-"));
-      //s = replaceAll(s, string("(-e"), string("(-$e"));
-      //s = replaceAll(s, string("-e)"), string("-$e)"));
-      //s = replaceAll(s, string("(e)"), string("($e)"));
-      //s = replaceAll(s, string("/e)"), string("/$e)"));
-      //s = replaceAll(s, string("/e/"), string("/$e/"));
-      //s = replaceAll(s, string("*e+"), string("*$e+"));
-      //vExpr[i] = s;
    }
 }
 
