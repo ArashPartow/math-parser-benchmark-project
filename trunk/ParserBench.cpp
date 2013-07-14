@@ -108,18 +108,30 @@ void Shootout(const std::string &sCaption,
 
       for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
       {
-         output(pRes, ".");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one 
+         output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one 
          Benchmark *pBench = vBenchmarks[j];
 
          std::string sExpr = vExpr[i];   // get the original expression anew for each parser
          pBench->PreprocessExpr(sExpr);  // some parsers use fancy characters to signal variables
          double time = 1000 * pBench->DoBenchmark(sExpr + " ", iCount);
 
-         // The first parser is used for obtaining reference results.
+         // The first parser is used for obtaining reference results. If the reference result is nan the reference parser
+         // is disqualified too.
          if (j == 0)
          {
             fRefResult = pBench->GetRes();
             fRefSum    = pBench->GetSum();
+
+            // If either the reference result or the sum is nan the reference parser will be set to fail.
+            // In these cases the fail evaluation does not work and will cause the disqualificationof all
+            // other parsers. 
+            // (A better solution would be to ignore those expressions and remove them from the test. This
+            // is a temporary workaround.)
+            if (fRefResult!=fRefResult || fRefSum!=fRefSum)
+            { 
+              pBench->AddFail(vExpr[i]);
+              ++failure_count;
+            }
          }
          else
          {
@@ -287,10 +299,12 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_expr.txt";
-   std::string benchmark_file = "bench_expr_weird.txt"; //"bench_expr_all.txt";
+   //std::string benchmark_file = "bench_expr_all.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
    //std::string benchmark_file = "bench_expr_random.txt";
    //std::string benchmark_file = "bench_precedence.txt";
+   std::string benchmark_file = "bench_expr_complete.txt";
+//   std::string benchmark_file = "debug.txt";
 
    // Usage:
    // 1. ParserBench

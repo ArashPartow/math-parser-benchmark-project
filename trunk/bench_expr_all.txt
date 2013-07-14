@@ -186,14 +186,10 @@ cos(a)
 tan(a)
 sqrt(a)
 abs(a)
-
-
 # von mparser
 (0.1*a+1)*a+1.1
 (0.1*a+1)*a+1.1-sin(a)
 (0.1*a+1)*a+1.1-sin(a)-log(a)/a*3/4
-
-
 #The following should all be completly optimised to a single value
 ((2/3)-(3/2))*((3/2)-(2/3))
 1.1234567*(2.1234567/3.1234567)
