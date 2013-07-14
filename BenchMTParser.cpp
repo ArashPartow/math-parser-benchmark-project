@@ -46,10 +46,9 @@ double BenchMTParser::DoBenchmark(const std::string &sExpr, long iCount)
    double fRes = 0;
    double fSum = 0;
 
-   string buf = sExpr + "+0";
    try
    {
-      p.compile(buf.c_str());
+      p.compile(sExpr.c_str());
       fRes = p.evaluate();
    }
    catch(...)
