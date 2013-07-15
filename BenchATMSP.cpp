@@ -6,8 +6,6 @@
 // atmsp
 #include "atmsp/atmsp.h"
 
-using namespace std;
-
 
 //-------------------------------------------------------------------------------------------------
 BenchATMSP::BenchATMSP()
@@ -48,21 +46,24 @@ void BenchATMSP::PreprocessExpr(std::vector<std::string> &vExpr)
 //-------------------------------------------------------------------------------------------------
 void BenchATMSP::PreprocessExpr(std::string &s)
 {
-  s = replaceAll(s, string("pi"), string("$pi"));
-  s = replaceAll(s, string("-e*"), string("-$e*"));
-  s = replaceAll(s, string("/e*"), string("/$e*"));
-  s = replaceAll(s, string("(e*"), string("($e*"));
-  s = replaceAll(s, string("-e/"), string("-$e/"));
-  s = replaceAll(s, string("e^"), string("$e^"));
-  s = replaceAll(s, string("+e)"), string("+$e)"));
-  s = replaceAll(s, string("(e+"), string("($e+"));
-  s = replaceAll(s, string("(e-"), string("($e-"));
-  s = replaceAll(s, string("(-e"), string("(-$e"));
-  s = replaceAll(s, string("-e)"), string("-$e)"));
-  s = replaceAll(s, string("(e)"), string("($e)"));
-  s = replaceAll(s, string("/e)"), string("/$e)"));
-  s = replaceAll(s, string("/e/"), string("/$e/"));
-  s = replaceAll(s, string("*e+"), string("*$e+"));
+  s = replaceAll(s, std::string("pi"),  std::string("$pi"));
+  s = replaceAll(s, std::string("-e*"), std::string("-$e*"));
+  s = replaceAll(s, std::string("/e*"), std::string("/$e*"));
+  s = replaceAll(s, std::string("(e*"), std::string("($e*"));
+  s = replaceAll(s, std::string("-e/"), std::string("-$e/"));
+  s = replaceAll(s, std::string("e^"),  std::string("$e^"));
+  s = replaceAll(s, std::string("+e)"), std::string("+$e)"));
+  s = replaceAll(s, std::string("(e+"), std::string("($e+"));
+  s = replaceAll(s, std::string("(e-"), std::string("($e-"));
+  s = replaceAll(s, std::string("(-e"), std::string("(-$e"));
+  s = replaceAll(s, std::string("-e)"), std::string("-$e)"));
+  s = replaceAll(s, std::string("(e)"), std::string("($e)"));
+  s = replaceAll(s, std::string("/e)"), std::string("/$e)"));
+  s = replaceAll(s, std::string("/e/"), std::string("/$e/"));
+  s = replaceAll(s, std::string("*e+"), std::string("*$e+"));
+  s = replaceAll(s, std::string("*e)"), std::string("*$e)"));
+  s = replaceAll(s, std::string("/e)"), std::string("/$e)"));
+  s = replaceAll(s, std::string("(e/"), std::string("($e/"));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -73,7 +74,9 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
    // Parsing/bytecode generation with error check. In a scope here JUST to
    // demonstrate that a parser-instance itself is NOT needed later on
    ATMSP<double> p;
+
    unsigned int err = p.parse(bc, sExpr, "a, b, c, x, y, z, w");
+
    if (err)
    {
       StopTimer(std::numeric_limits<double>::quiet_NaN(),
