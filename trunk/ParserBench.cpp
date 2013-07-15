@@ -27,8 +27,7 @@
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
-   static const T epsilon = T(0.0001);
-   //static const T epsilon = T(0.00000001);
+   static const T epsilon = T(0.00001);
    //static const T epsilon = T(std::numeric_limits<double>::epsilon());
    //static const T epsilon = T(std::numeric_limits<float>::epsilon());
    //Is either a NaN?
@@ -98,9 +97,9 @@ void Shootout(const std::string &sCaption,
       const std::string current_expr = vExpr[i];
 
       output(pRes, "\nExpression %d of %d: \"%s\"; Progress: ",
-            (int)i+1,
-            vExpr.size(),
-            vExpr[i].c_str());
+             (int)i+1,
+             vExpr.size(),
+             vExpr[i].c_str());
 
       double fRefResult = 0;
       double fRefSum    = 0;
@@ -108,27 +107,27 @@ void Shootout(const std::string &sCaption,
 
       for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
       {
-         output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one 
+         output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one
          Benchmark *pBench = vBenchmarks[j];
 
          std::string sExpr = vExpr[i];   // get the original expression anew for each parser
          pBench->PreprocessExpr(sExpr);  // some parsers use fancy characters to signal variables
-         double time = 1000 * pBench->DoBenchmark(sExpr + " ", iCount);
+         double time = 1000000 * pBench->DoBenchmark(sExpr + " ", iCount);
 
-         // The first parser is used for obtaining reference results. If the reference result is nan the reference parser
-         // is disqualified too.
+         // The first parser is used for obtaining reference results. If the reference result
+         // is nan the reference parser is disqualified too.
          if (j == 0)
          {
             fRefResult = pBench->GetRes();
             fRefSum    = pBench->GetSum();
 
             // If either the reference result or the sum is nan the reference parser will be set to fail.
-            // In these cases the fail evaluation does not work and will cause the disqualificationof all
-            // other parsers. 
+            // In these cases the fail evaluation does not work and will cause the disqualification of all
+            // other parsers.
             // (A better solution would be to ignore those expressions and remove them from the test. This
             // is a temporary workaround.)
             if (fRefResult!=fRefResult || fRefSum!=fRefSum)
-            { 
+            {
               pBench->AddFail(vExpr[i]);
               ++failure_count;
             }
@@ -163,7 +162,7 @@ void Shootout(const std::string &sCaption,
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
-            output(pRes, "    %-20s (%8.5f us, %26.18f, %26.18f)\n",
+            output(pRes, "    %-20s (%9.3f ns, %26.18f, %26.18f)\n",
                     pBench->GetShortName().c_str(),
                     it->first,
                     pBench->GetRes(),
@@ -191,11 +190,11 @@ void Shootout(const std::string &sCaption,
                pBench->AddPoints(0);
                pBench->AddScore(0);
 
-               output(pRes, "    %-15s (%8.5f us, %26.18f, %26.18f)\n",
-                       pBench->GetShortName().c_str(),
-                       it->first,
-                       (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
-                       (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
+               output(pRes, "    %-15s (%9.3f ns, %26.18f, %26.18f)\n",
+                      pBench->GetShortName().c_str(),
+                      it->first,
+                      (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
+                      (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
             }
          }
       }
@@ -335,8 +334,8 @@ int main(int argc, const char *argv[])
    //            Engines producing deviating results are disqualified so make
    //            sure the reference parser is computing properly.
    vBenchmarks.push_back(new BenchExprTk());            // <- Note: first parser becomes the reference!
-   vBenchmarks.push_back(new BenchMuParser2(false));    
-   vBenchmarks.push_back(new BenchMuParser2(true));     
+   vBenchmarks.push_back(new BenchMuParser2(false));
+   vBenchmarks.push_back(new BenchMuParser2(true));
 //   vBenchmarks.push_back(new BenchMTParser());      // <- Crash for expression "1"
    vBenchmarks.push_back(new BenchFParser());
    vBenchmarks.push_back(new BenchMuParserX());
