@@ -1,10 +1,37 @@
 #
 # The following are a set of deceptively simple expressions
-# that require extra attention when parsing and evaluating.
+# that are intended to expose operator precedence related
+# parsing and evaluation errors.
 #
 
+-a-b
++a+b
+-a*-b
++a*+b
+-a/-b
++a/+b
 (a)+(b)
 (a)-(b)
+-(a)+(b)
+-(a)-(b)
++(a)-(b)
+(+a)+(-b)
+(-a)+(+b)
+(-a)+(-b)
+(-a)-(-b)
+(+a)+(+b)
+(+(a))-(b)
+(-(a))+(-(b))
+(+(a))+(+(b))
+(-(a))-(-(b))
+3.3-((+a)+(-b))
+3.3-((-a)+(+b))
+3.3-((-a)+(-b))
+3.3-((-a)-(-b))
+3.3-((+a)/(-b))
+3.3-((-a)/(+b))
+3.3-((+a)*(-b))
+3.3-((-a)*(+b))
 3.3+((-a+b)+(-b+a))
 3.3+((+a-b)+(+b-a))
 3.3+((+b-a)+(+a-b))
@@ -45,23 +72,15 @@ a^-b
 +a^-b/1.1
 -a^+b/1.1
 -a^-b/1.1
-+1.1/a^b
-+1.1/a^+b
-+1.1/a^(0+b)
-+1.1/a^(+b-0)
-+1.1/a^-b
-+1.1/a^b
-+1.1/a^+b
-+1.1/a^(0+b)
-+1.1/a^(+b-0)
-+1.1/a^-b
++1.1/a^(0.0+b)
++1.1/a^(+b-0.0)
 +1.1*a^b
 +1.1*a^+b
 +1.1*a^(0+b)
 +1.1*a^(+b-0)
 +1.1*a^-b
-+1.1*a^b
-+1.1*a^+b
-+1.1*a^(0+b)
-+1.1*a^(+b-0)
-+1.1*a^-b
+-1.1*a^b
+-1.1*a^+b
+-1.1*a^(0+b)
+-1.1*a^(+b-0)
+-1.1*a^-b
