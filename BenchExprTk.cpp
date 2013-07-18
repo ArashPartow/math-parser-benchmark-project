@@ -1,12 +1,8 @@
 #include "BenchExprTk.h"
 
-#include <windows.h>
 #include <cmath>
 
-#define exprtk_enable_all_optimizations
 #include "exprtk/exprtk.hpp"
-
-using namespace std;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -17,7 +13,7 @@ BenchExprTk::BenchExprTk()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchExprTk::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchExprTk::DoBenchmark(const std::string& sExpr, long iCount)
 {
    double a = 1.1;
    double b = 2.2;

@@ -51,7 +51,8 @@ void dump_cpuid(FILE* file)
    fprintf(file, "  - Features      : ");
 
    std::deque<std::string> feature_list;
-   for (int i = 0; i < NUM_CPU_FEATURES; i++)
+
+   for (int i = 0; i < NUM_CPU_FEATURES; ++i)
    {
       if (data.flags[i])
       {

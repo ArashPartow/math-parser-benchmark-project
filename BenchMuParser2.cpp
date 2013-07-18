@@ -21,6 +21,7 @@ BenchMuParser2::BenchMuParser2(bool bUseBulkMode)
 double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
 {
    Parser p;
+
    double fRes(0);
    double fSum(0);
    double a = 1.1;
@@ -31,6 +32,7 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
    double y = 3.123456;
    double z = 4.123456;
    double w = 5.123456;
+
    try
    {
       p.SetExpr(sExpr.c_str());
@@ -59,7 +61,7 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
    }
 
    StartTimer();
-   for (int j = 0; j < iCount; j++)
+   for (int j = 0; j < iCount; ++j)
    {
       std::swap(a,b);
       std::swap(x,y);
@@ -88,27 +90,28 @@ void BenchMuParser2::PreprocessExpr(std::string &s)
 //-------------------------------------------------------------------------------------------------
 double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
 {
-    int nBulkSize = (int)iCount;
+   int nBulkSize = (int)iCount;
 
-    // allocate arrays for storing the variables
-    double *a = new double[nBulkSize];
-    double *b = new double[nBulkSize];
-    double *c = new double[nBulkSize];
-    double *d = new double[nBulkSize];
-    double *x = new double[nBulkSize];
-    double *y = new double[nBulkSize];
-    double *z = new double[nBulkSize];
-    double *w = new double[nBulkSize];
-    double *result = new double[nBulkSize];
+   // allocate arrays for storing the variables
+   double *a = new double[nBulkSize];
+   double *b = new double[nBulkSize];
+   double *c = new double[nBulkSize];
+   double *d = new double[nBulkSize];
+   double *x = new double[nBulkSize];
+   double *y = new double[nBulkSize];
+   double *z = new double[nBulkSize];
+   double *w = new double[nBulkSize];
+   double *result = new double[nBulkSize];
 
-    // Note: There is a bit of variable swapping going on. I use aa,bb,xx,yy as
-    //       buffer variables to toggle values.
-    double aa = 1.1;
-    double bb = 2.2;
-    double xx = 2.123456;
-    double yy = 3.123456;
-    for (int i=0; i<nBulkSize; ++i)
-    {
+   // Note: There is a bit of variable swapping going on. I use aa,bb,xx,yy as
+   //       buffer variables to toggle values.
+   double aa = 1.1;
+   double bb = 2.2;
+   double xx = 2.123456;
+   double yy = 3.123456;
+
+   for (int i = 0; i < nBulkSize; ++i)
+   {
       a[i] = aa;
       b[i] = bb;
       c[i] = 3.3;
@@ -119,11 +122,11 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       w[i] = 5.123456;
       std::swap(aa,bb);
       std::swap(xx,yy);
-    }
+   }
 
-    double fTime(0);
-    try
-    {
+   double fTime(0);
+   try
+   {
       Parser p;
       p.SetExpr(sExpr.c_str());
       p.DefineVar("a", a);
@@ -143,33 +146,37 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       // Note: Performing the addition inside the timed section is done
       //       because all other parsers do it in their main loop too.
       double fSum(0);
-      for (int j = 0; j < nBulkSize; j++)
+      for (int j = 0; j < nBulkSize; ++j)
       {
-        fSum += result[j];
+         fSum += result[j];
       }
       StopTimer(result[0], fSum, iCount);
+
       fTime = m_fTime1;
    }
    catch(...)
    {
       fTime = std::numeric_limits<double>::quiet_NaN();
+      StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN(),
+                1);
    }
 
-    delete [] a;
-    delete [] b;
-    delete [] c;
-    delete [] d;
-    delete [] x;
-    delete [] y;
-    delete [] z;
-    delete [] w;
-    delete [] result;
+   delete [] a;
+   delete [] b;
+   delete [] c;
+   delete [] d;
+   delete [] x;
+   delete [] y;
+   delete [] z;
+   delete [] w;
+   delete [] result;
 
-    return fTime;
+   return fTime;
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMuParser2::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchMuParser2::DoBenchmark(const std::string& sExpr, long iCount)
 {
    if (m_bUseBulkMode)
    {

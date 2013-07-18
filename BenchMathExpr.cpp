@@ -16,7 +16,7 @@ BenchMathExpr::BenchMathExpr()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMathExpr::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchMathExpr::DoBenchmark(const std::string& sExpr, long iCount)
 {
    double a = 1.1;
    double b = 2.2;

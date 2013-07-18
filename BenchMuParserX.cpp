@@ -13,7 +13,7 @@ BenchMuParserX::BenchMuParserX()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMuParserX::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 {
    using namespace mup;
 

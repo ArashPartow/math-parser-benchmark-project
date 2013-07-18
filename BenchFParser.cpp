@@ -14,17 +14,21 @@ BenchFParser::BenchFParser()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
 {
    double fTime(0);
-   double fRes(0), fSum(0);
+   double fRes (0);
+   double fSum (0);
 
    FunctionParser Parser;
    Parser.AddConstant("pi", (double)M_PI);
    Parser.AddConstant("e", (double)M_E);
-   int iRet = Parser.Parse(sExpr.c_str(), "a,b,c,x,y,z,w");
-   if (iRet >= 0)
+
+   if (Parser.Parse(sExpr.c_str(), "a,b,c,x,y,z,w") >= 0)
    {
+      StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN(),
+                1);
       return std::numeric_limits<double>::quiet_NaN();
    }
 
@@ -37,16 +41,17 @@ double BenchFParser::DoBenchmark(const std::string &sExpr, long iCount)
                      4.123456,
                      5.123456
                    };
-   fRes = Parser.Eval(vals);;
+
+   fRes = Parser.Eval(vals);
 
    StartTimer();
-   for (int j=0; j<iCount; j++)
+   for (int j = 0; j < iCount; ++j)
    {
       std::swap(vals[0], vals[1]);
       std::swap(vals[3], vals[4]);
       fSum += Parser.Eval(vals);
    }
-
    StopTimer(fRes, fSum, iCount);
+
    return m_fTime1;
 }

@@ -11,7 +11,7 @@
 BenchATMSP::BenchATMSP()
 : Benchmark()
 {
-   m_sName = "atmsp 1.0.3";
+   m_sName = "atmsp 1.0.4";
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -34,40 +34,40 @@ std::string BenchATMSP::replaceAll(std::string result,
 }
 
 //-------------------------------------------------------------------------------------------------
-void BenchATMSP::PreprocessExpr(std::vector<std::string> &vExpr)
+void BenchATMSP::PreprocessExpr(std::vector<std::string>& vExpr)
 {
    // atmsp is using $ to mark a constant
-   for (std::size_t i=0; i<vExpr.size(); ++i)
+   for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
       PreprocessExpr(vExpr[i]);
    }
 }
 
 //-------------------------------------------------------------------------------------------------
-void BenchATMSP::PreprocessExpr(std::string &s)
+void BenchATMSP::PreprocessExpr(std::string& s)
 {
-  s = replaceAll(s, std::string("pi"),  std::string("$pi"));
-  s = replaceAll(s, std::string("-e*"), std::string("-$e*"));
-  s = replaceAll(s, std::string("/e*"), std::string("/$e*"));
-  s = replaceAll(s, std::string("(e*"), std::string("($e*"));
-  s = replaceAll(s, std::string("-e/"), std::string("-$e/"));
-  s = replaceAll(s, std::string("e^"),  std::string("$e^"));
-  s = replaceAll(s, std::string("+e)"), std::string("+$e)"));
-  s = replaceAll(s, std::string("(e+"), std::string("($e+"));
-  s = replaceAll(s, std::string("(e-"), std::string("($e-"));
-  s = replaceAll(s, std::string("(-e"), std::string("(-$e"));
-  s = replaceAll(s, std::string("-e)"), std::string("-$e)"));
-  s = replaceAll(s, std::string("(e)"), std::string("($e)"));
-  s = replaceAll(s, std::string("/e)"), std::string("/$e)"));
-  s = replaceAll(s, std::string("/e/"), std::string("/$e/"));
-  s = replaceAll(s, std::string("*e+"), std::string("*$e+"));
-  s = replaceAll(s, std::string("*e)"), std::string("*$e)"));
-  s = replaceAll(s, std::string("/e)"), std::string("/$e)"));
-  s = replaceAll(s, std::string("(e/"), std::string("($e/"));
+   s = replaceAll(s, std::string("pi"),  std::string("$pi"));
+   s = replaceAll(s, std::string("-e*"), std::string("-$e*"));
+   s = replaceAll(s, std::string("/e*"), std::string("/$e*"));
+   s = replaceAll(s, std::string("(e*"), std::string("($e*"));
+   s = replaceAll(s, std::string("-e/"), std::string("-$e/"));
+   s = replaceAll(s, std::string("e^"),  std::string("$e^"));
+   s = replaceAll(s, std::string("+e)"), std::string("+$e)"));
+   s = replaceAll(s, std::string("(e+"), std::string("($e+"));
+   s = replaceAll(s, std::string("(e-"), std::string("($e-"));
+   s = replaceAll(s, std::string("(-e"), std::string("(-$e"));
+   s = replaceAll(s, std::string("-e)"), std::string("-$e)"));
+   s = replaceAll(s, std::string("(e)"), std::string("($e)"));
+   s = replaceAll(s, std::string("/e)"), std::string("/$e)"));
+   s = replaceAll(s, std::string("/e/"), std::string("/$e/"));
+   s = replaceAll(s, std::string("*e+"), std::string("*$e+"));
+   s = replaceAll(s, std::string("*e)"), std::string("*$e)"));
+   s = replaceAll(s, std::string("/e)"), std::string("/$e)"));
+   s = replaceAll(s, std::string("(e/"), std::string("($e/"));
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchATMSP::DoBenchmark(const std::string& sExpr, long iCount)
 {
    ATMSB<double> bc;
 
@@ -96,18 +96,18 @@ double BenchATMSP::DoBenchmark(const std::string &sExpr, long iCount)
 
    // Calculate/bench and show result finally
    double fTime(0);
-   double fRes(0), fSum(0);
+   double fRes (0);
+   double fSum (0);
 
    fRes = bc.run();
 
    StartTimer();
-   for (int j=0; j<iCount; j++)
+   for (int j = 0; j < iCount; ++j)
    {
       std::swap(bc.var[0], bc.var[1]);
       std::swap(bc.var[3], bc.var[4]);
       fSum += bc.run();
    }
-
    StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;
