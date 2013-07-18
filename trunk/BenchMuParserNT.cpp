@@ -16,7 +16,7 @@ BenchMuParserNT::BenchMuParserNT(bool bEnableOptimizer)
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMuParserNT::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchMuParserNT::DoBenchmark(const std::string& sExpr, long iCount)
 {
   mp::Parser<double, std::string> p;
   double fRes(0);

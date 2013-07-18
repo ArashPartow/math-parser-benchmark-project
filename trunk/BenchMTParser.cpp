@@ -19,7 +19,7 @@ BenchMTParser::BenchMTParser()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMTParser::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
 {
    double a = 1.1;
    double b = 2.2;

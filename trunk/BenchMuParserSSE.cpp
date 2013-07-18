@@ -18,7 +18,7 @@ BenchMuParserSSE::BenchMuParserSSE()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMuParserSSE::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
 {
    mecFloat_t fRes(0);
    mecFloat_t a(1.1);

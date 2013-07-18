@@ -1,12 +1,8 @@
 #include "BenchExprTkFloat.h"
 
-#include <windows.h>
 #include <cmath>
 
-#define exprtk_enable_all_optimizations
 #include "exprtk/exprtk.hpp"
-
-using namespace std;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -17,7 +13,7 @@ BenchExprTkFloat::BenchExprTkFloat()
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchExprTkFloat::DoBenchmark(const std::string &sExpr, long iCount)
+double BenchExprTkFloat::DoBenchmark(const std::string& sExpr, long iCount)
 {
    float a = 1.1f;
    float b = 2.2f;
@@ -57,12 +53,12 @@ double BenchExprTkFloat::DoBenchmark(const std::string &sExpr, long iCount)
       }
    }
 
-   // Calculate/bench and show result finally
    double fTime = 0;
    float  fRes  = 0;
    double fSum  = 0;
 
    fRes = expression.value();
+
    StartTimer();
    for (int j = 0; j < iCount; j++)
    {
@@ -71,5 +67,6 @@ double BenchExprTkFloat::DoBenchmark(const std::string &sExpr, long iCount)
       fSum += expression.value();
    }
    StopTimer(fRes, fSum, iCount);
+
    return m_fTime1;
 }
