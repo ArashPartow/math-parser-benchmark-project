@@ -11,7 +11,7 @@
  ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR        **
  ** PURPOSE.                                                                **
  **                                                                         **
- ** Verson: 1.0.3                                                           **
+ ** Verson: 1.0.4                                                           **
  **                                                                         **
  ** *********************************************************************** **/
 
@@ -180,10 +180,13 @@ void ATMSP<T>::factor(ATMSB<T> &bc) {
 	/// Check available memory
 	if ( numInd>=ATMSP_MAXNUM || valInd>=ATMSP_SIZE || opCnt>=ATMSP_SIZE ) longjmp(errJmp, memErr);
 
-	/// Handle open parenthesis and unary minus first
+	/// Handle open parenthesis and unary operators first
 	if ( *cp == '(' ) {
 		++cp; expression(bc);
 		if ( *cp++ != ')' ) longjmp(errJmp, parErr);
+	}
+	else if ( *cp == '+' ) {
+		++cp; factor(bc);
 	}
 	else if ( *cp == '-' ) {
 		++cp; factor(bc);

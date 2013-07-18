@@ -11,7 +11,7 @@
  ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR        **
  ** PURPOSE.                                                                **
  **                                                                         **
- ** Verson: 1.0.3                                                           **
+ ** Verson: 1.0.4                                                           **
  **                                                                         **
  ** *********************************************************************** **/
 
@@ -21,7 +21,7 @@
 
 /// Determine maximum sizes for stack and var/val/num/con arrays.
 /// Note that sizes may have chache-effects e.g. Play here for tuning 
-#define ATMSP_SIZE 128                 // Stack, values-array and bytecode-operators
+#define ATMSP_SIZE 64                 // Stack, values-array and bytecode-operators
 #define ATMSP_MAXNUM ATMSP_SIZE/4     // Numeric-array. Holds all numbers
 #define ATMSP_MAXVAR ATMSP_SIZE/8     // Variables-array. Holds all variables
 #define ATMSP_MAXCON ATMSP_SIZE/16    // Constants-array. Holds all constants
@@ -84,5 +84,4 @@ public:
 	}
 };
 
-// _ATMSP_BASE_H_INCLUDED_
-#endif
+#endif    // _ATMSP_BASE_H_INCLUDED_

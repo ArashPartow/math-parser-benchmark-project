@@ -1,7 +1,7 @@
 TEST-SYSTEM
 ========================================================================
 Linux 64 bit Core2 Duo 2.4 GHz
-Kernel 2.6.37 + GCC 4.5.1
+Kernel 2.6.37 + GCC 4.7.2
 Compiler switches: -O3 -ffast-math -flto -fwhole-program [-static]
 
 
@@ -9,14 +9,14 @@ PARSERS COMPARED
 ========================================================================
 MP = muParser 2.1.0
 FP = fParser 4.4.3
-AP = ATMSP 1.0.2
+AP = ATMSP 1.0.4
 
 
 BASIC INFORMATION     MP      FP    AP
 ========================================================================
 Code total (KB)      243     420    22
-Code lines (net)    6066   24208   322   (Comments, blank lines removed)
-Executable (KB)      111     292    31   (Dynamic executable stripped)
+Code lines (net)    6066   24208   325   (Comments, blank lines removed)
+Executable (KB)      111     292    28   (Dynamic executable stripped)
 Executable (KB)     1326    1518  1251   (Static executable stripped)
 Compile time (s)      11      27     2   (Dynamic executable)
 
