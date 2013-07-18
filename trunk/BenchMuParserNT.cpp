@@ -31,7 +31,6 @@ double BenchMuParserNT::DoBenchmark(const std::string& sExpr, long iCount)
 
   try
   {
-
      p.SetExpr(sExpr.c_str());
      p.DefineVar("a", &a);
      p.DefineVar("b", &b);
@@ -65,12 +64,13 @@ double BenchMuParserNT::DoBenchmark(const std::string& sExpr, long iCount)
 
      m_sInfo = ss.str();
   }
-  catch (...)
+  catch(mp::ParserError<std::string> &exc)
   {
-     StopTimer(std::numeric_limits<double>::quiet_NaN(),
-               std::numeric_limits<double>::quiet_NaN(),
-               1);
-     return std::numeric_limits<double>::quiet_NaN();
+    StopTimerAndReport(exc.GetMsg());
+  }
+  catch(...)
+  {
+    StopTimerAndReport("unexpected exception");
   }
 
   return m_fTime1;

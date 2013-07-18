@@ -60,12 +60,15 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 
      StopTimer(fRes.GetFloat(), fSum, iCount);
   }
+  catch(mup::ParserError &exc)
+  {
+    fTime = std::numeric_limits<double>::quiet_NaN();
+    StopTimerAndReport(exc.GetMsg());
+  }
   catch(...)
   {
-     StopTimer(std::numeric_limits<double>::quiet_NaN(),
-               std::numeric_limits<double>::quiet_NaN(),
-               1);
-     return std::numeric_limits<double>::quiet_NaN();
+    fTime = std::numeric_limits<double>::quiet_NaN();
+    StopTimerAndReport("unexpected exception");
   }
 
   return m_fTime1;

@@ -26,32 +26,32 @@ double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
 
    if (Parser.Parse(sExpr.c_str(), "a,b,c,x,y,z,w") >= 0)
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
-      return std::numeric_limits<double>::quiet_NaN();
+      StopTimerAndReport(Parser.ErrorMsg());
+      return m_fTime1;
    }
-
-   double vals[] = {
-                     1.1,
-                     2.2,
-                     3.3,
-                     2.123456,
-                     3.123456,
-                     4.123456,
-                     5.123456
-                   };
-
-   fRes = Parser.Eval(vals);
-
-   StartTimer();
-   for (int j = 0; j < iCount; ++j)
+   else
    {
-      std::swap(vals[0], vals[1]);
-      std::swap(vals[3], vals[4]);
-      fSum += Parser.Eval(vals);
+     double vals[] = {
+                       1.1,
+                       2.2,
+                       3.3,
+                       2.123456,
+                       3.123456,
+                       4.123456,
+                       5.123456
+                     };
+
+     fRes = Parser.Eval(vals);
+
+     StartTimer();
+     for (int j = 0; j < iCount; ++j)
+     {
+        std::swap(vals[0], vals[1]);
+        std::swap(vals[3], vals[4]);
+        fSum += Parser.Eval(vals);
+     }
+     StopTimer(fRes, fSum, iCount);
    }
-   StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;
 }

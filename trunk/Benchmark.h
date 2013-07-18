@@ -1,6 +1,7 @@
 #ifndef BENCHMARK_H
 #define BENCHMARK_H
 
+#include <map>
 #include <vector>
 #include <string>
 #include "Stopwatch.h"
@@ -33,6 +34,10 @@ public:
 
    void StartTimer();
    void StopTimer(double fRes, double fSum, int iCount);
+   void StopTimerAndReport(const std::string &msg);
+
+   const std::string &GetFailReason() const;
+   bool DidNotEvaluate() const;
 
    void AddPoints(int pt);
    int GetPoints() const;
@@ -44,7 +49,7 @@ public:
    double GetRes() const;
    double GetSum() const;
 
-   const std::vector<std::string> GetFails() const;
+   const std::map<std::string, std::string> GetFails() const;
    bool ExpressionFailed(const std::string& expr) const;
    void AddFail(const std::string &sExpr);
 
@@ -54,15 +59,16 @@ protected:
    std::string m_sInfo;
    int m_nTotalBytecodeSize;
    int m_nPoints;
-   int m_nFail;
    long m_nNum;
    double m_fScore;
    double m_fTime1;
    double m_fResult;
    double m_fSum;
+   bool m_bFail;
+   std::string m_sFailReason;
    Stopwatch m_timer;
    EBaseType m_eBaseType;
-   std::vector<std::string> m_vFails;
+   std::map<std::string, std::string> m_allFails;
 };
 
 #endif
