@@ -79,36 +79,34 @@ double BenchATMSP::DoBenchmark(const std::string& sExpr, long iCount)
 
    if (err)
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
-      return std::numeric_limits<double>::quiet_NaN();
+     StopTimerAndReport(p.errMessage(err));
    }
-
-   // Set variable values for x,y,z. Here always 1,2,3
-   bc.var[0] = 1.1;
-   bc.var[1] = 2.2;
-   bc.var[2] = 3.3;
-   bc.var[3] = 2.123456;
-   bc.var[4] = 3.123456;
-   bc.var[5] = 4.123456;
-   bc.var[6] = 5.123456;
-
-   // Calculate/bench and show result finally
-   double fTime(0);
-   double fRes (0);
-   double fSum (0);
-
-   fRes = bc.run();
-
-   StartTimer();
-   for (int j = 0; j < iCount; ++j)
+   else
    {
-      std::swap(bc.var[0], bc.var[1]);
-      std::swap(bc.var[3], bc.var[4]);
-      fSum += bc.run();
-   }
-   StopTimer(fRes, fSum, iCount);
+     // Set variable values for x,y,z. Here always 1,2,3
+     bc.var[0] = 1.1;
+     bc.var[1] = 2.2;
+     bc.var[2] = 3.3;
+     bc.var[3] = 2.123456;
+     bc.var[4] = 3.123456;
+     bc.var[5] = 4.123456;
+     bc.var[6] = 5.123456;
 
+     // Calculate/bench and show result finally
+     double fTime(0);
+     double fRes (0);
+     double fSum (0);
+
+     fRes = bc.run();
+
+     StartTimer();
+     for (int j = 0; j < iCount; ++j)
+     {
+        std::swap(bc.var[0], bc.var[1]);
+        std::swap(bc.var[3], bc.var[4]);
+        fSum += bc.run();
+     }
+     StopTimer(fRes, fSum, iCount);
+   }
    return m_fTime1;
 }
