@@ -1,3 +1,9 @@
+1.0.4
+
+- Bug fix for unary plus. Thanks Arash for reporting
+- Improved test-codes
+- Code size is 325 LOC in total now
+
 1.0.3
 
 - Switched own uint-types to more general size_t

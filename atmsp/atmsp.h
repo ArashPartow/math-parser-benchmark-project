@@ -11,7 +11,7 @@
  ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR        **
  ** PURPOSE.                                                                **
  **                                                                         **
- ** Verson: 1.0.3                                                           **
+ ** Verson: 1.0.4                                                           **
  **                                                                         **
  ** *********************************************************************** **/
 
@@ -184,5 +184,4 @@ public:
 /** We use templates, so include the whole code here! **/
 #include "atmsp.cpp"
 
-// _ATMSP_H_INCLUDED_
-#endif
+#endif    // _ATMSP_H_INCLUDED_

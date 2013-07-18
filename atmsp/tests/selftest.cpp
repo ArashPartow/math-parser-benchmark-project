@@ -165,6 +165,18 @@ static void addSamples() {
 	list.push(LISTENTRY<PTYPE>("--abs(--log2(2))*y", 2.0));
 	list.push(LISTENTRY<PTYPE>("--abs(--log10(--10))*y", 2.0));
 	list.push(LISTENTRY<PTYPE>("floor(sin(x)+1)", 1.0));
+
+	list.push(LISTENTRY<PTYPE>("+x+y", 3.0));
+	list.push(LISTENTRY<PTYPE>("+1*y", 2.0));
+	list.push(LISTENTRY<PTYPE>("-1*y", -2.0));
+	list.push(LISTENTRY<PTYPE>("+x*+y", 2.0));
+	list.push(LISTENTRY<PTYPE>("3.3-((+x)*(-y))", 5.3));
+	list.push(LISTENTRY<PTYPE>("3.3+((((+x/2))+((+y/2))))", 4.8));
+	list.push(LISTENTRY<PTYPE>("+x^+y", 1.0));
+	list.push(LISTENTRY<PTYPE>("-y^+y", -4.0));
+	list.push(LISTENTRY<PTYPE>("-x^+y/2.0", -0.5));
+	list.push(LISTENTRY<PTYPE>("-2.0*z^+y", -18.0));
+	list.push(LISTENTRY<PTYPE>("-x*+y", -2.0));
 }
 
 
