@@ -51,24 +51,25 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
       fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
                        // since fparser does it in Parse(...) wich is outside too
                        // (Speed of bytecode creation is irrelevant)
+
+      StartTimer();
+      for (int j = 0; j < iCount; ++j)
+      {
+        std::swap(a,b);
+        std::swap(x,y);
+        fSum += p.Eval();
+      }
+      StopTimer(fRes, fSum, iCount);
+   }
+   catch(ParserError &exc)
+   {
+      StopTimerAndReport(exc.GetMsg());
    }
    catch(...)
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
-      return std::numeric_limits<double>::quiet_NaN();
+      StopTimerAndReport("unexpected exception");
    }
 
-   StartTimer();
-   for (int j = 0; j < iCount; ++j)
-   {
-      std::swap(a,b);
-      std::swap(x,y);
-      fSum += p.Eval();
-   }
-
-   StopTimer(fRes, fSum, iCount);
    return m_fTime1;
 }
 
@@ -141,6 +142,15 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
 
       // Do the computation
       StartTimer();
+
+      // Needlessly waste time swapping variables for the sake of fairness.
+      // Todo: Check if the compiler is optimizing this loop away...
+      for (int i = 0; i < nBulkSize; ++i)
+      {
+        std::swap(aa,bb);
+        std::swap(xx,yy);
+      }
+
       p.Eval(result, nBulkSize);
 
       // Note: Performing the addition inside the timed section is done
@@ -154,12 +164,15 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
 
       fTime = m_fTime1;
    }
+   catch(ParserError &exc)
+   {
+      fTime = std::numeric_limits<double>::quiet_NaN();
+      StopTimerAndReport(exc.GetMsg());
+   }
    catch(...)
    {
       fTime = std::numeric_limits<double>::quiet_NaN();
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
+      StopTimerAndReport("unexpected exception");
    }
 
    delete [] a;

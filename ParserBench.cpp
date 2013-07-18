@@ -121,23 +121,25 @@ void Shootout(const std::string &sCaption,
             fRefResult = pBench->GetRes();
             fRefSum    = pBench->GetSum();
 
-            // If either the reference result or the sum is NaN the reference parser will be set to fail.
-            // In these cases the fail evaluation does not work and will cause the disqualification of all
-            // other parsers.
-            // (A better solution would be to ignore those expressions and remove them from the test. This
-            // is a temporary workaround.)
-            if (fRefResult!=fRefResult || fRefSum!=fRefSum)
+            if (fRefResult ==  std::numeric_limits<double>::infinity() || 
+                fRefResult == -std::numeric_limits<double>::infinity() || 
+                fRefResult != fRefResult)
             {
-              pBench->AddFail(vExpr[i]);
-              ++failure_count;
+              output(pRes, "\nWARNING: Expression rejected due to non numeric result");
+              goto NextExpression; // don't say it... I don't care...
             }
          }
          else
          {
-            // Check the sum of all results and if the sum is ok, check the last result of
-            // the benchmark run.
-            if (!is_equal(pBench->GetRes(),fRefResult))
+            if (pBench->DidNotEvaluate())
             {
+               pBench->AddFail(vExpr[i]);
+               ++failure_count;
+            }
+            else if (!is_equal(pBench->GetRes(),fRefResult))
+            {
+               // Check the sum of all results and if the sum is ok, check the last result of
+               // the benchmark run.
                pBench->AddFail(vExpr[i]);
                ++failure_count;
             }
@@ -164,10 +166,10 @@ void Shootout(const std::string &sCaption,
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
             output(pRes, "    %-20s (%9.3f ns, %26.18f, %26.18f)\n",
-                   pBench->GetShortName().c_str(),
-                   it->first,
-                   pBench->GetRes(),
-                   pBench->GetSum());
+                    pBench->GetShortName().c_str(),
+                    it->first,
+                    pBench->GetRes(),
+                    pBench->GetSum());
          }
 
          ct += vBench.size();
@@ -191,11 +193,20 @@ void Shootout(const std::string &sCaption,
                pBench->AddPoints(0);
                pBench->AddScore(0);
 
-               output(pRes, "    %-15s (%9.3f ns, %26.18f, %26.18f)\n",
-                      pBench->GetShortName().c_str(),
-                      it->first,
-                      (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
-                      (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
+               if (pBench->DidNotEvaluate())
+               {
+                 output(pRes, "    %-20s (%s)\n",
+                        pBench->GetShortName().c_str(),
+                        pBench->GetFailReason().c_str());
+               }
+               else
+               {
+                 output(pRes, "    %-20s (%9.3f ns, %26.18f, %26.18f)\n",
+                        pBench->GetShortName().c_str(),
+                        it->first,
+                        (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
+                        (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
+               }
             }
          }
       }
@@ -207,6 +218,8 @@ void Shootout(const std::string &sCaption,
       }
 
       results.clear();
+
+      NextExpression:;
    }
 
    output(pRes, "\n\nBenchmark settings:\n");
@@ -267,16 +280,17 @@ void Shootout(const std::string &sCaption,
       for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
       {
          Benchmark *pBench = vBenchmarks[i];
-         std::vector<std::string> vFail = pBench->GetFails();
-         if (!vFail.empty())
+         const std::map<std::string, std::string> &allFailures = pBench->GetFails();
+         if (!allFailures.empty())
          {
             output(pRes, "  %-15s (%3d):\n",
                    pBench->GetShortName().c_str(),
-                   vFail.size());
+                   allFailures.size());
 
-            for (std::size_t j = 0; j < vFail.size(); ++j)
+            for (auto it = allFailures.begin(); it!=allFailures.end(); ++it)
             {
-               output(pRes, "         \"%s\"\n", vFail[j].c_str());
+               output(pRes, "         \"%s\" - \"%s\"\n", it->first.c_str(), 
+                                                          it->second.c_str());
             }
          }
       }
@@ -301,10 +315,12 @@ int main(int argc, const char *argv[])
 
    //std::string benchmark_file = "bench_expr.txt";
    //std::string benchmark_file = "bench_expr_all.txt";
+   std::string benchmark_file = "bench_expr_weird.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
    //std::string benchmark_file = "bench_expr_random.txt";
    //std::string benchmark_file = "bench_precedence.txt";
-   std::string benchmark_file = "bench_expr_complete.txt";
+   //std::string benchmark_file = "bench_expr_complete.txt";
+   //std::string benchmark_file = "debug.txt";
 
    // Usage:
    // 1. ParserBench

@@ -18,7 +18,7 @@ Benchmark::Benchmark(EBaseType eBaseType)
   ,m_nTotalBytecodeSize(0)
   ,m_nPoints(0)
   ,m_fScore(0)
-  ,m_vFails()
+  ,m_allFails()
   ,m_eBaseType(eBaseType)
 {}
 
@@ -139,7 +139,7 @@ void Benchmark::Reset()
 {
    m_fTime1  = 0;
    m_fResult = 0;
-   m_vFails.clear();
+   m_allFails.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -155,11 +155,23 @@ double Benchmark::GetTime() const
 }
 
 //-------------------------------------------------------------------------------------------------
+void Benchmark::StopTimerAndReport(const std::string &msg)
+{
+  m_timer.Stop();
+  m_fResult = 0;
+  m_fSum = 0;
+  m_fTime1 = 0;
+  m_bFail = true;
+  m_sFailReason = msg;
+}
+
+//-------------------------------------------------------------------------------------------------
 void Benchmark::StopTimer(double fRes, double fSum, int iCount)
 {
    m_fTime1 = m_timer.Stop() / (double)iCount;
    m_fResult = fRes;
    m_fSum = fSum;
+   m_bFail = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -174,20 +186,33 @@ double Benchmark::GetRes() const
    return m_fResult;
 }
 
-bool Benchmark::ExpressionFailed(const std::string& expr) const
+//-------------------------------------------------------------------------------------------------
+bool Benchmark::DidNotEvaluate() const
 {
-   return (m_vFails.end() != std::find(m_vFails.begin(),m_vFails.end(),expr));
+  return m_bFail;
 }
 
+//-------------------------------------------------------------------------------------------------
+const std::string &Benchmark::GetFailReason() const
+{
+  return m_sFailReason;
+}
 
 //-------------------------------------------------------------------------------------------------
-const std::vector<std::string> Benchmark::GetFails() const
+bool Benchmark::ExpressionFailed(const std::string& expr) const
 {
-   return m_vFails;
+  return m_allFails.find(expr)!=m_allFails.end();
+//return (m_allFails.end() != std::find(m_allFails.begin(),m_allFails.end(),expr));
+}
+
+//-------------------------------------------------------------------------------------------------
+const std::map<std::string, std::string> Benchmark::GetFails() const
+{
+   return m_allFails;
 }
 
 //-------------------------------------------------------------------------------------------------
 void Benchmark::AddFail(const std::string &sExpr)
 {
-   m_vFails.push_back(sExpr);
+   m_allFails[sExpr] = DidNotEvaluate() ? m_sFailReason : std::string("incorrect result");
 }

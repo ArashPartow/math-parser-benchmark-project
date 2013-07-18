@@ -56,25 +56,25 @@ double BenchMathExpr::DoBenchmark(const std::string& sExpr, long iCount)
 
    if (op.HasError(&op))
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
-      return std::numeric_limits<double>::quiet_NaN();
+      // I did not find functions for reporting an error, taking generic message instead
+      StopTimerAndReport("parsing error");
    }
-
-   // Calculate/bench and show result finally
-   double fTime = 0;
-   double fRes  = 0;
-   double fSum  = 0;
-
-   fRes = op.Val();
-   StartTimer();
-   for (int j = 0; j < iCount; j++)
+   else
    {
-      std::swap(a,b);
-      std::swap(x,y);
-      fSum += op.Val();
+     // Calculate/bench and show result finally
+     double fTime = 0;
+     double fRes  = 0;
+     double fSum  = 0;
+
+     fRes = op.Val();
+     StartTimer();
+     for (int j = 0; j < iCount; j++)
+     {
+        std::swap(a,b);
+        std::swap(x,y);
+        fSum += op.Val();
+     }
+     StopTimer(fRes, fSum, iCount);
    }
-   StopTimer(fRes, fSum, iCount);
    return m_fTime1;
 }

@@ -49,9 +49,7 @@ double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
    }
    catch (std::exception& e)
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
+      StopTimerAndReport(e.what());
       return std::numeric_limits<double>::quiet_NaN();
    }
 
