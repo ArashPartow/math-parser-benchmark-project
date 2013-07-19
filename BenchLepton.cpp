@@ -65,9 +65,9 @@ double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
    StartTimer();
    for (int j = 0; j < iCount; ++j)
    {
+      fSum += program.evaluate(var_list);
       std::swap(a,b);
       std::swap(x,y);
-      fSum += program.evaluate(var_list);
    }
    StopTimer(fRes, fSum, iCount);
 

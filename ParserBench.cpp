@@ -315,9 +315,10 @@ int main(int argc, const char *argv[])
 
    //std::string benchmark_file = "bench_expr.txt";
    //std::string benchmark_file = "bench_expr_all.txt";
-   std::string benchmark_file = "bench_expr_weird.txt";
+   //std::string benchmark_file = "bench_expr_weird.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
-   //std::string benchmark_file = "bench_expr_random.txt";
+   std::string benchmark_file = "bench_expr_random_with_functions.txt";
+
    //std::string benchmark_file = "bench_precedence.txt";
    //std::string benchmark_file = "bench_expr_complete.txt";
    //std::string benchmark_file = "debug.txt";
@@ -353,7 +354,7 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchExprTk());            // <- Note: first parser becomes the reference!
    vBenchmarks.push_back(new BenchMuParser2(false));
    vBenchmarks.push_back(new BenchMuParser2(true));
-//   vBenchmarks.push_back(new BenchMTParser());      // <- Crash for expression "1"
+//   vBenchmarks.push_back(new BenchMTParser());      // <- Crash in debug mode
    vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchMuParserNT(true));
    vBenchmarks.push_back(new BenchATMSP());

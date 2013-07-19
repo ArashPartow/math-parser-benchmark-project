@@ -70,9 +70,9 @@ double BenchMathExpr::DoBenchmark(const std::string& sExpr, long iCount)
      StartTimer();
      for (int j = 0; j < iCount; j++)
      {
+        fSum += op.Val();
         std::swap(a,b);
         std::swap(x,y);
-        fSum += op.Val();
      }
      StopTimer(fRes, fSum, iCount);
    }

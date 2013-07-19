@@ -51,9 +51,9 @@ double BenchMuParserNT::DoBenchmark(const std::string& sExpr, long iCount)
      StartTimer();
      for (int j=0; j<iCount; j++)
      {
+       fSum += p.Eval();
        std::swap(a,b);
        std::swap(x,y);
-       fSum += p.Eval();
      }
 
      StopTimer(fRes, fSum, iCount);
