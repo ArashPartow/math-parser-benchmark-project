@@ -55,9 +55,9 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
       StartTimer();
       for (int j = 0; j < iCount; ++j)
       {
+        fSum += p.Eval();
         std::swap(a,b);
         std::swap(x,y);
-        fSum += p.Eval();
       }
       StopTimer(fRes, fSum, iCount);
    }
@@ -121,6 +121,7 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       y[i] = yy;
       z[i] = 4.123456;
       w[i] = 5.123456;
+
       std::swap(aa,bb);
       std::swap(xx,yy);
    }
@@ -143,8 +144,7 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       // Do the computation
       StartTimer();
 
-      // Needlessly waste time swapping variables for the sake of fairness.
-      // Todo: Check if the compiler is optimizing this loop away...
+      // Needlessly waste time swapping variables for the sake of timing fairness.
       for (int i = 0; i < nBulkSize; ++i)
       {
         std::swap(aa,bb);
@@ -205,7 +205,7 @@ double BenchMuParser2::DoBenchmark(const std::string& sExpr, long iCount)
 std::string BenchMuParser2::GetShortName() const
 {
    if (m_bUseBulkMode)
-      return "muparser2.2.4 (omp)";
+      return "muparser 2.2.4 (omp)";
    else
-      return "muparser2.2.4";
+      return "muparser 2.2.4";
 }

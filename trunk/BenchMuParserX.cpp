@@ -44,18 +44,16 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 
       //p.DefineConst("pi", (float_type)M_PI);
       //p.DefineConst("e", (float_type)M_E);
-      p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
-                // since fparser does it in Parse(...) wich is outside too
-                // (Speed of bytecode creation is irrelevant)
-
      double fSum = 0;
-     fRes = p.Eval();
+     fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
+                       // since fparser does it in Parse(...) wich is outside too
+                       // (Speed of bytecode creation is irrelevant)
      StartTimer();
      for (int j = 0; j < iCount; j++)
      {
+        fSum += p.Eval().GetFloat();
         std::swap(a,b);
         std::swap(x,y);
-        fSum += p.Eval().GetFloat();
      }
 
      StopTimer(fRes.GetFloat(), fSum, iCount);

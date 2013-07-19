@@ -46,9 +46,9 @@ double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
      StartTimer();
      for (int j = 0; j < iCount; ++j)
      {
+        fSum += Parser.Eval(vals);
         std::swap(vals[0], vals[1]);
         std::swap(vals[3], vals[4]);
-        fSum += Parser.Eval(vals);
      }
      StopTimer(fRes, fSum, iCount);
    }

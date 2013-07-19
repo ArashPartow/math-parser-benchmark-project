@@ -50,23 +50,20 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    {
       p.compile(sExpr.c_str());
       fRes = p.evaluate();
+
+      StartTimer();
+      for (int j = 0;j<iCount; j++)
+      {
+        fSum += p.evaluate();
+        std::swap(a,b);
+        std::swap(x,y);
+      }
+      StopTimer(fRes, fSum, iCount);
    }
-   catch(...)
+   catch(MTParserException &e)
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
-      return std::numeric_limits<double>::quiet_NaN();
+      StopTimerAndReport(e.getDesc(0).c_str());
    }
 
-   StartTimer();
-   for (int j = 0;j<iCount; j++)
-   {
-      std::swap(a,b);
-      std::swap(x,y);
-      fSum += p.evaluate();
-   }
-
-   StopTimer(fRes, fSum, iCount);
    return m_fTime1;
 }

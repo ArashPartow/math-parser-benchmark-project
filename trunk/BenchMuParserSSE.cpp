@@ -61,9 +61,9 @@ double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
       StartTimer();
       for (int j = 0 ; j < iCount; j++)
       {
+          fSum += ptfun();
           std::swap(a,b);
           std::swap(x,y);
-          fSum += ptfun();
       }
 
       StopTimer(fRes, fSum, iCount);
