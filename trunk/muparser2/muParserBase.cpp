@@ -1720,6 +1720,14 @@ namespace mu
   //---------------------------------------------------------------------------
   void ParserBase::Eval(value_type *results, int nBulkSize)
   {
+    // Parallelization does not make sense for fewer than 10000 computations 
+    // due to thread creation overhead. If the bulk size is below 2000
+    // computation is refused. 
+    if (nBulkSize<2000)
+    {
+      throw ParserError(ecUNREASONABLE_NUMBER_OF_COMPUTATIONS);
+    }
+
     CreateRPN();
 
     int i = 0;
