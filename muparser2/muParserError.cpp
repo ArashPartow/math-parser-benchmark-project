@@ -100,7 +100,7 @@ namespace mu
     m_vErrMsg[ecUNEXPECTED_CONDITIONAL] = _T("The \"$TOK$\" operator must be preceeded by a closing bracket.");
     m_vErrMsg[ecMISSING_ELSE_CLAUSE]    = _T("If-then-else operator is missing an else clause");
     m_vErrMsg[ecMISPLACED_COLON]        = _T("Misplaced colon at position $POS$");
-    m_vErrMsg[ecUNREASONABLE_NUMBER_OF_COMPUTATIONS] = _T("Number of computations to small for bulk mode. (Performance would suffer)");
+    m_vErrMsg[ecUNREASONABLE_NUMBER_OF_COMPUTATIONS] = _T("Number of computations to small for bulk mode. (Vectorisation overhead too costly)");
     
     #if defined(_DEBUG)
       for (int i=0; i<ecCOUNT; ++i)

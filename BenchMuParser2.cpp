@@ -106,8 +106,8 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
 
    // Note: There is a bit of variable swapping going on. I use aa,bb,xx,yy as
    //       buffer variables to toggle values.
-   double aa = 1.1;
-   double bb = 2.2;
+   volatile double aa = 1.1;
+   volatile double bb = 2.2;
    double xx = 2.123456;
    double yy = 3.123456;
 

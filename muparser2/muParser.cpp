@@ -129,6 +129,16 @@ namespace mu
   }
 
   //---------------------------------------------------------------------------
+  /** \brief Callback for the unary minus operator.
+      \param v The value to negate
+      \return -v
+  */
+  value_type Parser::UnaryPlus(value_type v) 
+  { 
+    return v; 
+  }
+
+  //---------------------------------------------------------------------------
   /** \brief Callback for adding multiple values. 
       \param [in] a_afArg Vector with the function arguments
       \param [in] a_iArgc The size of a_afArg
@@ -320,6 +330,7 @@ namespace mu
   void Parser::InitOprt()
   {
     DefineInfixOprt(_T("-"), UnaryMinus);
+    DefineInfixOprt(_T("+"), UnaryPlus);
   }
 
   //---------------------------------------------------------------------------
