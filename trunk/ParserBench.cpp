@@ -315,9 +315,9 @@ int main(int argc, const char *argv[])
 
    //std::string benchmark_file = "bench_expr.txt";
    //std::string benchmark_file = "bench_expr_all.txt";
-   //std::string benchmark_file = "bench_expr_weird.txt";
+   std::string benchmark_file = "bench_expr_weird.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
-   std::string benchmark_file = "bench_expr_random_with_functions.txt";
+   //std::string benchmark_file = "bench_expr_random_with_functions.txt";
 
    //std::string benchmark_file = "bench_precedence.txt";
    //std::string benchmark_file = "bench_expr_complete.txt";
