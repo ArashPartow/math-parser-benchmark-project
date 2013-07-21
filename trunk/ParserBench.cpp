@@ -26,7 +26,7 @@
 template <typename T>
 inline bool is_equal(const T v0, const T v1)
 {
-   static const T epsilon = T(0.00001);
+   static const T epsilon = T(0.000001);
    //static const T epsilon = T(std::numeric_limits<double>::epsilon());
    //static const T epsilon = T(std::numeric_limits<float>::epsilon());
    //Is either a NaN?
@@ -73,8 +73,7 @@ void output(FILE *pFile, const char *fmt, ...)
 void Shootout(const std::string &sCaption,
               std::vector<Benchmark*> vBenchmarks,
               std::vector<std::string> vExpr,
-              int iCount,
-              double fRefDev = 0.0001)
+              int iCount)
 {
    char outstr[400], file[400];
    time_t t = time(NULL);
@@ -87,65 +86,76 @@ void Shootout(const std::string &sCaption,
 
    output(pRes, "Benchmark (Shootout for file \"%s\")\n", sCaption.c_str());
 
-   Benchmark *pRefBench = vBenchmarks[0];
+   Benchmark* pRefBench = vBenchmarks[0];
 
    std::map<double, std::vector<Benchmark*>> results;
+
    for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
       std::size_t failure_count = 0;
       const std::string current_expr = vExpr[i];
 
       output(pRes, "\nExpression %d of %d: \"%s\"; Progress: ",
-             (int)i+1,
+             (int)(i + 1),
              vExpr.size(),
-             vExpr[i].c_str());
+             current_expr.c_str());
 
-      double fRefResult = 0;
-      double fRefSum    = 0;
-      double fRefTime   = 0;
+      double fRefResult = 0.0;
+      double fRefSum    = 0.0;
+
+      // Setup Reference parser result and total sum.
+      {
+         Benchmark *pBench = vBenchmarks[0];
+
+         pBench->DoBenchmark(current_expr + " ", iCount);
+
+         fRefResult = pBench->GetRes();
+         fRefSum    = pBench->GetSum();
+
+         if (
+             (fRefResult ==  std::numeric_limits<double>::infinity()) ||
+             (fRefResult == -std::numeric_limits<double>::infinity()) ||
+             (fRefResult != fRefResult)
+            )
+         {
+            output(pRes, "\nWARNING: Expression rejected due to non-numeric result.");
+            continue;
+         }
+      }
 
       for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
       {
          output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one
-         Benchmark *pBench = vBenchmarks[j];
+         Benchmark* pBench = vBenchmarks[j];
 
-         std::string sExpr = vExpr[i];   // get the original expression anew for each parser
-         pBench->PreprocessExpr(sExpr);  // some parsers use fancy characters to signal variables
-         double time = 1000000 * pBench->DoBenchmark(sExpr + " ", iCount);
+         std::string sExpr = current_expr;  // get the original expression anew for each parser
+         pBench->PreprocessExpr(sExpr);     // some parsers use fancy characters to signal variables
+         double time = 1000000.0 * pBench->DoBenchmark(sExpr + " ", iCount);
 
-         // The first parser is used for obtaining reference results. If the reference result
-         // is nan the reference parser is disqualified too.
-         if (j == 0)
+         // The first parser is used for obtaining reference results.
+         // If the reference result is nan the reference parser is
+         // disqualified too.
+         if (pBench->DidNotEvaluate())
          {
-            fRefResult = pBench->GetRes();
-            fRefSum    = pBench->GetSum();
-
-            if (fRefResult ==  std::numeric_limits<double>::infinity() || 
-                fRefResult == -std::numeric_limits<double>::infinity() || 
-                fRefResult != fRefResult)
-            {
-              output(pRes, "\nWARNING: Expression rejected due to non numeric result");
-              goto NextExpression; // don't say it... I don't care...
-            }
+            pBench->AddFail(vExpr[i]);
+            ++failure_count;
          }
-         else
+         else if (
+                  !is_equal(pBench->GetRes(),fRefResult)
+                  ||
+                  //Instead of 5, perhaps something proportional to iCount, but no less than 1?
+                  (std::abs(static_cast<long long>(pBench->GetSum()) - static_cast<long long>(fRefSum)) > 5)
+                 )
          {
-            if (pBench->DidNotEvaluate())
-            {
-               pBench->AddFail(vExpr[i]);
-               ++failure_count;
-            }
-            else if (!is_equal(pBench->GetRes(),fRefResult))
-            {
-               // Check the sum of all results and if the sum is ok, check the last result of
-               // the benchmark run.
-               pBench->AddFail(vExpr[i]);
-               ++failure_count;
-            }
+            // Check the sum of all results and if the sum is ok, check the last result of
+            // the benchmark run.
+            pBench->AddFail(vExpr[i]);
+            ++failure_count;
          }
 
          results[time].push_back(pBench);
       }
+
       output(pRes, "\n");
 
       int ct = 1;
@@ -159,21 +169,22 @@ void Shootout(const std::string &sCaption,
             Benchmark* pBench = vBench[k];
 
             if (pBench->ExpressionFailed(current_expr))
+            {
                continue;
+            }
 
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
             output(pRes, "    %-20s (%9.3f ns, %26.18f, %26.18f)\n",
-                    pBench->GetShortName().c_str(),
-                    it->first,
-                    pBench->GetRes(),
-                    pBench->GetSum());
+                   pBench->GetShortName().c_str(),
+                   it->first,
+                   pBench->GetRes(),
+                   pBench->GetSum());
          }
 
          ct += vBench.size();
       }
-
 
       if (failure_count)
       {
@@ -217,8 +228,6 @@ void Shootout(const std::string &sCaption,
       }
 
       results.clear();
-
-      NextExpression:;
    }
 
    output(pRes, "\n\nBenchmark settings:\n");
@@ -286,10 +295,11 @@ void Shootout(const std::string &sCaption,
                    pBench->GetShortName().c_str(),
                    allFailures.size());
 
-            for (auto it = allFailures.begin(); it!=allFailures.end(); ++it)
+            for (auto it = allFailures.begin(); it != allFailures.end(); ++it)
             {
-               output(pRes, "         \"%s\" - \"%s\"\n", it->first.c_str(), 
-                                                          it->second.c_str());
+               output(pRes, "         \"%s\" - \"%s\"\n",
+                      it->first.c_str(),
+                      it->second.c_str());
             }
          }
       }
@@ -313,11 +323,10 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_expr.txt";
-   //std::string benchmark_file = "bench_expr_all.txt";
-   std::string benchmark_file = "bench_expr_weird.txt";
+   std::string benchmark_file = "bench_expr_all.txt";
+   //std::string benchmark_file = "bench_expr_weird.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
    //std::string benchmark_file = "bench_expr_random_with_functions.txt";
-
    //std::string benchmark_file = "bench_precedence.txt";
    //std::string benchmark_file = "bench_expr_complete.txt";
    //std::string benchmark_file = "debug.txt";
