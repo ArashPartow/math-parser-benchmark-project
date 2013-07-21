@@ -11,7 +11,6 @@
 #include "FormelGenerator.h"
 #include "cpuid.h"
 #include "Benchmark.h"
-#include "BenchMuParserNT.h"
 #include "BenchMuParserX.h"
 #include "BenchMuParser2.h"
 #include "BenchATMSP.h"
@@ -356,7 +355,6 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchMuParser2(true));
 //   vBenchmarks.push_back(new BenchMTParser());      // <- Crash in debug mode
    vBenchmarks.push_back(new BenchMuParserX());
-   vBenchmarks.push_back(new BenchMuParserNT(true));
    vBenchmarks.push_back(new BenchATMSP());
    vBenchmarks.push_back(new BenchLepton());
    vBenchmarks.push_back(new BenchMathExpr());
