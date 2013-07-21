@@ -15,6 +15,13 @@ BenchMuParser2::BenchMuParser2(bool bUseBulkMode)
 {
    m_sName = "muparser2 V" + mu::Parser().GetVersion();
    m_bUseBulkMode = bUseBulkMode;
+
+   // Evaluating a single function will force OpenMP to create its threads here and not
+   // during the first expression of the benchmark set.
+   if (m_bUseBulkMode)
+   {
+     DoBenchmarkBulk("1", 2001);
+   }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -108,8 +115,8 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
    //       buffer variables to toggle values.
    volatile double aa = 1.1;
    volatile double bb = 2.2;
-   double xx = 2.123456;
-   double yy = 3.123456;
+   volatile double xx = 2.123456;
+   volatile double yy = 3.123456;
 
    for (int i = 0; i < nBulkSize; ++i)
    {
@@ -144,7 +151,7 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       // Do the computation
       StartTimer();
 
-      // Needlessly waste time swapping variables for the sake of timing fairness.
+      // Needlessly spend time swapping variables for the sake of timing fairness.
       for (int i = 0; i < nBulkSize; ++i)
       {
         std::swap(aa,bb);
