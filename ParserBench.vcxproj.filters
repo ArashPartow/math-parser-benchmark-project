@@ -17,9 +17,6 @@
     <Filter Include="Quelldateien\atmsp">
       <UniqueIdentifier>{9375774e-15fd-46f5-8dd4-53927bc7a76b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Quelldateien\muparser3">
-      <UniqueIdentifier>{e014649f-4e81-4064-a17b-1c98f6784b34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Quelldateien\MTParser">
       <UniqueIdentifier>{325581cd-6788-48c0-9dcf-74c438220890}</UniqueIdentifier>
     </Filter>
@@ -55,9 +52,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Benchmark.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="BenchMuParserNT.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="BenchMuParserX.cpp">
@@ -305,9 +299,6 @@
     <ClInclude Include="Benchmark.h">
       <Filter>Quelldateien</Filter>
     </ClInclude>
-    <ClInclude Include="BenchMuParserNT.h">
-      <Filter>Quelldateien</Filter>
-    </ClInclude>
     <ClInclude Include="BenchMuParserX.h">
       <Filter>Quelldateien</Filter>
     </ClInclude>
@@ -547,36 +538,6 @@
     </ClInclude>
     <ClInclude Include="BenchExprTk.h">
       <Filter>Quelldateien</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserTokenReader.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserToken.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserBytecode.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserBase.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserStack.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserMath.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParser.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserError.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserDef.h">
-      <Filter>Quelldateien\muparser3</Filter>
-    </ClInclude>
-    <ClInclude Include="muparser3\muParserTest.h">
-      <Filter>Quelldateien\muparser3</Filter>
     </ClInclude>
     <ClInclude Include="BenchMuParser2.h">
       <Filter>Quelldateien</Filter>

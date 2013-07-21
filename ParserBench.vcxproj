@@ -135,7 +135,6 @@
     <ClCompile Include="BenchMathExpr.cpp" />
     <ClCompile Include="BenchMTParser.cpp" />
     <ClCompile Include="BenchMuParser2.cpp" />
-    <ClCompile Include="BenchMuParserNT.cpp" />
     <ClCompile Include="BenchMuParserSSE.cpp" />
     <ClCompile Include="BenchMuParserX.cpp" />
     <ClCompile Include="cpuid.cpp" />
@@ -219,7 +218,6 @@
     <ClInclude Include="BenchMathExpr.h" />
     <ClInclude Include="BenchMTParser.h" />
     <ClInclude Include="BenchMuParser2.h" />
-    <ClInclude Include="BenchMuParserNT.h" />
     <ClInclude Include="BenchMuParserSSE.h" />
     <ClInclude Include="BenchMuParserX.h" />
     <ClInclude Include="cpuid.h" />
@@ -253,16 +251,6 @@
     <ClInclude Include="muparser2\muParserTemplateMagic.h" />
     <ClInclude Include="muparser2\muParserToken.h" />
     <ClInclude Include="muparser2\muParserTokenReader.h" />
-    <ClInclude Include="muparser3\muParser.h" />
-    <ClInclude Include="muparser3\muParserBase.h" />
-    <ClInclude Include="muparser3\muParserBytecode.h" />
-    <ClInclude Include="muparser3\muParserDef.h" />
-    <ClInclude Include="muparser3\muParserError.h" />
-    <ClInclude Include="muparser3\muParserMath.h" />
-    <ClInclude Include="muparser3\muParserStack.h" />
-    <ClInclude Include="muparser3\muParserTest.h" />
-    <ClInclude Include="muparser3\muParserToken.h" />
-    <ClInclude Include="muparser3\muParserTokenReader.h" />
     <ClInclude Include="muparserx\mpOprtPostfixCommon.h" />
     <ClInclude Include="muparserx\mpParserMessageProvider.h" />
     <ClInclude Include="muparserx\suStringTokens.h" />
