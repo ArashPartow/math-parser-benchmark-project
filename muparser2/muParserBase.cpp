@@ -1157,16 +1157,6 @@ namespace mu
                 }
               }
 
-        //case  cmSTRING:
-        //case  cmOPRT_BIN:
-        //case  cmOPRT_POSTFIX:
-        //case  cmOPRT_INFIX:
-        //      MUP_FAIL(INVALID_CODE_IN_BYTECODE);
-        //      continue;
-
-        //case  cmEND:
-	       //     return Stack[m_nFinalResultIdx];  
-
         default:
               Error(ecINTERNAL_ERROR, 3);
               return 0;
@@ -1215,7 +1205,7 @@ namespace mu
                 break;
 
         case cmVAL:
-		            stVal.push(opt);
+		        stVal.push(opt);
                 m_vRPN.AddVal( opt.GetVal() );
                 break;
 
