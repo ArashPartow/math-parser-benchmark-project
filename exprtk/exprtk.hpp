@@ -610,9 +610,9 @@ namespace exprtk
             template <typename T>
             inline T roundn_impl(const T v0, const T v1, real_type_tag)
             {
-               // 0 <= index <= sizeof(pow10)
-               const int index = std::max<int>(0,std::min<int>(sizeof(pow10),(int)std::floor(v1)));
-               const T p10 = pow10[index];
+               // 0 <= index < sizeof(pow10)
+               const int index = std::max<int>(0,std::min<int>(sizeof(pow10) - 1,(int)std::floor(v1)));
+               const T p10 = T(pow10[index]);
                return T(std::floor((v0 * p10) + T(0.5)) / p10);
             }
 
