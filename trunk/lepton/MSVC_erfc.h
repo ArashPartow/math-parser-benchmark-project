@@ -20,7 +20,9 @@
 
 #include <cmath>
 
-#define M_PI 3.14159265358979323846264338327950288
+#ifndef M_PI
+   #define M_PI 3.14159265358979323846264338327950288
+#endif
 
 static const double rel_error= 1E-12;        //calculate 12 significant figures
 //you can adjust rel_error to trade off between accuracy and speed

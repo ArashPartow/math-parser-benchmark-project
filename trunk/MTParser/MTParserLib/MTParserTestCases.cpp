@@ -1102,7 +1102,7 @@ bool MTParserTestFunctionDef::doTests()
 		pFct->m_symbol = _T("sin.");
 		parser.defineFunc(pFct);					
 	}
-	catch(MTParserException &e)
+	catch(MTParserException &)
 	{
 		ASSERTTRUE(false, _T("function name may contain decimal point character"))		
 	}	
@@ -1235,7 +1235,7 @@ bool MTParserTestOperatorDef::doTests()
 		pOp->m_prec = e_MTOpPrec_ADD;
 		parser.defineOp(pOp);				
 	}
-	catch(MTParserException &e)
+	catch(MTParserException &)
 	{
 		ASSERTTRUE(false, _T("op name may contain decimal point character"))			
 	}	
