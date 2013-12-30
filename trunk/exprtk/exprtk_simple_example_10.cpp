@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 10                                          *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -32,7 +32,7 @@ void newton_sqrt()
 
    T x = T(0);
 
-   exprtk::symbol_table<T> symbol_table;
+   symbol_table_t symbol_table;
 
    symbol_table.add_constants();
    symbol_table.add_variable("x",x);
@@ -68,7 +68,7 @@ void newton_sqrt()
 
    expression.register_symbol_table(symbol_table);
 
-   exprtk::parser<T> parser;
+   parser_t parser;
 
    parser.compile(expression_str,expression);
 
