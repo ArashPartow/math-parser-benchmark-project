@@ -15235,6 +15235,38 @@ namespace exprtk
                         template compile<ctype,vtype,vtype>(expr_gen,"(t*t)*t",(c0 * c1),v0,v1,result);
                   return (synthesis_result) ? result : error_node();
                }
+               // (c0 * v0) / (c1 * v1) --> (covov) (c0 / c1) * (v0 / v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 / v0) * (c1 / v1) --> (covov) (c0 * c1) / (v0 * v1)
+               else if ((details::e_div == o0) && (details::e_mul == o1) && (details::e_div == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t/(t*t)",(c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 * v0) / (c1 / v1) --> (covov) (c0 / c1) * (v0 * v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_div == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t*(t*t)",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 / v0) / (c1 * v1) --> (covov) (c0 / c1) / (v0 * v1)
+               else if ((details::e_div == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t/(t*t)",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
                else if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,c1,v1,result))
                   return result;
                else if (!expr_gen.valid_operator(o0,f0))
@@ -15307,12 +15339,44 @@ namespace exprtk
                         template compile<ctype,vtype,vtype>(expr_gen,"(t+t)-t",(c1 - c0),v0,v1,result);
                   return (synthesis_result) ? result : error_node();
                }
-               // (c0 * v0) * (c1 * v1) --> (covov) (c0 * c1) * v0 * v1
+               // (v0 * c0) * (v1 * c1) --> (covov) (c0 * c1) * v0 * v1
                else if ((details::e_mul == o0) && (details::e_mul == o1) && (details::e_mul == o2))
                {
                   const bool synthesis_result =
                      synthesize_sf3ext_expression::
                         template compile<ctype,vtype,vtype>(expr_gen,"(t*t)*t",(c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 * c0) / (v1 * c1) --> (covov) (c0 / c1) * (v0 / v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 / c0) * (v1 / c1) --> (covov) (1 / (c0 * c1)) * v0 * v1
+               else if ((details::e_div == o0) && (details::e_mul == o1) && (details::e_div == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)*t",Type(1) / (c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 * c0) / (v1 / c1) --> (covov) (c0 * c1) * (v0 / v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t*(t/t)",(c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 / c0) / (v1 * c1) --> (covov) (1 / (c0 * c1)) * v0 / v1
+               else if ((details::e_div == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t*(t/t)",Type(1) / (c0 * c1),v0,v1,result);
                   return (synthesis_result) ? result : error_node();
                }
                else if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,v1,c1,result))
@@ -15387,12 +15451,44 @@ namespace exprtk
                         template compile<ctype,vtype,vtype>(expr_gen,"t-(t+t)",(c0 + c1),v0,v1,result);
                   return (synthesis_result) ? result : error_node();
                }
-               // (c0 * v0) * (c1 * v1) --> (covov) (c0 * c1) * v0 * v1
+               // (c0 * v0) * (v1 * c1) --> (covov) (c0 * c1) * v0 * v1
                else if ((details::e_mul == o0) && (details::e_mul == o1) && (details::e_mul == o2))
                {
                   const bool synthesis_result =
                      synthesize_sf3ext_expression::
                         template compile<ctype,vtype,vtype>(expr_gen,"(t*t)*t",(c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 * v0) / (v1 * c1) --> (covov) (c0 / c1) * (v0 / v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 / v0) * (v1 / c1) --> (covov) (c0 / c1) * (v1 / v0)
+               else if ((details::e_div == o0) && (details::e_mul == o1) && (details::e_div == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t*(t/t)",(c0 / c1),v1,v0,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 * v0) / (v1 / c1) --> (covov) (c0 * c1) * (v0 / v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_div == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",(c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (c0 / v0) / (v1 * c1) --> (covov) (c0 / c1) / (v0 * v1)
+               else if ((details::e_div == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"t/(t*t)",(c0 / c1),v0,v1,result);
                   return (synthesis_result) ? result : error_node();
                }
                else if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),c0,v0,v1,c1,result))
@@ -15467,12 +15563,44 @@ namespace exprtk
                         template compile<vtype,vtype,ctype>(expr_gen,"(t+t)-t",v0,v1,(c1 + c0),result);
                   return (synthesis_result) ? result : error_node();
                }
-               // (c0 * v0) * (c1 * v1) --> (covov) (c0 * c1) * v0 * v1
+               // (v0 * c0) * (c1 * v1) --> (covov) (c0 * c1) * v0 * v1
                else if ((details::e_mul == o0) && (details::e_mul == o1) && (details::e_mul == o2))
                {
                   const bool synthesis_result =
                      synthesize_sf3ext_expression::
                         template compile<ctype,vtype,vtype>(expr_gen,"(t*t)*t",(c0 * c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 * c0) / (c1 * v1) --> (covov) (c0 / c1) * (v0 * v1)
+               else if ((details::e_mul == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 / c0) * (c1 / v1) --> (covov) (c1 / c0) * (v0 / v1)
+               else if ((details::e_div == o0) && (details::e_mul == o1) && (details::e_div == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",(c1 / c0),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 * c0) / (c1 / v1) --> (covov) (c0 / c1) * (v0 * v1)
+               else if ((details::e_mul == o0) && (details::e_mul == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)*t",(c0 / c1),v0,v1,result);
+                  return (synthesis_result) ? result : error_node();
+               }
+               // (v0 / c0) / (c1 * v1) --> (covov) (1 / (c0 * c1)) * (v0 / v1)
+               else if ((details::e_div == o0) && (details::e_div == o1) && (details::e_mul == o2))
+               {
+                  const bool synthesis_result =
+                     synthesize_sf3ext_expression::
+                        template compile<ctype,vtype,vtype>(expr_gen,"(t*t)/t",Type(1) / (c0 * c1),v0,v1,result);
                   return (synthesis_result) ? result : error_node();
                }
                else if (synthesize_sf4ext_expression::template compile<T0,T1,T2,T3>(expr_gen,id(expr_gen,o0,o1,o2),v0,c0,c1,v1,result))
