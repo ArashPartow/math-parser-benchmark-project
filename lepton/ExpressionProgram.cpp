@@ -33,6 +33,8 @@
 #include "Operation.h"
 #include "ParsedExpression.h"
 
+#include <algorithm>
+
 using namespace Lepton;
 using namespace std;
 

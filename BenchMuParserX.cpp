@@ -1,7 +1,7 @@
 #include "BenchMuParserX.h"
 
 #include <cmath>
-#include <windows.h>
+//#include <windows.h>
 
 #include "muparserx/mpParser.h"
 

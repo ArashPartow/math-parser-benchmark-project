@@ -14,13 +14,16 @@
 #include "BenchMuParserX.h"
 #include "BenchMuParser2.h"
 #include "BenchATMSP.h"
-#include "BenchFParser.h"
+//#include "BenchFParser.h"
 #include "BenchExprTk.h"
 #include "BenchExprTkFloat.h"
 #include "BenchLepton.h"
-#include "BenchMuParserSSE.h"
-#include "BenchMTParser.h"
 #include "BenchMathExpr.h"
+
+#ifdef _MSC_VER
+#include "BenchMTParser.h"
+#include "BenchMuParserSSE.h"
+#endif
 
 
 template <typename T>
@@ -58,14 +61,16 @@ std::vector<std::string> load_expressions(const std::string& file_name)
 void output(FILE *pFile, const char *fmt, ...)
 {
   va_list args;
-  va_start (args, fmt);
 
+  va_start (args, fmt);
   if (pFile)
   {
      vfprintf(pFile, fmt, args);
      fflush(pFile);
   }
+  va_end (args);
 
+  va_start (args, fmt);
   vprintf(fmt, args);
   va_end (args);
 }
@@ -318,11 +323,14 @@ void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<std::string> v
 
 int main(int argc, const char *argv[])
 {
+#ifdef _MSC_VER
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+#endif
 
    int iCount = 10000000;
 
    //std::string benchmark_file = "bench_expr.txt";
+//   std::string benchmark_file = "bench_expr_all.txt";
    std::string benchmark_file = "bench_expr_all.txt";
    //std::string benchmark_file = "bench_expr_weird.txt";
    //std::string benchmark_file = "bench_expr_extensive.txt";
@@ -362,13 +370,19 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchExprTk());            // <- Note: first parser becomes the reference!
    vBenchmarks.push_back(new BenchMuParser2(false));
    vBenchmarks.push_back(new BenchMuParser2(true));
+#ifdef _MSC_VER
 //   vBenchmarks.push_back(new BenchMTParser());      // <- Crash in debug mode
+#endif
+
    vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchATMSP());
    vBenchmarks.push_back(new BenchLepton());
    vBenchmarks.push_back(new BenchMathExpr());
-   vBenchmarks.push_back(new BenchFParser());
+   //   vBenchmarks.push_back(new BenchFParser());
+
+#ifdef _MSC_VER
    vBenchmarks.push_back(new BenchMuParserSSE());
+#endif
    vBenchmarks.push_back(new BenchExprTkFloat());
 
    Shootout(benchmark_file, vBenchmarks, vExpr, iCount);

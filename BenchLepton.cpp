@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-#include <windows.h>
+//#include <windows.h>
 #include <cmath>
 
 #define LEPTON_BUILDING_STATIC_LIBRARY
@@ -56,7 +56,6 @@ double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
    Lepton::ExpressionProgram program = Lepton::Parser::parse(sExpr).optimize().createProgram();
 
    // Calculate/bench and show result finally
-   double fTime = 0;
    double fRes  = 0;
    double fSum  = 0;
 

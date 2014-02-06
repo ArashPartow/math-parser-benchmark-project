@@ -1,6 +1,7 @@
 #ifndef LEPTON_MSVC_ERFC_H_
 #define LEPTON_MSVC_ERFC_H_
 
+
 /*
  * At least up to version 8 (VC++ 2005), Microsoft does not support the
  * standard C99 erf() and erfc() functions. For now we're including these
@@ -9,8 +10,8 @@
  * version level.
  */
 
-#ifdef _MSC_VER
-
+// <ibg 20140206/> Added test for VS2013, this code is no longer needed.
+#if (_MSC_VER<1800) 
 
 /***************************
 *   erf.cpp
