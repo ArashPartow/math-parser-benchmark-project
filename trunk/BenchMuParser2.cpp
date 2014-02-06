@@ -1,10 +1,10 @@
 #include "BenchMuParser2.h"
 
 #include <cmath>
-#include <windows.h>
+//#include <windows.h>
 
 //-------------------------------------------------------------------------------------------------
-#include "muParser2/muParser.h"
+#include "muparser2/muParser.h"
 
 using namespace mu;
 
@@ -34,7 +34,6 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
    double a = 1.1;
    double b = 2.2;
    double c = 3.3;
-   double d = 4.4;
    double x = 2.123456;
    double y = 3.123456;
    double z = 4.123456;
@@ -91,7 +90,7 @@ void BenchMuParser2::PreprocessExpr(std::vector<std::string> &vExpr)
 }
 
 //-------------------------------------------------------------------------------------------------
-void BenchMuParser2::PreprocessExpr(std::string &s)
+void BenchMuParser2::PreprocessExpr(std::string & /*s*/)
 {
 }
 

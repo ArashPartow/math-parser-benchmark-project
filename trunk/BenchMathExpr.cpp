@@ -1,6 +1,6 @@
 #include "BenchMathExpr.h"
 
-#include <windows.h>
+//#include <windows.h>
 #include <cmath>
 
 #include "MathExpr/mathexpr.h"
@@ -62,7 +62,6 @@ double BenchMathExpr::DoBenchmark(const std::string& sExpr, long iCount)
    else
    {
      // Calculate/bench and show result finally
-     double fTime = 0;
      double fRes  = 0;
      double fSum  = 0;
 

@@ -158,8 +158,8 @@ namespace FUNCTIONPARSERTYPES
         /*cSqrt */ { FP_FNAME("sqrt"),  1, 0 },
         /*cTan  */ { FP_FNAME("tan"),   1, FuncDefinition::AngleIn },
         /*cTanh */ { FP_FNAME("tanh"),  1, FuncDefinition::AngleIn },
-        /*cTrunc*/ { FP_FNAME("trunc"), 1, 0 }
-    };
+        /*cTrunc*/ { FP_FNAME("trunc"), 1, 0 },
+	};
 #undef FP_FNAME
 
     struct NamePtr

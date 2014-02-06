@@ -34,6 +34,7 @@
 #include "Operation.h"
 #include <limits>
 #include <vector>
+#include <algorithm>
 
 using namespace Lepton;
 using namespace std;

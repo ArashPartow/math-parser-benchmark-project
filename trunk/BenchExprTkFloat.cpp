@@ -53,7 +53,6 @@ double BenchExprTkFloat::DoBenchmark(const std::string& sExpr, long iCount)
       }
    }
 
-   double fTime = 0;
    float  fRes  = 0;
    double fSum  = 0;
 

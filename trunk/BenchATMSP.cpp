@@ -1,6 +1,6 @@
 #include "BenchATMSP.h"
 
-#include <windows.h>
+//#include <windows.h>
 #include <cmath>
 
 // atmsp
@@ -93,7 +93,6 @@ double BenchATMSP::DoBenchmark(const std::string& sExpr, long iCount)
      bc.var[6] = 5.123456;
 
      // Calculate/bench and show result finally
-     double fTime(0);
      double fRes (0);
      double fSum (0);
 

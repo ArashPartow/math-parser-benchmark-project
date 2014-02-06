@@ -5,9 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Quelldateien\fparser4.4.3">
-      <UniqueIdentifier>{d6f4abb9-fc6a-4461-b2ba-3452e242b368}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Quelldateien\muparserx">
       <UniqueIdentifier>{a9d21e7f-f530-41d7-8baf-d1e1457ec3e1}</UniqueIdentifier>
     </Filter>
@@ -43,6 +40,9 @@
     <Filter Include="Quelldateien\libcpuid">
       <UniqueIdentifier>{527109b1-c5fa-4f5f-8022-45ed006f18f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\fparser">
+      <UniqueIdentifier>{d6f4abb9-fc6a-4461-b2ba-3452e242b368}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BenchATMSP.cpp">
@@ -67,7 +67,7 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="fparser\fparser.cc">
-      <Filter>Quelldateien\fparser4.4.3</Filter>
+      <Filter>Quelldateien\fparser</Filter>
     </ClCompile>
     <ClCompile Include="muparserx\mpError.cpp">
       <Filter>Quelldateien\muparserx</Filter>
@@ -659,7 +659,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fparser\fparser.hh">
-      <Filter>Quelldateien\fparser4.4.3</Filter>
+      <Filter>Quelldateien\fparser</Filter>
     </None>
     <None Include="fparser.hh">
       <Filter>Headerdateien</Filter>

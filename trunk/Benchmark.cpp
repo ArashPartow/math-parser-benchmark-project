@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <ctime>
 #include <algorithm>
-#include <Windows.h>
+//#include <Windows.h>
 
 using namespace std;
 
@@ -12,14 +12,22 @@ using namespace std;
 //-------------------------------------------------------------------------------------------------
 Benchmark::Benchmark(EBaseType eBaseType)
   :m_sName()
+  ,m_sInfo()
+  ,m_nTotalBytecodeSize(0)
+  ,m_nPoints(0)
+  ,m_nNum()
+  ,m_fScore(0)
   ,m_fTime1(0)
   ,m_fResult(0)
   ,m_fSum(0)
-  ,m_nTotalBytecodeSize(0)
-  ,m_nPoints(0)
-  ,m_fScore(0)
-  ,m_allFails()
+  ,m_bFail(false)
+  ,m_sFailReason()
   ,m_eBaseType(eBaseType)
+  ,m_allFails()
+{}
+
+//-------------------------------------------------------------------------------------------------
+Benchmark::~Benchmark()
 {}
 
 //-------------------------------------------------------------------------------------------------
@@ -57,7 +65,7 @@ std::string Benchmark::GetBaseType() const
   }
 }
 //-------------------------------------------------------------------------------------------------
-void Benchmark::PreprocessExpr(std::vector<std::string> &vExpr)
+void Benchmark::PreprocessExpr(std::vector<std::string> & /*vExpr*/)
 {}
 
 //-------------------------------------------------------------------------------------------------
@@ -83,8 +91,8 @@ void Benchmark::DoAll(std::vector<string> vExpr, long num)
 
    fprintf(pRes,  "# Benchmark results\n");
    fprintf(pRes,  "#   Parser:  %s\n", GetName().c_str());
-   fprintf(pRes,  "#   Evals per expr:  %d\n", num);
-   fprintf(pRes,  "#\"ms per eval [ms]\", \"evals per sec\", \"Result\", \"expr_len\", \"Expression\"\n", GetName());
+   fprintf(pRes,  "#   Evals per expr:  %ld\n", num);
+   fprintf(pRes,  "#\"ms per eval [ms]\", \"evals per sec\", \"Result\", \"expr_len\", \"Expression\"\n");
 
    std::string sExpr;
 
@@ -95,8 +103,8 @@ void Benchmark::DoAll(std::vector<string> vExpr, long num)
       try
       {
          DoBenchmark(vExpr[i], num);
-         fprintf(pRes, "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
-         printf(       "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
+         fprintf(pRes, "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, (int)vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
+         printf(       "%4.6lf, %4.6lf, %4.6lf, %d, %s, %s\n", m_fTime1, 1000.0/m_fTime1, m_fResult, (int)vExpr[i].length(), vExpr[i].c_str(), m_sInfo.c_str());
       }
       catch(...)
       {
@@ -107,7 +115,6 @@ void Benchmark::DoAll(std::vector<string> vExpr, long num)
       fflush(pRes);
    }
    double dt = timer.Stop() / ((double)vExpr.size()*num);
-   double fnum_per_sec = 1000.0/dt;
 
    fprintf(pRes,  "# avg. time per expr.: %lf ms;  avg. eval per sec: %lf; total bytecode size: %d",
            dt,

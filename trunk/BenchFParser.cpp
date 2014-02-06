@@ -1,7 +1,7 @@
 #include "BenchFParser.h"
 
 #include <cmath>
-#include <windows.h>
+//#include <windows.h>
 
 // fparser includes
 #include "fparser/fparser.hh"
@@ -16,7 +16,6 @@ BenchFParser::BenchFParser()
 //-------------------------------------------------------------------------------------------------
 double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
 {
-   double fTime(0);
    double fRes (0);
    double fSum (0);
 

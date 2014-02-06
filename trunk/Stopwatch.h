@@ -1,6 +1,8 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
+#include <limits>
+
 #ifdef WIN32
 #   ifndef NOMINMAX
 #      define NOMINMAX
@@ -54,16 +56,17 @@ public:
       stop_time_.tv_usec  = 0;
    }
 
-   inline void start()
+   inline void Start()
    {
       in_use_ = true;
       gettimeofday(&start_time_,0);
    }
 
-   inline void stop()
+   inline double Stop()
    {
       gettimeofday(&stop_time_, 0);
       in_use_ = false;
+      return (time() * 1000.0);
    }
 
    inline unsigned long long int usec_time() const
