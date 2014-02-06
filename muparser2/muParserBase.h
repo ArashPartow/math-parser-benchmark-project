@@ -85,7 +85,7 @@ private:
     typedef ParserToken<value_type, string_type> token_type;
 
     /** \brief Maximum number of threads spawned by OpenMP when using the bulk mode. */
-    static const int s_MaxNumOpenMPThreads;
+    static const int s_MaxNumOpenMPThreads = 16;
 
  public:
 
@@ -220,7 +220,7 @@ private:
 
       virtual std::string do_grouping() const 
       { 
-        return std::string(1, m_nGroup); 
+        return std::string(1, (char)m_nGroup); 
       }
 
     private:
