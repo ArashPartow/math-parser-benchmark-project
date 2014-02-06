@@ -52,6 +52,7 @@ namespace mu
 
   bool ParserBase::g_DbgDumpCmdCode = false;
   bool ParserBase::g_DbgDumpStack = false;
+  const int ParserBase::s_MaxNumOpenMPThreads = 16;
 
   //------------------------------------------------------------------------------
   /** \brief Identifiers for built in binary operators. 
