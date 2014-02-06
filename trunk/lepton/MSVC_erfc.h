@@ -11,7 +11,7 @@
  */
 
 // <ibg 20140206/> Added test for VS2013, this code is no longer needed.
-#if (_MSC_VER<1800) 
+#if _MSC_VER && (_MSC_VER<1800)
 
 /***************************
 *   erf.cpp
