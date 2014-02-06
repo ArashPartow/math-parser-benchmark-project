@@ -73,6 +73,8 @@ void output(FILE *pFile, const char *fmt, ...)
   va_start (args, fmt);
   vprintf(fmt, args);
   va_end (args);
+
+  fflush(nullptr);
 }
 
 void Shootout(const std::string &sCaption,
@@ -376,7 +378,7 @@ int main(int argc, const char *argv[])
 
    vBenchmarks.push_back(new BenchMuParserX());
    vBenchmarks.push_back(new BenchATMSP());
-   vBenchmarks.push_back(new BenchLepton());
+//   vBenchmarks.push_back(new BenchLepton());
    vBenchmarks.push_back(new BenchMathExpr());
    //   vBenchmarks.push_back(new BenchFParser());
 
