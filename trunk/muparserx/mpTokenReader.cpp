@@ -271,17 +271,41 @@ MUP_NAMESPACE_START
   }
 
   //---------------------------------------------------------------------------
+  void TokenReader::SkipCommentsAndWhitespaces()
+  {
+    bool bSkip = true;
+    while (m_nPos<(int)m_sExpr.length() && bSkip)
+    {
+      switch(m_sExpr[m_nPos])
+      {
+      // skip comments
+      case  '#':
+            {
+              std::size_t i = m_sExpr.find_first_of('\n', m_nPos+1);
+              m_nPos = (i!=string_type::npos) ? i : m_sExpr.length();
+            }
+            break;
+      
+      // skip whitespaces
+      case ' ':
+            ++m_nPos;
+            break;
+      
+      default:
+            bSkip = false;
+      } // switch 
+    } // while comment or whitespace
+  }
+
+  //---------------------------------------------------------------------------
   /** \brief Read the next token from the string. */ 
   ptr_tok_type TokenReader::ReadNextToken()
   {
     assert(m_pParser);
-    const char_type *szFormula = m_sExpr.c_str();
 
-    while (szFormula[m_nPos]==' ') 
-      ++m_nPos;
+    SkipCommentsAndWhitespaces();
 
     int token_pos = m_nPos;
-
     ptr_tok_type pTok;
 
     // Check for end of expression
@@ -412,34 +436,34 @@ MUP_NAMESPACE_START
         {
           switch(i)
           {
-          case cmARG_SEP:
-		            if (m_nSynFlags & noCOMMA)
+          case  cmARG_SEP:
+                if (m_nSynFlags & noCOMMA)
                   throw ecUNEXPECTED_COMMA;
 
                 m_nSynFlags = noBC | noOPT | noEND | noNEWLINE | noCOMMA | noPFX | noIC | noIO | noIF | noELSE;
                 a_Tok = ptr_tok_type(new GenericToken((ECmdCode)i, pOprtDef[i]));
 	              break;
 
-          case cmELSE:
-               if (m_nSynFlags & noELSE)
-                 throw ecUNEXPECTED_CONDITIONAL;
+          case  cmELSE:
+                if (m_nSynFlags & noELSE)
+                  throw ecUNEXPECTED_CONDITIONAL;
 
-               m_nNumIfElse--;
-               if (m_nNumIfElse<0)
-                 throw ecMISPLACED_COLON;
+                m_nNumIfElse--;
+                if (m_nNumIfElse<0)
+                  throw ecMISPLACED_COLON;
 
-               m_nSynFlags = noBC | noIO | noIC | noPFX | noEND | noNEWLINE | noCOMMA | noOPT | noIF | noELSE;
-               a_Tok = ptr_tok_type(new TokenIfThenElse(cmELSE));
-               break;
+                m_nSynFlags = noBC | noIO | noIC | noPFX | noEND | noNEWLINE | noCOMMA | noOPT | noIF | noELSE;
+                a_Tok = ptr_tok_type(new TokenIfThenElse(cmELSE));
+                break;
 
-          case cmIF:
-               if (m_nSynFlags & noIF)
-                 throw ecUNEXPECTED_CONDITIONAL;
+          case  cmIF:
+                if (m_nSynFlags & noIF)
+                  throw ecUNEXPECTED_CONDITIONAL;
 
-               m_nNumIfElse++; 
-               m_nSynFlags = noBC | noIO | noPFX | noIC | noEND | noNEWLINE | noCOMMA | noOPT | noIF | noELSE;
-               a_Tok = ptr_tok_type(new TokenIfThenElse(cmIF));
-               break;
+                m_nNumIfElse++; 
+                m_nSynFlags = noBC | noIO | noPFX | noIC | noEND | noNEWLINE | noCOMMA | noOPT | noIF | noELSE;
+                a_Tok = ptr_tok_type(new TokenIfThenElse(cmIF));
+                break;
 
           case cmBO:
                 if (m_nSynFlags & noBO)
@@ -486,7 +510,6 @@ MUP_NAMESPACE_START
                 if (m_nNumIndex<0)
                   throw ecUNEXPECTED_SQR_BRACKET;
 
-//                a_Tok = ptr_tok_type(new GenericToken((ECmdCode)i, pOprtDef[i]));
                 a_Tok = ptr_tok_type(new OprtIndex());
                 break;
 
@@ -869,7 +892,8 @@ MUP_NAMESPACE_START
         
         m_nPos = iEnd;
         m_nSynFlags = noVAL | noVAR | noFUN | noBO | noIFX;
-        a_Tok = item->second;
+//        a_Tok = item->second;
+        a_Tok = ptr_tok_type(item->second->Clone());
         a_Tok->SetIdent(sTok);
         m_UsedVar[item->first] = item->second;  // Add variable to used-var-list
         return true;
@@ -884,7 +908,8 @@ MUP_NAMESPACE_START
 
         m_nPos = iEnd;
         m_nSynFlags = noVAL | noVAR | noFUN | noBO | noIFX | noIO;
-        a_Tok = item->second;
+//        a_Tok = item->second;
+        a_Tok = ptr_tok_type(item->second->Clone());
         a_Tok->SetIdent(sTok);
         return true;
       }
