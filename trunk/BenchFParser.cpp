@@ -1,7 +1,6 @@
 #include "BenchFParser.h"
 
 #include <cmath>
-//#include <windows.h>
 
 // fparser includes
 #include "fparser/fparser.hh"

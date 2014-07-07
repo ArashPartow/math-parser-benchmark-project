@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 1                                           *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -36,7 +36,7 @@ void trig_function()
    exprtk::parser<T> parser;
    parser.compile(expression_string,expression);
 
-   for (x = T(-5.0); x <= T(+5.0); x += 0.001)
+   for (x = T(-5); x <= T(+5); x += T(0.001))
    {
       T y = expression.value();
       printf("%19.15f\t%19.15f\n",x,y);

@@ -2,6 +2,7 @@
 #define STOPWATCH_H
 
 #include <limits>
+#include <ctime>
 
 #ifdef WIN32
 #   ifndef NOMINMAX

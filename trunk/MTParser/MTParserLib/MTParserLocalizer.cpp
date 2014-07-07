@@ -7,7 +7,7 @@
 #include "MTSearchFile.h"
 #include "MTParserExcepStrEng.h"
 #include <windows.h>
-#import "../MTParserInfoFile/MTParserInfoFile/_MTParserInfoFile.tlb" no_namespace
+//#import "../MTParserInfoFile/MTParserInfoFile/_MTParserInfoFile.tlb" no_namespace
 
 MTParserLocalizer MTParserLocalizer::m_instance = MTParserLocalizer::MTParserLocalizer();
 

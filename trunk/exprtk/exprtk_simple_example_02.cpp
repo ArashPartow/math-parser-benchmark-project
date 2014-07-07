@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 2                                           *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -32,7 +32,9 @@ void square_wave()
                              " (1/17)*sin(34*pi*f*t)+(1/19)*sin(38*pi*f*t)+"
                              " (1/21)*sin(42*pi*f*t)+(1/23)*sin(46*pi*f*t)+"
                              " (1/25)*sin(50*pi*f*t)+(1/27)*sin(54*pi*f*t))";
+
    static const T pi = T(3.14159265358979323846);
+
    T f = pi / T(10);
    T t = T(0);
    T a = T(10);
@@ -50,6 +52,7 @@ void square_wave()
    parser.compile(expr_string,expression);
 
    const T delta = (T(4) * pi) / T(1000);
+
    for (t = (T(-2) * pi); t <= (T(+2) * pi); t += delta)
    {
       T result = expression.value();

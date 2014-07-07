@@ -6,18 +6,18 @@
 int FormelGenerator::Make(char *Buffer, int Length, int Items, int NumberOfVars)
 {
   pos = 0;
-  
+
   items = Items;
   len = Length;
   buf = Buffer;
-  
+
   if (NumberOfVars > 20) vars = 20;
   else vars = NumberOfVars;
-  
+
   Make();
-  
+
   Buffer[pos] = 0;
-  
+
   return Items - items;
 }
 
@@ -52,7 +52,7 @@ void FormelGenerator::Make()
   if (items-- > 0)
   {
     if (pos >= len - 10) return;
-    
+
     switch (RandInt(8))
     {
     case 1:
@@ -61,18 +61,18 @@ void FormelGenerator::Make()
       buf[pos++] = RandOp();
       MakeVar();
       buf[pos++] = ')';
-      
+
       break;
-      
+
     case 2:
       buf[pos++] = '(';
       MakeVar();
       buf[pos++] = RandOp();
       Make();
       buf[pos++] = ')';
-      
+
       break;
-    
+
     case 3:
     case 4:
       RandFunction();
@@ -80,16 +80,16 @@ void FormelGenerator::Make()
       Make();
       buf[pos++] = ')';
       break;
-     
+
     default:
       buf[pos++] = '(';
       Make();
       buf[pos++] = RandOp();
       Make();
       buf[pos++] = ')';
-      
+
       break;
-      
+
     }
   }
   else
@@ -107,14 +107,14 @@ void FormelGenerator::RandFunction()
     buf[pos++] = 'o';
     buf[pos++] = 's';
     break;
-    
+
   case 2:
 //    buf[pos++] = 'a';
     buf[pos++] = 't';
     buf[pos++] = 'a';
     buf[pos++] = 'n';
     break;
-    
+
   default:
     buf[pos++] = 's';
     buf[pos++] = 'i';
@@ -124,10 +124,10 @@ void FormelGenerator::RandFunction()
 
 void FormelGenerator::MakeVar()
 {
-  char		str[16];
-  double	d;
-  int		i;
-  
+  char      str[16];
+  double d;
+  int    i;
+
   switch (RandInt(4))
   {
 //  case 1:
@@ -149,18 +149,18 @@ void FormelGenerator::MakeVar()
       buf[pos++] = 'p';
       buf[pos++] = 'i';
     }
-    
+
     break;
-    
+
 //  default:
     case 1:
 // <ibg> ich will keine negativen werte weil der fparser die nicht nimmt
 //    d = RandDouble() * 4.0 - 2.0;
     d = RandDouble() * 4.0;
-    
+
     if (d < 0) sprintf(str,"(%.2f)",d);
     else sprintf(str,"%.2f",d);
-    
+
     for (i = 0; str[i]; i++) buf[pos++] = str[i];
   }
 }

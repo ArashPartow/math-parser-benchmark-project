@@ -55,6 +55,9 @@ public:
    bool ExpressionFailed(const std::string& expr) const;
    void AddFail(const std::string &sExpr);
 
+   double GetRate(const std::size_t& index) const;
+   void IgnoreLastRate();
+
 protected:
 
    std::string m_sName;
@@ -71,6 +74,7 @@ protected:
    Stopwatch m_timer;
    EBaseType m_eBaseType;
    std::map<std::string, std::string> m_allFails;
+   std::vector<double> rate_list;
 };
 
 #endif

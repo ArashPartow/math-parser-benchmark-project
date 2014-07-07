@@ -12,7 +12,7 @@ class BenchLepton : public Benchmark
 public:
 
    BenchLepton();
-   
+
    double DoBenchmark(const std::string &sExpr, long iCount);
 
 };

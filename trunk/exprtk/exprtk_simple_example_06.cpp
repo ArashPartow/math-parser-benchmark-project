@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 6                                           *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -24,36 +24,33 @@
 template<typename T>
 void vector_function()
 {
-   typedef exprtk::expression<T> expression_t;
-   std::string expression_string = "z := (3sin(x) + 2log(y))";
+   typedef exprtk::symbol_table<T> symbol_table_t;
+   typedef exprtk::expression<T>     expression_t;
+   typedef exprtk::parser<T>             parser_t;
 
-   const std::size_t vec_size = 5;
+   std::string expression_string =
+                  " for (var i := 0; i < min(x[],y[],z[]); i += 1) "
+                  " {                                              "
+                  "    z[i] := 3sin(x[i]) + 2log(y[i]);            "
+                  " }                                              ";
 
-   T x[vec_size] = { T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
-   T y[vec_size] = { T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
-   T z[vec_size] = { T(0.0), T(0.0), T(0.0), T(0.0), T(0.0) };
+   T x[] = { T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
+   T y[] = { T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
+   T z[] = { T(0.0), T(0.0), T(0.0), T(0.0), T(0.0) };
 
-   T x_ = x[0];
-   T y_ = y[0];
-   T z_ = z[0];
-
-   exprtk::symbol_table<T> symbol_table;
-   symbol_table.add_variable("x",x_);
-   symbol_table.add_variable("y",y_);
-   symbol_table.add_variable("z",z_);
+   symbol_table_t symbol_table;
+   symbol_table.add_vector("x",x);
+   symbol_table.add_vector("y",y);
+   symbol_table.add_vector("z",z);
 
    expression_t expression;
    expression.register_symbol_table(symbol_table);
 
-   exprtk::parser<T> parser;
+   parser_t parser;
+
    parser.compile(expression_string,expression);
 
-   for (std::size_t i = 0; i < vec_size; ++i)
-   {
-      x_ = x[i]; y_ = y[i]; z_ = z[i];
-      expression.value();
-      x[i] = x_; y[i] = y_; z[i] = z_;
-   }
+   expression.value();
 }
 
 int main()
