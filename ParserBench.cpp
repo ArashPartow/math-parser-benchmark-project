@@ -8,20 +8,35 @@
 #include <iostream>
 #include <map>
 
+#ifdef _MSC_VER
+ #ifndef NOMINMAX
+  #define NOMINMAX
+ #endif
+ #ifndef WIN32_LEAN_AND_MEAN
+  #define WIN32_LEAN_AND_MEAN
+ #endif
+#include <windows.h>
+#else
+ #include <pthread.h>
+#endif
+
 #include "FormelGenerator.h"
 #include "cpuid.h"
 #include "Benchmark.h"
 #include "BenchMuParserX.h"
 #include "BenchMuParser2.h"
 #include "BenchATMSP.h"
-//#include "BenchFParser.h"
 #include "BenchExprTk.h"
 #include "BenchExprTkFloat.h"
 #include "BenchLepton.h"
+#include "BenchFParser.h"
 #include "BenchMathExpr.h"
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && defined(NDEBUG)
 #include "BenchMTParser.h"
+#endif
+
+#ifdef _MSC_VER
 #include "BenchMuParserSSE.h"
 #endif
 
@@ -77,18 +92,42 @@ void output(FILE *pFile, const char *fmt, ...)
   fflush(nullptr);
 }
 
+void WriteResultTable(FILE* pRes, std::vector<Benchmark*>& vBenchmarks, std::vector<std::string>& vExpr)
+{
+   output(pRes, "\n\n\n");
+   for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
+   {
+      output(pRes, "%s\t",vBenchmarks[i]->GetShortName().c_str());
+   }
+
+   output(pRes, "Expression\t\n");
+
+   for (std::size_t i = 0; i < vExpr.size(); ++i)
+   {
+      for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
+      {
+         output(pRes, "%13.3f\t", vBenchmarks[j]->GetRate(i));
+      }
+      output(pRes, "%s\t\n",vExpr[i].c_str());
+   }
+   output(pRes, "\n\n\n");
+}
+
 void Shootout(const std::string &sCaption,
               std::vector<Benchmark*> vBenchmarks,
               std::vector<std::string> vExpr,
-              int iCount)
+              int iCount,
+              bool writeResultTable = false)
 {
-   char outstr[400], file[400];
-   time_t t = time(NULL);
+   char outstr[1024] = {0};
+   char file  [1024] = {0};
+   time_t t          = time(NULL);
+   std::size_t excessive_failure_cnt = 0;
 
    sprintf(outstr, "Shootout_%%Y%%m%%d_%%H%%M%%S.txt");
    strftime(file, sizeof(file), outstr, localtime(&t));
 
-   FILE *pRes = fopen(file, "w");
+   FILE* pRes = fopen(file, "w");
    assert(pRes);
 
    output(pRes, "Benchmark (Shootout for file \"%s\")\n", sCaption.c_str());
@@ -112,6 +151,7 @@ void Shootout(const std::string &sCaption,
 
       // Setup Reference parser result and total sum.
       {
+         // Use the first as the reference parser.
          Benchmark *pBench = vBenchmarks[0];
 
          pBench->DoBenchmark(current_expr + " ", iCount);
@@ -119,10 +159,12 @@ void Shootout(const std::string &sCaption,
          fRefResult = pBench->GetRes();
          fRefSum    = pBench->GetSum();
 
+         pBench->IgnoreLastRate();
+
          if (
-             (fRefResult ==  std::numeric_limits<double>::infinity()) ||
-             (fRefResult == -std::numeric_limits<double>::infinity()) ||
-             (fRefResult != fRefResult)
+              (fRefResult ==  std::numeric_limits<double>::infinity()) ||
+              (fRefResult == -std::numeric_limits<double>::infinity()) ||
+              (fRefResult != fRefResult)
             )
          {
             output(pRes, "\nWARNING: Expression rejected due to non-numeric result.");
@@ -132,15 +174,22 @@ void Shootout(const std::string &sCaption,
 
       for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
       {
-         output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser is crashing i'd like to know which one
+         output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser crashes we'd
+                             //    like to know which one.
+
          Benchmark* pBench = vBenchmarks[j];
 
-         std::string sExpr = current_expr;  // get the original expression anew for each parser
-         pBench->PreprocessExpr(sExpr);     // some parsers use fancy characters to signal variables
+         std::string sExpr = current_expr;
+
+         // Assign the current expression anew for each parser, furthermore preprocess the
+         // expression string as some parsers use fancy characters to signal variables and
+         // constants.
+         pBench->PreprocessExpr(sExpr);
+
          double time = 1000000.0 * pBench->DoBenchmark(sExpr + " ", iCount);
 
          // The first parser is used for obtaining reference results.
-         // If the reference result is nan the reference parser is
+         // If the reference result is a NaA the reference parser is
          // disqualified too.
          if (pBench->DidNotEvaluate())
          {
@@ -148,14 +197,14 @@ void Shootout(const std::string &sCaption,
             ++failure_count;
          }
          else if (
-                  !is_equal(pBench->GetRes(),fRefResult)
-                  ||
-                  //Instead of 5, perhaps something proportional to iCount, but no less than 1?
-                  (std::abs(static_cast<long long>(pBench->GetSum()) - static_cast<long long>(fRefSum)) > 5)
+                   !is_equal(pBench->GetRes(),fRefResult)
+                   ||
+                   //Instead of 5, perhaps something proportional to iCount, but no less than 1?
+                   (std::abs(static_cast<long long>(pBench->GetSum()) - static_cast<long long>(fRefSum)) > 5)
                  )
          {
-            // Check the sum of all results and if the sum is ok, check the last result of
-            // the benchmark run.
+            // Check the sum of all results and if the sum is ok,
+            // check the last result of the benchmark run.
             pBench->AddFail(vExpr[i]);
             ++failure_count;
          }
@@ -166,11 +215,10 @@ void Shootout(const std::string &sCaption,
       output(pRes, "\n");
 
       int ct = 1;
-
+      int parser_index = 0;
       for (auto it = results.begin(); it != results.end(); ++it)
       {
          const std::vector<Benchmark*>& vBench = it->second;
-
          for (std::size_t k = 0; k < vBench.size(); ++k)
          {
             Benchmark* pBench = vBench[k];
@@ -183,7 +231,8 @@ void Shootout(const std::string &sCaption,
             pBench->AddPoints(vBenchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
-            output(pRes, "    %-20s (%9.3f ns, %26.18f, %26.18f)\n",
+            output(pRes, "[%02d] %-20s (%9.3f ns, %26.18f, %26.18f)\n",
+                   static_cast<int>(++parser_index),
                    pBench->GetShortName().c_str(),
                    it->first,
                    pBench->GetRes(),
@@ -196,6 +245,7 @@ void Shootout(const std::string &sCaption,
       if (failure_count)
       {
          output(pRes, "DNQ List\n");
+         parser_index = 0;
          for (auto it = results.begin(); it != results.end(); ++it)
          {
             const std::vector<Benchmark*>& vBench = it->second;
@@ -212,17 +262,19 @@ void Shootout(const std::string &sCaption,
 
                if (pBench->DidNotEvaluate())
                {
-                 output(pRes, "    %-20s (%s)\n",
-                        pBench->GetShortName().c_str(),
-                        pBench->GetFailReason().c_str());
+                  output(pRes, "[%02d] %-20s (%s)\n",
+                         static_cast<int>(++parser_index),
+                         pBench->GetShortName().c_str(),
+                         pBench->GetFailReason().c_str());
                }
                else
                {
-                 output(pRes, "    %-20s (%9.3f ns, %26.18f, %26.18f)\n",
-                        pBench->GetShortName().c_str(),
-                        it->first,
-                        (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
-                        (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
+                  output(pRes, "[%02d] %-20s (%9.3f ns, %26.18f, %26.18f)\n",
+                         static_cast<int>(++parser_index),
+                         pBench->GetShortName().c_str(),
+                         it->first,
+                         (pBench->GetRes() == pBench->GetRes()) ? pBench->GetRes() : 0.0,
+                         (pBench->GetSum() == pBench->GetSum()) ? pBench->GetSum() : 0.0);
                }
             }
          }
@@ -232,6 +284,7 @@ void Shootout(const std::string &sCaption,
       {
          output(pRes, "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
                 failure_count);
+         ++excessive_failure_cnt;
       }
 
       results.clear();
@@ -242,6 +295,8 @@ void Shootout(const std::string &sCaption,
    output(pRes, "  - Reference parser is %s\n"       , pRefBench->GetShortName().c_str());
    output(pRes, "  - Iterations per expression: %d\n", iCount);
    output(pRes, "  - Number of expressions: %d\n"    , vExpr.size());
+   if (excessive_failure_cnt)
+   output(pRes, "  - Number of excessive failures: %d\n", excessive_failure_cnt);
 
    #if defined(_DEBUG)
    output(pRes, "  - Debug build\n");
@@ -263,7 +318,6 @@ void Shootout(const std::string &sCaption,
    output(pRes, "\n\nScores:\n");
 
    // Dump scores
-
    std::deque<std::pair<int,Benchmark*> > order_list;
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {
@@ -274,17 +328,21 @@ void Shootout(const std::string &sCaption,
    std::reverse(order_list.begin(),order_list.end());
 
    bool bHasFailures = false;
+
+   output(pRes,  "  #     Parser                  Type            Points   Score   Failures\n");
+   output(pRes,  "  -----------------------------------------------------------------------\n");
+
    for (std::size_t i = 0; i < order_list.size(); ++i)
    {
       Benchmark* pBench = order_list[i].second;
       bHasFailures |= (pBench->GetFails().size() > 0);
 
-      output(pRes,  "  %02d  %-20s (%-10s): %5d %5.0lf %3d\n",
+      output(pRes,  "  %02d\t%-20s\t%-10s\t%6d\t%6d\t%4d\n",
              i,
              pBench->GetShortName().c_str(),
              pBench->GetBaseType().c_str(),
              pBench->GetPoints(),
-             (pBench->GetScore() / (double)vExpr.size()) * 100.0,
+             (int)((pBench->GetScore() / (double)vExpr.size()) * 100.0),
              pBench->GetFails().size());
    }
 
@@ -312,6 +370,11 @@ void Shootout(const std::string &sCaption,
       }
    }
 
+   if (writeResultTable)
+   {
+      WriteResultTable(pRes,vBenchmarks,vExpr);
+   }
+
    fclose(pRes);
 }
 
@@ -325,21 +388,32 @@ void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<std::string> v
 
 int main(int argc, const char *argv[])
 {
-#ifdef _MSC_VER
+   #ifdef _MSC_VER
    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
-#endif
+   #else
+   int policy;
+   struct sched_param param;
+   pthread_getschedparam(pthread_self(), &policy, &param);
+   param.sched_priority = sched_get_priority_max(policy);
+   pthread_setschedparam(pthread_self(), policy, &param);
+   #endif
 
    int iCount = 10000000;
 
-   //std::string benchmark_file = "bench_expr.txt";
-//   std::string benchmark_file = "bench_expr_all.txt";
-   std::string benchmark_file = "bench_expr_all.txt";
-   //std::string benchmark_file = "bench_expr_weird.txt";
-   //std::string benchmark_file = "bench_expr_extensive.txt";
-   //std::string benchmark_file = "bench_expr_random_with_functions.txt";
-   //std::string benchmark_file = "bench_precedence.txt";
-   //std::string benchmark_file = "bench_expr_complete.txt";
-   //std::string benchmark_file = "debug.txt";
+   bool writeResultTable = false;
+
+   const std::string benchmark_file_set[] =
+                     {
+                        "bench_expr.txt",
+                        "bench_expr_all.txt",
+                        "bench_expr_weird.txt",
+                        "bench_expr_extensive.txt",
+                        "bench_expr_random_with_functions.txt",
+                        "bench_precedence.txt",
+                        "bench_expr_complete.txt"
+                     };
+
+   std::string benchmark_file = benchmark_file_set[1];
 
    // Usage:
    // 1. ParserBench
@@ -351,9 +425,14 @@ int main(int argc, const char *argv[])
       iCount = atoi(argv[1]);
    }
 
-   if (argc == 3)
+   if (argc >= 3)
    {
       benchmark_file = argv[2];
+   }
+
+   if ((argc >= 4) && (std::string(argv[3]) == "write_table"))
+   {
+      writeResultTable = true;
    }
 
    std::vector<std::string> vExpr = load_expressions(benchmark_file);
@@ -366,29 +445,31 @@ int main(int argc, const char *argv[])
 
    std::vector<Benchmark*> vBenchmarks;
 
-   // Important: The first parser in the list becomes the reference parser.
-   //            Engines producing deviating results are disqualified so make
-   //            sure the reference parser is computing properly.
-   vBenchmarks.push_back(new BenchExprTk());            // <- Note: first parser becomes the reference!
+   // *** Important: ***
+   // The first parser in the list is denoted as being the reference parser.
+   // Parsing engines that produce results which deviate from the reference
+   // parser are disqualified for the round. As such it is paramount that
+   // the reference parser be precise when computing expressions.
+   //
+
+   vBenchmarks.push_back(new BenchExprTk()        );  // <- Note: first parser becomes the reference!
    vBenchmarks.push_back(new BenchMuParser2(false));
-   vBenchmarks.push_back(new BenchMuParser2(true));
-#ifdef _MSC_VER
-//   vBenchmarks.push_back(new BenchMTParser());      // <- Crash in debug mode
-#endif
+   vBenchmarks.push_back(new BenchMuParser2(true) );
+   vBenchmarks.push_back(new BenchMuParserX()     );
+   vBenchmarks.push_back(new BenchATMSP()         );
+   vBenchmarks.push_back(new BenchLepton()        );
+   vBenchmarks.push_back(new BenchFParser()       );
+   vBenchmarks.push_back(new BenchMathExpr()      );
+   #if defined(_MSC_VER) && defined(NDEBUG)
+   vBenchmarks.push_back(new BenchMTParser());        // <- Crash in debug mode
+   #endif
 
-   vBenchmarks.push_back(new BenchMuParserX());
-   vBenchmarks.push_back(new BenchATMSP());
-//   vBenchmarks.push_back(new BenchLepton());
-   vBenchmarks.push_back(new BenchMathExpr());
-   //   vBenchmarks.push_back(new BenchFParser());
-
-#ifdef _MSC_VER
+   #ifdef _MSC_VER
    vBenchmarks.push_back(new BenchMuParserSSE());
-#endif
+   #endif
    vBenchmarks.push_back(new BenchExprTkFloat());
 
-   Shootout(benchmark_file, vBenchmarks, vExpr, iCount);
-   //DoBenchmark(vBenchmarks, vExpr, iCount);
+   Shootout(benchmark_file, vBenchmarks, vExpr, iCount, writeResultTable);
 
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {

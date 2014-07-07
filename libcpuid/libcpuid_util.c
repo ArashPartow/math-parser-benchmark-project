@@ -127,7 +127,10 @@ void generic_get_cpu_list(const struct match_entry_t* matchtable, int count,
             break;
          }
       if (!good) continue;
+      #pragma warning(push)
+      #pragma warning(disable: 4996)
       list->names[n++] = strdup(matchtable[i].name);
+      #pragma warning(pop)
    }
    list->num_entries = n;
 }

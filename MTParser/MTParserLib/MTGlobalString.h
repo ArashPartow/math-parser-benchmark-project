@@ -8,6 +8,8 @@
 
 #include "MTUnicodeANSIDefs.h"
 #include <windows.h>
+#include <WTypes.h>
+#include <Oleauto.h>
 
 
 /** @brief String allocated in global memory */

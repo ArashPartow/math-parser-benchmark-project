@@ -79,33 +79,33 @@ double BenchATMSP::DoBenchmark(const std::string& sExpr, long iCount)
 
    if (err)
    {
-     StopTimerAndReport(p.errMessage(err));
+      StopTimerAndReport(p.errMessage(err));
    }
    else
    {
-     // Set variable values for x,y,z. Here always 1,2,3
-     bc.var[0] = 1.1;
-     bc.var[1] = 2.2;
-     bc.var[2] = 3.3;
-     bc.var[3] = 2.123456;
-     bc.var[4] = 3.123456;
-     bc.var[5] = 4.123456;
-     bc.var[6] = 5.123456;
+      // Set variable values for x,y,z. Here always 1,2,3
+      bc.var[0] = 1.1;
+      bc.var[1] = 2.2;
+      bc.var[2] = 3.3;
+      bc.var[3] = 2.123456;
+      bc.var[4] = 3.123456;
+      bc.var[5] = 4.123456;
+      bc.var[6] = 5.123456;
 
-     // Calculate/bench and show result finally
-     double fRes (0);
-     double fSum (0);
+      // Calculate/bench and show result finally
+      double fRes (0);
+      double fSum (0);
 
-     fRes = bc.run();
+      fRes = bc.run();
 
-     StartTimer();
-     for (int j = 0; j < iCount; ++j)
-     {
-        fSum += bc.run();
-        std::swap(bc.var[0], bc.var[1]);
-        std::swap(bc.var[3], bc.var[4]);
-     }
-     StopTimer(fRes, fSum, iCount);
+      StartTimer();
+      for (int j = 0; j < iCount; ++j)
+      {
+         fSum += bc.run();
+         std::swap(bc.var[0], bc.var[1]);
+         std::swap(bc.var[3], bc.var[4]);
+      }
+      StopTimer(fRes, fSum, iCount);
    }
    return m_fTime1;
 }

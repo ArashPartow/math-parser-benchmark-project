@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 5                                           *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -38,7 +38,7 @@ template<typename T>
 void custom_function()
 {
    typedef exprtk::expression<T> expression_t;
-   std::string expression_string = "myfunc(sin(x*pi),y/2)";
+   std::string expression_string = "myfunc(sin(x * pi),y / 2)";
    T x = T(1);
    T y = T(2);
    myfunc<T> mf;

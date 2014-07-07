@@ -10,7 +10,7 @@ class BenchFParser : public Benchmark
 public:
 
    BenchFParser();
-   
+
    double DoBenchmark(const std::string &sExpr, long iCount);
 
 };

@@ -16,11 +16,11 @@ BenchMuParser2::BenchMuParser2(bool bUseBulkMode)
    m_sName = "muparser2 V" + mu::Parser().GetVersion();
    m_bUseBulkMode = bUseBulkMode;
 
-   // Evaluating a single function will force OpenMP to create its threads here and not
-   // during the first expression of the benchmark set.
+   // Evaluating a single function will force OpenMP to create its threads
+   // here and not during the first expression of the benchmark set.
    if (m_bUseBulkMode)
    {
-     DoBenchmarkBulk("1", 2001);
+      DoBenchmarkBulk("1", 2001);
    }
 }
 
@@ -61,9 +61,9 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
       StartTimer();
       for (int j = 0; j < iCount; ++j)
       {
-        fSum += p.Eval();
-        std::swap(a,b);
-        std::swap(x,y);
+         fSum += p.Eval();
+         std::swap(a,b);
+         std::swap(x,y);
       }
       StopTimer(fRes, fSum, iCount);
    }
@@ -82,15 +82,14 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
 //-------------------------------------------------------------------------------------------------
 void BenchMuParser2::PreprocessExpr(std::vector<std::string> &vExpr)
 {
-   // atmsp is using $ to mark a constant
-   for (std::size_t i=0; i<vExpr.size(); ++i)
+   for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
       PreprocessExpr(vExpr[i]);
    }
 }
 
 //-------------------------------------------------------------------------------------------------
-void BenchMuParser2::PreprocessExpr(std::string & /*s*/)
+void BenchMuParser2::PreprocessExpr(std::string&)
 {
 }
 
@@ -153,8 +152,8 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       // Needlessly spend time swapping variables for the sake of timing fairness.
       for (int i = 0; i < nBulkSize; ++i)
       {
-        std::swap(aa,bb);
-        std::swap(xx,yy);
+         std::swap(aa,bb);
+         std::swap(xx,yy);
       }
 
       p.Eval(result, nBulkSize);
@@ -199,11 +198,11 @@ double BenchMuParser2::DoBenchmark(const std::string& sExpr, long iCount)
 {
    if (m_bUseBulkMode)
    {
-     return DoBenchmarkBulk(sExpr, iCount);
+      return DoBenchmarkBulk(sExpr, iCount);
    }
    else
    {
-     return DoBenchmarkStd(sExpr, iCount);
+      return DoBenchmarkStd(sExpr, iCount);
    }
 }
 

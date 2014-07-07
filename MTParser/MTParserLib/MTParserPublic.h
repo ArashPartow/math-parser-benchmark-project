@@ -16,7 +16,7 @@
 #define _MTPARSERPUBLIC_INCLUDED
 
 //! Enable plug-in extension.  If not needed, comment the define.
-#define _MTPARSER_USE_PLUGIN
+//#define _MTPARSER_USE_PLUGIN
 
 //! Enable localization.  If not needed, comment the define.
 #define _MTPARSER_USE_LOCALIZATION

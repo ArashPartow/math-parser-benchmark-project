@@ -54,9 +54,9 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
       StartTimer();
       for (int j = 0;j<iCount; j++)
       {
-        fSum += p.evaluate();
-        std::swap(a,b);
-        std::swap(x,y);
+         fSum += p.evaluate();
+         std::swap(a,b);
+         std::swap(x,y);
       }
       StopTimer(fRes, fSum, iCount);
    }

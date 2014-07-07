@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 8                                           *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -40,8 +40,8 @@ void composite()
    symbol_table.add_variable("x",x);
    symbol_table.add_variable("y",y);
 
-   compositor.add("f","sin(x/pi)","x");          // f(x) = sin(x/pi)
-   compositor.add("g","3*[f(x)+f(y)]","x","y");  // g(x,y) = 3[f(x)+f(y)]
+   compositor.add("f","sin(x / pi)","x");          // f(x) = sin(x / pi)
+   compositor.add("g","3*[f(x) + f(y)]","x","y");  // g(x,y) = 3[f(x) + f(y)]
 
    std::string expression_string = "g(1 + f(x),f(y) / 2)";
 

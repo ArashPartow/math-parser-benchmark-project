@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 4                                           *
- * Author: Arash Partow (1999-2013)                           *
+ * Author: Arash Partow (1999-2014)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -32,25 +32,23 @@ void fibonacci()
    compositor_t compositor;
 
    compositor
-      .add("fibonacci_impl",
-           "switch                        "
-           "{                             "
-           "  case x == 0 : 0;            "
-           "  case x == 1 : 1;            "
-           "  default     :               "
-           "    while ((x := (x - 1)) > 0)"
-           "    {                         "
-           "      w := z;                 "
-           "      z := z + y;             "
-           "      y := w;                 "
-           "      z                       "
-           "    };                        "
-           "}                             ",
-           "x","y","z","w");
-
-   compositor
       .add("fibonacci",
-           "fibonacci_impl(x,0,1,0)",
+           " var w := 0;             "
+           " var y := 0;             "
+           " var z := 1;             "
+           " switch                  "
+           " {                       "
+           "   case x == 0 : 0;      "
+           "   case x == 1 : 1;      "
+           "   default     :         "
+           "    while ((x -= 1) > 0) "
+           "    {                    "
+           "      w := z;            "
+           "      z := z + y;        "
+           "      y := w;            "
+           "      z                  "
+           "    };                   "
+           " }                       ",
            "x");
 
    T x = T(0);

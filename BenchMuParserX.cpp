@@ -44,30 +44,30 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 
       //p.DefineConst("pi", (float_type)M_PI);
       //p.DefineConst("e", (float_type)M_E);
-     double fSum = 0;
-     fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
+      double fSum = 0;
+      fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
                        // since fparser does it in Parse(...) wich is outside too
                        // (Speed of bytecode creation is irrelevant)
-     StartTimer();
-     for (int j = 0; j < iCount; j++)
-     {
-        fSum += p.Eval().GetFloat();
-        std::swap(a,b);
-        std::swap(x,y);
-     }
+      StartTimer();
+      for (int j = 0; j < iCount; j++)
+      {
+         fSum += p.Eval().GetFloat();
+         std::swap(a,b);
+         std::swap(x,y);
+      }
 
-     StopTimer(fRes.GetFloat(), fSum, iCount);
-  }
-  catch(mup::ParserError &exc)
-  {
-    fTime = std::numeric_limits<double>::quiet_NaN();
-    StopTimerAndReport(exc.GetMsg());
-  }
-  catch(...)
-  {
-    fTime = std::numeric_limits<double>::quiet_NaN();
-    StopTimerAndReport("unexpected exception");
-  }
+      StopTimer(fRes.GetFloat(), fSum, iCount);
+   }
+   catch(mup::ParserError &exc)
+   {
+      fTime = std::numeric_limits<double>::quiet_NaN();
+      StopTimerAndReport(exc.GetMsg());
+   }
+   catch(...)
+   {
+      fTime = std::numeric_limits<double>::quiet_NaN();
+      StopTimerAndReport("unexpected exception");
+   }
 
   return m_fTime1;
 }

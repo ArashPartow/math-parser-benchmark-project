@@ -28,7 +28,8 @@
 #include "exprtk.hpp"
 
 
-typedef std::pair<std::string,double> test_t;
+typedef double numeric_type;
+typedef std::pair<std::string,numeric_type> test_t;
 
 static const test_t test_list[] =
                   {
@@ -341,6 +342,10 @@ static const test_t test_list[] =
                      test_t("+(1+2)",+3.0),
                      test_t("+(1-2)",-1.0),
                      test_t("-(1-2)",+1.0),
+                     test_t("(-3*-6)",+18.0),
+                     test_t("(-6*-3)",+18.0),
+                     test_t("-(-3*-6)",-18.0),
+                     test_t("-(-6*-3)",-18.0),
                      test_t("1.1+2.2+3.3",+6.6),
                      test_t("+1.1+2.2+3.3",+6.6),
                      test_t("-1.1-2.2-3.3",-6.6),
@@ -1006,7 +1011,53 @@ static const test_t test_list[] =
                      test_t("repeat 1.1234; 1 < 2; (1.1 + 2.2) until (1 < 2)",3.3),
                      test_t("repeat 1.1234; 1 < 2; 1.1 + 2.2; until (1 < 2)",3.3),
                      test_t("repeat 1.1234; 1 < 2; (1.1 + 2.2); until (1 < 2)",3.3),
-                     test_t("[*] { case 1 < 2 : 1 / 2; case (1 < 3) : 2 / 2; case 1 < 4 : 3 / 2; case (1 < 5) : 4 / 2; }",2.0)
+                     test_t("[*] { case 1 < 2 : 1 / 2; case (1 < 3) : 2 / 2; case 1 < 4 : 3 / 2; case (1 < 5) : 4 / 2; }",2.0),
+                     test_t(" 0 ? 1 : 2",2.0),
+                     test_t(" 1 ? 3 : 4",3.0),
+                     test_t("(0 ? 1 : 2) == 2",1.0),
+                     test_t("(1 ? 3 : 4) == 3",1.0),
+                     test_t("[(0)] ? [(1)] : [(2)]",2.0),
+                     test_t("([(0)] ? [(1)] : [(2)]) == 2",1.0),
+                     test_t("([(1)] ? [(3)] : [(4)]) == 3",1.0),
+                     test_t("(1 < 2 ? 3 : 4) == 3",1.0),
+                     test_t("(1 > 2 ? 3 : 4) == 4",1.0),
+                     test_t("(1 < 2 ? 3 + 5 : 4) == 8",1.0),
+                     test_t("(1 > 2 ? 3 : 4 + 5) == 9",1.0),
+                     test_t("(2 < 3 + 3 ? 7 : 9) == 7",1.0),
+                     test_t("(1 + 1 < 3 ? 7 : 9) == 7",1.0),
+                     test_t("(1 + 1 < 3 + 3 ? 7 : 9) == 7",1.0),
+                     test_t("(2 > 3 + 3 ? 7 : 9) == 9",1.0),
+                     test_t("(1 + 1 > 3 ? 7 : 9) == 9",1.0),
+                     test_t("(1 + 1 > 3 + 3 ? 7 : 9) == 9",1.0),
+                     test_t("(2 < (3 + 3) ? 7 : 9) == 7",1.0),
+                     test_t("((1 + 1) < 3 ? 7 : 9) == 7",1.0),
+                     test_t("((1 + 1) < (3 + 3) ? 7 : 9) == 7",1.0),
+                     test_t("(min(1,2) ? 1 + 3 : 1 + 4) == 4",1.0),
+                     test_t("(min(0,1) ? 1 + 3 : 1 + 4) == 5",1.0),
+                     test_t("if(1 < 2) 3; == 3",1.0),
+                     test_t("if(1 > 2) 3; == null",1.0),
+                     test_t("if(1 < 2) 3; else 4; == 3",1.0),
+                     test_t("if(1 > 2) 3; else 4; == 4",1.0),
+                     test_t("if(1 < 2) 3; else {1+2; 4;} == 3",1.0),
+                     test_t("if(1 > 2) 3; else {1+2; 4;} == 4",1.0),
+                     test_t("if(1 < 2) 3; else if (1 < 2) 4; == 3",1.0),
+                     test_t("if(1 > 2) 3; else if (1 < 2) 4; == 4",1.0),
+                     test_t("if(1 > 2) 3; else if (1 > 2) 4; == null",1.0),
+                     test_t("if(1 < 2) 3; else if (1 < 2) {1+2; 4;} == 3",1.0),
+                     test_t("if(1 > 2) 3; else if (1 < 2) {1+2; 4;} == 4",1.0),
+                     test_t("if(1 > 2) 3; else if (1 > 2) {1+2; 4;} == null",1.0),
+                     test_t("if(1 < 2) { 1+2; 3;} == 3",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} == null",1.0),
+                     test_t("if(1 < 2) { 1+2; 3;} else 4; == 3",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} else 4; == 4",1.0),
+                     test_t("if(1 < 2) { 1+2; 3;} else {1+2; 4;} == 3",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} else {1+2; 4;} == 4",1.0),
+                     test_t("if(1 < 2) { 1+2; 3;} else if (1 < 2) 4; == 3",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} else if (1 < 2) 4; == 4",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} else if (1 > 2) 4; == null",1.0),
+                     test_t("if(1 < 2) { 1+2; 3;} else if (1 < 2) {1+2; 4;} == 3",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} else if (1 < 2) {1+2; 4;} == 4",1.0),
+                     test_t("if(1 > 2) { 1+2; 3;} else if (1 > 2) {1+2; 4;} == null",1.0)
                   };
 
 static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_t);
@@ -1082,7 +1133,7 @@ inline bool test_expression(const std::string& expression_string, const T& expec
       }
    }
 
-   if (!exprtk::expression_helper<T>::is_head_constant(expression))
+   if (!exprtk::expression_helper<T>::is_constant(expression))
    {
       printf("test_expression() - Error: Expression did not compile to a constant!   Expression: %s\n",
              expression_string.c_str());
@@ -1095,8 +1146,8 @@ inline bool test_expression(const std::string& expression_string, const T& expec
    {
       printf("test_expression() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
              expression_string.c_str(),
-             expected_result,
-             result);
+             (double)expected_result,
+             (double)result);
       return false;
    }
 
@@ -1109,13 +1160,17 @@ inline bool run_test00()
    const std::size_t rounds = 10;
    for (std::size_t r = 0; r < rounds; ++r)
    {
+      bool result = true;
       for (std::size_t i = 0; i < test_list_size; ++i)
       {
          if (!test_expression<T>(test_list[i].first,T(test_list[i].second)))
          {
-            return false;
+            result = false;
          }
       }
+
+      if (!result)
+         return false;
    }
 
    return true;
@@ -1138,13 +1193,14 @@ struct test_xy
 };
 
 template <typename T>
-struct test_xyz
+struct test_xyzw
 {
-   test_xyz(std::string e, const T& v0, const T& v1, const T& v2, const T& r)
+   test_xyzw(std::string e, const T& v0, const T& v1, const T& v2, const T& v3, const T& r)
    : expr(e),
      x(v0),
      y(v1),
      z(v2),
+     w(v3),
      result(r)
    {}
 
@@ -1152,6 +1208,7 @@ struct test_xyz
    T x;
    T y;
    T z;
+   T w;
    T result;
 };
 
@@ -1384,6 +1441,42 @@ inline bool run_test01()
                                  test_xy<T>("((x / 2) * (3 / y))",T(7.0),T(9.0),T(((7.0 / 2.0) * (3.0 / 9.0)))),
                                  test_xy<T>("((x * 2) / (3 / y))",T(7.0),T(9.0),T(((7.0 * 2.0) / (3.0 / 9.0)))),
                                  test_xy<T>("((x / 2) / (3 * y))",T(7.0),T(9.0),T(((7.0 / 2.0) / (3.0 * 9.0)))),
+                                 test_xy<T>("([(min(x,8) + y) + 3] - 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) + 3.0) - 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) + 3] + 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) + 3.0) + 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) + 3] * 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) + 3.0) * 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) + 3] / 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) + 3.0) / 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) - 3] - 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) - 3.0) - 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) - 3] + 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) - 3.0) + 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) - 3] * 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) - 3.0) * 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) - 3] / 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) - 3.0) / 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) * 3] - 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) * 3.0) - 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) * 3] + 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) * 3.0) + 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) * 3] * 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) * 3.0) * 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) * 3] / 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) * 3.0) / 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) / 3] - 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) / 3.0) - 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) / 3] + 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) / 3.0) + 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) / 3] * 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) / 3.0) * 4.0))),
+                                 test_xy<T>("([(min(x,8) + y) / 3] / 4)",T(7.0),T(9.0),T((((std::min(7.0,8.0) + 9.0) / 3.0) / 4.0))),
+                                 test_xy<T>("(4 - [3 + (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 - (3.0 + (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 + [3 + (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 + (3.0 + (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 * [3 + (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 * (3.0 + (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 / [3 + (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 / (3.0 + (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 - [3 - (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 - (3.0 - (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 + [3 - (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 + (3.0 - (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 * [3 - (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 * (3.0 - (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 / [3 - (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 / (3.0 - (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 - [3 * (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 - (3.0 * (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 + [3 * (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 + (3.0 * (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 * [3 * (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 * (3.0 * (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 / [3 * (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 / (3.0 * (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 - [3 / (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 - (3.0 / (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 + [3 / (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 + (3.0 / (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 * [3 / (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 * (3.0 / (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("(4 / [3 / (min(x,8) + y)])",T(7.0),T(9.0),T((4.0 / (3.0 / (std::min(7.0,8.0) + 9.0))))),
+                                 test_xy<T>("((2 * x) + (2 * y))",T(7.0),T(9.0),T(((2.0 * 7.0) + (2.0 * 9.0)))),
+                                 test_xy<T>("((2 * x) - (2 * y))",T(7.0),T(9.0),T(((2.0 * 7.0) - (2.0 * 9.0)))),
+                                 test_xy<T>("((2 * x) + (y * 2))",T(7.0),T(9.0),T(((2.0 * 7.0) + (9.0 * 2.0)))),
+                                 test_xy<T>("((x * 2) - (y * 2))",T(7.0),T(9.0),T(((7.0 * 2.0) - (9.0 * 2.0)))),
                                  test_xy<T>("0 * (abs  (x) + acos (y) + asin (x) + atan (y))",T(1.0),T(1.0),T(0.0)),
                                  test_xy<T>("0 * (ceil (x) + cos  (y) + cosh (x) + exp  (y))",T(1.0),T(1.0),T(0.0)),
                                  test_xy<T>("0 * (floor(x) + log  (y) + log10(x) + round(y))",T(1.0),T(1.0),T(0.0)),
@@ -1406,7 +1499,36 @@ inline bool run_test01()
                                  test_xy<T>("switch { case {(x <= y)} : switch { case ({x <= y}) : x; default: 1.12345; }; default: 1.12345; }",T(1.0),T(2.0),T(1.0)),
                                  test_xy<T>("[*]{ case x < y : x + y; case y < x : y - x; }",T(2.0),T(3.0),T(5.0)),
                                  test_xy<T>("[*]{ case x > y : x + y; case y > x : y - x; }",T(2.0),T(3.0),T(1.0)),
-                                 test_xy<T>("[*]{ case x > y : x - y; case y < x : y + x; }",T(2.0),T(3.0),T(0.0))
+                                 test_xy<T>("[*]{ case x > y : x - y; case y < x : y + x; }",T(2.0),T(3.0),T(0.0)),
+                                 test_xy<T>("0 ? x : y"                       ,T(1.0),T(2.0),T( 2.0)),
+                                 test_xy<T>("1 ? x : y"                       ,T(1.0),T(2.0),T( 1.0)),
+                                 test_xy<T>("x ? x : y"                       ,T(1.0),T(2.0),T( 1.0)),
+                                 test_xy<T>("x ? x : y"                       ,T(0.0),T(2.0),T( 2.0)),
+                                 test_xy<T>("(x + y < 4) ? 1 : 2"             ,T(1.0),T(2.0),T( 1.0)),
+                                 test_xy<T>("(x + y > 4) ? 1 : 2"             ,T(1.0),T(2.0),T( 2.0)),
+                                 test_xy<T>("x < y ? x + y : x - y"           ,T(1.0),T(2.0),T( 3.0)),
+                                 test_xy<T>("x > y ? x + y : x - y"           ,T(1.0),T(2.0),T(-1.0)),
+                                 test_xy<T>("(x + x < y ? 7 : 9) == 7"        ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("(x + x < y + y ? 7 : 9) == 7"    ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("(x > y + y ? 7 : 9) == 9"        ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("(x + x > y ? 7 : 9) == 9"        ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("(x + x > y + 3 ? 7 : 9) == 9"    ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("(x < (y + y) ? 7 : 9) == 7"      ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("((x + x) < y ? 7 : 9) == 7"      ,T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("((x + x) < (y + y) ? 7 : 9) == 7",T(1.0),T(3.0),T( 1.0)),
+                                 test_xy<T>("(x += 2 ) ==    3 "              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x += 2y) ==    7 "              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x -= 2 ) ==   -1 "              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x -= 2y) ==   -5 "              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x *= 2 ) ==    2 "              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x *= 2y) ==    6 "              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x /= 2 ) == (1/2)"              ,T(1),T(3),T(1)),
+                                 test_xy<T>("(x /= 2y) == (1/6)"              ,T(1),T(3),T(1)),
+                                 test_xy<T>("for(var i := 0; (i < 10);) { i += 1; }; x;"                   ,T(1),T(20),T( 1)),
+                                 test_xy<T>("for(var i := 0; (i < 10) and (i != y); i+=2) { x += i; }; x;" ,T(1),T(20),T(21)),
+                                 test_xy<T>("for(var i := 0; (i < 10) and (i != y);) { x += i; i+=2; }; x;",T(1),T(20),T(21)),
+                                 test_xy<T>("for(var i := 0; (i < y); i += 1) { if (i <= (y / 2)) x += i; else break; }; x;" ,T(0),T(10),T(15)),
+                                 test_xy<T>("for(var i := 0; (i < y); i += 1) { if (i <= (y / 2)) continue; else x += i; }; x;" ,T(0),T(10),T(30))
                               };
 
       static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_xy<T>);
@@ -1420,9 +1542,12 @@ inline bool run_test01()
          {
             test_xy<T>& test = const_cast<test_xy<T>&>(test_list[i]);
 
+            T x = test.x;
+            T y = test.y;
+
             exprtk::symbol_table<T> symbol_table;
-            symbol_table.add_variable("x",test.x);
-            symbol_table.add_variable("y",test.y);
+            symbol_table.add_variable("x",x);
+            symbol_table.add_variable("y",y);
 
             exprtk::expression<T> expression;
             expression.register_symbol_table(symbol_table);
@@ -1445,8 +1570,8 @@ inline bool run_test01()
             {
                printf("run_test01() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
                       test.expr.c_str(),
-                      test.result,
-                      result);
+                      (double)test.result,
+                      (double)result);
                loop_result = false;
             }
          }
@@ -1459,19 +1584,63 @@ inline bool run_test01()
    }
 
    {
-      static const test_xyz<T> test_list[] =
+      static const test_xyzw<T> test_list[] =
                               {
-                                test_xyz<T>("((x /  y) / z )",T(7.0),T(9.0),T(3.0),T(((7.0 /  9.0) / 3.0 ))),
-                                test_xyz<T>("((x /  y) / 2 )",T(7.0),T(9.0),T(3.0),T(((7.0 /  9.0) / 2.0 ))),
-                                test_xyz<T>("((x /  2) / y )",T(7.0),T(9.0),T(3.0),T(((7.0 /  2.0) / 9.0 ))),
-                                test_xyz<T>("((2 /  x) / y )",T(7.0),T(9.0),T(3.0),T(((2.0 /  7.0) / 9.0 ))),
-                                test_xyz<T>("( x / (y /  z))",T(7.0),T(9.0),T(3.0),T(( 7.0 / (9.0  / 3.0)))),
-                                test_xyz<T>("( x / (y /  2))",T(7.0),T(9.0),T(3.0),T(( 7.0 / (9.0  / 2.0)))),
-                                test_xyz<T>("( x / (2  / y))",T(7.0),T(9.0),T(3.0),T(( 7.0 / (2.0  / 9.0)))),
-                                test_xyz<T>("( 2 / (x /  y))",T(7.0),T(9.0),T(3.0),T(( 2.0 / (7.0  / 9.0))))
+                                test_xyzw<T>("((x /  y) / z )",T(7.0),T(9.0),T(3.0),T(0.0),T(((7.0 /  9.0) / 3.0 ))),
+                                test_xyzw<T>("((x /  y) / 2 )",T(7.0),T(9.0),T(3.0),T(0.0),T(((7.0 /  9.0) / 2.0 ))),
+                                test_xyzw<T>("((x /  2) / y )",T(7.0),T(9.0),T(3.0),T(0.0),T(((7.0 /  2.0) / 9.0 ))),
+                                test_xyzw<T>("((2 /  x) / y )",T(7.0),T(9.0),T(3.0),T(0.0),T(((2.0 /  7.0) / 9.0 ))),
+                                test_xyzw<T>("( x / (y /  z))",T(7.0),T(9.0),T(3.0),T(0.0),T(( 7.0 / (9.0  / 3.0)))),
+                                test_xyzw<T>("( x / (y /  2))",T(7.0),T(9.0),T(3.0),T(0.0),T(( 7.0 / (9.0  / 2.0)))),
+                                test_xyzw<T>("( x / (2  / y))",T(7.0),T(9.0),T(3.0),T(0.0),T(( 7.0 / (2.0  / 9.0)))),
+                                test_xyzw<T>("( 2 / (x /  y))",T(7.0),T(9.0),T(3.0),T(0.0),T(( 2.0 / (7.0  / 9.0)))),
+                                test_xyzw<T>("([(min(x,y) + z) + 3] - 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) + 3.0) - 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) + 3] + 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) + 3.0) + 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) + 3] * 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) + 3.0) * 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) + 3] / 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) + 3.0) / 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) - 3] - 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) - 3.0) - 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) - 3] + 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) - 3.0) + 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) - 3] * 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) - 3.0) * 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) - 3] / 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) - 3.0) / 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) * 3] - 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) * 3.0) - 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) * 3] + 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) * 3.0) + 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) * 3] * 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) * 3.0) * 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) * 3] / 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) * 3.0) / 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) / 3] - 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) / 3.0) - 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) / 3] + 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) / 3.0) + 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) / 3] * 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) / 3.0) * 4.0))),
+                                test_xyzw<T>("([(min(x,y) + z) / 3] / 4)",T(5.0),T(7.0),T(9.0),T(0.0),T((((std::min(5.0,7.0) + 9.0) / 3.0) / 4.0))),
+                                test_xyzw<T>("(4 - [3 + (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 - (3.0 + (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 + [3 + (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 + (3.0 + (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 * [3 + (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 * (3.0 + (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 / [3 + (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 / (3.0 + (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 - [3 - (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 - (3.0 - (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 + [3 - (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 + (3.0 - (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 * [3 - (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 * (3.0 - (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 / [3 - (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 / (3.0 - (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 - [3 * (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 - (3.0 * (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 + [3 * (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 + (3.0 * (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 * [3 * (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 * (3.0 * (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 / [3 * (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 / (3.0 * (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 - [3 / (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 - (3.0 / (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 + [3 / (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 + (3.0 / (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 * [3 / (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 * (3.0 / (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("(4 / [3 / (min(x,y) + z)])",T(5.0),T(7.0),T(9.0),T(0.0),T((4.0 / (3.0 / (std::min(5.0,7.0) + 9.0))))),
+                                test_xyzw<T>("if(x < y) { z+2; z;} == z"                             ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} == null"                          ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x < y) { z+2; z;} else w; == z"                     ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} else 1 + w; == (w + 1)"           ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x < y) { z+2; z;} else {1+2; w;} == z"              ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} else {1+2; w;} == w"              ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x < y) { z+2; z;} else if (x < y) w; == z"          ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} else if (x < y) 1 + w; == w + 1"  ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} else if (x > y) w; == null"       ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x < y) { z+2; z;} else if (x < y) {w+2; w;} == z"   ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} else if (x < y) {w+2; w;} == w"   ,T(1.0),T(2.0),T(3.0),T(4.0),T(1.0)),
+                                test_xyzw<T>("if(x > y) { z+2; z;} else if (x > y) {w+2; w;} == null",T(1.0),T(2.0),T(3.0),T(4.0),T(1.0))
                               };
 
-      static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_xyz<T>);
+      static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_xyzw<T>);
 
       const std::size_t rounds = 60;
 
@@ -1480,12 +1649,13 @@ inline bool run_test01()
          bool loop_result = true;
          for (std::size_t i = 0; i < test_list_size; ++i)
          {
-            test_xyz<T>& test = const_cast<test_xyz<T>&>(test_list[i]);
+            test_xyzw<T>& test = const_cast<test_xyzw<T>&>(test_list[i]);
 
             exprtk::symbol_table<T> symbol_table;
             symbol_table.add_variable("x",test.x);
             symbol_table.add_variable("y",test.y);
             symbol_table.add_variable("z",test.z);
+            symbol_table.add_variable("w",test.w);
 
             exprtk::expression<T> expression;
             expression.register_symbol_table(symbol_table);
@@ -1508,8 +1678,87 @@ inline bool run_test01()
             {
                printf("run_test01() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
                       test.expr.c_str(),
-                      test.result,
-                      result);
+                      (double)test.result,
+                      (double)result);
+               loop_result = false;
+            }
+         }
+
+         if (!loop_result)
+         {
+            return false;
+         }
+      }
+   }
+
+   {
+      const std::string expr_list[] =
+                          {
+                            "((v[1] + x) == (x + v[1]))",
+                            "((v[0] += x) == x)",
+                            "((v[0] += x + y) == (x + y))",
+                            "((v[0] -= x) == -x)",
+                            "((v[0] -= (x + y)) == -(x + y))",
+                            "((v[1] + v[2]) == (v[3 - 1] + v[2 * 1/2]))",
+                            "(v[v[1]] == v[1])",
+                            "(v[1] += v[1]) == v[1 + 1]",
+                            "((v[i[1]] + x) == (x + v[i[1]]))",
+                            "((v[i[0]] += x) == x)",
+                            "((v[i[0]] += x + y) == (x + y))",
+                            "((v[i[0]] -= x) == -x)",
+                            "((v[i[0]] -= (x + y)) == -(x + y))",
+                            "((v[i[1]] + v[2]) == (v[i[3] - i[1]] + v[i[2] * 1/2]))",
+                            "(v[v[i[1]]] == v[i[1]])",
+                            "(v[i[1]] += v[i[1]]) == v[i[1] + 1]"
+                          };
+
+      const std::size_t expr_list_size = sizeof(expr_list) / sizeof(std::string);
+
+
+      const std::size_t rounds = 60;
+
+      for (std::size_t r = 0; r < rounds; ++r)
+      {
+         bool loop_result = true;
+         for (std::size_t i = 0; i < expr_list_size; ++i)
+         {
+            T v[]     = { T(0.0), T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
+            T index[] = { T(0)  , T(1)  , T(2)  , T(3)  , T(4)  , T(5)   };
+
+            T x = T(6.6);
+            T y = T(7.7);
+            T z = T(8.8);
+
+            exprtk::symbol_table<T> symbol_table;
+            symbol_table.add_variable("x",x);
+            symbol_table.add_variable("y",y);
+            symbol_table.add_variable("z",z);
+            symbol_table.add_vector  ("v",v);
+            symbol_table.add_vector  ("i",index);
+
+            exprtk::expression<T> expression;
+            expression.register_symbol_table(symbol_table);
+
+            {
+               exprtk::parser<T> parser;
+               if (!parser.compile(expr_list[i],expression))
+               {
+                  printf("run_test01() - Error: %s   Expression: %s\n",
+                         parser.error().c_str(),
+                         expr_list[i].c_str());
+                  loop_result = false;
+                  continue;
+               }
+            }
+
+            T result = expression.value();
+
+            if (not_equal(result,T(1)))
+            {
+               printf("run_test01() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
+                      expr_list[i].c_str(),
+                      (double)1.0,
+                      (double)result);
                loop_result = false;
             }
          }
@@ -1781,7 +2030,16 @@ inline bool run_test02()
                               test_ab<T>("('!@#$%^&*([{}])-=') == ('!@#$%^&*([{}])-=')","","",T(1.0)),
                               test_ab<T>("{[('!@#$%^&*([{}])-=')]} == [{('!@#$%^&*([{}])-=')}]","","",T(1.0)),
                               test_ab<T>("'1234\\\\abc\nxyz\r890\tqaz\\'567' == a","1234\\abc\nxyz\r890\tqaz'567","",T(1.0)),
-                              test_ab<T>("a == '1234\\\\abc\nxyz\r890\tqaz\\'567'","1234\\abc\nxyz\r890\tqaz'567","",T(1.0))
+                              test_ab<T>("a == '1234\\\\abc\nxyz\r890\tqaz\\'567'","1234\\abc\nxyz\r890\tqaz'567","",T(1.0)),
+                              test_ab<T>("'123'[] == 3"                              ,"","",T(1.0)),
+                              test_ab<T>("3 == '123'[]"                              ,"","",T(1.0)),
+                              test_ab<T>("'123'[] + '1234'[] == 7"                   ,"","",T(1.0)),
+                              test_ab<T>("abs('123'[] - '1234'[]) == 1"              ,"","",T(1.0)),
+                              test_ab<T>("'1234'[] == a[]"                           ,"1234","",T(1.0)),
+                              test_ab<T>("'123'[] + a[] == 7"                        ,"1234","",T(1.0)),
+                              test_ab<T>("abs(a[] - '12345'[]) == 1"                 ,"1234","",T(1.0)),
+                              test_ab<T>("'1234'[] + '12345'[] == a[] + b[]"         ,"1234","12345",T(1.0)),
+                              test_ab<T>("abs('123'[] - '1234'[]) == abs(a[] - b[])" ,"1234","12345",T(1.0))
                            };
 
    static const std::size_t test_list_size = sizeof(test_list) / sizeof(test_ab<T>);
@@ -1789,6 +2047,7 @@ inline bool run_test02()
    const std::size_t rounds = 50;
    for (std::size_t r = 0; r < rounds; ++r)
    {
+      bool result = true;
       for (std::size_t i = 0; i < test_list_size; ++i)
       {
          test_ab<T>& test = const_cast<test_ab<T>&>(test_list[i]);
@@ -1832,12 +2091,14 @@ inline bool run_test02()
          {
             printf("run_test02() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
                    test.expr.c_str(),
-                   test.result,
-                   result);
-            return false;
+                   (double)test.result,
+                   (double)result);
+            result = false;
          }
       }
 
+      if (!result)
+         return false;
    }
 
    return true;
@@ -1907,14 +2168,16 @@ inline bool run_test03()
 
       expression.register_symbol_table(symbol_table);
 
-      exprtk::parser<T> parser;
-
-      if (!parser.compile(expression_string,expression))
       {
-         printf("run_test03() - Error: %s   Expression: %s\n",
-                parser.error().c_str(),
-                expression_string.c_str());
-         return false;
+         exprtk::parser<T> parser;
+
+         if (!parser.compile(expression_string,expression))
+         {
+            printf("run_test03() - Error: %s   Expression: %s\n",
+                   parser.error().c_str(),
+                   expression_string.c_str());
+            return false;
+         }
       }
 
       expression.value();
@@ -1970,10 +2233,10 @@ inline bool run_test04()
       {
          printf("run_test04() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f x:%19.15f\ty:%19.15f\n",
                 expression_string.c_str(),
-                result1,
-                result2,
-                x,
-                y);
+                (double)result1,
+                (double)result2,
+                (double)x,
+                (double)y);
          return false;
       }
 
@@ -2004,15 +2267,18 @@ inline bool run_test05()
    for (std::size_t i = 0; i < expression_count; ++i)
    {
       expression_t e;
-      exprtk::parser<T> parser;
       e.register_symbol_table(symbol_table);
 
-      if (!parser.compile(expression_string,e))
       {
-         printf("run_test05() - Error: %s   Expression: %s\n",
-                parser.error().c_str(),
-                expression_string.c_str());
-         return false;
+         exprtk::parser<T> parser;
+
+         if (!parser.compile(expression_string,e))
+         {
+            printf("run_test05() - Error: %s   Expression: %s\n",
+                   parser.error().c_str(),
+                   expression_string.c_str());
+            return false;
+         }
       }
 
       expression_list.push_back(e);
@@ -2035,10 +2301,10 @@ inline bool run_test05()
          {
             printf("run_test05() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f x:%19.15f\ty:%19.15f\tIndex:%d\n",
                    expression_string.c_str(),
-                   real_result,
-                   result,
-                   x,
-                   y,
+                   (double)real_result,
+                   (double)result,
+                   (double)x,
+                   (double)y,
                    static_cast<unsigned int>(i));
             return false;
          }
@@ -2065,14 +2331,16 @@ inline bool run_test06()
    expression_t expression;
    expression.register_symbol_table(symbol_table);
 
-   exprtk::parser<T> parser;
-
-   if (!parser.compile(expression_string,expression))
    {
-      printf("run_test06() - Error: %s   Expression: %s\n",
-             parser.error().c_str(),
-             expression_string.c_str());
-      return false;
+      exprtk::parser<T> parser;
+
+      if (!parser.compile(expression_string,expression))
+      {
+         printf("run_test06() - Error: %s   Expression: %s\n",
+                parser.error().c_str(),
+                expression_string.c_str());
+         return false;
+      }
    }
 
    T total_area1 = exprtk::integrate(expression,x,T(-1),T(1));
@@ -2088,8 +2356,8 @@ inline bool run_test06()
    if (not_equal(total_area1,T(pi) / T(2),T(0.000001)))
    {
       printf("run_test06() - Integration Error:  Expected: %19.15f\tResult: %19.15f\n",
-             pi / T(2),
-             total_area1);
+             (double)(pi / T(2)),
+             (double)total_area1);
       return false;
    }
 
@@ -2110,15 +2378,17 @@ inline bool run_test07()
    expression_t expression;
    expression.register_symbol_table(symbol_table);
 
-   exprtk::parser<T> parser;
-
-   if (!parser.compile(expression_string,expression))
    {
-      printf("run_test07() - Error: %s   Expression: %s\n",
-             parser.error().c_str(),
-             expression_string.c_str());
+      exprtk::parser<T> parser;
 
-      return false;
+      if (!parser.compile(expression_string,expression))
+      {
+         printf("run_test07() - Error: %s   Expression: %s\n",
+                parser.error().c_str(),
+                expression_string.c_str());
+
+         return false;
+      }
    }
 
    for (x = T(-200); x < T(200); x += T(0.0001))
@@ -2137,9 +2407,9 @@ inline bool run_test07()
          if (not_equal(deriv1_result1,deriv1_real_result,T(0.00001)))
          {
             printf("run_test07() - 1st Derivative Error:  x: %19.15f\tExpected: %19.15f\tResult: %19.15f\n",
-                   x,
-                   deriv1_real_result,
-                   deriv1_result1);
+                   (double)x,
+                   (double)deriv1_real_result,
+                   (double)deriv1_result1);
             return false;
          }
       }
@@ -2158,9 +2428,9 @@ inline bool run_test07()
          if (not_equal(deriv2_result1,deriv2_real_result,T(0.01)))
          {
             printf("run_test07() - 2nd Derivative Error:  x: %19.15f\tExpected: %19.15f\tResult: %19.15f\n",
-                   x,
-                   deriv2_real_result,
-                   deriv2_result1);
+                   (double)x,
+                   (double)deriv2_real_result,
+                   (double)deriv2_result1);
             return false;
          }
       }
@@ -2179,9 +2449,9 @@ inline bool run_test07()
          if (not_equal(deriv3_result1,deriv3_real_result,T(0.01)))
          {
             printf("run_test07() - 3rd Derivative Error:  x: %19.15f\tExpected: %19.15f\tResult: %19.15f\n",
-                   x,
-                   deriv3_real_result,
-                   deriv3_result1);
+                   (double)x,
+                   (double)deriv3_real_result,
+                   (double)deriv3_result1);
             return false;
          }
       }
@@ -2323,6 +2593,13 @@ inline bool run_test08()
                                  "equal($f96(x,y,z,w),if(x > y,z,w))",
                                  "equal($f97(x,y,z,w),if(x >= y,z,w))",
                                  "equal($f98(x,y,z,w),if(equal(x,y),z,w))",
+                                 "equal($f92(x,y,z,w),x and y ? z : w)",
+                                 "equal($f93(x,y,z,w),x or y ? z : w)",
+                                 "equal($f94(x,y,z,w),x < y ? z : w)",
+                                 "equal($f95(x,y,z,w),x <= y ? z : w)",
+                                 "equal($f96(x,y,z,w),x > y ? z : w)",
+                                 "equal($f97(x,y,z,w),x >= y ? z : w)",
+                                 "equal($f98(x,y,z,w),equal(x,y) ? z : w)",
                                  "equal($f99(x,y,z,w),x*sin(y)+z*cos(w))"
                               };
    static const std::size_t expr_str_size = sizeof(expr_str) / sizeof(std::string);
@@ -2351,14 +2628,16 @@ inline bool run_test08()
          expression_t expression;
          expression.register_symbol_table(symbol_table);
 
-         exprtk::parser<T> parser;
-
-         if (!parser.compile(expr_str[j],expression))
          {
-            printf("run_test08() - Error: %s   Expression: %s\n",
-                   parser.error().c_str(),
-                   expr_str[j].c_str());
-            return false;
+            exprtk::parser<T> parser;
+
+            if (!parser.compile(expr_str[j],expression))
+            {
+               printf("run_test08() - Error: %s   Expression: %s\n",
+                      parser.error().c_str(),
+                      expr_str[j].c_str());
+               return false;
+            }
          }
 
          expression.value();
@@ -2386,26 +2665,26 @@ inline bool run_test09()
    for (std::size_t i = 0; i < rounds; ++i)
    {
       typedef exprtk::expression<T> expression_t;
-      std::string expression_string = "myfunc0(sin(x*pi),y/2)+myfunc1(sin(x*pi),y/2)+"
-                                      "myfunc2(sin(x*pi),y/2)+myfunc3(sin(x*pi),y/2)+"
-                                      "myfunc4(sin(x*pi),y/2)+myfunc5(sin(x*pi),y/2)+"
-                                      "myfunc6(sin(x*pi),y/2)+myfunc7(sin(x*pi),y/2)+"
-                                      "myfunc8(sin(x*pi),y/2)+myfunc9(sin(x*pi),y/2)+"
-                                      "myfunc0(sin(x*pi),y/2)+myfunc1(sin(x*pi),y/2)+"
-                                      "myfunc2(sin(x*pi),y/2)+myfunc3(sin(x*pi),y/2)+"
-                                      "myfunc4(sin(x*pi),y/2)+myfunc5(sin(x*pi),y/2)+"
-                                      "myfunc6(sin(x*pi),y/2)+myfunc7(sin(x*pi),y/2)+"
-                                      "myfunc8(sin(x*pi),y/2)+myfunc9(sin(x*pi),y/2)+"
-                                      "myfunc0(sin(x*pi),y/2)+myfunc1(sin(x*pi),y/2)+"
-                                      "myfunc2(sin(x*pi),y/2)+myfunc3(sin(x*pi),y/2)+"
-                                      "myfunc4(sin(x*pi),y/2)+myfunc5(sin(x*pi),y/2)+"
-                                      "myfunc6(sin(x*pi),y/2)+myfunc7(sin(x*pi),y/2)+"
-                                      "myfunc8(sin(x*pi),y/2)+myfunc9(sin(x*pi),y/2)+"
-                                      "myfunc0(sin(x*pi),y/2)+myfunc1(sin(x*pi),y/2)+"
-                                      "myfunc2(sin(x*pi),y/2)+myfunc3(sin(x*pi),y/2)+"
-                                      "myfunc4(sin(x*pi),y/2)+myfunc5(sin(x*pi),y/2)+"
-                                      "myfunc6(sin(x*pi),y/2)+myfunc7(sin(x*pi),y/2)+"
-                                      "myfunc8(sin(x*pi),y/2)+myfunc9(sin(x*pi),y/2)";
+      std::string expression_string = "myfunc0(sin(x * pi),y / 2) + myfunc1(sin(x * pi),y / 2)+"
+                                      "myfunc2(sin(x * pi),y / 2) + myfunc3(sin(x * pi),y / 2)+"
+                                      "myfunc4(sin(x * pi),y / 2) + myfunc5(sin(x * pi),y / 2)+"
+                                      "myfunc6(sin(x * pi),y / 2) + myfunc7(sin(x * pi),y / 2)+"
+                                      "myfunc8(sin(x * pi),y / 2) + myfunc9(sin(x * pi),y / 2)+"
+                                      "myfunc0(sin(x * pi),y / 2) + myfunc1(sin(x * pi),y / 2)+"
+                                      "myfunc2(sin(x * pi),y / 2) + myfunc3(sin(x * pi),y / 2)+"
+                                      "myfunc4(sin(x * pi),y / 2) + myfunc5(sin(x * pi),y / 2)+"
+                                      "myfunc6(sin(x * pi),y / 2) + myfunc7(sin(x * pi),y / 2)+"
+                                      "myfunc8(sin(x * pi),y / 2) + myfunc9(sin(x * pi),y / 2)+"
+                                      "myfunc0(sin(x * pi),y / 2) + myfunc1(sin(x * pi),y / 2)+"
+                                      "myfunc2(sin(x * pi),y / 2) + myfunc3(sin(x * pi),y / 2)+"
+                                      "myfunc4(sin(x * pi),y / 2) + myfunc5(sin(x * pi),y / 2)+"
+                                      "myfunc6(sin(x * pi),y / 2) + myfunc7(sin(x * pi),y / 2)+"
+                                      "myfunc8(sin(x * pi),y / 2) + myfunc9(sin(x * pi),y / 2)+"
+                                      "myfunc0(sin(x * pi),y / 2) + myfunc1(sin(x * pi),y / 2)+"
+                                      "myfunc2(sin(x * pi),y / 2) + myfunc3(sin(x * pi),y / 2)+"
+                                      "myfunc4(sin(x * pi),y / 2) + myfunc5(sin(x * pi),y / 2)+"
+                                      "myfunc6(sin(x * pi),y / 2) + myfunc7(sin(x * pi),y / 2)+"
+                                      "myfunc8(sin(x * pi),y / 2) + myfunc9(sin(x * pi),y / 2)";
 
       T x = T(1) + (i / T(10000));
       T y = T(2) + (i / T(10000));
@@ -2429,14 +2708,16 @@ inline bool run_test09()
       expression_t expression;
       expression.register_symbol_table(symbol_table);
 
-      exprtk::parser<T> parser;
-
-      if (!parser.compile(expression_string,expression))
       {
-         printf("run_test09() - Error: %s   Expression: %s\n",
-                parser.error().c_str(),
-                expression_string.c_str());
-         return false;
+         exprtk::parser<T> parser;
+
+         if (!parser.compile(expression_string,expression))
+         {
+            printf("run_test09() - Error: %s   Expression: %s\n",
+                   parser.error().c_str(),
+                   expression_string.c_str());
+            return false;
+         }
       }
 
       const T pi = T(3.141592653589793238462);
@@ -2460,8 +2741,8 @@ inline bool run_test09()
       if (not_equal(result,expected,T(0.0000001)))
       {
          printf("run_test09() - Error Expected: %19.15f\tResult: %19.15f\n",
-                expected,
-                result);
+                (double)expected,
+                (double)result);
          return false;
       }
    }
@@ -2472,6 +2753,8 @@ inline bool run_test09()
 template <typename T>
 inline bool run_test10()
 {
+   typedef exprtk::expression<T> expression_t;
+
    T  x = T(1.1);
    T  y = T(2.2);
    T xx = T(3.3);
@@ -2483,8 +2766,6 @@ inline bool run_test10()
    std::string jj = "Another String";
 
    exprtk::symbol_table<T> symbol_table;
-
-   typedef exprtk::expression<T> expression_t;
 
    struct test
    {
@@ -2977,6 +3258,301 @@ inline bool run_test10()
       }
    }
 
+   {
+      exprtk::symbol_table<T> symbol_table0;
+      exprtk::symbol_table<T> symbol_table1;
+
+      if (symbol_table0 == symbol_table1)
+      {
+         printf("run_test10() - Error symbol_table0 and symbol_table1 are equal\n");
+         return false;
+      }
+
+      symbol_table0 = symbol_table1;
+      symbol_table1 = symbol_table0;
+
+      if (!(symbol_table0 == symbol_table1))
+      {
+         printf("run_test10() - Error symbol_table0 and symbol_table1 are not equal\n");
+         return false;
+      }
+   }
+
+   {
+      std::string expression_list[] =
+      {
+         "var x; 1",
+         "var x := 1; x",
+         "var x := 1; var y := 2; 1",
+         "var x := 1; var y := 2; x",
+         "var x:=6; var y:=4; x + -3  ==   3",
+         "var x:=6; var y:=4; x - -3  ==   9",
+         "var x:=6; var y:=4; x * -3  == -18",
+         "var x:=6; var y:=4; x / -3  ==  -2",
+         "var x:=6; var y:=4; -x + -3 ==  -9",
+         "var x:=6; var y:=4; -x - -3 ==  -3",
+         "var x:=6; var y:=4; -x * -3 ==  18",
+         "var x:=6; var y:=4; -x / -3 ==   2",
+         "var x:=6; var y:=4; -3 + -x ==   -9",
+         "var x:=6; var y:=4; -3 - -x ==    3",
+         "var x:=6; var y:=4; -3 * -x ==   18",
+         "var x:=6; var y:=4; -3 / -x ==  0.5",
+         "var x:=6; var y:=4;  3 + -x ==   -3",
+         "var x:=6; var y:=4;  3 - -x ==    9",
+         "var x:=6; var y:=4;  3 * -x ==  -18",
+         "var x:=6; var y:=4;  3 / -x == -0.5",
+         "var x := 3; var y := 6;  x + -y == -3",
+         "var x := 3; var y := 6;  x - -y ==  9",
+         "var x := 3; var y := 6; -x + -y == -9",
+         "var x := 3; var y := 6; -x - -y ==  3",
+         "var x := 3; var y := 6; -x * -y == 18",
+         "var x := 6; var y := 3; -x / -y ==  2",
+         "var x := 3; var y := 6; -(-x * -y) == -18",
+         "var x := 6; var y := 3; -(-x / -y) ==  -2",
+         "var x:=1;  2+(3+abs(x)) == 6    ",
+         "var x:=1;  (3+abs(x))+2 == 6    ",
+         "var x:=1;  2+(abs(x)+3) == 6    ",
+         "var x:=1;  (abs(x)+3)+2 == 6    ",
+         "var x:=1;  2+(3-abs(x)) == 4    ",
+         "var x:=1;  (3-abs(x))+2 == 4    ",
+         "var x:=1;  2+(abs(x)-3) == 0    ",
+         "var x:=1;  (abs(x)-3)+2 == 0    ",
+         "var x:=1;  2-(3+abs(x)) == -2   ",
+         "var x:=1;  (3+abs(x))-2 ==  2   ",
+         "var x:=1;  2-(abs(x)+3) == -2   ",
+         "var x:=1;  (abs(x)+3)-2 ==  2   ",
+         "var x:=1;  2*(3*abs(x)) == 6    ",
+         "var x:=1;  (3*abs(x))*2 == 6    ",
+         "var x:=1;  2*(abs(x)*3) == 6    ",
+         "var x:=1;  (abs(x)*3)*2 == 6    ",
+         "var x:=1;  2*(3/abs(x)) == 6    ",
+         "var x:=1;  (3/abs(x))*2 == 6    ",
+         "var x:=1;  2*(abs(x)/3) == (2/3)",
+         "var x:=1;  (abs(x)/3)*2 == (2/3)",
+         "var x:=1;  2/(3*abs(x)) == (2/3)",
+         "var x:=1;  (3*abs(x))/2 == (3/2)",
+         "var x:=1;  2/(abs(x)*3) == (2/3)",
+         "var x:=1;  (abs(x)*3)/2 == (3/2)",
+         "var x:=1;  2/(3/abs(x)) == (2/3)",
+         "var x:=1;  (3/abs(x))/2 == (3/2)",
+         "var x:=1;  2/(abs(x)/3) == 6    ",
+         "var x:=1;  (abs(x)/3)/2 == (1/6)",
+         "var x:=3; var y:=6; -(-x)*-(-y)               ==  18",
+         "var x:=3; var y:=6; -(-x)*-(-(-y))            == -18",
+         "var x:=3; var y:=6; -(-(-x))*-(-y)            == -18",
+         "var x:=3; var y:=6; -(-(-x))*-(-(-y))         ==  18",
+         "var x:=3; var y:=6; -(-(x+y))*-(-(y+x))       ==  81",
+         "var x:=3; var y:=6; -(-(-(x+y)))*-(-(y+x))    == -81",
+         "var x:=3; var y:=6; -(-(x+y))*-(-(-(y+x)))    == -81",
+         "var x:=3; var y:=6; -(-(-(x+y)))*-(-(-(y+x))) ==  81",
+         "var x := 1; var y := 2; swap(x,y); (x == 2) and (y == 1)",
+         "var x := 1; var y := 2; x <=> y     ; (x    == 2) and (y    == 1)",
+         "var v[2] := {1,2}; swap(v[0],v[1]); (v[0] == 2) and (v[1] == 1)",
+         "var v[2] := {1,2}; v[0] <=> v[1]  ; (v[0] == 2) and (v[1] == 1)",
+         "var x := 1; var y := 2; ~(swap(x,y),(x == 2) and (y == 1))",
+         "var x := 1; var y := 2; ~(x <=> y     , (x    == 2) and (y    == 1))",
+         "var v[2] := {1,2}; ~(swap(v[0],v[1]), (v[0] == 2) and (v[1] == 1))",
+         "var v[2] := {1,2}; ~(v[0] <=> v[1]  , (v[0] == 2) and (v[1] == 1))",
+         "var v[2] := {1,2}; swap(v[zero],v[one]); (v[zero] == 2) and (v[one] == 1)",
+         "var v[2] := {1,2}; v[zero] <=> v[one]  ; (v[zero] == 2) and (v[one] == 1)",
+         "var v[2] := {1,2}; ~(swap(v[zero],v[one]), (v[zero] == 2) and (v[one] == 1))",
+         "var v[2] := {1,2}; ~(v[zero] <=> v[one]  , (v[zero] == 2) and (v[one] == 1))",
+         "var v[2] := {1,2}; swap(v[2 * zero],v[(2 * one) / (1 + 1)]); (v[2 * zero] == 2) and (v[(2 * one) / (1 + 1)] == 1)",
+         "var v[2] := {1,2}; v[2 * zero] <=> v[(2*one)/(1+1)]  ; (v[2 * zero] == 2) and (v[(2 * one) / (1 + 1)] == 1)",
+         "var v[2] := {1,2}; ~(swap(v[2 * zero],v[(2 * one) / (1 + 1)]), (v[2 * zero] == 2) and (v[(2 * one) / (1 + 1)] == 1))",
+         "var v[2] := {1,2}; ~(v[2 * zero] <=> v[(2 * one) / (1 + 1)]  , (v[2 * zero] == 2) and (v[(2 * one) / (1 + 1)] == 1))",
+         "var x := 1; var y := 2; var v[2] := {3,4}; swap(x,v[0]); swap(v[1],y); (x == 3) and (y == 4)",
+         "var x := 1; var y := 2; var v[2] := {3,4}; x <=> v[0]; v[1] <=> y; (x == 3) and (y == 4)",
+         "var x := 1; var y := 2; var v[2] := {3,4}; swap(x,v[zero]); swap(v[one],y); (x == 3) and (y == 4)",
+         "var x := 1; var y := 2; var v[2] := {3,4}; x <=> v[zero]; v[one] <=> y; (x == 3) and (y == 4)",
+         "var x := 1; var y := 2; var v[2] := {3,4}; swap(x,v[2 * zero]); swap(v[(2 * one) / (1 + 1)],y); (x == 3) and (y == 4)",
+         "var x := 1; var y := 2; var v[2] := {3,4}; x <=> v[zero / 3]; v[(2 * one)/(1 + 1)] <=> y; (x == 3) and (y == 4)",
+         "~{ var x := 1 } + ~{ var x := 2 } == 3",
+         "(~{ var x := 1 } + ~{ var x := 2 }) == (~{ var x := 2 } + ~{ var x := 1 })",
+         "(~{ var x := 1 } + ~{ var x := 2 } + ~{~{ var x := 1 } + ~{ var x := 2 }}) == 6",
+         "(~{ var x[3] := [1] } + ~{ var x[6] := {6,5,4,3,2,1}}) == 7",
+         "(~{ var x[6] := {6,5,4,3,2,1} } + ~{ var x := 1 }) == 7",
+         "(~{ var x := 1 } + ~{ var x[6] := {6,5,4,3,2,1} }) == 7",
+         "var x[3] := {};      (x[0] == 0) and (x[1] == 0) and (x[2] == 0)",
+         "var x[3] := {1,2};   (x[0] == 1) and (x[1] == 2) and (x[2] == 0)",
+         "var x[3] := {1,2,3}; (x[0] == 1) and (x[1] == 2) and (x[2] == 3)",
+         "var x[3] := [1];     (x[0] == 1) and (x[1] == 1) and (x[2] == 1)",
+         "var v[3] := [1]; v += 1; (v[0] == v[1]) and (v[0] == v[2]) and (v[0] == 2)",
+         "var v[3] := [1]; v -= 1; (v[0] == v[1]) and (v[0] == v[2]) and (v[0] == 0)",
+         "var v[3] := [1]; v *= 2; (v[0] == v[1]) and (v[0] == v[2]) and (v[0] == 2)",
+         "var v[3] := [3]; v /= 3; (v[0] == v[1]) and (v[0] == v[2]) and (v[0] == 1)",
+         "var v[3] := {1,2, 3}; v += 1; (v[0] == 2) and (v[1] == 3) and (v[2] == 4)",
+         "var v[3] := {1,2, 3}; v -= 1; (v[0] == 0) and (v[1] == 1) and (v[2] == 2)",
+         "var v[3] := {1,2, 3}; v *= 2; (v[0] == 2) and (v[1] == 4) and (v[2] == 6)",
+         "var v[3] := {3,9,15}; v /= 3; (v[0] == 1) and (v[1] == 3) and (v[2] == 5)",
+         "var v0[3] := [1]; var v1[3] := [1]; v0 += v1; (v0[0] == v0[1]) and (v0[0] == v0[2]) and (v0[0] == 2)",
+         "var v0[3] := [1]; var v1[3] := [1]; v0 -= v1; (v0[0] == v0[1]) and (v0[0] == v0[2]) and (v0[0] == 0)",
+         "var v0[3] := [1]; var v1[3] := [2]; v0 *= v1; (v0[0] == v0[1]) and (v0[0] == v0[2]) and (v0[0] == 2)",
+         "var v0[3] := [3]; var v1[3] := [3]; v0 /= v1; (v0[0] == v0[1]) and (v0[0] == v0[2]) and (v0[0] == 1)",
+         "var v0[3] := {1,2, 3}; var v1[3] := {1,1,1}; v0 += v1; (v0[0] == 2) and (v0[1] == 3) and (v0[2] == 4)",
+         "var v0[3] := {1,2, 3}; var v1[3] := {1,1,1}; v0 -= v1; (v0[0] == 0) and (v0[1] == 1) and (v0[2] == 2)",
+         "var v0[3] := {1,2, 3}; var v1[3] := {2,2,2}; v0 *= v1; (v0[0] == 2) and (v0[1] == 4) and (v0[2] == 6)",
+         "var v0[3] := {3,9,15}; var v1[3] := {3,3,3}; v0 /= v1; (v0[0] == 1) and (v0[1] == 3) and (v0[2] == 5)",
+         "var x[3] := {};  var y[4] := {1,2,3,4}; x := y; (x[0] == y[0]) and (x[1] == y[1]) and (x[2] == y[2])",
+         "var x[3] := {};  var y[3] := {1,2,3};   x := y; (x[0] == y[0]) and (x[1] == y[1]) and (x[2] == y[2])",
+         "var x[3] := {};  var y[2] := {1,2};     x := y; (x[0] == y[0]) and (x[1] == y[1]) and (x[2] ==    0)",
+         "var x[3] := {};  var y[1] := {1};       x := y; (x[0] == y[0]) and (x[1] ==    0) and (x[2] ==    0)",
+         "var x[3] := {};  var y[4] := {1,2,3,4}; x := (y+=1); (x[0] == y[0]) and (x[1] == y[1]) and (x[2] == y[2])",
+         "var x[3] := {};  var y[3] := {1,2,3};   x := (y+=1); (x[0] == y[0]) and (x[1] == y[1]) and (x[2] == y[2])",
+         "var x[3] := {};  var y[2] := {1,2};     x := (y+=1); (x[0] == y[0]) and (x[1] == y[1]) and (x[2] ==    0)",
+         "var x[3] := {};  var y[1] := {1};       x := (y+=1); (x[0] == y[0]) and (x[1] ==    0) and (x[2] ==    0)",
+         "var x[3] := {};  var y[4] := {1,2,3,4}; x += (y+=1); (x[0] == y[0]) and (x[1] == y[1]) and (x[2] == y[2])",
+         "var x[3] := {};  var y[3] := {1,2,3};   x += (y+=1); (x[0] == y[0]) and (x[1] == y[1]) and (x[2] == y[2])",
+         "var x[3] := {};  var y[2] := {1,2};     x += (y+=1); (x[0] == y[0]) and (x[1] == y[1]) and (x[2] ==    0)",
+         "var x[3] := {};  var y[1] := {1};       x += (y+=1); (x[0] == y[0]) and (x[1] ==    0) and (x[2] ==    0)",
+         "var x[3] := [9]; var y[4] := {1,2,3,4}; x <=> y; (x[0] == 1) and (x[1] == 2) and (x[2] == 3)",
+         "var x[3] := [9]; var y[3] := {1,2,3};   x <=> y; (x[0] == 1) and (x[1] == 2) and (x[2] == 3)",
+         "var x[3] := [9]; var y[2] := {1,2};     x <=> y; (x[0] == 1) and (x[1] == 2) and (x[2] == 9)",
+         "var x[3] := [9]; var y[1] := {1};       x <=> y; (x[0] == 1) and (x[1] == 9) and (x[2] == 9)",
+         "var x[3] := [9]; var y[4] := {1,2,3,4}; x <=> (y += 1); (x[0] == 2) and (x[1] == 3) and (x[2] == 4)",
+         "var x[3] := [9]; var y[3] := {1,2,3};   x <=> (y += 1); (x[0] == 2) and (x[1] == 3) and (x[2] == 4)",
+         "var x[3] := [9]; var y[2] := {1,2};     x <=> (y += 1); (x[0] == 2) and (x[1] == 3) and (x[2] == 9)",
+         "var x[3] := [9]; var y[1] := {1};       x <=> (y += 1); (x[0] == 2) and (x[1] == 9) and (x[2] == 9)",
+         "var x[3] := [8]; var y[4] := {1,2,3,4}; (x += 1) <=> y; (x[0] == 1) and (x[1] == 2) and (x[2] == 3)",
+         "var x[3] := [8]; var y[3] := {1,2,3};   (x += 1) <=> y; (x[0] == 1) and (x[1] == 2) and (x[2] == 3)",
+         "var x[3] := [8]; var y[2] := {1,2};     (x += 1) <=> y; (x[0] == 1) and (x[1] == 2) and (x[2] == 9)",
+         "var x[3] := [8]; var y[1] := {1};       (x += 1) <=> y; (x[0] == 1) and (x[1] == 9) and (x[2] == 9)",
+         "var x[3] := [8]; var y[4] := {1,2,3,4}; (x += 1) <=> (y += 1); (x[0] == 2) and (x[1] == 3) and (x[2] == 4)",
+         "var x[3] := [8]; var y[3] := {1,2,3};   (x += 1) <=> (y += 1); (x[0] == 2) and (x[1] == 3) and (x[2] == 4)",
+         "var x[3] := [8]; var y[2] := {1,2};     (x += 1) <=> (y += 1); (x[0] == 2) and (x[1] == 3) and (x[2] == 9)",
+         "var x[3] := [8]; var y[1] := {1};       (x += 1) <=> (y += 1); (x[0] == 2) and (x[1] == 9) and (x[2] == 9)",
+         "var x[3] := [0]; var y[4] := {1,2,3,4}; x <  y",
+         "var x[3] := [0]; var y[3] := {1,2,3};   x <  y",
+         "var x[3] := [0]; var y[2] := {1,2};     x <  y",
+         "var x[3] := [0]; var y[1] := {1};       x <  y",
+         "var x[3] := [0]; var y[4] := {1,2,3,4}; x <= y",
+         "var x[3] := [0]; var y[3] := {1,2,3};   x <= y",
+         "var x[3] := [0]; var y[2] := {1,2};     x <= y",
+         "var x[3] := [0]; var y[1] := {1};       x <= y",
+         "var x[3] := [5]; var y[4] := {1,2,3,4}; x >  y",
+         "var x[3] := [5]; var y[3] := {1,2,3};   x >  y",
+         "var x[3] := [5]; var y[2] := {1,2};     x >  y",
+         "var x[3] := [5]; var y[1] := {1};       x >  y",
+         "var x[3] := [5]; var y[4] := {1,2,3,4}; x >= y",
+         "var x[3] := [5]; var y[3] := {1,2,3};   x >= y",
+         "var x[3] := [5]; var y[2] := {1,2};     x >= y",
+         "var x[3] := [5]; var y[1] := {1};       x >= y",
+         "var x[3] := [1]; var y[4] := [1];       x == y",
+         "var x[3] := [1]; var y[3] := [1];       x == y",
+         "var x[3] := [1]; var y[2] := [1];       x == y",
+         "var x[3] := [1]; var y[1] := [1];       x == y",
+         "var x[3] := [1]; var y[4] := [2];       x != y",
+         "var x[3] := [1]; var y[3] := [2];       x != y",
+         "var x[3] := [1]; var y[2] := [2];       x != y",
+         "var x[3] := [1]; var y[1] := [2];       x != y",
+         "var x[3] := [0]; var y[4] := {5,6,7,8}; (x += 1) < y",
+         "var x[3] := [0]; var y[3] := {5,6,7};   (x += 1) < y",
+         "var x[3] := [0]; var y[2] := {5,6};     (x += 1) < y",
+         "var x[3] := [0]; var y[1] := {5};       (x += 1) < y",
+         "var x[3] := [0]; var y[4] := {1,2,3,4}; x < (y += 1)",
+         "var x[3] := [0]; var y[3] := {1,2,3};   x < (y += 1)",
+         "var x[3] := [0]; var y[2] := {1,2};     x < (y += 1)",
+         "var x[3] := [0]; var y[1] := {1};       x < (y += 1)",
+         "var x[3] := [0]; var y[4] := {5,6,7,8}; (x += 1) < (y += 1)",
+         "var x[3] := [0]; var y[3] := {5,6,7};   (x += 1) < (y += 1)",
+         "var x[3] := [0]; var y[2] := {5,6};     (x += 1) < (y += 1)",
+         "var x[3] := [0]; var y[1] := {5};       (x += 1) < (y += 1)",
+         "var x[3] := {1,2,3};  var y := 5; x < y     ",
+         "var x[3] := {1,2,3};  var y := 3; x < y + 1 ",
+         "var x[3] := {1,2,3};  var y := 5; x <= y    ",
+         "var x[3] := {1,2,3};  var y := 3; x <= y + 1",
+         "var x[3] := {1,1,1};  var y := 1; x == y    ",
+         "var x[3] := {1,1,1};  var y := 2; x == y - 1",
+         "var x[3] := {1,2,3};  var y := 5; y > x     ",
+         "var x[3] := {1,2,3};  var y := 3; y >= x    ",
+         "var x[3] := {1,2,3};  var y := 5; y + 1 > x ",
+         "var x[3] := {1,1,1};  var y := 1; y == x    ",
+         "var x[3] := {1,1,1};  var y := 2; y - 1 == x",
+         "var x[3] := {1,2,3};  var y := 5; (x += 1) < y     ",
+         "var x[3] := {1,2,3};  var y := 3; (x -= 1) < y + 1 ",
+         "var x[3] := {1,2,3};  var y := 5; (x -= 1) <= y    ",
+         "var x[3] := {2,2,2};  var y := 1; (x -= 1) == y    ",
+         "var x[3] := {1,2,3};  var y := 5; y > (x += 1)     ",
+         "var x[3] := {1,2,3};  var y := 5; y + 1 > (x += 1) ",
+         "var x[3] := {2,2,2};  var y := 1; y == (x -= 1)    ",
+         "var x[3] := {2,2,2};  var y := 0; y + 1 == (x -= 1)",
+         "var x[3] := [1]; var y[4] := {1,2,3,4}; var z[3] := [1]; z := (x + y); z == (x + y)",
+         "var x[3] := [1]; var y[3] := {1,2,3};   var z[3] := [1]; z := (x - y); z == (x - y)",
+         "var x[3] := [1]; var y[2] := {1,2};     var z[3] := [1]; z := (x / y); z == (x / y)",
+         "var x[3] := [1]; var y[1] := {1};       var z[3] := [1]; z := (x * y); z == (x * y)",
+         "var x[3] := [1]; var y[4] := {1,2,3,4}; var z[3] := [1]; z := 2(x + y); z == (x + y)2",
+         "var x[3] := [1]; var y[3] := {1,2,3};   var z[3] := [1]; z := 2(x - y); z == (x - y)2",
+         "var x[3] := [1]; var y[2] := {1,2};     var z[3] := [1]; z := 2(x / y); z == (x / y)2",
+         "var x[3] := [1]; var y[1] := {1};       var z[3] := [1]; z := 2(x * y); z == (x * y)2",
+         "var x[3] := [1]; var y[4] := {1,2,3,4}; var z[3] := [1]; z := 2(x + y)/3; z == 2(x + y)/3",
+         "var x[3] := [1]; var y[3] := {1,2,3};   var z[3] := [1]; z := 2(x - y)/3; z == 2(x - y)/3",
+         "var x[3] := [1]; var y[2] := {1,2};     var z[3] := [1]; z := 2(x / y)/3; z == 2(x / y)/3",
+         "var x[3] := [1]; var y[1] := {1};       var z[3] := [1]; z := 2(x * y)/3; z == 2(x * y)/3",
+         "var x[6] := {1,2,3,4,5,6}; equal(sqrt(sum([x - avg(x)]^2) / x[]),1.7078251277)",
+         "var x[3] := {-1,-2,-3};    sum(abs(x)  ) == 6",
+         "var x[3] := {0.1,0.2,0.3}; sum(trunc(x)) == 0",
+
+         "var x := 2; (~{ for (var i := 0; i < 10; i += 1) { for (var j := 0; j <= i;  "
+         "j += 1) { var y := 3; if ((i + j + y + x) < 6) { y += x; continue; } else    "
+         "break[i + j]; } } } + ~{ for (var i := 0; i < 10; i += 1) { for (var j := 0; "
+         "j <= i; j += 1) { var y := 3; if ((i + j + y + x) < 6) { y += x; continue; } "
+         " else break[i + j]; } } }) == 18                                             ",
+
+         "var x := 2; var v0[3] := {1,2,3}; ( ~{ for (var i := 0; i < 10; i += 1) { "
+         "for (var j := 0; j <= i; j += 1) { var y := 3; var v2[3] := {1,2,3}; if ( "
+         "(i + j + y + x + abs(v0[i % v0[]] - v2[j % v2[]])) < 6) { var v3[3] :=    "
+         "{1,2,3}; y += x / v3[j % v3[]]; continue; } else break[i + j]; } } }      "
+         "+ ~{ for (var i := 0; i < 10; i += 1) { for (var j := 0; j <= i; j += 1)  "
+         " { var y := 3; var v2[3] := {1,2,3}; if ((i + j + y + x + abs(v0[i % v0[]] - "
+         "v2[j % v2[]])) < 6) { var v3[3] := {1,2,3}; y += x / v3[j % v3[]];        "
+         "continue; } else break[i + j]; } } } ) == 18                              "
+      };
+
+      const std::size_t expression_list_size = sizeof(expression_list) / sizeof(std::string);
+
+      exprtk::symbol_table<T> symbol_table;
+
+      T zero = T(0);
+      T one  = T(1);
+
+      symbol_table.add_variable("zero",zero);
+      symbol_table.add_variable("one" , one);
+
+      bool failed = false;
+
+      for (std::size_t r = 0; r < 10; ++r)
+      {
+         for (std::size_t i = 0; i < expression_list_size; ++i)
+         {
+            expression_t expression;
+            expression.register_symbol_table(symbol_table);
+
+            {
+               exprtk::parser<T> parser;
+               if (!parser.compile(expression_list[i],expression))
+               {
+                  printf("run_test10() -  swaps  Error: %s   Expression: %s\n",
+                         parser.error().c_str(),
+                         expression_list[i].c_str());
+                  return false;
+               }
+            }
+
+            T result = expression.value();
+
+            if (T(1) != result)
+            {
+               printf("run_test10() -  swaps evaluation error Expression: %s\n",
+                      expression_list[i].c_str());
+               failed = true;
+            }
+         }
+
+         if (failed)
+            return false;
+      }
+   }
+
    return true;
 }
 
@@ -3314,7 +3890,10 @@ inline bool run_test14()
 
    std::deque<std::string> expr_str_list;
 
-   if (0 == load_expressions("exprtk_functional_test.txt",expr_str_list))
+   load_expressions("exprtk_functional_test.txt"    ,expr_str_list);
+   load_expressions("exprtk_functional_ext_test.txt",expr_str_list);
+
+   if (expr_str_list.empty())
    {
       return true;
    }
@@ -3336,11 +3915,14 @@ inline bool run_test14()
             printf("run_test14() - Error: %s   Expression: %s\n",
                    parser.error().c_str(),
                    expr_str_list[i].c_str());
-            return false;
+            failure = true;
          }
          else
             expression_list.push_back(current_expression);
       }
+
+      if (failure)
+         break;
 
       for (std::size_t i = 0; i < expression_list.size(); ++i)
       {
@@ -3348,7 +3930,7 @@ inline bool run_test14()
          if (result != T(1))
          {
             failure = true;
-            printf("run_test14() - Error with expression: %s\n",
+            printf("run_test14() - Error with evaluation of expression: %s\n",
                    expr_str_list[i].c_str());
          }
       }
@@ -3447,8 +4029,8 @@ inline bool run_test15()
       if (not_equal(base_result,result))
       {
          printf("run_test15() - Error in evaluation! (1)  Base: %20.10f\tResult: %20.10f\tExpression: %s\n",
-                base_result,
-                result,
+                (double)base_result,
+                (double)result,
                 expr_str_list[i].c_str());
          failure = true;
       }
@@ -3771,6 +4353,8 @@ inline bool run_test18()
 
    static const std::string expr_str_list[] =
                                {
+                                  "equal(va_func,(0))",
+                                  "equal(va_func(),(0))",
                                   "equal(va_func(1,2,3,4,5,6,7,8,9),(1+2+3+4+5+6+7+8+9))",
                                   "equal(va_func(1,x,3,y,5,z,7,w,9),(1+x+3+y+5+z+7+w+9))",
                                   "equal(va_func(x,2,y,4,z,6,w,8,u),(x+2+y+4+z+6+w+8+u))",
@@ -3854,6 +4438,12 @@ inline bool run_test19()
       // gof(x) = g(f(x))
       compositor.add("gof","g(f(x))","x");
 
+      // fogof(x) = f(g(f(x)))
+      compositor.add("fogof","f(g(f(x)))","x");
+
+      // gofog(x) = g(f(g(x)))
+      compositor.add("gofog","g(f(g(x)))","x");
+
       symbol_table_t& symbol_table = compositor.symbol_table();
       symbol_table.add_constants();
       symbol_table.add_variable("x",x);
@@ -3866,6 +4456,8 @@ inline bool run_test19()
                                    "equal(gog(x),(x^4 - 6x^2 + 6))",
                                    "equal(fog(x),(x^2 - 1))",
                                    "equal(gof(x),(x^2 + 4x + 1))",
+                                   "equal(fogof(x),(x^2 + 4x + 3))",
+                                   "equal(gofog(x),(x^4 - 2x^2 - 2))"
                                  };
       static const std::size_t expr_str_list_size = sizeof(expr_str_list) / sizeof(std::string);
 
@@ -3923,13 +4515,13 @@ inline bool run_test19()
 
       // f1(x) = 5 * (f0 + x)
       compositor
-         .add("f1","5 * (f0+x)","x");
+         .add("f1","5 * (f0 + x)","x");
 
       // f2(x,y) = 7 * (f1(x) + f1(y))
       compositor
          .add("f2","7 * (f1(x) + f1(y))","x","y");
 
-      // f3(x,y,z) = 9 * (2(x,y) + f2(y,z) + f2(x,z))
+      // f3(x,y,z) = 9 * (f2(x,y) + f2(y,z) + f2(x,z))
       compositor
          .add("f3","9 * (f2(x,y) + f2(y,z) + f2(x,z))","x","y","z");
 
@@ -3960,28 +4552,64 @@ inline bool run_test19()
       symbol_table.add_variable("u",u);
       symbol_table.add_variable("v",v);
 
-      expression_t expression;
-      expression.register_symbol_table(symbol_table);
-
       parser_t parser;
 
-      std::string expression_str = "f6(x,y,z,w,u,v) + 2";
+      const std::string expr_str_list[] =
+                          {
+                            "f0()",
+                            "f1(x)",
+                            "f2(x,x)",
+                            "f3(x,x,x)",
+                            "f4(x,x,x,x)",
+                            "f5(x,x,x,x,x)",
+                            "f6(x,x,x,x,x,x)",
+                            "f2(x,y)",
+                            "f3(x,y,z)",
+                            "f4(x,y,z,w)",
+                            "f5(x,y,z,w,u)",
+                            "f6(x,y,z,w,u,v)"
+                          };
+      const std::size_t expr_str_list_size = sizeof(expr_str_list) / sizeof(std::string);
 
-      if (!parser.compile(expression_str,expression))
+      const T result_list[] =
+                {
+                  T(6         ),
+                  T(35        ),
+                  T(490       ),
+                  T(13230     ),
+                  T(436590    ),
+                  T(22702680  ),
+                  T(1543782240),
+                  T(525       ),
+                  T(15120     ),
+                  T(533610    ),
+                  T(29459430  ),
+                  T(2122700580)
+                };
+
+      for (std::size_t i = 0; i < expr_str_list_size; ++i)
       {
-         printf("run_test19() - Error: %s   Expression: %s\n",
-                parser.error().c_str(),
-                expression_str.c_str());
-         return false;
-      }
+         expression_t expression;
+         expression.register_symbol_table(symbol_table);
 
-      T result = expression.value();
+         if (!parser.compile(expr_str_list[i],expression))
+         {
+            printf("run_test19() - Error: %s   Expression: %s\n",
+                   parser.error().c_str(),
+                   expr_str_list[i].c_str());
+            return false;
+         }
 
-      if (T(2122700582) != result)
-      {
-         printf("run_test19() - Error in evaluation! (2) Expression: %s\n",
-                expression_str.c_str());
-         return false;
+         T result = expression.value();
+
+         if (result_list[i] != result)
+         {
+            printf("run_test19() - Error in evaluation! (2) Expression: %s Expected: %10.1f\tResult: %10.1f\n",
+                   expr_str_list[i].c_str(),
+                   result_list[i],
+                   result);
+            return false;
+         }
       }
    }
 
@@ -3992,10 +4620,17 @@ inline bool run_test19()
 
       compositor
          .add("is_prime_impl1",
-              "if(y == 1,true,              "
-              "   if(0 == (x % y),false,    "
-              "      is_prime_impl1(x,y-1)))",
+              "if(y == 1,true,                "
+              "   if(0 == (x % y),false,      "
+              "      is_prime_impl1(x,y - 1)))",
               "x","y");
+
+      compositor
+         .add("is_prime1",
+              "if(frac(x) != 0, false,                                "
+              "   if(x <= 0, false,                                   "
+              "      is_prime_impl1(x,min(x - 1,trunc(sqrt(x)) + 1))))",
+              "x");
 
       compositor
          .add("is_prime_impl2",
@@ -4006,13 +4641,6 @@ inline bool run_test19()
               "  default           : is_prime_impl2(x,y - 1);"
               "}                                             ",
               "x","y");
-
-      compositor
-         .add("is_prime1",
-              "if(frac(x) != 0, false,                                "
-              "   if(x <= 0, false,                                   "
-              "      is_prime_impl1(x,min(x - 1,trunc(sqrt(x)) + 1))))",
-              "x");
 
       compositor
          .add("is_prime2",
@@ -4047,45 +4675,71 @@ inline bool run_test19()
               "}                                                                     ",
               "x");
 
+      compositor
+         .add("is_prime_impl4",
+              "switch                              "
+              "{                                   "
+              "  case 1 == x     : false;          "
+              "  case 2 == x     : true;           "
+              "  case 3 == x     : true;           "
+              "  case 5 == x     : true;           "
+              "  case 7 == x     : true;           "
+              "  case 0 == x % 2 : false;          "
+              "  default         :                 "
+              "  {                                 "
+              "    for (var i := 3; i < y; i += 2) "
+              "    {                               "
+              "      if ((x % i) == 0)             "
+              "        break[false];               "
+              "      else                          "
+              "        true;                       "
+              "    }                               "
+              "  };                                "
+              "}                                   ",
+              "x","y");
+
+      compositor
+         .add("is_prime4",
+              "switch                                                                "
+              "{                                                                     "
+              "  case x <= 0       : false;                                          "
+              "  case frac(x) != 0 : false;                                          "
+              "  default           : is_prime_impl4(x,min(x - 1,trunc(sqrt(x)) + 1));"
+              "}                                                                     ",
+              "x");
+
       symbol_table_t& symbol_table = compositor.symbol_table();
       symbol_table.add_constants();
       symbol_table.add_variable("x",x);
 
-      std::string expression_str1 = "is_prime1(x)";
-      std::string expression_str2 = "is_prime2(x)";
-      std::string expression_str3 = "is_prime3(x)";
+      const std::string expression_str[] = {
+                                             "is_prime1(x)",
+                                             "is_prime2(x)",
+                                             "is_prime3(x)",
+                                             "is_prime4(x)"
+                                           };
 
-      expression_t expression1;
-      expression_t expression2;
-      expression_t expression3;
-      expression1.register_symbol_table(symbol_table);
-      expression2.register_symbol_table(symbol_table);
-      expression3.register_symbol_table(symbol_table);
+      const std::size_t expression_count = sizeof(expression_str) / sizeof(std::string);
 
-      parser_t parser;
+      std::vector<expression_t> expression_list;
 
-      if (!parser.compile(expression_str1,expression1))
+      for (std::size_t i = 0; i < expression_count; ++i)
       {
-         printf("run_test19() - Error: %s   Expression1: %s\n",
-                parser.error().c_str(),
-                expression_str1.c_str());
-         return false;
-      }
+         parser_t parser;
 
-      if (!parser.compile(expression_str2,expression2))
-      {
-         printf("run_test19() - Error: %s   Expression2: %s\n",
-                parser.error().c_str(),
-                expression_str2.c_str());
-         return false;
-      }
+         expression_t expression;
+         expression.register_symbol_table(symbol_table);
 
-      if (!parser.compile(expression_str3,expression3))
-      {
-         printf("run_test19() - Error: %s   Expression3: %s\n",
-                parser.error().c_str(),
-                expression_str3.c_str());
-         return false;
+         if (!parser.compile(expression_str[i],expression))
+         {
+            printf("run_test19() - Error: %s   Expression%d: %s\n",
+                   parser.error().c_str(),
+                   static_cast<unsigned int>(i),
+                   expression_str[i].c_str());
+            return false;
+         }
+         else
+            expression_list.push_back(expression);
       }
 
       bool failure = false;
@@ -4112,33 +4766,50 @@ inline bool run_test19()
                            };
       const std::size_t prime_list_size = sizeof(prime_list) / sizeof(std::size_t);
 
-      for (std::size_t i = 0; i < prime_list_size; ++i)
+      for (std::size_t i = 0; (i < prime_list_size) && (!failure); ++i)
       {
          x = prime_list[i];
-         T result1 = expression1.value();
-         T result2 = expression2.value();
-         T result3 = expression3.value();
+         std::vector<T> result(expression_count,T(0));
 
-         if ((result1 != result2) || (result1 != result3))
+         for (std::size_t j = 0; j < expression_list.size(); ++j)
          {
-            printf("run_test19() - Error in evaluation! (3)  Results don't match!  Prime: %d  "
-                   "Expression1: %s  Expression2: %s  Expression3: %s\n",
-                   static_cast<unsigned int>(prime_list[i]),
-                   expression_str1.c_str(),
-                   expression_str2.c_str(),
-                   expression_str3.c_str());
-            failure = true;
+            result[j] = expression_list[j].value();
          }
 
-         if (T(1) != result1)
+         for (std::size_t j = 1; j < expression_list.size(); ++j)
          {
-            printf("run_test19() - Error in evaluation! (3)  Prime: %d  "
-                   "Expression1: %s  Expression2: %s  Expression3: %s\n",
-                   static_cast<unsigned int>(prime_list[i]),
-                   expression_str1.c_str(),
-                   expression_str2.c_str(),
-                   expression_str3.c_str());
-            failure = true;
+            if (result[j] != result[0])
+            {
+               failure = true;
+               break;
+            }
+         }
+
+         if (failure)
+         {
+            printf("run_test19() - Error in evaluation! (3)  Results don't match!  Prime: %d\n",
+                   static_cast<unsigned int>(prime_list[i]));
+
+            for (std::size_t j = 0; j < expression_list.size(); ++j)
+            {
+               printf("Expression[%02d]: %s = %d\n",
+                      static_cast<unsigned int>(j),
+                      expression_str[j].c_str(),
+                      static_cast<unsigned int>(result[j]));
+            }
+         }
+         else  if (T(1) != expression_list[0].value())
+         {
+            printf("run_test19() - Error in evaluation! (4)  Results don't match!  Prime: %d\n",
+                   static_cast<unsigned int>(prime_list[i]));
+
+            for (std::size_t j = 0; j < expression_list.size(); ++j)
+            {
+               printf("Expression[%02d]: %s = %d\n",
+                      static_cast<unsigned int>(j),
+                      expression_str[j].c_str(),
+                      static_cast<unsigned int>(result[j]));
+            }
          }
       }
 
@@ -4170,18 +4841,19 @@ inline bool run_test19()
 
       compositor
          .add("fibonacci_impl3",
-              "switch                                "
-              "{                                     "
-              "  case x == 0 : 0;                    "
-              "  case x == 1 : 1;                    "
-              "  default : while ((x := (x - 1)) > 0)"
-              "            {                         "
-              "              w := z;                 "
-              "              z := z + y;             "
-              "              y := w;                 "
-              "              z                       "
-              "            };                        "
-              "}                                     ",
+              "switch                        "
+              "{                             "
+              "  case x == 0 : 0;            "
+              "  case x == 1 : 1;            "
+              "  default :                   "
+              "    while ((x := (x - 1)) > 0)"
+              "    {                         "
+              "      w := z;                 "
+              "      z := z + y;             "
+              "      y := w;                 "
+              "      z                       "
+              "    };                        "
+              "}                             ",
               "x","y","z","w");
 
       compositor
@@ -4191,18 +4863,19 @@ inline bool run_test19()
 
       compositor
          .add("fibonacci_impl4",
-              "switch                     "
-              "{                          "
-              "  case x == 0 : 0;         "
-              "  case x == 1 : 1;         "
-              "  default : repeat         "
-              "              w := z;      "
-              "              z := z + y;  "
-              "              y := w;      "
-              "              x := x - 1;  "
-              "              z            "
-              "            until (x <= 1);"
-              "}                          ",
+              "switch             "
+              "{                  "
+              "  case x == 0 : 0; "
+              "  case x == 1 : 1; "
+              "  default :        "
+              "    repeat         "
+              "      w := z;      "
+              "      z := z + y;  "
+              "      y := w;      "
+              "      x := x - 1;  "
+              "      z            "
+              "    until (x <= 1);"
+              "}                  ",
               "x","y","z","w");
 
       compositor
@@ -4210,56 +4883,48 @@ inline bool run_test19()
               "fibonacci_impl4(x,0,1,0)",
               "x");
 
+      compositor
+         .add("fibonacci5",
+              "if ((x == 0) or (x == 1))                "
+              "  x;                                     "
+              "else                                     "
+              "  fibonacci5(x - 1) + fibonacci5(x - 2); ",
+              "x");
+
+
       symbol_table_t& symbol_table = compositor.symbol_table();
       symbol_table.add_constants();
       symbol_table.add_variable("x",x);
 
-      std::string expression_str1 = "fibonacci1(x)";
-      std::string expression_str2 = "fibonacci2(x)";
-      std::string expression_str3 = "fibonacci3(x)";
-      std::string expression_str4 = "fibonacci4(x)";
+      const std::string expression_str[] = {
+                                             "fibonacci1(x)",
+                                             "fibonacci2(x)",
+                                             "fibonacci3(x)",
+                                             "fibonacci4(x)",
+                                             "fibonacci5(x)"
+                                           };
 
-      expression_t expression1;
-      expression_t expression2;
-      expression_t expression3;
-      expression_t expression4;
-      expression1.register_symbol_table(symbol_table);
-      expression2.register_symbol_table(symbol_table);
-      expression3.register_symbol_table(symbol_table);
-      expression4.register_symbol_table(symbol_table);
+      const std::size_t expression_count = sizeof(expression_str) / sizeof(std::string);
 
-      parser_t parser;
+      std::vector<expression_t> expression_list;
 
-      if (!parser.compile(expression_str1,expression1))
+      for (std::size_t i = 0; i < expression_count; ++i)
       {
-         printf("run_test19() - Error: %s   Expression1: %s\n",
-                parser.error().c_str(),
-                expression_str1.c_str());
-         return false;
-      }
+         parser_t parser;
 
-      if (!parser.compile(expression_str2,expression2))
-      {
-         printf("run_test19() - Error: %s   Expression2: %s\n",
-                parser.error().c_str(),
-                expression_str2.c_str());
-         return false;
-      }
+         expression_t expression;
+         expression.register_symbol_table(symbol_table);
 
-      if (!parser.compile(expression_str3,expression3))
-      {
-         printf("run_test19() - Error: %s   Expression3: %s\n",
-                parser.error().c_str(),
-                expression_str3.c_str());
-         return false;
-      }
-
-      if (!parser.compile(expression_str4,expression4))
-      {
-         printf("run_test19() - Error: %s   Expression4: %s\n",
-                parser.error().c_str(),
-                expression_str4.c_str());
-         return false;
+         if (!parser.compile(expression_str[i],expression))
+         {
+            printf("run_test19() - Error: %s   Expression[%02d]: %s\n",
+                   parser.error().c_str(),
+                   static_cast<unsigned int>(i),
+                   expression_str[i].c_str());
+            return false;
+         }
+         else
+            expression_list.push_back(expression);
       }
 
       bool failure = false;
@@ -4277,50 +4942,52 @@ inline bool run_test19()
                            };
       const std::size_t fibonacci_list_size = sizeof(fibonacci_list) / sizeof(std::size_t);
 
-      for (std::size_t i = 0; i < fibonacci_list_size; ++i)
+      for (std::size_t i = 0; (i < fibonacci_list_size) && (!failure); ++i)
       {
          x = i;
-         T result1 = expression1.value();
-         T result2 = expression2.value();
-         T result3 = expression3.value();
-         T result4 = expression4.value();
+         std::vector<T> result(expression_count,T(0));
 
-         if (
-              (result1 != result2) ||
-              (result1 != result3) ||
-              (result1 != result4)
-            )
+         for (std::size_t j = 0; j < expression_list.size(); ++j)
          {
-            printf("run_test19() - Error in evaluation! (3)  Results don't match!  fibonacci(%d) = %d "
-                   "Expression1: %s = %d  Expression2: %s = %d  Expression3: %s = %d  Expression4: %s = %d\n",
-                   static_cast<unsigned int>(i),
-                   static_cast<unsigned int>(fibonacci_list[i]),
-                   expression_str1.c_str(),
-                   static_cast<unsigned int>(result1),
-                   expression_str2.c_str(),
-                   static_cast<unsigned int>(result2),
-                   expression_str3.c_str(),
-                   static_cast<unsigned int>(result3),
-                   expression_str4.c_str(),
-                   static_cast<unsigned int>(result4));
-            failure = true;
+            result[j] = expression_list[j].value();
          }
 
-         if (fibonacci_list[i] != expression1.value())
+         for (std::size_t j = 1; j < expression_list.size(); ++j)
          {
-            printf("run_test19() - Error in evaluation! (4)  fibonacci(%d) = %d "
-                   "Expression1: %s = %d  Expression2: %s = %d  Expression3: %s = %d  Expression4: %s = %d\n",
+            if (result[j] != result[0])
+            {
+               failure = true;
+               break;
+            }
+         }
+
+         if (failure)
+         {
+            printf("run_test19() - Error in evaluation! (5)  Results don't match!  fibonacci(%d) = %d\n",
                    static_cast<unsigned int>(i),
-                   static_cast<unsigned int>(fibonacci_list[i]),
-                   expression_str1.c_str(),
-                   static_cast<unsigned int>(result1),
-                   expression_str2.c_str(),
-                   static_cast<unsigned int>(result2),
-                   expression_str3.c_str(),
-                   static_cast<unsigned int>(result3),
-                   expression_str4.c_str(),
-                   static_cast<unsigned int>(result4));
-            failure = true;
+                   static_cast<unsigned int>(fibonacci_list[i]));
+
+            for (std::size_t j = 0; j < expression_list.size(); ++j)
+            {
+               printf("Expression[%02d]: %s = %d\n",
+                      static_cast<unsigned int>(j),
+                      expression_str[j].c_str(),
+                      static_cast<unsigned int>(result[j]));
+            }
+         }
+         else  if (fibonacci_list[i] != expression_list[0].value())
+         {
+            printf("run_test19() - Error in evaluation! (6)  Results don't match!  fibonacci(%d) = %d\n",
+                   static_cast<unsigned int>(i),
+                   static_cast<unsigned int>(fibonacci_list[i]));
+
+            for (std::size_t j = 0; j < expression_list.size(); ++j)
+            {
+               printf("Expression[%02d]: %s = %d\n",
+                      static_cast<unsigned int>(j),
+                      expression_str[j].c_str(),
+                      static_cast<unsigned int>(result[j]));
+            }
          }
       }
 
@@ -4340,22 +5007,22 @@ inline bool run_test19()
 
       compositor
          .add("newton_sqrt_impl",
-              "switch                                "
-              "{                                     "
-              "  case x < 0  : -inf;                 "
-              "  case x == 0 : 0;                    "
-              "  case x == 1 : 1;                    "
-              "  default:                            "
-              "  ~{                                  "
-              "     z := 100;                        "
-              "     y := x / 2;                      "
-              "     while ((z := (z - 1)) > 0)       "
-              "     {                                "
-              "       if (equal(y * y,x), z := 0, 0);"
-              "       y := (1 / 2) * (y + (x / y))   "
-              "     }                                "
-              "   };                                 "
-              "}                                     ",
+              "switch                               "
+              "{                                    "
+              "  case x < 0  : -inf;                "
+              "  case x == 0 : 0;                   "
+              "  case x == 1 : 1;                   "
+              "  default:                           "
+              "  ~{                                 "
+              "     z := 100;                       "
+              "     y := x / 2;                     "
+              "     repeat                          "
+              "       y := (1 / 2) * (y + (x / y)); "
+              "       if (equal(y * y,x))           "
+              "         break[y];                   "
+              "     until ((z -= 1) <= 0);          "
+              "   };                                "
+              "}                                    ",
               "x","y","z");
 
       compositor
@@ -4390,14 +5057,132 @@ inline bool run_test19()
             printf("run_test19() - Computation Error  "
                    "Expression: [%s]\tExpected: %12.8f\tResult: %12.8f\n",
                    expression_str.c_str(),
-                   std::sqrt(x),
-                   result);
+                   (double)std::sqrt(x),
+                   (double)result);
             failure = true;
          }
       }
 
       if (failure)
          return false;
+   }
+
+   {
+      symbol_table_t symbol_table;
+
+      symbol_table.add_constants();
+
+      compositor_t compositor(symbol_table);
+
+      compositor
+         .add("mandelbrot",
+              " var width    := 118;                            "
+              " var height   := 41;                             "
+              " var imag_max := +1;                             "
+              " var imag_min := -1;                             "
+              " var real_max := +1;                             "
+              " var real_min := -2.5;                           "
+              " var x_step   := (real_max - real_min) / width;  "
+              " var y_step   := (imag_max - imag_min) / height; "
+              " for (var y := 0; y < height; y += 1)            "
+              " {                                               "
+              "   var imag := imag_min + (y_step * y);          "
+              "   for (var x := 0; x < width; x += 1)           "
+              "   {                                             "
+              "     var real   := real_min + x_step * x;        "
+              "     var z_real := real;                         "
+              "     var z_imag := imag;                         "
+              "     var plot_value;                             "
+              "     for (var n := 0; n < 30; n += 1)            "
+              "     {                                           "
+              "       var a := z_real^2;                        "
+              "       var b := z_imag^2;                        "
+              "       plot_value := n;                          "
+              "       if ((a + b) < 4)                          "
+              "       {                                         "
+              "         z_imag := 2 * z_real * z_imag + imag;   "
+              "         z_real := a - b + real;                 "
+              "       }                                         "
+              "       else                                      "
+              "         break;                                  "
+              "     };                                          "
+              "   };                                            "
+              " }                                               ");
+
+      std::string expression_str = "mandelbrot()";
+
+      expression_t expression;
+
+      expression.register_symbol_table(symbol_table);
+
+      parser_t parser;
+
+      if (!parser.compile(expression_str,expression))
+      {
+         printf("run_test19() - Error: %s   Expression: %s\n",
+                parser.error().c_str(),
+                expression_str.c_str());
+         return false;
+      }
+
+      for (std::size_t i = 0; i < 100; ++i)
+      {
+         expression.value();
+      }
+   }
+
+   {
+      T x = T(0);
+
+      symbol_table_t symbol_table;
+
+      symbol_table.add_variable("x",x);
+
+      compositor_t compositor(symbol_table);
+
+      compositor
+         .add("fooboo",
+              " var x := input;       "
+              " if (x > 0)            "
+              "   fooboo(x - 1) + x;  "
+              " else                  "
+              "   0;                  ",
+              "input");
+
+      std::string expression_str = "fOoBoO(x)";
+
+      expression_t expression;
+
+      expression.register_symbol_table(symbol_table);
+
+      parser_t parser;
+
+      if (!parser.compile(expression_str,expression))
+      {
+         printf("run_test19() - Error: %s   Expression: %s\n",
+                parser.error().c_str(),
+                expression_str.c_str());
+         return false;
+      }
+
+      T sum = T(0);
+
+      for (std::size_t i = 0; i < 100; ++i)
+      {
+         x = T(i);
+         sum += x;
+         T result = expression.value();
+
+         if (result != sum)
+         {
+            printf("run_test19() - FooBoo(%5.2f)  Expected: %5.2f\tResult: %5.2f\n",
+                   x,
+                   sum,
+                   result);
+            return false;
+         }
+      }
+
    }
 
    return true;
@@ -4490,44 +5275,53 @@ inline bool run_test20()
    return true;
 }
 
+template <typename T>
+struct type_name { static inline std::string value() { return "unknown"; } };
+template <> struct type_name<float>       { static inline std::string value() { return "float";       } };
+template <> struct type_name<double>      { static inline std::string value() { return "double";      } };
+template <> struct type_name<long double> { static inline std::string value() { return "long double"; } };
+
 int main()
 {
-   #define perform_test(Type,Number)                                                                \
-   {                                                                                                \
-      exprtk::timer timer;                                                                          \
-      timer.start();                                                                                \
-      if (!run_test##Number<Type>())                                                                \
-      {                                                                                             \
-         printf("run_test"#Number" ("#Type") *** FAILED! ***\n");                                   \
-      }                                                                                             \
-      else                                                                                          \
-      {                                                                                             \
-         timer.stop();                                                                              \
-         printf("run_test"#Number" ("#Type") - Result: SUCCESS     Time: %8.4fsec\n",timer.time()); \
-      }                                                                                             \
-   }                                                                                                \
+   #define perform_test(Type,Number)                                           \
+   {                                                                           \
+      exprtk::timer timer;                                                     \
+      timer.start();                                                           \
+      if (!run_test##Number<Type>())                                           \
+      {                                                                        \
+         printf("run_test"#Number" (%s) *** FAILED! ***\n",                    \
+                type_name<Type>::value().c_str());                             \
+      }                                                                        \
+      else                                                                     \
+      {                                                                        \
+         timer.stop();                                                         \
+         printf("run_test"#Number" (%s) - Result: SUCCESS   Time: %8.4fsec\n", \
+                type_name<Type>::value().c_str(),                              \
+                timer.time());                                                 \
+      }                                                                        \
+   }                                                                           \
 
-   perform_test(double,00)
-   perform_test(double,01)
-   perform_test(double,02)
-   perform_test(double,03)
-   perform_test(double,04)
-   perform_test(double,05)
-   perform_test(double,06)
-   perform_test(double,07)
-   perform_test(double,08)
-   perform_test(double,09)
-   perform_test(double,10)
-   perform_test(double,11)
-   perform_test(double,12)
-   perform_test(double,13)
-   perform_test(double,14)
-   perform_test(double,15)
-   perform_test(double,16)
-   perform_test(double,17)
-   perform_test(double,18)
-   perform_test(double,19)
-   perform_test(double,20)
+   perform_test(numeric_type,00)
+   perform_test(numeric_type,01)
+   perform_test(numeric_type,02)
+   perform_test(numeric_type,03)
+   perform_test(numeric_type,04)
+   perform_test(numeric_type,05)
+   perform_test(numeric_type,06)
+   perform_test(numeric_type,07)
+   perform_test(numeric_type,08)
+   perform_test(numeric_type,09)
+   perform_test(numeric_type,10)
+   perform_test(numeric_type,11)
+   perform_test(numeric_type,12)
+   perform_test(numeric_type,13)
+   perform_test(numeric_type,14)
+   perform_test(numeric_type,15)
+   perform_test(numeric_type,16)
+   perform_test(numeric_type,17)
+   perform_test(numeric_type,18)
+   perform_test(numeric_type,19)
+   perform_test(numeric_type,20)
 
    #undef perform_test
 

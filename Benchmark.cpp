@@ -11,20 +11,22 @@ using namespace std;
 
 //-------------------------------------------------------------------------------------------------
 Benchmark::Benchmark(EBaseType eBaseType)
-  :m_sName()
-  ,m_sInfo()
-  ,m_nTotalBytecodeSize(0)
-  ,m_nPoints(0)
-  ,m_nNum()
-  ,m_fScore(0)
-  ,m_fTime1(0)
-  ,m_fResult(0)
-  ,m_fSum(0)
-  ,m_bFail(false)
-  ,m_sFailReason()
-  ,m_eBaseType(eBaseType)
-  ,m_allFails()
-{}
+: m_sName(),
+  m_sInfo(),
+  m_nTotalBytecodeSize(0),
+  m_nPoints(0),
+  m_nNum(),
+  m_fScore(0),
+  m_fTime1(0),
+  m_fResult(0),
+  m_fSum(0),
+  m_bFail(false),
+  m_sFailReason(),
+  m_eBaseType(eBaseType),
+  m_allFails()
+{
+   rate_list.reserve(36000);
+}
 
 //-------------------------------------------------------------------------------------------------
 Benchmark::~Benchmark()
@@ -33,7 +35,7 @@ Benchmark::~Benchmark()
 //-------------------------------------------------------------------------------------------------
 void Benchmark::AddPoints(int pt)
 {
-   m_nPoints+=pt;
+   m_nPoints += pt;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -51,7 +53,7 @@ void Benchmark::AddScore(double fScore)
 //-------------------------------------------------------------------------------------------------
 double Benchmark::GetScore() const
 {
-  return m_fScore;
+   return m_fScore;
 }
 
 std::string Benchmark::GetBaseType() const
@@ -65,7 +67,7 @@ std::string Benchmark::GetBaseType() const
   }
 }
 //-------------------------------------------------------------------------------------------------
-void Benchmark::PreprocessExpr(std::vector<std::string> & /*vExpr*/)
+void Benchmark::PreprocessExpr(std::vector<std::string>&)
 {}
 
 //-------------------------------------------------------------------------------------------------
@@ -98,7 +100,7 @@ void Benchmark::DoAll(std::vector<string> vExpr, long num)
 
    Stopwatch timer;
    timer.Start();
-   for (std::size_t i=0; i<vExpr.size(); ++i)
+   for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
       try
       {
@@ -114,7 +116,7 @@ void Benchmark::DoAll(std::vector<string> vExpr, long num)
 
       fflush(pRes);
    }
-   double dt = timer.Stop() / ((double)vExpr.size()*num);
+   double dt = timer.Stop() / ((double)vExpr.size() * num);
 
    fprintf(pRes,  "# avg. time per expr.: %lf ms;  avg. eval per sec: %lf; total bytecode size: %d",
            dt,
@@ -138,7 +140,7 @@ std::string Benchmark::GetName() const
 //-------------------------------------------------------------------------------------------------
 std::string Benchmark::GetShortName() const
 {
-  return m_sName;
+   return m_sName;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -164,21 +166,25 @@ double Benchmark::GetTime() const
 //-------------------------------------------------------------------------------------------------
 void Benchmark::StopTimerAndReport(const std::string &msg)
 {
-  m_timer.Stop();
-  m_fResult = 0;
-  m_fSum = 0;
-  m_fTime1 = 0;
-  m_bFail = true;
-  m_sFailReason = msg;
+   m_timer.Stop();
+   m_fResult     = 0;
+   m_fSum        = 0;
+   m_fTime1      = 0;
+   m_bFail       = true;
+   #ifndef disable_failure_messge
+   m_sFailReason = msg;
+   #endif
+   rate_list.push_back(0.0);
 }
 
 //-------------------------------------------------------------------------------------------------
 void Benchmark::StopTimer(double fRes, double fSum, int iCount)
 {
-   m_fTime1 = m_timer.Stop() / (double)iCount;
+   m_fTime1  = m_timer.Stop() / (double)iCount;
    m_fResult = fRes;
-   m_fSum = fSum;
-   m_bFail = false;
+   m_fSum    = fSum;
+   m_bFail   = false;
+   rate_list.push_back((double)iCount / m_fTime1);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -196,20 +202,19 @@ double Benchmark::GetRes() const
 //-------------------------------------------------------------------------------------------------
 bool Benchmark::DidNotEvaluate() const
 {
-  return m_bFail;
+   return m_bFail;
 }
 
 //-------------------------------------------------------------------------------------------------
 const std::string &Benchmark::GetFailReason() const
 {
-  return m_sFailReason;
+   return m_sFailReason;
 }
 
 //-------------------------------------------------------------------------------------------------
 bool Benchmark::ExpressionFailed(const std::string& expr) const
 {
-  return m_allFails.find(expr)!=m_allFails.end();
-//return (m_allFails.end() != std::find(m_allFails.begin(),m_allFails.end(),expr));
+  return m_allFails.find(expr) != m_allFails.end();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -222,4 +227,20 @@ const std::map<std::string, std::string> Benchmark::GetFails() const
 void Benchmark::AddFail(const std::string &sExpr)
 {
    m_allFails[sExpr] = DidNotEvaluate() ? m_sFailReason : std::string("incorrect result");
+}
+
+//-------------------------------------------------------------------------------------------------
+double Benchmark::GetRate(const std::size_t& index) const
+{
+   if (index < rate_list.size())
+      return rate_list[index];
+   else
+      return 0.0;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Benchmark::IgnoreLastRate()
+{
+   if (!rate_list.empty())
+      rate_list.pop_back();
 }
