@@ -32,6 +32,10 @@
 #include "BenchFParser.h"
 #include "BenchMathExpr.h"
 
+#ifdef ENABLE_MPFR
+#include "BenchExprTkMPFR.h"
+#endif
+
 #if defined(_MSC_VER) && defined(NDEBUG)
 #include "BenchMTParser.h"
 #endif
@@ -452,7 +456,7 @@ int main(int argc, const char *argv[])
    // the reference parser be precise when computing expressions.
    //
 
-   vBenchmarks.push_back(new BenchExprTk()        );  // <- Note: first parser becomes the reference!
+   vBenchmarks.push_back(new BenchExprTk()        );  // <-- Note: first parser becomes the reference!
    vBenchmarks.push_back(new BenchMuParser2(false));
    vBenchmarks.push_back(new BenchMuParser2(true) );
    vBenchmarks.push_back(new BenchMuParserX()     );
@@ -461,13 +465,17 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchFParser()       );
    vBenchmarks.push_back(new BenchMathExpr()      );
    #if defined(_MSC_VER) && defined(NDEBUG)
-   vBenchmarks.push_back(new BenchMTParser());        // <- Crash in debug mode
+   vBenchmarks.push_back(new BenchMTParser());        // <-- Crash in debug mode
    #endif
 
    #ifdef _MSC_VER
    vBenchmarks.push_back(new BenchMuParserSSE());
    #endif
    vBenchmarks.push_back(new BenchExprTkFloat());
+
+   #ifdef ENABLE_MPFR
+   vBenchmarks.push_back(new BenchExprTkMPFR ());
+   #endif
 
    Shootout(benchmark_file, vBenchmarks, vExpr, iCount, writeResultTable);
 

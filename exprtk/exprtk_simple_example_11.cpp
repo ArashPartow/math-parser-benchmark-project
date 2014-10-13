@@ -21,7 +21,7 @@
 #include "exprtk.hpp"
 
 
-template<typename T>
+template <typename T>
 void square_wave2()
 {
    typedef exprtk::symbol_table<T> symbol_table_t;

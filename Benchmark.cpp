@@ -4,7 +4,6 @@
 #include <cstdio>
 #include <ctime>
 #include <algorithm>
-//#include <Windows.h>
 
 using namespace std;
 
@@ -63,6 +62,7 @@ std::string Benchmark::GetBaseType() const
      case FLOAT:       return "float";
      case DOUBLE:      return "double";
      case LONG_DOUBLE: return "long double";
+     case MPFR:        return "mpfr";
      default:          return "unknown";
   }
 }

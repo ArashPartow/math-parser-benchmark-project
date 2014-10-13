@@ -207,10 +207,9 @@
     <ClCompile Include="..\lepton\Parser.cpp">
       <Filter>lepton</Filter>
     </ClCompile>
+    <ClCompile Include="..\BenchExprTkMPFR.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\FormelGenerator.h" />
-    <ClInclude Include="..\Stopwatch.h" />
     <ClInclude Include="..\atmsp\atmsp.h">
       <Filter>atmsp</Filter>
     </ClInclude>
@@ -616,6 +615,42 @@
     <ClInclude Include="..\muparserx\utGeneric.h">
       <Filter>muparserx</Filter>
     </ClInclude>
+    <ClInclude Include="..\BenchExprTkMPFR.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FormelGenerator.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Stopwatch.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\config.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\gmp.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\gmp-mparam.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\gmpxx.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\mpfr.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\mpir.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\mpirxx.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mpfr\include\mpreal.h">
+      <Filter>mpfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\exprtk\exprtk_mpfr_adaptor.hpp">
+      <Filter>exprtk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
@@ -661,6 +696,9 @@
     </Filter>
     <Filter Include="muparser2">
       <UniqueIdentifier>{087dd1b5-eba9-49b9-9c03-ba91dcda4f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mpfr">
+      <UniqueIdentifier>{7d03bb0e-8cbc-4f3f-8619-2050f99cd007}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
