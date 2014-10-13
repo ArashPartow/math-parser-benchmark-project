@@ -16,7 +16,8 @@ public:
    {
      FLOAT,
      DOUBLE,
-     LONG_DOUBLE
+     LONG_DOUBLE,
+     MPFR
    };
 
    typedef std::vector<std::string> expr_vec;

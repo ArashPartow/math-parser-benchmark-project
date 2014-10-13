@@ -57,12 +57,14 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalIncludeDirectories>..\mpfr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Advapi32.lib;OleAut32.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Advapi32.lib;OleAut32.lib;User32.lib;mpfr.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\ParserBenchmark.exe</OutputFile>
+      <AdditionalLibraryDirectories>..\mpfr\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(SolutionDir)muParserSSE\muParserSSE.dll" "$(TargetDir)muParserSSE.dll"</Command>
@@ -81,17 +83,20 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>..\mpfr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Advapi32.lib;OleAut32.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Advapi32.lib;OleAut32.lib;User32.lib;mpfr.lib;mpir.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\ParserBenchmark.exe</OutputFile>
+      <AdditionalLibraryDirectories>..\mpfr\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)muParserSSE\muParserSSE.dll" "$(TargetDir)muParserSSE.dll"</Command>
+      <Command>copy /Y "$(SolutionDir)muParserSSE\muParserSSE.dll" "$(TargetDir)muParserSSE.dll"
+copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -101,6 +106,7 @@
     <ClInclude Include="..\BenchChaiScript.h" />
     <ClInclude Include="..\BenchExprTk.h" />
     <ClInclude Include="..\BenchExprTkFloat.h" />
+    <ClInclude Include="..\BenchExprTkMPFR.h" />
     <ClInclude Include="..\BenchFParser.h" />
     <ClInclude Include="..\BenchLepton.h" />
     <ClInclude Include="..\Benchmark.h" />
@@ -144,6 +150,7 @@
     <ClInclude Include="..\chaiscript\utility\utility.hpp" />
     <ClInclude Include="..\cpuid.h" />
     <ClInclude Include="..\exprtk\exprtk.hpp" />
+    <ClInclude Include="..\exprtk\exprtk_mpfr_adaptor.hpp" />
     <ClInclude Include="..\FormelGenerator.h" />
     <ClInclude Include="..\lepton\CustomFunction.h" />
     <ClInclude Include="..\lepton\Exception.h" />
@@ -163,6 +170,14 @@
     <ClInclude Include="..\libcpuid\recog_amd.h" />
     <ClInclude Include="..\libcpuid\recog_intel.h" />
     <ClInclude Include="..\MathExpr\mathexpr.h" />
+    <ClInclude Include="..\mpfr\include\config.h" />
+    <ClInclude Include="..\mpfr\include\gmp-mparam.h" />
+    <ClInclude Include="..\mpfr\include\gmp.h" />
+    <ClInclude Include="..\mpfr\include\gmpxx.h" />
+    <ClInclude Include="..\mpfr\include\mpfr.h" />
+    <ClInclude Include="..\mpfr\include\mpir.h" />
+    <ClInclude Include="..\mpfr\include\mpirxx.h" />
+    <ClInclude Include="..\mpfr\include\mpreal.h" />
     <ClInclude Include="..\MTParser\MTParserLib\MTParser.h" />
     <ClInclude Include="..\MTParser\MTParserLib\MTParserCompiler.h" />
     <ClInclude Include="..\MTParser\MTParserLib\MTParserDefFuncs.h" />
@@ -237,6 +252,7 @@
     <ClCompile Include="..\BenchATMSP.cpp" />
     <ClCompile Include="..\BenchExprTk.cpp" />
     <ClCompile Include="..\BenchExprTkFloat.cpp" />
+    <ClCompile Include="..\BenchExprTkMPFR.cpp" />
     <ClCompile Include="..\BenchFParser.cpp" />
     <ClCompile Include="..\BenchLepton.cpp" />
     <ClCompile Include="..\Benchmark.cpp" />
