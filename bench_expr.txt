@@ -3,6 +3,7 @@
 # constant folding
 1
 a
+2/abs(3*4/5)
 sin((1+2/2*3)*4^5)+cos(6*pi)
 
 #
@@ -50,10 +51,10 @@ abs(a)
 # Simple expressions without functions
 a+b
 a+b-c
+a*b*c
 a/b/c
 a+b*c
 a*b+c
-a*2+b*2
 a/((a+b)*(a-b))/b
 1-((a*b)+(a/b))-3
 (a+b)*3
@@ -62,13 +63,24 @@ a+b*(a+b)
 (1+b)*(-3)
 a+b-e*pi/5^6
 a^b/e*pi-5+6
+a*2+2*b
 2*(a+b)
+(a+b)*2
+-a+-b
+-a--b
+-a*-b
+-a/-b
+-a*b
+-a/b
+a*-b
+a/-b
 (a/((((b+(((e*(((((pi*((((3.45*((pi+a)+pi))+b)+b)*a))+0.68)+e)+a)/a))+a)+b))+b)*a)-pi))
 
 # expressions with functions
 a+(cos(b-sin(2/a*pi))-sin(a-cos(2*b/pi)))-b
 sin(a)+sin(b)
 abs(sin(sqrt(a^2+b^2))*255)
+-abs(a+1)*-sin(2-b)
 sqrt(a)<sin(8)
 (10+sqrt(a))<(sin(8)^2)
 (b+a/b) * (a-b/a)
