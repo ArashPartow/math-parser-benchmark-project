@@ -35,6 +35,15 @@ namespace exprtk
 
       template <typename Iterator>
       inline bool string_to_real(Iterator& itr_external, const Iterator end, mpfr::mpreal& t, numeric::details::mpfrreal_type_tag);
+
+   }
+
+   namespace helper
+   {
+      namespace details
+      {
+         inline void print_type(const std::string&, const mpfr::mpreal& v, exprtk::details::numeric::details::mpfrreal_type_tag);
+      }
    }
 
    using details::is_true;
@@ -349,6 +358,17 @@ namespace exprtk
 
       inline bool is_true (const mpfr::mpreal& v) { return details::numeric::details::is_true_impl (v); }
       inline bool is_false(const mpfr::mpreal& v) { return details::numeric::details::is_false_impl(v); }
+   }
+
+   namespace helper
+   {
+      namespace details
+      {
+         inline void print_type(const std::string&, const mpfr::mpreal& v, exprtk::details::numeric::details::mpfrreal_type_tag)
+         {
+            printf("%s",v.toString().c_str());
+         }
+      }
    }
 }
 
