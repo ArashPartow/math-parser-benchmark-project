@@ -1026,8 +1026,8 @@ with vectors:
    (c) Assignment:       :=, +=, -=, *=, /=, %=, <=>
    (d) Inequalities:     <, <=, >, >=, ==, =
    (e) Unary operations:
-       abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh,
-       cot, csc, deg2grad, deg2rad, erf, erfc, exp, expm1, floor,
+       abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos,  cosh,
+       cot, csc,  deg2grad, deg2rad,  erf, erfc,  exp, expm1, floor,
        frac, grad2deg, log, log10, log1p, log2, rad2deg, round, sec,
        sgn, sin, sinc, sinh, sqrt, swap, tan, tanh, trunc
    (f) Aggregate and Reduce operations:
@@ -1403,10 +1403,12 @@ parameters in the following sequence:
 
 
 A final  piece of  type checking  functionality is  available for  the
-scenarios where  a single function name  is intended  to be  used for
-multiple distinct parameter sequences.  Two specific overrides of  the
-function operator are provided one for standard generic functions  and
-one for string returning functions. The overrides are as follows:
+scenarios where  a single  function name  is intended  to be  used for
+multiple  distinct parameter  sequences. The  parameter sequences  are
+passed to the constructor as a single string delimited by the pipe '|'
+character.  Two  specific  overrides  of  the  function  operator  are
+provided  one  for  standard  generic  functions  and  one  for string
+returning functions. The overrides are as follows:
 
       // f(psi,i_0,i_1,....,i_N) --> Scalar
       inline T operator()(const std::size_t& ps_index,
@@ -1441,7 +1443,8 @@ particular parameter sequence can be performed.
       : exprtk::igeneric_function<T>("SVTT|SS|TTV|S?V*S")
       {}
 
-      inline T operator()(parameter_list_t parameters)
+      inline T operator()(const std::size_t& ps_index,
+                          parameter_list_t parameters)
       {
          ...
       }
@@ -1643,10 +1646,10 @@ dependents of the given expression:
 
       switch (symbol.second)
       {
-         case parser_t::e_st_variable: ... break;
-         case parser_t::e_st_vector  : ... break;
-         case parser_t::e_st_string  : ... break;
-         case parser_t::e_st_function: ... break;
+         case parser_t::e_st_variable : ... break;
+         case parser_t::e_st_vector   : ... break;
+         case parser_t::e_st_string   : ... break;
+         case parser_t::e_st_function : ... break;
       }
    }
 
@@ -1674,7 +1677,8 @@ Note: In expression 4, both variables 'z' and 'w' are denoted as being
 assignments even though only one of  them can be modified at the  time
 of  evaluation.  Furthermore the  determination  of which  of  the two
 variables the  modification will  occur upon  can only  be known  with
-certainty at evaluation time and not beforehand.
+certainty at evaluation time and not beforehand, hence both are listed
+as being candidates for assignment.
 
 The following builds upon the previous example demonstrating the usage
 of the DEC in determining the 'assignments' of the given expression:
@@ -1697,9 +1701,9 @@ of the DEC in determining the 'assignments' of the given expression:
 
       switch (symbol.second)
       {
-         case parser_t::e_st_variable: ... break;
-         case parser_t::e_st_vector  : ... break;
-         case parser_t::e_st_string  : ... break;
+         case parser_t::e_st_variable : ... break;
+         case parser_t::e_st_vector   : ... break;
+         case parser_t::e_st_string   : ... break;
       }
    }
 
