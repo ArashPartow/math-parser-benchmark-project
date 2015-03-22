@@ -175,19 +175,25 @@ namespace exprtk
             return std::string("0");
 
          std::string result;
-         bool negative = (i < 0);
 
-         if (negative) i *= -1;
-
-         while (i)
+         if (i < 0)
          {
-            char digit = '0' + char(i % 10);
-            result = (digit + result);
-            i /= 10;
+            for ( ; i; i /= 10)
+            {
+               result += '0' + char(-(i % 10));
+            }
+
+            result += '-';
+         }
+         else
+         {
+            for ( ; i; i /= 10)
+            {
+               result += '0' + char(i % 10);
+            }
          }
 
-         if (negative)
-            result = "-" + result;
+         std::reverse(result.begin(), result.end());
 
          return result;
       }
@@ -335,9 +341,9 @@ namespace exprtk
                                   {
                                     "break",  "case",  "continue",  "default",  "false",  "for",
                                     "if", "else", "ilike",  "in", "like", "and",  "nand", "nor",
-                                    "not",  "null",  "or",   "repeat",  "shl",  "shr",   "swap",
-                                    "switch", "true",  "until", "var",  "while", "xnor",  "xor",
-                                    "&", "|"
+                                    "not",  "null",  "or",   "repeat", "return",  "shl",  "shr",
+                                    "swap", "switch", "true",  "until", "var",  "while", "xnor",
+                                    "xor", "&", "|"
                                   };
 
       static const std::size_t reserved_words_size = sizeof(reserved_words) / sizeof(std::string);
@@ -353,8 +359,8 @@ namespace exprtk
                                     "like",  "log",  "log10", "log2",  "logn",  "log1p", "mand",
                                     "max", "min",  "mod", "mor",  "mul", "ncdf",  "nand", "nor",
                                     "not",   "not_equal",   "null",   "or",   "pow",  "rad2deg",
-                                    "repeat", "root",  "round", "roundn",  "sec", "sgn",  "shl",
-                                    "shr",  "sin",  "sinc",   "sinh",  "sqrt",  "sum",   "swap",
+                                    "repeat", "return", "root", "round", "roundn", "sec", "sgn",
+                                    "shl", "shr", "sin", "sinc", "sinh", "sqrt",  "sum", "swap",
                                     "switch", "tan",  "tanh", "true",  "trunc", "until",  "var",
                                     "while", "xnor", "xor", "&", "|"
                                   };
@@ -553,11 +559,11 @@ namespace exprtk
       }
 
       static const double pow10[] = {
-                                       1.0,
-                                       1.0E+001, 1.0E+002, 1.0E+003, 1.0E+004,
-                                       1.0E+005, 1.0E+006, 1.0E+007, 1.0E+008,
-                                       1.0E+009, 1.0E+010, 1.0E+011, 1.0E+012,
-                                       1.0E+013, 1.0E+014, 1.0E+015, 1.0E+016
+                                      1.0,
+                                      1.0E+001, 1.0E+002, 1.0E+003, 1.0E+004,
+                                      1.0E+005, 1.0E+006, 1.0E+007, 1.0E+008,
+                                      1.0E+009, 1.0E+010, 1.0E+011, 1.0E+012,
+                                      1.0E+013, 1.0E+014, 1.0E+015, 1.0E+016
                                     };
 
      static const std::size_t pow10_size = sizeof(pow10) / sizeof(double);
@@ -1396,38 +1402,38 @@ namespace exprtk
       {
          static const double fract10[] =
          {
-            0.0,
-            1.0E+001, 1.0E+002, 1.0E+003, 1.0E+004, 1.0E+005, 1.0E+006, 1.0E+007, 1.0E+008, 1.0E+009, 1.0E+010,
-            1.0E+011, 1.0E+012, 1.0E+013, 1.0E+014, 1.0E+015, 1.0E+016, 1.0E+017, 1.0E+018, 1.0E+019, 1.0E+020,
-            1.0E+021, 1.0E+022, 1.0E+023, 1.0E+024, 1.0E+025, 1.0E+026, 1.0E+027, 1.0E+028, 1.0E+029, 1.0E+030,
-            1.0E+031, 1.0E+032, 1.0E+033, 1.0E+034, 1.0E+035, 1.0E+036, 1.0E+037, 1.0E+038, 1.0E+039, 1.0E+040,
-            1.0E+041, 1.0E+042, 1.0E+043, 1.0E+044, 1.0E+045, 1.0E+046, 1.0E+047, 1.0E+048, 1.0E+049, 1.0E+050,
-            1.0E+051, 1.0E+052, 1.0E+053, 1.0E+054, 1.0E+055, 1.0E+056, 1.0E+057, 1.0E+058, 1.0E+059, 1.0E+060,
-            1.0E+061, 1.0E+062, 1.0E+063, 1.0E+064, 1.0E+065, 1.0E+066, 1.0E+067, 1.0E+068, 1.0E+069, 1.0E+070,
-            1.0E+071, 1.0E+072, 1.0E+073, 1.0E+074, 1.0E+075, 1.0E+076, 1.0E+077, 1.0E+078, 1.0E+079, 1.0E+080,
-            1.0E+081, 1.0E+082, 1.0E+083, 1.0E+084, 1.0E+085, 1.0E+086, 1.0E+087, 1.0E+088, 1.0E+089, 1.0E+090,
-            1.0E+091, 1.0E+092, 1.0E+093, 1.0E+094, 1.0E+095, 1.0E+096, 1.0E+097, 1.0E+098, 1.0E+099, 1.0E+100,
-            1.0E+101, 1.0E+102, 1.0E+103, 1.0E+104, 1.0E+105, 1.0E+106, 1.0E+107, 1.0E+108, 1.0E+109, 1.0E+110,
-            1.0E+111, 1.0E+112, 1.0E+113, 1.0E+114, 1.0E+115, 1.0E+116, 1.0E+117, 1.0E+118, 1.0E+119, 1.0E+120,
-            1.0E+121, 1.0E+122, 1.0E+123, 1.0E+124, 1.0E+125, 1.0E+126, 1.0E+127, 1.0E+128, 1.0E+129, 1.0E+130,
-            1.0E+131, 1.0E+132, 1.0E+133, 1.0E+134, 1.0E+135, 1.0E+136, 1.0E+137, 1.0E+138, 1.0E+139, 1.0E+140,
-            1.0E+141, 1.0E+142, 1.0E+143, 1.0E+144, 1.0E+145, 1.0E+146, 1.0E+147, 1.0E+148, 1.0E+149, 1.0E+150,
-            1.0E+151, 1.0E+152, 1.0E+153, 1.0E+154, 1.0E+155, 1.0E+156, 1.0E+157, 1.0E+158, 1.0E+159, 1.0E+160,
-            1.0E+161, 1.0E+162, 1.0E+163, 1.0E+164, 1.0E+165, 1.0E+166, 1.0E+167, 1.0E+168, 1.0E+169, 1.0E+170,
-            1.0E+171, 1.0E+172, 1.0E+173, 1.0E+174, 1.0E+175, 1.0E+176, 1.0E+177, 1.0E+178, 1.0E+179, 1.0E+180,
-            1.0E+181, 1.0E+182, 1.0E+183, 1.0E+184, 1.0E+185, 1.0E+186, 1.0E+187, 1.0E+188, 1.0E+189, 1.0E+190,
-            1.0E+191, 1.0E+192, 1.0E+193, 1.0E+194, 1.0E+195, 1.0E+196, 1.0E+197, 1.0E+198, 1.0E+199, 1.0E+200,
-            1.0E+201, 1.0E+202, 1.0E+203, 1.0E+204, 1.0E+205, 1.0E+206, 1.0E+207, 1.0E+208, 1.0E+209, 1.0E+210,
-            1.0E+211, 1.0E+212, 1.0E+213, 1.0E+214, 1.0E+215, 1.0E+216, 1.0E+217, 1.0E+218, 1.0E+219, 1.0E+220,
-            1.0E+221, 1.0E+222, 1.0E+223, 1.0E+224, 1.0E+225, 1.0E+226, 1.0E+227, 1.0E+228, 1.0E+229, 1.0E+230,
-            1.0E+231, 1.0E+232, 1.0E+233, 1.0E+234, 1.0E+235, 1.0E+236, 1.0E+237, 1.0E+238, 1.0E+239, 1.0E+240,
-            1.0E+241, 1.0E+242, 1.0E+243, 1.0E+244, 1.0E+245, 1.0E+246, 1.0E+247, 1.0E+248, 1.0E+249, 1.0E+250,
-            1.0E+251, 1.0E+252, 1.0E+253, 1.0E+254, 1.0E+255, 1.0E+256, 1.0E+257, 1.0E+258, 1.0E+259, 1.0E+260,
-            1.0E+261, 1.0E+262, 1.0E+263, 1.0E+264, 1.0E+265, 1.0E+266, 1.0E+267, 1.0E+268, 1.0E+269, 1.0E+270,
-            1.0E+271, 1.0E+272, 1.0E+273, 1.0E+274, 1.0E+275, 1.0E+276, 1.0E+277, 1.0E+278, 1.0E+279, 1.0E+280,
-            1.0E+281, 1.0E+282, 1.0E+283, 1.0E+284, 1.0E+285, 1.0E+286, 1.0E+287, 1.0E+288, 1.0E+289, 1.0E+290,
-            1.0E+291, 1.0E+292, 1.0E+293, 1.0E+294, 1.0E+295, 1.0E+296, 1.0E+297, 1.0E+298, 1.0E+299, 1.0E+300,
-            1.0E+301, 1.0E+302, 1.0E+303, 1.0E+304, 1.0E+305, 1.0E+306, 1.0E+307, 1.0E+308
+           0.0,
+           1.0E+001, 1.0E+002, 1.0E+003, 1.0E+004, 1.0E+005, 1.0E+006, 1.0E+007, 1.0E+008, 1.0E+009, 1.0E+010,
+           1.0E+011, 1.0E+012, 1.0E+013, 1.0E+014, 1.0E+015, 1.0E+016, 1.0E+017, 1.0E+018, 1.0E+019, 1.0E+020,
+           1.0E+021, 1.0E+022, 1.0E+023, 1.0E+024, 1.0E+025, 1.0E+026, 1.0E+027, 1.0E+028, 1.0E+029, 1.0E+030,
+           1.0E+031, 1.0E+032, 1.0E+033, 1.0E+034, 1.0E+035, 1.0E+036, 1.0E+037, 1.0E+038, 1.0E+039, 1.0E+040,
+           1.0E+041, 1.0E+042, 1.0E+043, 1.0E+044, 1.0E+045, 1.0E+046, 1.0E+047, 1.0E+048, 1.0E+049, 1.0E+050,
+           1.0E+051, 1.0E+052, 1.0E+053, 1.0E+054, 1.0E+055, 1.0E+056, 1.0E+057, 1.0E+058, 1.0E+059, 1.0E+060,
+           1.0E+061, 1.0E+062, 1.0E+063, 1.0E+064, 1.0E+065, 1.0E+066, 1.0E+067, 1.0E+068, 1.0E+069, 1.0E+070,
+           1.0E+071, 1.0E+072, 1.0E+073, 1.0E+074, 1.0E+075, 1.0E+076, 1.0E+077, 1.0E+078, 1.0E+079, 1.0E+080,
+           1.0E+081, 1.0E+082, 1.0E+083, 1.0E+084, 1.0E+085, 1.0E+086, 1.0E+087, 1.0E+088, 1.0E+089, 1.0E+090,
+           1.0E+091, 1.0E+092, 1.0E+093, 1.0E+094, 1.0E+095, 1.0E+096, 1.0E+097, 1.0E+098, 1.0E+099, 1.0E+100,
+           1.0E+101, 1.0E+102, 1.0E+103, 1.0E+104, 1.0E+105, 1.0E+106, 1.0E+107, 1.0E+108, 1.0E+109, 1.0E+110,
+           1.0E+111, 1.0E+112, 1.0E+113, 1.0E+114, 1.0E+115, 1.0E+116, 1.0E+117, 1.0E+118, 1.0E+119, 1.0E+120,
+           1.0E+121, 1.0E+122, 1.0E+123, 1.0E+124, 1.0E+125, 1.0E+126, 1.0E+127, 1.0E+128, 1.0E+129, 1.0E+130,
+           1.0E+131, 1.0E+132, 1.0E+133, 1.0E+134, 1.0E+135, 1.0E+136, 1.0E+137, 1.0E+138, 1.0E+139, 1.0E+140,
+           1.0E+141, 1.0E+142, 1.0E+143, 1.0E+144, 1.0E+145, 1.0E+146, 1.0E+147, 1.0E+148, 1.0E+149, 1.0E+150,
+           1.0E+151, 1.0E+152, 1.0E+153, 1.0E+154, 1.0E+155, 1.0E+156, 1.0E+157, 1.0E+158, 1.0E+159, 1.0E+160,
+           1.0E+161, 1.0E+162, 1.0E+163, 1.0E+164, 1.0E+165, 1.0E+166, 1.0E+167, 1.0E+168, 1.0E+169, 1.0E+170,
+           1.0E+171, 1.0E+172, 1.0E+173, 1.0E+174, 1.0E+175, 1.0E+176, 1.0E+177, 1.0E+178, 1.0E+179, 1.0E+180,
+           1.0E+181, 1.0E+182, 1.0E+183, 1.0E+184, 1.0E+185, 1.0E+186, 1.0E+187, 1.0E+188, 1.0E+189, 1.0E+190,
+           1.0E+191, 1.0E+192, 1.0E+193, 1.0E+194, 1.0E+195, 1.0E+196, 1.0E+197, 1.0E+198, 1.0E+199, 1.0E+200,
+           1.0E+201, 1.0E+202, 1.0E+203, 1.0E+204, 1.0E+205, 1.0E+206, 1.0E+207, 1.0E+208, 1.0E+209, 1.0E+210,
+           1.0E+211, 1.0E+212, 1.0E+213, 1.0E+214, 1.0E+215, 1.0E+216, 1.0E+217, 1.0E+218, 1.0E+219, 1.0E+220,
+           1.0E+221, 1.0E+222, 1.0E+223, 1.0E+224, 1.0E+225, 1.0E+226, 1.0E+227, 1.0E+228, 1.0E+229, 1.0E+230,
+           1.0E+231, 1.0E+232, 1.0E+233, 1.0E+234, 1.0E+235, 1.0E+236, 1.0E+237, 1.0E+238, 1.0E+239, 1.0E+240,
+           1.0E+241, 1.0E+242, 1.0E+243, 1.0E+244, 1.0E+245, 1.0E+246, 1.0E+247, 1.0E+248, 1.0E+249, 1.0E+250,
+           1.0E+251, 1.0E+252, 1.0E+253, 1.0E+254, 1.0E+255, 1.0E+256, 1.0E+257, 1.0E+258, 1.0E+259, 1.0E+260,
+           1.0E+261, 1.0E+262, 1.0E+263, 1.0E+264, 1.0E+265, 1.0E+266, 1.0E+267, 1.0E+268, 1.0E+269, 1.0E+270,
+           1.0E+271, 1.0E+272, 1.0E+273, 1.0E+274, 1.0E+275, 1.0E+276, 1.0E+277, 1.0E+278, 1.0E+279, 1.0E+280,
+           1.0E+281, 1.0E+282, 1.0E+283, 1.0E+284, 1.0E+285, 1.0E+286, 1.0E+287, 1.0E+288, 1.0E+289, 1.0E+290,
+           1.0E+291, 1.0E+292, 1.0E+293, 1.0E+294, 1.0E+295, 1.0E+296, 1.0E+297, 1.0E+298, 1.0E+299, 1.0E+300,
+           1.0E+301, 1.0E+302, 1.0E+303, 1.0E+304, 1.0E+305, 1.0E+306, 1.0E+307, 1.0E+308
          };
 
          static const int fract10_size = static_cast<int>(sizeof(fract10) / sizeof(double));
@@ -2407,17 +2413,26 @@ namespace exprtk
                {
                   if (!is_end(s_itr_) && ('0' == *(s_itr_)))
                   {
-                     if (
-                          is_end(s_itr_ + 1) ||
-                          is_end(s_itr_ + 2) ||
-                          is_end(s_itr_ + 3) ||
-                          (
-                            ('x' != *(s_itr_ + 1)) &&
-                            ('X' != *(s_itr_ + 1))
-                          ) ||
-                          (!details::is_hex_digit(*(s_itr_ + 2))) ||
-                          (!details::is_hex_digit(*(s_itr_ + 3)))
-                        )
+                     /*
+                        Note: The following 'awkward' conditional is
+                              due to various broken msvc compilers.
+                     */
+                     #if _MSC_VER == 1600
+                     const bool within_range = !is_end(s_itr_ + 2) &&
+                                               !is_end(s_itr_ + 3) ;
+                     #else
+                     const bool within_range = !is_end(s_itr_ + 1) &&
+                                               !is_end(s_itr_ + 2) &&
+                                               !is_end(s_itr_ + 3) ;
+                     #endif
+
+                     const bool x_seperator  = ('x' == *(s_itr_ + 1)) ||
+                                               ('X' == *(s_itr_ + 1)) ;
+
+                     const bool both_digits  = details::is_hex_digit(*(s_itr_ + 2)) &&
+                                               details::is_hex_digit(*(s_itr_ + 3)) ;
+
+                     if (!within_range || !x_seperator || !both_digits)
                      {
                         t.set_error(token::e_err_string,initial_itr,s_itr_,base_itr_);
                         token_list_.push_back(t);
@@ -5724,7 +5739,7 @@ namespace exprtk
 
       template <typename T>
       class variable_node : public expression_node<T>,
-                            public ivariable<T>
+                            public ivariable      <T>
       {
       public:
 
@@ -5958,7 +5973,7 @@ namespace exprtk
       };
 
       template <typename T>
-      class vector_node : public expression_node<T>,
+      class vector_node : public expression_node <T>,
                           public vector_interface<T>
       {
       public:
@@ -6013,7 +6028,7 @@ namespace exprtk
 
       template <typename T>
       class vector_elem_node : public expression_node<T>,
-                               public ivariable<T>
+                               public ivariable      <T>
       {
       public:
 
@@ -6195,7 +6210,7 @@ namespace exprtk
       };
 
       template <typename T>
-      class swap_vecvec_node : public binary_node<T>,
+      class swap_vecvec_node : public binary_node     <T>,
                                public vector_interface<T>
       {
       public:
@@ -6208,7 +6223,8 @@ namespace exprtk
          : binary_node<T>(details::e_swap,branch0,branch1),
            vec0_node_ptr_(0),
            vec1_node_ptr_(0),
-           vec_size_     (0)
+           vec_size_     (0),
+           initialised_(false)
          {
             if (is_ivector_node(binary_node<T>::branch_[0].first))
             {
@@ -6234,12 +6250,13 @@ namespace exprtk
             {
                vec_size_ = std::min(vec0_node_ptr_->ref().size(),
                                     vec1_node_ptr_->ref().size());
+               initialised_ = true;
             }
          }
 
          inline T value() const
          {
-            if (vec0_node_ptr_ && vec1_node_ptr_)
+            if (initialised_)
             {
                binary_node<T>::branch_[0].first->value();
                binary_node<T>::branch_[1].first->value();
@@ -6283,6 +6300,7 @@ namespace exprtk
          vector_node<T>* vec0_node_ptr_;
          vector_node<T>* vec1_node_ptr_;
          std::size_t     vec_size_;
+         bool            initialised_;
       };
 
       #ifndef exprtk_disable_string_capabilities
@@ -7802,7 +7820,7 @@ namespace exprtk
       };
 
       template <typename T>
-      class assignment_vec_node : public binary_node<T>,
+      class assignment_vec_node : public binary_node     <T>,
                                   public vector_interface<T>
       {
       public:
@@ -7869,7 +7887,7 @@ namespace exprtk
       };
 
       template <typename T>
-      class assignment_vecvec_node : public binary_node<T>,
+      class assignment_vecvec_node : public binary_node     <T>,
                                      public vector_interface<T>
       {
       public:
@@ -8033,7 +8051,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class assignment_vec_op_node : public binary_node<T>,
+      class assignment_vec_op_node : public binary_node     <T>,
                                      public vector_interface<T>
       {
       public:
@@ -8101,7 +8119,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class assignment_vecvec_op_node : public binary_node<T>,
+      class assignment_vecvec_op_node : public binary_node     <T>,
                                         public vector_interface<T>
       {
       public:
@@ -8194,7 +8212,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class eqineq_vecvec_node : public binary_node<T>,
+      class eqineq_vecvec_node : public binary_node     <T>,
                                  public vector_interface<T>
       {
       public:
@@ -8298,7 +8316,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class eqineq_vecval_node : public binary_node<T>,
+      class eqineq_vecval_node : public binary_node     <T>,
                                  public vector_interface<T>
       {
       public:
@@ -8383,7 +8401,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class eqineq_valvec_node : public binary_node<T>,
+      class eqineq_valvec_node : public binary_node     <T>,
                                  public vector_interface<T>
       {
       public:
@@ -8468,7 +8486,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class vecarith_vecvec_node : public binary_node<T>,
+      class vecarith_vecvec_node : public binary_node     <T>,
                                    public vector_interface<T>
       {
       public:
@@ -8593,7 +8611,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class vecarith_vecval_node : public binary_node<T>,
+      class vecarith_vecval_node : public binary_node     <T>,
                                    public vector_interface<T>
       {
       public:
@@ -8698,7 +8716,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class vecarith_valvec_node : public binary_node<T>,
+      class vecarith_valvec_node : public binary_node     <T>,
                                    public vector_interface<T>
       {
       public:
@@ -8803,7 +8821,7 @@ namespace exprtk
       };
 
       template <typename T, typename Operation>
-      class unary_vector_node : public unary_node<T>,
+      class unary_vector_node : public unary_node      <T>,
                                 public vector_interface<T>
       {
       public:
@@ -9513,9 +9531,9 @@ namespace exprtk
 
                if (rdt.range)
                {
-                  range_t&      rp = (*rdt.range);
-                  std::size_t   r0 = 0;
-                  std::size_t   r1 = 0;
+                  range_t&    rp = (*rdt.range);
+                  std::size_t r0 = 0;
+                  std::size_t r1 = 0;
 
                   if (rp(r0,r1,rdt.size))
                   {
@@ -13444,10 +13462,6 @@ namespace exprtk
    {
    protected:
 
-      template <typename Type> class parser;
-
-   protected:
-
       template <typename Type, typename RawType>
       struct type_store
       {
@@ -13833,11 +13847,11 @@ namespace exprtk
       typedef typename details::stringvar_node<T> stringvar_t;
       typedef stringvar_t* stringvar_ptr;
       #endif
-      typedef ifunction<T> function_t;
-      typedef ivararg_function<T> vararg_function_t;
+      typedef ifunction        <T> function_t;
+      typedef ivararg_function <T> vararg_function_t;
       typedef igeneric_function<T> generic_function_t;
       typedef function_t* function_ptr;
-      typedef vararg_function_t* vararg_function_ptr;
+      typedef vararg_function_t*  vararg_function_ptr;
       typedef generic_function_t* generic_function_ptr;
 
       static const std::size_t lut_size = 256;
@@ -13852,7 +13866,7 @@ namespace exprtk
             type_store<typename details::stringvar_node<T>,std::string> stringvar_store;
             #endif
             type_store<ifunction<T>,ifunction<T> > function_store;
-            type_store<ivararg_function<T>,ivararg_function<T> > vararg_function_store;
+            type_store<ivararg_function <T>,ivararg_function <T> > vararg_function_store;
             type_store<igeneric_function<T>,igeneric_function<T> > generic_function_store;
             type_store<igeneric_function<T>,igeneric_function<T> > string_function_store;
             type_store<vector_holder_t,vector_holder_t> vector_store;
@@ -14636,17 +14650,21 @@ namespace exprtk
          return (!local_data().is_reserved_symbol(symbol));
       }
 
-      inline typename st_holder::st_data& local_data()
+      typedef typename st_holder::st_data local_data_t;
+
+      inline local_data_t& local_data()
       {
          return *(holder_->data_);
       }
 
-      inline const typename st_holder::st_data& local_data() const
+      inline const local_data_t& local_data() const
       {
          return *(holder_->data_);
       }
 
       st_holder* holder_;
+
+      friend class parser<T>;
    };
 
    template <typename T>
@@ -14659,6 +14677,7 @@ namespace exprtk
 
       typedef details::expression_node<T>*  expression_ptr;
       typedef details::vector_holder<T>* vector_holder_ptr;
+      typedef std::vector<symbol_table<T> >  symtab_list_t;
 
       struct expression_holder
       {
@@ -14754,7 +14773,7 @@ namespace exprtk
 
       expression(const expression<T>& e)
       : expression_holder_(e.expression_holder_),
-        symbol_table_(e.symbol_table_)
+        symbol_table_list_(e.symbol_table_list_)
       {
          expression_holder_->ref_count++;
       }
@@ -14775,7 +14794,7 @@ namespace exprtk
 
             expression_holder_ = e.expression_holder_;
             expression_holder_->ref_count++;
-            symbol_table_ = e.symbol_table_;
+            symbol_table_list_ = e.symbol_table_list_;
          }
 
          return *this;
@@ -14842,20 +14861,25 @@ namespace exprtk
 
       inline void register_symbol_table(symbol_table<T>& st)
       {
-         symbol_table_ = st;
+         symbol_table_list_.push_back(st);
       }
 
-      inline const symbol_table<T>& get_symbol_table() const
+      inline const symbol_table<T>& get_symbol_table(const std::size_t& index = 0) const
       {
-         return symbol_table_;
+         return symbol_table_list_[index];
       }
 
-      inline symbol_table<T>& get_symbol_table()
+      inline symbol_table<T>& get_symbol_table(const std::size_t& index = 0)
       {
-         return symbol_table_;
+         return symbol_table_list_[index];
       }
 
    private:
+
+      inline symtab_list_t get_symbol_table_list() const
+      {
+         return symbol_table_list_;
+      }
 
       inline void set_expression(const expression_ptr expr)
       {
@@ -14934,7 +14958,7 @@ namespace exprtk
       }
 
       expression_holder* expression_holder_;
-      symbol_table<T> symbol_table_;
+      symtab_list_t      symbol_table_list_;
 
       friend class parser<T>;
       friend class expression_helper<T>;
@@ -15161,6 +15185,7 @@ namespace exprtk
       typedef lexer::token                                          token_t;
       typedef expression_node_t*                        expression_node_ptr;
       typedef symbol_table<T>                                symbol_table_t;
+      typedef typename expression<T>::symtab_list_t     symbol_table_list_t;
       typedef details::vector_holder<T>*                  vector_holder_ptr;
 
       typedef typename details::functor_t<T>         functor_t;
@@ -15436,6 +15461,408 @@ namespace exprtk
          scope_handler& operator=(const scope_handler&);
 
          parser_t& parser_;
+      };
+
+      struct symtab_store
+      {
+         symbol_table_list_t symtab_list_;
+
+         typedef typename symbol_table_t::local_data_t   local_data_t;
+         typedef typename symbol_table_t::variable_ptr   variable_ptr;
+         typedef typename symbol_table_t::stringvar_ptr stringvar_ptr;
+         typedef typename symbol_table_t::function_ptr   function_ptr;
+         typedef typename symbol_table_t::vector_holder_ptr       vector_holder_ptr;
+         typedef typename symbol_table_t::vararg_function_ptr   vararg_function_ptr;
+         typedef typename symbol_table_t::generic_function_ptr generic_function_ptr;
+
+         inline bool empty() const
+         {
+            return symtab_list_.empty();
+         }
+
+         inline void clear()
+         {
+            symtab_list_.clear();
+         }
+
+         inline bool valid() const
+         {
+            if (!empty())
+            {
+               for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+               {
+                  if (symtab_list_[i].valid())
+                     return true;
+               }
+            }
+
+            return false;
+         }
+
+         inline bool valid_symbol(const std::string& symbol) const
+         {
+            if (!symtab_list_.empty())
+               return symtab_list_[0].valid_symbol(symbol);
+            else
+               return false;
+         }
+
+         inline variable_ptr get_variable(const std::string& variable_name) const
+         {
+            if (!valid_symbol(variable_name))
+               return reinterpret_cast<variable_ptr>(0);
+
+            variable_ptr result = reinterpret_cast<variable_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result = local_data(i)
+                              .variable_store.get(variable_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         inline variable_ptr get_variable(const T& var_ref) const
+         {
+            variable_ptr result = reinterpret_cast<variable_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result = local_data(i).variable_store
+                              .get_from_varptr(reinterpret_cast<const void*>(&var_ref));
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         #ifndef exprtk_disable_string_capabilities
+         inline stringvar_ptr get_stringvar(const std::string& string_name) const
+         {
+            if (!valid_symbol(string_name))
+               return reinterpret_cast<stringvar_ptr>(0);
+
+            stringvar_ptr result = reinterpret_cast<stringvar_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result = local_data(i)
+                              .stringvar_store.get(string_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+         #endif
+
+         inline function_ptr get_function(const std::string& function_name) const
+         {
+            if (!valid_symbol(function_name))
+               return reinterpret_cast<function_ptr>(0);
+
+            function_ptr result = reinterpret_cast<function_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result = local_data(i)
+                              .function_store.get(function_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         inline vararg_function_ptr get_vararg_function(const std::string& vararg_function_name) const
+         {
+            if (!valid_symbol(vararg_function_name))
+               return reinterpret_cast<vararg_function_ptr>(0);
+
+            vararg_function_ptr result = reinterpret_cast<vararg_function_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result = local_data(i)
+                              .vararg_function_store.get(vararg_function_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         inline generic_function_ptr get_generic_function(const std::string& function_name) const
+         {
+            if (!valid_symbol(function_name))
+               return reinterpret_cast<generic_function_ptr>(0);
+
+            generic_function_ptr result = reinterpret_cast<generic_function_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result = local_data(i)
+                              .generic_function_store.get(function_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         inline generic_function_ptr get_string_function(const std::string& function_name) const
+         {
+            if (!valid_symbol(function_name))
+               return reinterpret_cast<generic_function_ptr>(0);
+
+            generic_function_ptr result = reinterpret_cast<generic_function_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result =
+                     local_data(i).string_function_store.get(function_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         inline vector_holder_ptr get_vector(const std::string& vector_name) const
+         {
+            if (!valid_symbol(vector_name))
+               return reinterpret_cast<vector_holder_ptr>(0);
+
+            vector_holder_ptr result = reinterpret_cast<vector_holder_ptr>(0);
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else
+                  result =
+                     local_data(i).vector_store.get(vector_name);
+
+               if (result) break;
+            }
+
+            return result;
+         }
+
+         inline bool is_constant_node(const std::string& symbol_name) const
+         {
+            if (!valid_symbol(symbol_name))
+               return false;
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (local_data(i).variable_store.is_constant(symbol_name))
+                  return true;
+            }
+
+            return false;
+         }
+
+         #ifndef exprtk_disable_string_capabilities
+         inline bool is_constant_string(const std::string& symbol_name) const
+         {
+            if (!valid_symbol(symbol_name))
+               return false;
+
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (!local_data(i).stringvar_store.symbol_exists(symbol_name))
+                  continue;
+               else if ( local_data(i).stringvar_store.is_constant(symbol_name))
+                  return true;
+            }
+
+            return false;
+         }
+         #endif
+
+         inline bool symbol_exists(const std::string& symbol) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (symtab_list_[i].symbol_exists(symbol))
+                  return true;
+            }
+
+            return false;
+         }
+
+         inline bool is_variable(const std::string& variable_name) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (
+                         symtab_list_[i].local_data().variable_store
+                           .symbol_exists(variable_name)
+                       )
+                  return true;
+            }
+
+            return false;
+         }
+
+         #ifndef exprtk_disable_string_capabilities
+         inline bool is_stringvar(const std::string& stringvar_name) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (
+                         symtab_list_[i].local_data().stringvar_store
+                           .symbol_exists(stringvar_name)
+                       )
+                  return true;
+            }
+
+            return false;
+         }
+
+         inline bool is_conststr_stringvar(const std::string& symbol_name) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (
+                         symtab_list_[i].local_data().stringvar_store
+                           .symbol_exists(symbol_name)
+                       )
+               {
+                  return (
+                           local_data(i).stringvar_store.symbol_exists(symbol_name) ||
+                           local_data(i).stringvar_store.is_constant  (symbol_name)
+                         );
+
+               }
+            }
+
+            return false;
+         }
+         #endif
+
+         inline bool is_function(const std::string& function_name) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (
+                         local_data(i).vararg_function_store
+                           .symbol_exists(function_name)
+                       )
+                  return true;
+            }
+
+            return false;
+         }
+
+         inline bool is_vararg_function(const std::string& vararg_function_name) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (
+                         local_data(i).vararg_function_store
+                           .symbol_exists(vararg_function_name)
+                       )
+                  return true;
+            }
+
+            return false;
+         }
+
+         inline bool is_vector(const std::string& vector_name) const
+         {
+            for (std::size_t i = 0; i < symtab_list_.size(); ++i)
+            {
+               if (!symtab_list_[i].valid())
+                  continue;
+               else if (
+                         local_data(i).vector_store
+                           .symbol_exists(vector_name)
+                       )
+                  return true;
+            }
+
+            return false;
+         }
+
+         inline std::string get_variable_name(const expression_node_ptr& ptr) const
+         {
+            return local_data().variable_store.entity_name(ptr);
+         }
+
+         inline std::string get_vector_name(const vector_holder_ptr& ptr) const
+         {
+            return local_data().vector_store.entity_name(ptr);
+         }
+
+         #ifndef exprtk_disable_string_capabilities
+         inline std::string get_stringvar_name(const expression_node_ptr& ptr) const
+         {
+            return local_data().stringvar_store.entity_name(ptr);
+         }
+
+         inline std::string get_conststr_stringvar_name(const expression_node_ptr& ptr) const
+         {
+            return local_data().stringvar_store.entity_name(ptr);
+         }
+         #endif
+
+         inline local_data_t& local_data(const std::size_t& index = 0)
+         {
+            return symtab_list_[index].local_data();
+         }
+
+         inline const local_data_t& local_data(const std::size_t& index = 0) const
+         {
+            return symtab_list_[index].local_data();
+         }
+
+         inline symbol_table_t& get_symbol_table(const std::size_t& index = 0)
+         {
+            return symtab_list_[index];
+         }
       };
 
    public:
@@ -15778,7 +16205,7 @@ namespace exprtk
             return false;
          }
 
-         symbol_table_ = expr.get_symbol_table();
+         symtab_store_.symtab_list_ = expr.get_symbol_table_list();
          dec_.clear();
 
          lexer_.begin();
@@ -16244,50 +16671,50 @@ namespace exprtk
 
                                            if (details::imatch(current_token_.value,s_and))
                                            {
-                                              current_state.set(e_level01,e_level02,details::e_and);
+                                              current_state.set(e_level03,e_level04,details::e_and);
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_and1))
                                            {
                                               #ifndef exprtk_disable_sc_andor
-                                              current_state.set(e_level01,e_level02,details::e_scand);
+                                              current_state.set(e_level03,e_level04,details::e_scand);
                                               #else
-                                              current_state.set(e_level01,e_level02,details::e_and);
+                                              current_state.set(e_level03,e_level04,details::e_and);
                                               #endif
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_nand))
                                            {
-                                              current_state.set(e_level01,e_level02,details::e_nand);
+                                              current_state.set(e_level03,e_level04,details::e_nand);
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_or))
                                            {
-                                              current_state.set(e_level03,e_level04,details::e_or);
+                                              current_state.set(e_level01,e_level02,details::e_or);
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_or1))
                                            {
                                               #ifndef exprtk_disable_sc_andor
-                                              current_state.set(e_level03,e_level04,details::e_scor);
+                                              current_state.set(e_level01,e_level02,details::e_scor);
                                               #else
-                                              current_state.set(e_level03,e_level04,details::e_or);
+                                              current_state.set(e_level01,e_level02,details::e_or);
                                               #endif
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_nor))
                                            {
-                                              current_state.set(e_level03,e_level04,details::e_nor);
+                                              current_state.set(e_level01,e_level02,details::e_nor);
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_xor))
                                            {
-                                              current_state.set(e_level03,e_level04,details::e_xor);
+                                              current_state.set(e_level01,e_level02,details::e_xor);
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_xnor))
                                            {
-                                              current_state.set(e_level03,e_level04,details::e_xnor);
+                                              current_state.set(e_level01,e_level02,details::e_xnor);
                                               break;
                                            }
                                            else if (details::imatch(current_token_.value,s_in))
@@ -16395,7 +16822,7 @@ namespace exprtk
                expression_node_ptr return_node = error_node();
 
                if (
-                    (return_node = symbol_table_.get_variable(v)) ||
+                    (return_node = symtab_store_.get_variable(v)) ||
                     (return_node = sem_         .get_variable(v))
                   )
                {
@@ -16760,13 +17187,13 @@ namespace exprtk
                {
                   switch (parameter_count)
                   {
-                     #define base_opr_case(N)                                       \
-                     case N : {                                                     \
-                                 expression_node_ptr pl##N[N] = {0};                \
-                                 std::copy(param_list,param_list + N,pl##N);        \
-                                 lodge_symbol(operation_name,e_st_function);        \
-                                 return expression_generator_(operation.type,pl##N);\
-                              }                                                     \
+                     #define base_opr_case(N)                                        \
+                     case N : {                                                      \
+                                 expression_node_ptr pl##N[N] = {0};                 \
+                                 std::copy(param_list,param_list + N,pl##N);         \
+                                 lodge_symbol(operation_name,e_st_function);         \
+                                 return expression_generator_(operation.type,pl##N); \
+                              }                                                      \
 
                      base_opr_case(1)
                      base_opr_case(2)
@@ -17370,7 +17797,7 @@ namespace exprtk
 
                   return error_node();
                }
-               else if (!symbol_table_.is_variable(loop_counter_symbol))
+               else if (!symtab_store_.is_variable(loop_counter_symbol))
                {
                   if (
                        !se->active &&
@@ -17414,8 +17841,7 @@ namespace exprtk
                              "ERR58 - Failed to parse initialiser of for-loop"));
                result = false;
             }
-
-            if (!token_is(token_t::e_eof))
+            else if (!token_is(token_t::e_eof))
             {
                set_error(
                   make_error(parser_error::e_syntax,
@@ -17795,6 +18221,8 @@ namespace exprtk
 
          scoped_vec_delete<expression_node_t> sdd(*this,arg_list);
 
+         lodge_symbol(symbol,e_st_function);
+
          next_token();
          if (!token_is(token_t::e_lbracket))
          {
@@ -17880,7 +18308,9 @@ namespace exprtk
 
       inline void parse_pending_string_rangesize(expression_node_ptr& expression)
       {
+         // Allow no more than 100 range calls, eg: s[][][]...[][]
          const std::size_t max_rangesize_parses = 100;
+
          std::size_t i = 0;
 
          while
@@ -18177,7 +18607,7 @@ namespace exprtk
       {
          const std::string symbol = current_token_.value;
 
-         if (!symbol_table_.is_conststr_stringvar(symbol))
+         if (!symtab_store_.is_conststr_stringvar(symbol))
          {
             set_error(
                make_error(parser_error::e_syntax,
@@ -18187,12 +18617,12 @@ namespace exprtk
             return error_node();
          }
 
-         expression_node_ptr result = symbol_table_.get_stringvar(symbol);
+         expression_node_ptr result = symtab_store_.get_stringvar(symbol);
 
          typedef details::stringvar_node<T>* strvar_node_t;
          strvar_node_t const_str_node = static_cast<strvar_node_t>(0);
 
-         const bool is_const_string = symbol_table_.is_constant_string(symbol);
+         const bool is_const_string = symtab_store_.is_constant_string(symbol);
 
          if (is_const_string)
          {
@@ -18323,7 +18753,7 @@ namespace exprtk
               (scope_element::e_vector != se.type)
             )
          {
-            if (0 == (vec = symbol_table_.get_vector(symbol)))
+            if (0 == (vec = symtab_store_.get_vector(symbol)))
             {
                set_error(
                   make_error(parser_error::e_syntax,
@@ -18629,7 +19059,7 @@ namespace exprtk
                      param_type_list += 'V';
                   else if (is_generally_string_node(arg))
                      param_type_list += 'S';
-                  else // Everything else is assumed to be scalar returning expression
+                  else // Everything else is assumed to be a scalar returning expression
                      param_type_list += 'T';
 
                   arg_list.push_back(arg);
@@ -19223,7 +19653,7 @@ namespace exprtk
 
             return error_node();
          }
-         else if (symbol_table_.symbol_exists(var_name))
+         else if (symtab_store_.symbol_exists(var_name))
          {
             set_error(
                make_error(parser_error::e_syntax,
@@ -19473,9 +19903,9 @@ namespace exprtk
          }
          else
          {
-            if (symbol_table_.is_variable(var0_name))
+            if (symtab_store_.is_variable(var0_name))
             {
-               variable0 = symbol_table_.get_variable(var0_name);
+               variable0 = symtab_store_.get_variable(var0_name);
             }
 
             scope_element& se = sem_.get_element(var0_name);
@@ -19556,9 +19986,9 @@ namespace exprtk
          }
          else
          {
-            if (symbol_table_.is_variable(var1_name))
+            if (symtab_store_.is_variable(var1_name))
             {
-               variable1 = symbol_table_.get_variable(var1_name);
+               variable1 = symtab_store_.get_variable(var1_name);
             }
 
             scope_element& se = sem_.get_element(var1_name);
@@ -19717,11 +20147,11 @@ namespace exprtk
          const std::string symbol = current_token_.value;
 
          // Are we dealing with a variable or a special constant?
-         expression_node_ptr variable = symbol_table_.get_variable(symbol);
+         expression_node_ptr variable = symtab_store_.get_variable(symbol);
 
          if (variable)
          {
-            if (symbol_table_.is_constant_node(symbol))
+            if (symtab_store_.is_constant_node(symbol))
             {
                variable = expression_generator_(variable->value());
             }
@@ -19763,7 +20193,7 @@ namespace exprtk
 
          #ifndef exprtk_disable_string_capabilities
          // Are we dealing with a string variable?
-         if (symbol_table_.is_stringvar(symbol))
+         if (symtab_store_.is_stringvar(symbol))
          {
             return parse_string();
          }
@@ -19771,7 +20201,7 @@ namespace exprtk
 
          {
             // Are we dealing with a function?
-            ifunction<T>* function = symbol_table_.get_function(symbol);
+            ifunction<T>* function = symtab_store_.get_function(symbol);
 
             if (function)
             {
@@ -19796,7 +20226,7 @@ namespace exprtk
 
          {
             // Are we dealing with a vararg function?
-            ivararg_function<T>* vararg_function = symbol_table_.get_vararg_function(symbol);
+            ivararg_function<T>* vararg_function = symtab_store_.get_vararg_function(symbol);
 
             if (vararg_function)
             {
@@ -19821,7 +20251,7 @@ namespace exprtk
 
          {
             // Are we dealing with a vararg generic function?
-            igeneric_function<T>* generic_function = symbol_table_.get_generic_function(symbol);
+            igeneric_function<T>* generic_function = symtab_store_.get_generic_function(symbol);
 
             if (generic_function)
             {
@@ -19845,8 +20275,8 @@ namespace exprtk
          }
 
          {
-            // Are we dealing with a vararg string returing function?
-            igeneric_function<T>* string_function = symbol_table_.get_string_function(symbol);
+            // Are we dealing with a vararg string returning function?
+            igeneric_function<T>* string_function = symtab_store_.get_string_function(symbol);
 
             if (string_function)
             {
@@ -19870,7 +20300,7 @@ namespace exprtk
          }
 
          // Are we dealing with a vector element?
-         if (symbol_table_.is_vector(symbol))
+         if (symtab_store_.is_vector(symbol))
          {
             lodge_symbol(symbol,e_st_vector);
             return parse_vector();
@@ -19897,12 +20327,14 @@ namespace exprtk
             {
                bool create_result = false;
 
+               symbol_table_t& symtab = symtab_store_.get_symbol_table();
+
                switch (usr_symbol_type)
                {
-                  case unknown_symbol_resolver::e_usr_variable_type : create_result = symbol_table_.create_variable(symbol,default_value);
+                  case unknown_symbol_resolver::e_usr_variable_type : create_result = symtab.create_variable(symbol,default_value);
                                                                       break;
 
-                  case unknown_symbol_resolver::e_usr_constant_type : create_result = symbol_table_.add_constant(symbol,default_value);
+                  case unknown_symbol_resolver::e_usr_constant_type : create_result = symtab.add_constant(symbol,default_value);
                                                                       break;
 
                   default                                           : create_result = false;
@@ -19910,11 +20342,11 @@ namespace exprtk
 
                if (create_result)
                {
-                  expression_node_ptr var = symbol_table_.get_variable(symbol);
+                  expression_node_ptr var = symtab_store_.get_variable(symbol);
 
                   if (var)
                   {
-                     if (symbol_table_.is_constant_node(symbol))
+                     if (symtab_store_.is_constant_node(symbol))
                      {
                         var = expression_generator_(var->value());
                      }
@@ -19959,6 +20391,7 @@ namespace exprtk
          static const std::string symbol_continue = "continue";
          static const std::string symbol_var      = "var"     ;
          static const std::string symbol_swap     = "swap"    ;
+         static const std::string symbol_return   = "return"  ;
 
          if (valid_vararg_operation(current_token_.value))
          {
@@ -20014,7 +20447,7 @@ namespace exprtk
          {
             return parse_swap_statement();
          }
-         else if (symbol_table_.valid() || !sem_.empty())
+         else if (symtab_store_.valid() || !sem_.empty())
          {
             return parse_symtab_symbol();
          }
@@ -21992,11 +22425,11 @@ namespace exprtk
 
             switch (cst)
             {
-               case e_st_variable : symbol_name = parser_->symbol_table_
+               case e_st_variable : symbol_name = parser_->symtab_store_
                                                      .get_variable_name(node);
                                     break;
 
-               case e_st_string   : symbol_name = parser_->symbol_table_
+               case e_st_string   : symbol_name = parser_->symtab_store_
                                                      .get_stringvar_name(node);
                                     break;
 
@@ -22005,7 +22438,7 @@ namespace exprtk
 
                                        vector_holder_t& vh = static_cast<vector_node_t*>(node)->ref();
 
-                                       symbol_name = parser_->symbol_table_.get_vector_name(&vh);
+                                       symbol_name = parser_->symtab_store_.get_vector_name(&vh);
                                     }
                                     break;
 
@@ -22650,11 +23083,13 @@ namespace exprtk
                {
                   if (details::is_uv_node(branch[1]))
                   {
-                     details::operator_type o = static_cast<details::uv_base_node<Type>*>(branch[1])->operation();
+                     typedef details::uv_base_node<Type>* uvbn_ptr_t;
+
+                     details::operator_type o = static_cast<uvbn_ptr_t>(branch[1])->operation();
 
                      if (details::e_neg == o)
                      {
-                        const Type& v1 = static_cast<details::uv_base_node<Type>*>(branch[1])->v();
+                        const Type& v1 = static_cast<uvbn_ptr_t>(branch[1])->v();
 
                         free_node(*expr_gen.node_allocator_,branch[1]);
 
@@ -22721,11 +23156,13 @@ namespace exprtk
                {
                   if (details::is_uv_node(branch[0]))
                   {
-                     details::operator_type o = static_cast<details::uv_base_node<Type>*>(branch[0])->operation();
+                     typedef details::uv_base_node<Type>* uvbn_ptr_t;
+
+                     details::operator_type o = static_cast<uvbn_ptr_t>(branch[0])->operation();
 
                      if (details::e_neg == o)
                      {
-                        const Type& v0 = static_cast<details::uv_base_node<Type>*>(branch[0])->v();
+                        const Type& v0 = static_cast<uvbn_ptr_t>(branch[0])->v();
 
                         free_node(*expr_gen.node_allocator_,branch[0]);
 
@@ -22997,7 +23434,6 @@ namespace exprtk
                      }
 
                      result = cobnode;
-
                   }
                   else if (details::e_mul == cobnode->operation())
                   {
@@ -28540,7 +28976,7 @@ namespace exprtk
       lexer::token store_current_token_;
       expression_generator<T> expression_generator_;
       details::node_allocator node_allocator_;
-      symbol_table_t symbol_table_;
+      symtab_store symtab_store_;
       dependent_entity_collector dec_;
       std::size_t compile_options_;
       std::deque<parser_error::type> error_list_;
@@ -30149,8 +30585,8 @@ namespace exprtk
    namespace information
    {
       static const char* library = "Mathematical Expression Toolkit";
-      static const char* version = "2.7182818284590452353602874713526624977572470936999595";
-      static const char* date    = "20150111";
+      static const char* version = "2.71828182845904523536028747135266249775724709369995957";
+      static const char* date    = "20150330";
 
       static inline std::string data()
       {
