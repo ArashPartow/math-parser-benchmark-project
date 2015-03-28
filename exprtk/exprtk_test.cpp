@@ -3764,6 +3764,21 @@ inline bool run_test10()
         "~{ var x := 1 } + ~{ var x := 2 } == 3",
         "(~{ var x := 1 } + ~{ var x := 2 }) == (~{ var x := 2 } + ~{ var x := 1 })",
         "(~{ var x := 1 } + ~{ var x := 2 } + ~{~{ var x := 1 } + ~{ var x := 2 }}) == 6",
+        "(~{ var x[1] := [1] } + ~{ var x[1] := [2] } + ~{~{ var x[1] := [1] } + ~{ var x[1] := [2] }}) == 6",
+        "(~{ var x    := [1] } + ~{ var x[1] := [2] } + ~{~{ var x[1] := [1] } + ~{ var x[1] := [2] }}) == 6",
+        "(~{ var x[1] := [1] } + ~{ var x    := [2] } + ~{~{ var x[1] := [1] } + ~{ var x[1] := [2] }}) == 6",
+        "(~{ var x[1] := [1] } + ~{ var x[1] := [2] } + ~{~{ var x    := [1] } + ~{ var x[1] := [2] }}) == 6",
+        "(~{ var x[1] := [1] } + ~{ var x[1] := [2] } + ~{~{ var x[1] := [1] } + ~{ var x    := [2] }}) == 6",
+        "(~{~{ var x[1] := [1] } + ~{ var x[1] := [2] }} + ~{ var x[1] := [1] } + ~{ var x[1] := [2] }) == 6",
+        "(~{~{ var x    := [1] } + ~{ var x[1] := [2] }} + ~{ var x[1] := [1] } + ~{ var x[1] := [2] }) == 6",
+        "(~{~{ var x[1] := [1] } + ~{ var x    := [2] }} + ~{ var x[1] := [1] } + ~{ var x[1] := [2] }) == 6",
+        "(~{~{ var x[1] := [1] } + ~{ var x[1] := [2] }} + ~{ var x    := [1] } + ~{ var x[1] := [2] }) == 6",
+        "(~{~{ var x[1] := [1] } + ~{ var x[1] := [2] }} + ~{ var x[1] := [1] } + ~{ var x    := [2] }) == 6",
+        "(~{~{ var x[1] := [1] }} + ~{ var x[1] := [1] } + ~{ var x[1] := [2] } + ~{{ var x[1] := [2] }}) == 6",
+        "(~{~{ var x    := [1] }} + ~{ var x[1] := [1] } + ~{ var x[1] := [2] } + ~{{ var x[1] := [2] }}) == 6",
+        "(~{~{ var x[1] := [1] }} + ~{ var x    := [1] } + ~{ var x[1] := [2] } + ~{{ var x[1] := [2] }}) == 6",
+        "(~{~{ var x[1] := [1] }} + ~{ var x[1] := [1] } + ~{ var x    := [2] } + ~{{ var x[1] := [2] }}) == 6",
+        "(~{~{ var x[1] := [1] }} + ~{ var x[1] := [1] } + ~{ var x[1] := [2] } + ~{{ var x    := [2] }}) == 6",
         "(~{ var x[3] := [1] } + ~{ var x[6] := {6,5,4,3,2,1}}) == 7",
         "(~{ var x[6] := {6,5,4,3,2,1} } + ~{ var x := 1 }) == 7",
         "(~{ var x := 1 } + ~{ var x[6] := {6,5,4,3,2,1} }) == 7",
@@ -3899,7 +3914,12 @@ inline bool run_test10()
         "+ ~{ for (var i := 0; i < 10; i += 1) { for (var j := 0; j <= i; j += 1)  "
         " { var y := 3; var v2[3] := {1,2,3}; if ((i + j + y + x + abs(v0[i % v0[]] - "
         "v2[j % v2[]])) < 6) { var v3[3] := {1,2,3}; y += x / v3[j % v3[]];        "
-        "continue; } else break[i + j]; } } } ) == 18                              "
+        "continue; } else break[i + j]; } } } ) == 18                              ",
+
+        "12 == (if (1 > 2) { var x:= 2; } else { var x[3] := {7,2,3}; sum(x); })",
+        "12 == (if (1 < 2) { var x[3] := {7,2,3}; sum(x); } else { var x:= 2; })",
+        "12 == (if (1 > 2) { var x:= 2; } else { var x[3] := {7,2,3}; sum(x); })",
+        "12 == (if (1 < 2) { var x[3] := {7,2,3}; sum(x); } else { var x:= 2; })"
       };
 
       const std::size_t expression_list_size = sizeof(expression_list) / sizeof(std::string);
@@ -3930,7 +3950,8 @@ inline bool run_test10()
                          parser.error().c_str(),
                          expression_list[i].c_str());
 
-                  return false;
+                  failed = true;
+                  continue;
                }
             }
 
@@ -4157,7 +4178,9 @@ struct cosine_deg : public exprtk::ifunction<T>
 template <typename T>
 inline bool run_test13()
 {
-   typedef exprtk::expression<T> expression_t;
+   typedef exprtk::symbol_table<T> symbol_table_t;
+   typedef exprtk::expression<T>     expression_t;
+   typedef exprtk::parser<T>             parser_t;
 
    static const std::string expression_string[] =
                             {
@@ -4181,54 +4204,113 @@ inline bool run_test13()
 
    static const std::size_t expression_string_size = sizeof(expression_string) / sizeof(std::string);
 
-   T x_deg = T(30);
-   T y_deg = T(60);
-
-   sine_deg  <T>   sine;
-   cosine_deg<T> cosine;
-
-   exprtk::symbol_table<T> symbol_table_0;
-   exprtk::symbol_table<T> symbol_table_1;
-
-   symbol_table_0.add_variable("x_deg",x_deg);
-   symbol_table_1.add_variable("y_deg",y_deg);
-
-   symbol_table_0.add_function(  "sine_deg",   sine);
-   symbol_table_1.add_function("cosine_deg", cosine);
-
-   expression_t expression;
-
-   expression.register_symbol_table(symbol_table_0);
-   expression.register_symbol_table(symbol_table_1);
-
-   static const std::size_t rounds = 100;
-
-   for (std::size_t i = 0; i < rounds; ++i)
    {
-      for (std::size_t j = 0; j < expression_string_size; ++j)
+      T x_deg = T(30);
+      T y_deg = T(60);
+
+      sine_deg  <T>   sine;
+      cosine_deg<T> cosine;
+
+      symbol_table_t symbol_table_0;
+      symbol_table_t symbol_table_1;
+
+      symbol_table_0.add_variable("x_deg",x_deg);
+      symbol_table_1.add_variable("y_deg",y_deg);
+
+      symbol_table_0.add_function(  "sine_deg",   sine);
+      symbol_table_1.add_function("cosine_deg", cosine);
+
+      expression_t expression;
+
+      expression.register_symbol_table(symbol_table_0);
+      expression.register_symbol_table(symbol_table_1);
+
+      static const std::size_t rounds = 100;
+
+      for (std::size_t i = 0; i < rounds; ++i)
       {
-         const std::string& expr_str = expression_string[j];
-
+         for (std::size_t j = 0; j < expression_string_size; ++j)
          {
-            exprtk::parser<T> parser;
+            const std::string& expr_str = expression_string[j];
 
-            parser.replace_symbol("sin",   "sine_deg");
-            parser.replace_symbol("cos", "cosine_deg");
-
-            if (!parser.compile(expr_str,expression))
             {
-               printf("run_test13() - Error: %s   Expression: %s\n",
-                      parser.error().c_str(),
-                      expr_str.c_str());
+               parser_t parser;
 
+               parser.replace_symbol("sin",   "sine_deg");
+               parser.replace_symbol("cos", "cosine_deg");
+
+               if (!parser.compile(expr_str,expression))
+               {
+                  printf("run_test13() - Error: %s   Expression: %s  [1]\n",
+                         parser.error().c_str(),
+                         expr_str.c_str());
+
+                  return false;
+               }
+            }
+
+            if (T(1) != expression.value())
+            {
+               printf("run_test13() - Error in evaluation! Expression: %s  [1]\n",expr_str.c_str());
                return false;
             }
          }
+      }
+   }
 
-         if (T(1) != expression.value())
+   {
+      T x_deg = T(30);
+      T y_deg = T(60);
+
+      sine_deg  <T>   sine;
+      cosine_deg<T> cosine;
+
+      symbol_table_t symbol_table_0;
+      symbol_table_t symbol_table_1;
+
+      symbol_table_0.add_variable("x_deg",x_deg);
+      symbol_table_1.add_variable("y_deg",y_deg);
+
+      symbol_table_0.add_reserved_function("sin",  sine);
+      symbol_table_1.add_reserved_function("cos",cosine);
+
+      expression_t expression;
+
+      expression.register_symbol_table(symbol_table_0);
+      expression.register_symbol_table(symbol_table_1);
+
+      static const std::size_t rounds = 100;
+
+      for (std::size_t i = 0; i < rounds; ++i)
+      {
+         for (std::size_t j = 0; j < expression_string_size; ++j)
          {
-            printf("run_test13() - Error in evaluation! Expression: %s\n",expr_str.c_str());
-            return false;
+            const std::string& expr_str = expression_string[j];
+
+            {
+               typedef typename parser_t::settings_store settings_t;
+
+               parser_t parser;
+
+               parser.settings()
+                  .disable_base_function(settings_t::e_bf_sin)
+                  .disable_base_function(settings_t::e_bf_cos);
+
+               if (!parser.compile(expr_str,expression))
+               {
+                  printf("run_test13() - Error: %s   Expression: %s  [2]\n",
+                         parser.error().c_str(),
+                         expr_str.c_str());
+
+                  return false;
+               }
+            }
+
+            if (T(1) != expression.value())
+            {
+               printf("run_test13() - Error in evaluation! Expression: %s  [2]\n",expr_str.c_str());
+               return false;
+            }
          }
       }
    }
@@ -6425,11 +6507,18 @@ inline bool run_test20()
 
    for (std::size_t i = 0; i < 100; ++i)
    {
-      exprtk::symbol_table<T> symbol_table;
-      symbol_table.add_constants();
+      exprtk::symbol_table<T> symbol_table0;
+      exprtk::symbol_table<T> symbol_table1;
+      exprtk::symbol_table<T> symbol_table2;
+      exprtk::symbol_table<T> symbol_table3;
+
+      symbol_table0.add_constants();
 
       expression_t expression;
-      expression.register_symbol_table(symbol_table);
+      expression.register_symbol_table(symbol_table0);
+      expression.register_symbol_table(symbol_table1);
+      expression.register_symbol_table(symbol_table2);
+      expression.register_symbol_table(symbol_table3);
 
       exprtk::parser<T> parser;
 
