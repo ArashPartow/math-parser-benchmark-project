@@ -581,9 +581,9 @@ of C++ compilers:
 |          | eg:                                                     |
 |          | [*]                                                     |
 |          | {                                                       |
-|          |   case (x + 1) > (y - 2)   : x := z / 2 + sin(y / pi);  |
-|          |   case (x + 2) < abs(y + 3): w / 4 + min(5y,9);         |
-|          |   case (x + 3) = (y * 4)   : y := abs(z / 6) + 7y;      |
+|          |   case (x + 1) > (y - 2)    : x := z / 2 + sin(y / pi); |
+|          |   case (x + 2) < abs(y + 3) : w / 4 + min(5y,9);        |
+|          |   case (x + 3) == (y * 4)   : y := abs(z / 6) + 7y;     |
 |          | }                                                       |
 +----------+---------------------------------------------------------+
 | []       | The vector size operator returns the size of the vector |
@@ -593,7 +593,7 @@ of C++ compilers:
 |          | 2. max_size := max(v0[],v1[],v2[],v3[])                 |
 +----------+---------------------------------------------------------+
 
-Note: In  the  above  tables, the  symbols x, y, z, w, u  and v  where
+Note: In  the  tables  above, the  symbols x, y, z, w, u  and v  where
 appropriate may represent any of one the following:
 
    1. Literal numeric/string value
@@ -705,7 +705,7 @@ current values assigned to the variables will be used.
    expression.value(); // 3.7 * -9 + 3
 
    // 'x * -9 + 3' for x in range of [0,100) in steps of 0.0001
-   for (var x = 0; x < 100; x += 0.0001)
+   for (x = 0; x < 100; x += 0.0001)
    {
       expression.value(); // x * -9 + 3
    }
@@ -785,7 +785,7 @@ The above denoted AST will be evaluated in the following order:
    (02) Load Variable  (x)        (11) Subtraction    (09 & 10)
    (03) Load Variable  (y)        (12) Load Variable  (v)
    (04) Load Constant  (2.345)    (13) Min            (11 & 12)
-   (05) Negation       (04)       (14) Division       (10 & 13)
+   (05) Negation       (04)       (14) Division       (08 & 13)
    (06) Exponentiation (03 & 05)  (15) Sin            (14)
    (07) Addition       (02 & 06)  (16) Multiplication (07 & 15)
    (08) Load Constant  (pi)       (17) Assignment     (01 & 16)
@@ -1307,10 +1307,10 @@ example defines a generic function called 'too':
    };
 
 
-In the above example, the input 'parameters' to the function operator,
+In the example above, the input 'parameters' to the function operator,
 parameter_list_t,  is  a  type  of  std::vector  of  type_store.  Each
 type_store  instance  has  a  member  called  'type'  which  holds the
-enumeration pertaining  the underlying  type of  the type_store. There
+enumeration pertaining to the underlying type of the type_store. There
 are three type enumerations:
 
    (1) e_scalar - literals, variables, vector elements, expressions
@@ -1570,7 +1570,7 @@ particular parameter sequence can be performed.
    };
 
 
-In the above example there are four distinct parameter sequences  that
+In the example above there are four distinct parameter sequences  that
 can be processed  by the generic  function 'roo'. Any  other parameter
 sequences will cause a compilation error. The four valid sequences are
 as follows:
@@ -2039,7 +2039,7 @@ redefined as a function taking degree input.
     parser.compile("1 + sin(30)",expression);
 
 
-In the above example, the custom 'sin' function is registered with the
+In the example above, the custom 'sin' function is registered with the
 symbol_table using the method 'add_reserved_function'. This is done so
 as to bypass the checks for reserved words that are carried out on the
 provided symbol names when calling the standard 'add_function' method.
