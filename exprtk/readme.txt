@@ -403,17 +403,17 @@ of C++ compilers:
 |          | in the event they have fractional components truncation |
 |          | will be performed. (eg: 1.67 --> 1)                     |
 +----------+---------------------------------------------------------+
-|  :=      | Assign the value of x to y. Where x is a mutable string |
-|          | or string range and y is either a string or a string    |
+|  :=      | Assign the value of x to y. Where y is a mutable string |
+|          | or string range and x is either a string or a string    |
 |          | range. eg:                                              |
-|          | 1. x := y                                               |
-|          | 2. x := 'abc'                                           |
-|          | 3. x := y[:i + j]                                       |
-|          | 4. x := '0123456789'[2:7]                               |
-|          | 5. x := '0123456789'[2i + 1:7]                          |
-|          | 6. x := (y := '0123456789'[2:7])                        |
-|          | 7. x[i:j] := y                                          |
-|          | 8. x[i:j] := (y + 'abcdefg'[8 / 4:5])[m:n]              |
+|          | 1. y := x                                               |
+|          | 2. y := 'abc'                                           |
+|          | 3. y := x[:i + j]                                       |
+|          | 4. y := '0123456789'[2:7]                               |
+|          | 5. y := '0123456789'[2i + 1:7]                          |
+|          | 6. y := (x := '0123456789'[2:7])                        |
+|          | 7. y[i:j] := x                                          |
+|          | 8. y[i:j] := (x + 'abcdefg'[8 / 4:5])[m:n]              |
 |          |                                                         |
 |          | Note: For options 7 and 8 the shorter of the two ranges |
 |          | will denote the number characters that are to be copied.|
@@ -2261,9 +2261,10 @@ into account when using ExprTk:
  (06) All  reserved words,  keywords, variable,  vector, string   and
       function names are case-insensitive.
 
- (07) Variable, vector and  function names must  begin with a  letter
-      (A-Z  or a-z),  then  can  be comprised  of any  combination of
-      letters, digits and underscores. (eg: x, var1 or power_func99)
+ (07) Variable, vector, string variable and function names must begin
+      with  a  letter  (A-Z or  a-z), then  can be  comprised of  any
+      combination of letters, digits and underscores. (eg: x, var1 or
+      power_func99)
 
  (08) Expression lengths and sub-expression lists are limited only by
       storage capacity.
