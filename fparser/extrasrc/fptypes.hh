@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.5.1                                          *|
+|* Function Parser for C++ v4.5.2                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -101,8 +101,6 @@ namespace FUNCTIONPARSERTYPES
 
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
         const char name[8];
-#else
-        struct name { } name;
 #endif
         unsigned params : 8;
         unsigned flags  : 8;
@@ -112,54 +110,54 @@ namespace FUNCTIONPARSERTYPES
     };
 
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
-# define FP_FNAME(n) n
+# define FP_FNAME(n) n,
 #else
-# define FP_FNAME(n) {}
+# define FP_FNAME(n)
 #endif
 // This list must be in the same order as that in OPCODE enum,
 // because the opcode value is used to index this array, and
 // the pointer to array element is used for generating the opcode.
     const FuncDefinition Functions[]=
     {
-        /*cAbs  */ { FP_FNAME("abs"),   1, FuncDefinition::OkForInt },
-        /*cAcos */ { FP_FNAME("acos"),  1, FuncDefinition::AngleOut },
-        /*cAcosh*/ { FP_FNAME("acosh"), 1, FuncDefinition::AngleOut },
-        /*cArg */  { FP_FNAME("arg"),   1, FuncDefinition::AngleOut | FuncDefinition::ComplexOnly },
-        /*cAsin */ { FP_FNAME("asin"),  1, FuncDefinition::AngleOut },
-        /*cAsinh*/ { FP_FNAME("asinh"), 1, FuncDefinition::AngleOut },
-        /*cAtan */ { FP_FNAME("atan"),  1, FuncDefinition::AngleOut },
-        /*cAtan2*/ { FP_FNAME("atan2"), 2, FuncDefinition::AngleOut },
-        /*cAtanh*/ { FP_FNAME("atanh"), 1, 0 },
-        /*cCbrt */ { FP_FNAME("cbrt"),  1, 0 },
-        /*cCeil */ { FP_FNAME("ceil"),  1, 0 },
-        /*cConj */ { FP_FNAME("conj"),  1, FuncDefinition::ComplexOnly },
-        /*cCos  */ { FP_FNAME("cos"),   1, FuncDefinition::AngleIn },
-        /*cCosh */ { FP_FNAME("cosh"),  1, FuncDefinition::AngleIn },
-        /*cCot  */ { FP_FNAME("cot"),   1, FuncDefinition::AngleIn },
-        /*cCsc  */ { FP_FNAME("csc"),   1, FuncDefinition::AngleIn },
-        /*cExp  */ { FP_FNAME("exp"),   1, 0 },
-        /*cExp2 */ { FP_FNAME("exp2"),  1, 0 },
-        /*cFloor*/ { FP_FNAME("floor"), 1, 0 },
-        /*cHypot*/ { FP_FNAME("hypot"), 2, 0 },
-        /*cIf   */ { FP_FNAME("if"),    0, FuncDefinition::OkForInt },
-        /*cImag */ { FP_FNAME("imag"),  1, FuncDefinition::ComplexOnly },
-        /*cInt  */ { FP_FNAME("int"),   1, 0 },
-        /*cLog  */ { FP_FNAME("log"),   1, 0 },
-        /*cLog10*/ { FP_FNAME("log10"), 1, 0 },
-        /*cLog2 */ { FP_FNAME("log2"),  1, 0 },
-        /*cMax  */ { FP_FNAME("max"),   2, FuncDefinition::OkForInt },
-        /*cMin  */ { FP_FNAME("min"),   2, FuncDefinition::OkForInt },
-        /*cPolar */{ FP_FNAME("polar"), 2, FuncDefinition::ComplexOnly | FuncDefinition::AngleIn },
-        /*cPow  */ { FP_FNAME("pow"),   2, 0 },
-        /*cReal */ { FP_FNAME("real"),  1, FuncDefinition::ComplexOnly },
-        /*cSec  */ { FP_FNAME("sec"),   1, FuncDefinition::AngleIn },
-        /*cSin  */ { FP_FNAME("sin"),   1, FuncDefinition::AngleIn },
-        /*cSinh */ { FP_FNAME("sinh"),  1, FuncDefinition::AngleIn },
-        /*cSqrt */ { FP_FNAME("sqrt"),  1, 0 },
-        /*cTan  */ { FP_FNAME("tan"),   1, FuncDefinition::AngleIn },
-        /*cTanh */ { FP_FNAME("tanh"),  1, FuncDefinition::AngleIn },
-        /*cTrunc*/ { FP_FNAME("trunc"), 1, 0 },
-	};
+        /*cAbs  */ { FP_FNAME("abs")   1, FuncDefinition::OkForInt },
+        /*cAcos */ { FP_FNAME("acos")  1, FuncDefinition::AngleOut },
+        /*cAcosh*/ { FP_FNAME("acosh") 1, FuncDefinition::AngleOut },
+        /*cArg */  { FP_FNAME("arg")   1, FuncDefinition::AngleOut | FuncDefinition::ComplexOnly },
+        /*cAsin */ { FP_FNAME("asin")  1, FuncDefinition::AngleOut },
+        /*cAsinh*/ { FP_FNAME("asinh") 1, FuncDefinition::AngleOut },
+        /*cAtan */ { FP_FNAME("atan")  1, FuncDefinition::AngleOut },
+        /*cAtan2*/ { FP_FNAME("atan2") 2, FuncDefinition::AngleOut },
+        /*cAtanh*/ { FP_FNAME("atanh") 1, 0 },
+        /*cCbrt */ { FP_FNAME("cbrt")  1, 0 },
+        /*cCeil */ { FP_FNAME("ceil")  1, 0 },
+        /*cConj */ { FP_FNAME("conj")  1, FuncDefinition::ComplexOnly },
+        /*cCos  */ { FP_FNAME("cos")   1, FuncDefinition::AngleIn },
+        /*cCosh */ { FP_FNAME("cosh")  1, FuncDefinition::AngleIn },
+        /*cCot  */ { FP_FNAME("cot")   1, FuncDefinition::AngleIn },
+        /*cCsc  */ { FP_FNAME("csc")   1, FuncDefinition::AngleIn },
+        /*cExp  */ { FP_FNAME("exp")   1, 0 },
+        /*cExp2 */ { FP_FNAME("exp2")  1, 0 },
+        /*cFloor*/ { FP_FNAME("floor") 1, 0 },
+        /*cHypot*/ { FP_FNAME("hypot") 2, 0 },
+        /*cIf   */ { FP_FNAME("if")    0, FuncDefinition::OkForInt },
+        /*cImag */ { FP_FNAME("imag")  1, FuncDefinition::ComplexOnly },
+        /*cInt  */ { FP_FNAME("int")   1, 0 },
+        /*cLog  */ { FP_FNAME("log")   1, 0 },
+        /*cLog10*/ { FP_FNAME("log10") 1, 0 },
+        /*cLog2 */ { FP_FNAME("log2")  1, 0 },
+        /*cMax  */ { FP_FNAME("max")   2, FuncDefinition::OkForInt },
+        /*cMin  */ { FP_FNAME("min")   2, FuncDefinition::OkForInt },
+        /*cPolar */{ FP_FNAME("polar") 2, FuncDefinition::ComplexOnly | FuncDefinition::AngleIn },
+        /*cPow  */ { FP_FNAME("pow")   2, 0 },
+        /*cReal */ { FP_FNAME("real")  1, FuncDefinition::ComplexOnly },
+        /*cSec  */ { FP_FNAME("sec")   1, FuncDefinition::AngleIn },
+        /*cSin  */ { FP_FNAME("sin")   1, FuncDefinition::AngleIn },
+        /*cSinh */ { FP_FNAME("sinh")  1, FuncDefinition::AngleIn },
+        /*cSqrt */ { FP_FNAME("sqrt")  1, 0 },
+        /*cTan  */ { FP_FNAME("tan")   1, FuncDefinition::AngleIn },
+        /*cTanh */ { FP_FNAME("tanh")  1, FuncDefinition::AngleIn },
+        /*cTrunc*/ { FP_FNAME("trunc") 1, 0 }
+    };
 #undef FP_FNAME
 
     struct NamePtr

@@ -208,6 +208,34 @@
       <Filter>lepton</Filter>
     </ClCompile>
     <ClCompile Include="..\BenchExprTkMPFR.cpp" />
+    <ClCompile Include="..\BenchMathPressoDouble.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_AST.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Context.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_DOT.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_JIT.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Optimizer.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Parser.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Tokenizer.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Util.cpp">
+      <Filter>mathpressodouble</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\atmsp\atmsp.h">
@@ -651,6 +679,34 @@
     <ClInclude Include="..\exprtk\exprtk_mpfr_adaptor.hpp">
       <Filter>exprtk</Filter>
     </ClInclude>
+    <ClInclude Include="..\BenchMathPressoDouble.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_AST_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Context_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_DOT_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_JIT_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Optimizer_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Parser_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Tokenizer_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Util_p.h">
+      <Filter>mathpressodouble</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
@@ -699,6 +755,9 @@
     </Filter>
     <Filter Include="mpfr">
       <UniqueIdentifier>{7d03bb0e-8cbc-4f3f-8619-2050f99cd007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mathpressodouble">
+      <UniqueIdentifier>{1aca9df1-d9c7-49be-abc8-eec1ad4dc859}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -83,7 +83,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>..\mpfr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MathPressoDouble;..\mpfr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,6 +111,7 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\BenchLepton.h" />
     <ClInclude Include="..\Benchmark.h" />
     <ClInclude Include="..\BenchMathExpr.h" />
+    <ClInclude Include="..\BenchMathPressoDouble.h" />
     <ClInclude Include="..\BenchMuParser2.h" />
     <ClInclude Include="..\BenchMuParserSSE.h" />
     <ClInclude Include="..\BenchMuParserX.h" />
@@ -170,6 +171,15 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\libcpuid\recog_amd.h" />
     <ClInclude Include="..\libcpuid\recog_intel.h" />
     <ClInclude Include="..\MathExpr\mathexpr.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_AST_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Context_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_DOT_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_JIT_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Optimizer_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Parser_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Tokenizer_p.h" />
+    <ClInclude Include="..\MathPressoDouble\MathPresso_Util_p.h" />
     <ClInclude Include="..\mpfr\include\config.h" />
     <ClInclude Include="..\mpfr\include\gmp-mparam.h" />
     <ClInclude Include="..\mpfr\include\gmp.h" />
@@ -257,6 +267,7 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="..\BenchLepton.cpp" />
     <ClCompile Include="..\Benchmark.cpp" />
     <ClCompile Include="..\BenchMathExpr.cpp" />
+    <ClCompile Include="..\BenchMathPressoDouble.cpp" />
     <ClCompile Include="..\BenchMTParser.cpp" />
     <ClCompile Include="..\BenchMuParser2.cpp" />
     <ClCompile Include="..\BenchMuParserSSE.cpp" />
@@ -276,6 +287,15 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="..\libcpuid\recog_amd.c" />
     <ClCompile Include="..\libcpuid\recog_intel.c" />
     <ClCompile Include="..\MathExpr\mathexpr.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_AST.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Context.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_DOT.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_JIT.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Optimizer.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Parser.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Tokenizer.cpp" />
+    <ClCompile Include="..\MathPressoDouble\MathPresso_Util.cpp" />
     <ClCompile Include="..\MTParser\MTParserLib\MTParser.cpp" />
     <ClCompile Include="..\MTParser\MTParserLib\MTParserCompiler.cpp" />
     <ClCompile Include="..\MTParser\MTParserLib\MTParserExcepStrEng.cpp" />

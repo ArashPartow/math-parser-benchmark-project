@@ -456,14 +456,14 @@ int main(int argc, const char *argv[])
    // the reference parser be precise when computing expressions.
    //
 
-   vBenchmarks.push_back(new BenchExprTk()        );  // <-- Note: first parser becomes the reference!
-   vBenchmarks.push_back(new BenchMuParser2(false));
-   vBenchmarks.push_back(new BenchMuParser2(true) );
-   vBenchmarks.push_back(new BenchMuParserX()     );
-   vBenchmarks.push_back(new BenchATMSP()         );
-   vBenchmarks.push_back(new BenchLepton()        );
-   vBenchmarks.push_back(new BenchFParser()       );
-   vBenchmarks.push_back(new BenchMathExpr()      );
+   vBenchmarks.push_back(new BenchExprTk()          );  // <-- Note: first parser becomes the reference!
+   vBenchmarks.push_back(new BenchMuParser2(false)  );
+   vBenchmarks.push_back(new BenchMuParser2(true)   );
+   vBenchmarks.push_back(new BenchMuParserX()       );
+   vBenchmarks.push_back(new BenchATMSP()           );
+   vBenchmarks.push_back(new BenchLepton()          );
+   vBenchmarks.push_back(new BenchFParser()         );
+   vBenchmarks.push_back(new BenchMathExpr()        );
    #if defined(_MSC_VER) && defined(NDEBUG)
    vBenchmarks.push_back(new BenchMTParser());        // <-- Crash in debug mode
    #endif
