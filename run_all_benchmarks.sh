@@ -5,5 +5,4 @@
 ./ParserBench.exe 100000 bench_expr_extensive.txt
 ./ParserBench.exe 100000 bench_expr_precedence.txt
 ./ParserBench.exe 100000 bench_expr_weird.txt
-./ParserBench.exe 1000 bench_expr_complete.txt
-
+./ParserBench.exe 10000  bench_expr_complete.txt

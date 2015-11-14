@@ -53,11 +53,11 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_USE_MATH_DEFINES;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
-      <AdditionalIncludeDirectories>..\mpfr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\include;..\mpfr</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,12 +78,12 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>..\MathPressoDouble;..\mpfr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\include;..\mpfr</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,19 +102,6 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClInclude Include="..\atmsp\atmsp.base.h" />
     <ClInclude Include="..\atmsp\atmsp.h" />
-    <ClInclude Include="..\BenchATMSP.h" />
-    <ClInclude Include="..\BenchChaiScript.h" />
-    <ClInclude Include="..\BenchExprTk.h" />
-    <ClInclude Include="..\BenchExprTkFloat.h" />
-    <ClInclude Include="..\BenchExprTkMPFR.h" />
-    <ClInclude Include="..\BenchFParser.h" />
-    <ClInclude Include="..\BenchLepton.h" />
-    <ClInclude Include="..\Benchmark.h" />
-    <ClInclude Include="..\BenchMathExpr.h" />
-    <ClInclude Include="..\BenchMathPressoDouble.h" />
-    <ClInclude Include="..\BenchMuParser2.h" />
-    <ClInclude Include="..\BenchMuParserSSE.h" />
-    <ClInclude Include="..\BenchMuParserX.h" />
     <ClInclude Include="..\chaiscript\chaiscript.hpp" />
     <ClInclude Include="..\chaiscript\chaiscript_defines.hpp" />
     <ClInclude Include="..\chaiscript\chaiscript_stdlib.hpp" />
@@ -149,10 +136,24 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\chaiscript\language\chaiscript_prelude.hpp" />
     <ClInclude Include="..\chaiscript\language\chaiscript_prelude_docs.hpp" />
     <ClInclude Include="..\chaiscript\utility\utility.hpp" />
-    <ClInclude Include="..\cpuid.h" />
     <ClInclude Include="..\exprtk\exprtk.hpp" />
     <ClInclude Include="..\exprtk\exprtk_mpfr_adaptor.hpp" />
-    <ClInclude Include="..\FormelGenerator.h" />
+    <ClInclude Include="..\include\BenchATMSP.h" />
+    <ClInclude Include="..\include\BenchChaiScript.h" />
+    <ClInclude Include="..\include\BenchExprTk.h" />
+    <ClInclude Include="..\include\BenchExprTkFloat.h" />
+    <ClInclude Include="..\include\BenchExprTkMPFR.h" />
+    <ClInclude Include="..\include\BenchFParser.h" />
+    <ClInclude Include="..\include\BenchLepton.h" />
+    <ClInclude Include="..\include\Benchmark.h" />
+    <ClInclude Include="..\include\BenchMathExpr.h" />
+    <ClInclude Include="..\include\BenchMTParser.h" />
+    <ClInclude Include="..\include\BenchMuParser2.h" />
+    <ClInclude Include="..\include\BenchMuParserSSE.h" />
+    <ClInclude Include="..\include\BenchMuParserX.h" />
+    <ClInclude Include="..\include\cpuid.h" />
+    <ClInclude Include="..\include\FormelGenerator.h" />
+    <ClInclude Include="..\include\Stopwatch.h" />
     <ClInclude Include="..\lepton\CustomFunction.h" />
     <ClInclude Include="..\lepton\Exception.h" />
     <ClInclude Include="..\lepton\ExpressionProgram.h" />
@@ -171,15 +172,6 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\libcpuid\recog_amd.h" />
     <ClInclude Include="..\libcpuid\recog_intel.h" />
     <ClInclude Include="..\MathExpr\mathexpr.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_AST_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_Context_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_DOT_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_JIT_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_Optimizer_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_Parser_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_Tokenizer_p.h" />
-    <ClInclude Include="..\MathPressoDouble\MathPresso_Util_p.h" />
     <ClInclude Include="..\mpfr\include\config.h" />
     <ClInclude Include="..\mpfr\include\gmp-mparam.h" />
     <ClInclude Include="..\mpfr\include\gmp.h" />
@@ -256,24 +248,8 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\muparserx\suSortPred.h" />
     <ClInclude Include="..\muparserx\suStringTokens.h" />
     <ClInclude Include="..\muparserx\utGeneric.h" />
-    <ClInclude Include="..\Stopwatch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\BenchATMSP.cpp" />
-    <ClCompile Include="..\BenchExprTk.cpp" />
-    <ClCompile Include="..\BenchExprTkFloat.cpp" />
-    <ClCompile Include="..\BenchExprTkMPFR.cpp" />
-    <ClCompile Include="..\BenchFParser.cpp" />
-    <ClCompile Include="..\BenchLepton.cpp" />
-    <ClCompile Include="..\Benchmark.cpp" />
-    <ClCompile Include="..\BenchMathExpr.cpp" />
-    <ClCompile Include="..\BenchMathPressoDouble.cpp" />
-    <ClCompile Include="..\BenchMTParser.cpp" />
-    <ClCompile Include="..\BenchMuParser2.cpp" />
-    <ClCompile Include="..\BenchMuParserSSE.cpp" />
-    <ClCompile Include="..\BenchMuParserX.cpp" />
-    <ClCompile Include="..\cpuid.cpp" />
-    <ClCompile Include="..\FormelGenerator.cpp" />
     <ClCompile Include="..\fparser\fparser.cc" />
     <ClCompile Include="..\lepton\ExpressionProgram.cpp" />
     <ClCompile Include="..\lepton\ExpressionTreeNode.cpp" />
@@ -287,15 +263,6 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="..\libcpuid\recog_amd.c" />
     <ClCompile Include="..\libcpuid\recog_intel.c" />
     <ClCompile Include="..\MathExpr\mathexpr.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_AST.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_Context.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_DOT.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_JIT.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_Optimizer.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_Parser.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_Tokenizer.cpp" />
-    <ClCompile Include="..\MathPressoDouble\MathPresso_Util.cpp" />
     <ClCompile Include="..\MTParser\MTParserLib\MTParser.cpp" />
     <ClCompile Include="..\MTParser\MTParserLib\MTParserCompiler.cpp" />
     <ClCompile Include="..\MTParser\MTParserLib\MTParserExcepStrEng.cpp" />
@@ -346,8 +313,23 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="..\muparserx\mpValue.cpp" />
     <ClCompile Include="..\muparserx\mpValueCache.cpp" />
     <ClCompile Include="..\muparserx\mpVariable.cpp" />
-    <ClCompile Include="..\ParserBench.cpp" />
-    <ClCompile Include="..\Stopwatch.cpp" />
+    <ClCompile Include="..\src\BenchATMSP.cpp" />
+    <ClCompile Include="..\src\BenchChaiScript.cpp" />
+    <ClCompile Include="..\src\BenchExprTk.cpp" />
+    <ClCompile Include="..\src\BenchExprTkFloat.cpp" />
+    <ClCompile Include="..\src\BenchExprTkMPFR.cpp" />
+    <ClCompile Include="..\src\BenchFParser.cpp" />
+    <ClCompile Include="..\src\BenchLepton.cpp" />
+    <ClCompile Include="..\src\Benchmark.cpp" />
+    <ClCompile Include="..\src\BenchMathExpr.cpp" />
+    <ClCompile Include="..\src\BenchMTParser.cpp" />
+    <ClCompile Include="..\src\BenchMuParser2.cpp" />
+    <ClCompile Include="..\src\BenchMuParserSSE.cpp" />
+    <ClCompile Include="..\src\BenchMuParserX.cpp" />
+    <ClCompile Include="..\src\cpuid.cpp" />
+    <ClCompile Include="..\src\FormelGenerator.cpp" />
+    <ClCompile Include="..\src\ParserBench.cpp" />
+    <ClCompile Include="..\src\Stopwatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\muParserSSE\muParserSSE.lib" />
