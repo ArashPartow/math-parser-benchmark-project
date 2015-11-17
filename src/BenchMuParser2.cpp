@@ -59,12 +59,14 @@ double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
                        // (Speed of bytecode creation is irrelevant)
 
       StartTimer();
+
       for (int j = 0; j < iCount; ++j)
       {
          fSum += p.Eval();
          std::swap(a,b);
          std::swap(x,y);
       }
+
       StopTimer(fRes, fSum, iCount);
    }
    catch(ParserError &exc)

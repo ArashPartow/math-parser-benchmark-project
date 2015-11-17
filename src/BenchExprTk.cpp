@@ -58,13 +58,17 @@ double BenchExprTk::DoBenchmark(const std::string& sExpr, long iCount)
    double fSum  = 0;
 
    fRes = expression.value();
+
    StartTimer();
-   for (int j = 0; j < iCount; j++)
+
+   for (int j = 0; j < iCount; ++j)
    {
       fSum += expression.value();
       std::swap(a,b);
       std::swap(x,y);
    }
+
    StopTimer(fRes, fSum, iCount);
+
    return m_fTime1;
 }

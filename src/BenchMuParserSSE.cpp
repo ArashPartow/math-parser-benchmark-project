@@ -59,7 +59,8 @@ double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
       fRes = ptfun();
 
       StartTimer();
-      for (int j = 0 ; j < iCount; j++)
+
+      for (int j = 0 ; j < iCount; ++j)
       {
          fSum += ptfun();
          std::swap(a,b);
@@ -70,6 +71,7 @@ double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
    }
 
    mecRelease(hParser);
+
    return m_fTime1;
 }
 

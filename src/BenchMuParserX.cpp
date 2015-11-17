@@ -19,7 +19,7 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 
    ParserX p(pckALL_NON_COMPLEX);
 
-   Value fRes(0);
+   Value fRes((float_type)0);
    Value a((float_type)1.1);
    Value b((float_type)2.2);
    Value c((float_type)3.3);
@@ -27,7 +27,7 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
    Value y((float_type)3.123456);
    Value z((float_type)4.123456);
    Value w((float_type)5.123456);
-   Value buf(0);
+   Value buf((float_type)0);
    double fTime(0);
 
    try
@@ -44,12 +44,15 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 
       //p.DefineConst("pi", (float_type)M_PI);
       //p.DefineConst("e", (float_type)M_E);
+
       double fSum = 0;
       fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
                        // since fparser does it in Parse(...) wich is outside too
                        // (Speed of bytecode creation is irrelevant)
+
       StartTimer();
-      for (int j = 0; j < iCount; j++)
+
+      for (int j = 0; j < iCount; ++j)
       {
          fSum += p.Eval().GetFloat();
          std::swap(a,b);

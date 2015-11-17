@@ -52,12 +52,14 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
       fRes = p.evaluate();
 
       StartTimer();
-      for (int j = 0;j<iCount; j++)
+
+      for (int j = 0;j<iCount; ++j)
       {
          fSum += p.evaluate();
          std::swap(a,b);
          std::swap(x,y);
       }
+
       StopTimer(fRes, fSum, iCount);
    }
    catch(MTParserException &e)

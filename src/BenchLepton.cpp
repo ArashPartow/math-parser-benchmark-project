@@ -23,6 +23,7 @@ BenchLepton::BenchLepton()
 double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
 {
    std::map<std::string,double> var_list;
+
    var_list["a" ] = 1.1;
    var_list["b" ] = 2.2;
    var_list["c" ] = 3.3;
@@ -62,12 +63,14 @@ double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
    fRes = program.evaluate(var_list);
 
    StartTimer();
+
    for (int j = 0; j < iCount; ++j)
    {
       fSum += program.evaluate(var_list);
       std::swap(a,b);
       std::swap(x,y);
    }
+
    StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;

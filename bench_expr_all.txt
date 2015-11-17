@@ -19,7 +19,12 @@ a+1.1
 a*2.2
 2.2*a+1.1
 (2.2*a+1.1)*3.3
-
+a+a
+2*a
+a+a+a
+3*a
+a+a+a+a
+4*a
 
 #
 # Polynome / Optimierung von Potenzfunktionen testen
@@ -106,6 +111,8 @@ abs(sin(sqrt(a^2+b^2))*255)
 abs(sin(sqrt(a*a+b*b))*255)
 (a-2*b)^2+(a/3+(abs(x-y)+1))^3
 (2+a*b)^5/(a/b+(abs(x/y)-1))^3
+(x*y)^3+(x/y)^4
+(x*y-(x/y)^4)^3
 
 # http://dabroz.scythe.pl/2010/11/18/quick-data-transformation
 #2+min(a+a+a,1/5)*(2+a*3)

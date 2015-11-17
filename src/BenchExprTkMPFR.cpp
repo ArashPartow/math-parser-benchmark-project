@@ -64,12 +64,14 @@ double BenchExprTkMPFR::DoBenchmark(const std::string& sExpr, long iCount)
    fRes = expression.value();
 
    StartTimer();
-   for (int j = 0; j < iCount; j++)
+
+   for (int j = 0; j < iCount; ++j)
    {
       fSum += expression.value().toDouble();
       std::swap(a,b);
       std::swap(x,y);
    }
+
    StopTimer(fRes.toDouble(), fSum, iCount);
 
    return m_fTime1;

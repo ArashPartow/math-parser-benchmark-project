@@ -59,11 +59,11 @@ std::string Benchmark::GetBaseType() const
 {
   switch(m_eBaseType)
   {
-     case FLOAT:       return "float";
-     case DOUBLE:      return "double";
-     case LONG_DOUBLE: return "long double";
-     case MPFR:        return "mpfr";
-     default:          return "unknown";
+     case FLOAT       : return "float";
+     case DOUBLE      : return "double";
+     case LONG_DOUBLE : return "long double";
+     case MPFR        : return "mpfr";
+     default:           return "unknown";
   }
 }
 //-------------------------------------------------------------------------------------------------

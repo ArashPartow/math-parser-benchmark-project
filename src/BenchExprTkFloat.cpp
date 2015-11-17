@@ -59,12 +59,14 @@ double BenchExprTkFloat::DoBenchmark(const std::string& sExpr, long iCount)
    fRes = expression.value();
 
    StartTimer();
-   for (int j = 0; j < iCount; j++)
+
+   for (int j = 0; j < iCount; ++j)
    {
       fSum += expression.value();
       std::swap(a,b);
       std::swap(x,y);
    }
+
    StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;

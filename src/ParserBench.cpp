@@ -54,13 +54,16 @@ inline bool is_equal(const T v0, const T v1)
    //Is either a NaN?
    if (v0 != v0) return false;
    if (v1 != v1) return false;
+
    return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
 }
 
 std::vector<std::string> load_expressions(const std::string& file_name)
 {
-   std::ifstream stream(file_name.c_str());
    std::vector<std::string> result;
+
+   std::ifstream stream(file_name.c_str());
+
    if (stream)
    {
       std::string buffer;
@@ -74,6 +77,7 @@ std::vector<std::string> load_expressions(const std::string& file_name)
             result.push_back(buffer);
       }
    }
+
    return result;
 }
 
@@ -99,6 +103,7 @@ void output(FILE *pFile, const char *fmt, ...)
 void WriteResultTable(FILE* pRes, std::vector<Benchmark*>& vBenchmarks, std::vector<std::string>& vExpr)
 {
    output(pRes, "\n\n\n");
+
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {
       output(pRes, "%s\t",vBenchmarks[i]->GetShortName().c_str());
@@ -112,8 +117,10 @@ void WriteResultTable(FILE* pRes, std::vector<Benchmark*>& vBenchmarks, std::vec
       {
          output(pRes, "%13.3f\t", vBenchmarks[j]->GetRate(i));
       }
+
       output(pRes, "%s\t\n",vExpr[i].c_str());
    }
+
    output(pRes, "\n\n\n");
 }
 
@@ -223,6 +230,7 @@ void Shootout(const std::string &sCaption,
       for (auto it = results.begin(); it != results.end(); ++it)
       {
          const std::vector<Benchmark*>& vBench = it->second;
+
          for (std::size_t k = 0; k < vBench.size(); ++k)
          {
             Benchmark* pBench = vBench[k];
@@ -323,6 +331,7 @@ void Shootout(const std::string &sCaption,
 
    // Dump scores
    std::deque<std::pair<int,Benchmark*> > order_list;
+
    for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
    {
       order_list.push_back(std::make_pair(vBenchmarks[i]->GetPoints(),vBenchmarks[i]));
@@ -354,10 +363,13 @@ void Shootout(const std::string &sCaption,
    if (bHasFailures)
    {
       output(pRes, "\n\nFailures:\n");
+
       for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
       {
          Benchmark *pBench = vBenchmarks[i];
+
          const std::map<std::string, std::string> &allFailures = pBench->GetFails();
+
          if (!allFailures.empty())
          {
             output(pRes, "  %-15s (%3d):\n",
@@ -465,7 +477,7 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchFParser()         );
    vBenchmarks.push_back(new BenchMathExpr()        );
    #if defined(_MSC_VER) && defined(NDEBUG)
-   vBenchmarks.push_back(new BenchMTParser());        // <-- Crash in debug mode
+   vBenchmarks.push_back(new BenchMTParser()        ); // <-- Crash in debug mode
    #endif
 
    #ifdef _MSC_VER

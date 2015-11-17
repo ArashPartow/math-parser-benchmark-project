@@ -99,13 +99,16 @@ double BenchATMSP::DoBenchmark(const std::string& sExpr, long iCount)
       fRes = bc.run();
 
       StartTimer();
+
       for (int j = 0; j < iCount; ++j)
       {
          fSum += bc.run();
          std::swap(bc.var[0], bc.var[1]);
          std::swap(bc.var[3], bc.var[4]);
       }
+
       StopTimer(fRes, fSum, iCount);
    }
+
    return m_fTime1;
 }
