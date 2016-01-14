@@ -31,6 +31,7 @@
 #include "BenchLepton.h"
 #include "BenchFParser.h"
 #include "BenchMathExpr.h"
+#include "BenchLuaJit.h"
 
 #ifdef ENABLE_MPFR
 #include "BenchExprTkMPFR.h"
@@ -476,6 +477,7 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchLepton()          );
    vBenchmarks.push_back(new BenchFParser()         );
    vBenchmarks.push_back(new BenchMathExpr()        );
+   vBenchmarks.push_back(new BenchLuaJit()             );
    #if defined(_MSC_VER) && defined(NDEBUG)
    vBenchmarks.push_back(new BenchMTParser()        ); // <-- Crash in debug mode
    #endif

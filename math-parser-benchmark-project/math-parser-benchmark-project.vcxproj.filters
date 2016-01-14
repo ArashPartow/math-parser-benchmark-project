@@ -209,6 +209,7 @@
     <ClCompile Include="..\src\cpuid.cpp">
       <Filter>libcpuid</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BenchLuajit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\atmsp\atmsp.h">
@@ -655,6 +656,7 @@
     <ClInclude Include="..\include\cpuid.h">
       <Filter>libcpuid</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\BenchLuaJit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
