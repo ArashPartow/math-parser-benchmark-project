@@ -40,6 +40,7 @@ double BenchLuaJit::DoBenchmark(const std::string& sExpr, long iCount)
 	try
 	{		
 		L = luaL_newstate();
+		luaL_openlibs(L);
 				
 		for (auto it = var_list.begin(); it != var_list.end(); ++it)
 		{
@@ -48,6 +49,23 @@ double BenchLuaJit::DoBenchmark(const std::string& sExpr, long iCount)
 		}		
 
 		int result = luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE);
+
+		ErrorPrint(L, luaL_dostring(L,
+			"local math = require('math');"
+			"abs,acos,asin,atan,atan2,ceil,"
+			"cos,cosh,deg,exp,floor,fmod,"
+			"frexp,huge,ldexp,log,log10,max,"
+			"min,modf,pi,pow,rad,random,"
+			"randomseed,sin,sinh,sqrt,tanh,"
+			"tan "
+			"="
+			"math.abs, math.acos, math.asin, math.atan, math.atan2, math.ceil,"
+			"math.cos, math.cosh, math.deg, math.exp, math.floor, math.fmod,"
+			"math.frexp, math.huge, math.ldexp, math.log, math.log10, math.max,"
+			"math.min, math.modf, math.pi, math.pow, math.rad, math.random,"
+			"math.randomseed, math.sin, math.sinh, math.sqrt, math.tanh,"
+			"math.tan"
+			));
 		ErrorPrint(L, luaL_dostring(L, ("function fnkt() return " + sExpr + "; end").c_str()));
 		ErrorPrint(L, luaL_dostring(L, 
 			("function fnktWithSwap() local result = " + sExpr + 
