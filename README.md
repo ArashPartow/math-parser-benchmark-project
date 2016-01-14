@@ -12,7 +12,7 @@ This is a benchmark suite for different implementations of open source math expr
 | 05  | [MTParser](http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)       |
 | 06  | [muParser](http://muparser.beltoforion.de/)        | Ingo Berg                      | [MIT](http://www.opensource.org/licenses/mit-license.php) |
 | 07  | [muParserX](http://muparserx.beltoforion.de/)      | Ingo Berg                      | [MIT](http://www.opensource.org/licenses/mit-license.php) |
-
+| 08  | [LuaJit](http://luajit.org/)                       |                                | [MIT](http://www.opensource.org/licenses/mit-license.php) |
 
 **Note:** This archive is not meant as a primary source for any of the libraries listed above as it may contain outdated versions of said libraries.
 
@@ -56,4 +56,4 @@ The following is a chart depicting the results as executions per second obtained
 
 ![alt text](http://www.partow.net/experimental/images/benchmark_result.png "Mathematical Expression Parser Benchmark Results")
 
-**Note:** The parsers *muParserSSE* and *ExprTKFloat* were excluded due to their use of the float type, and the *Lepton* and *muParserX* parsers were excluded due to the fact that their results were consistently 2-3 orders of magnitude slower than all the others.
+**Note:** The parsers *muParserSSE*, *ExprTKFloat* and *LuaJit* were excluded due to their use of the float type, and the *Lepton* and *muParserX* parsers were excluded due to the fact that their results were consistently 2-3 orders of magnitude slower than all the others.
