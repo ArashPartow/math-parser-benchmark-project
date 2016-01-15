@@ -56,4 +56,4 @@ The following is a chart depicting the results as executions per second obtained
 
 ![alt text](http://www.partow.net/experimental/images/benchmark_result.png "Mathematical Expression Parser Benchmark Results")
 
-**Note:** The parsers *muParserSSE*, *ExprTKFloat* and *LuaJit* were excluded due to their use of the float type, and the *Lepton* and *muParserX* parsers were excluded due to the fact that their results were consistently 2-3 orders of magnitude slower than all the others.
+**Note:** The parsers *muParserSSE* and  *ExprTKFloat were excluded due to their use of the float type, and the *Lepton**, *LuaJit* and *muParserX* parsers were excluded due to the fact that their results were consistently 2-3 orders of magnitude slower than all the others.
