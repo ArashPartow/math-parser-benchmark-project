@@ -656,7 +656,6 @@
     <ClInclude Include="..\include\cpuid.h">
       <Filter>libcpuid</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\BenchLuaJit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">

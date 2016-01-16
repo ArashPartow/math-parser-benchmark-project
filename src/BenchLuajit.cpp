@@ -41,6 +41,8 @@ double BenchLuaJit::DoBenchmark(const std::string& sExpr, long iCount)
 	{		
 		L = luaL_newstate();
 		luaL_openlibs(L);
+
+		int setJitResult = luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
 				
 		for (auto it = var_list.begin(); it != var_list.end(); ++it)
 		{

@@ -149,7 +149,6 @@ copy /Y "$(SolutionDir)luajit\bin\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\include\BenchExprTkMPFR.h" />
     <ClInclude Include="..\include\BenchFParser.h" />
     <ClInclude Include="..\include\BenchLepton.h" />
-    <ClInclude Include="..\include\BenchLuaJit.h" />
     <ClInclude Include="..\include\Benchmark.h" />
     <ClInclude Include="..\include\BenchMathExpr.h" />
     <ClInclude Include="..\include\BenchMTParser.h" />
