@@ -154,14 +154,15 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="..\include\cpuid.h" />
     <ClInclude Include="..\include\FormelGenerator.h" />
     <ClInclude Include="..\include\Stopwatch.h" />
-    <ClInclude Include="..\lepton\CustomFunction.h" />
-    <ClInclude Include="..\lepton\Exception.h" />
     <ClInclude Include="..\lepton\ExpressionProgram.h" />
     <ClInclude Include="..\lepton\ExpressionTreeNode.h" />
     <ClInclude Include="..\lepton\Lepton.h" />
+    <ClInclude Include="..\lepton\lepton\CompiledExpression.h" />
+    <ClInclude Include="..\lepton\lepton\CustomFunction.h" />
+    <ClInclude Include="..\lepton\lepton\Exception.h" />
+    <ClInclude Include="..\lepton\lepton\Operation.h" />
+    <ClInclude Include="..\lepton\lepton\ParsedExpression.h" />
     <ClInclude Include="..\lepton\MSVC_erfc.h" />
-    <ClInclude Include="..\lepton\Operation.h" />
-    <ClInclude Include="..\lepton\ParsedExpression.h" />
     <ClInclude Include="..\lepton\Parser.h" />
     <ClInclude Include="..\lepton\windowsIncludes.h" />
     <ClInclude Include="..\libcpuid\asm-bits.h" />
@@ -251,6 +252,7 @@ copy /Y "$(SolutionDir)mpfr\dll\*.dll" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\fparser\fparser.cc" />
+    <ClCompile Include="..\lepton\CompiledExpression.cpp" />
     <ClCompile Include="..\lepton\ExpressionProgram.cpp" />
     <ClCompile Include="..\lepton\ExpressionTreeNode.cpp" />
     <ClCompile Include="..\lepton\Operation.cpp" />

@@ -1,6 +1,5 @@
 #ifndef LEPTON_H_
 #define LEPTON_H_
-
 /* -------------------------------------------------------------------------- *
  *                                   Lepton                                   *
  * -------------------------------------------------------------------------- *
@@ -32,14 +31,12 @@
  * USE OR OTHER DEALINGS IN THE SOFTWARE.                                     *
  * -------------------------------------------------------------------------- */
 
-#define LEPTON_BUILDING_STATIC_LIBRARY
-#define LEPTON_USE_STATIC_LIBRARIES
-
-#include "CustomFunction.h"
-#include "ExpressionProgram.h"
-#include "ExpressionTreeNode.h"
-#include "Operation.h"
-#include "ParsedExpression.h"
-#include "Parser.h"
+#include "lepton/CompiledExpression.h"
+#include "lepton/CustomFunction.h"
+#include "lepton/ExpressionProgram.h"
+#include "lepton/ExpressionTreeNode.h"
+#include "lepton/Operation.h"
+#include "lepton/ParsedExpression.h"
+#include "lepton/Parser.h"
 
 #endif /*LEPTON_H_*/

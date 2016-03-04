@@ -163,10 +163,12 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
       // Note: Performing the addition inside the timed section is done
       //       because all other parsers do it in their main loop too.
       double fSum(0);
+
       for (int j = 0; j < nBulkSize; ++j)
       {
          fSum += result[j];
       }
+
       StopTimer(result[0], fSum, iCount);
 
       fTime = m_fTime1;

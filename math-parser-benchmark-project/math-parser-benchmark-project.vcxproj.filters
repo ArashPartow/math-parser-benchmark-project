@@ -4,12 +4,6 @@
     <ClCompile Include="..\fparser\fparser.cc">
       <Filter>fparser</Filter>
     </ClCompile>
-    <ClCompile Include="..\lepton\ExpressionProgram.cpp">
-      <Filter>lepton</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lepton\ExpressionTreeNode.cpp">
-      <Filter>lepton</Filter>
-    </ClCompile>
     <ClCompile Include="..\libcpuid\cpuid_main.c">
       <Filter>libcpuid</Filter>
     </ClCompile>
@@ -181,15 +175,6 @@
     <ClCompile Include="..\libcpuid\rdtsc.c">
       <Filter>libcpuid</Filter>
     </ClCompile>
-    <ClCompile Include="..\lepton\Operation.cpp">
-      <Filter>lepton</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lepton\ParsedExpression.cpp">
-      <Filter>lepton</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lepton\Parser.cpp">
-      <Filter>lepton</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\BenchATMSP.cpp" />
     <ClCompile Include="..\src\BenchChaiScript.cpp" />
     <ClCompile Include="..\src\BenchExprTk.cpp" />
@@ -208,6 +193,24 @@
     <ClCompile Include="..\src\Stopwatch.cpp" />
     <ClCompile Include="..\src\cpuid.cpp">
       <Filter>libcpuid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lepton\CompiledExpression.cpp">
+      <Filter>lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lepton\ExpressionProgram.cpp">
+      <Filter>lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lepton\ExpressionTreeNode.cpp">
+      <Filter>lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lepton\Operation.cpp">
+      <Filter>lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lepton\ParsedExpression.cpp">
+      <Filter>lepton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lepton\Parser.cpp">
+      <Filter>lepton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -279,18 +282,6 @@
     </ClInclude>
     <ClInclude Include="..\chaiscript\dispatchkit\bad_boxed_cast.hpp">
       <Filter>chaiscript</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\ExpressionProgram.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\ExpressionTreeNode.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\CustomFunction.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\Exception.h">
-      <Filter>lepton</Filter>
     </ClInclude>
     <ClInclude Include="..\chaiscript\dispatchkit\dynamic_cast_conversion.hpp">
       <Filter>chaiscript</Filter>
@@ -442,9 +433,6 @@
     <ClInclude Include="..\muparserx\mpIPackage.h">
       <Filter>muparserx</Filter>
     </ClInclude>
-    <ClInclude Include="..\lepton\Lepton.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
     <ClInclude Include="..\muparserx\mpParserBase.h">
       <Filter>muparserx</Filter>
     </ClInclude>
@@ -541,18 +529,6 @@
     <ClInclude Include="..\chaiscript\dispatchkit\dispatchkit.hpp">
       <Filter>chaiscript</Filter>
     </ClInclude>
-    <ClInclude Include="..\lepton\MSVC_erfc.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\Operation.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\ParsedExpression.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\Parser.h">
-      <Filter>lepton</Filter>
-    </ClInclude>
     <ClInclude Include="..\muParserSSE\muParserSSE.h">
       <Filter>muparsersse</Filter>
     </ClInclude>
@@ -561,9 +537,6 @@
     </ClInclude>
     <ClInclude Include="..\chaiscript\utility\utility.hpp">
       <Filter>chaiscript</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lepton\windowsIncludes.h">
-      <Filter>lepton</Filter>
     </ClInclude>
     <ClInclude Include="..\chaiscript\dispatchkit\operators.hpp">
       <Filter>chaiscript</Filter>
@@ -654,6 +627,39 @@
     </ClInclude>
     <ClInclude Include="..\include\cpuid.h">
       <Filter>libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\ExpressionProgram.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\ExpressionTreeNode.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\Lepton.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\MSVC_erfc.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\Parser.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\windowsIncludes.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\lepton\CompiledExpression.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\lepton\CustomFunction.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\lepton\Exception.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\lepton\Operation.h">
+      <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lepton\lepton\ParsedExpression.h">
+      <Filter>lepton</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

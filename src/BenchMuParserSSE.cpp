@@ -55,7 +55,8 @@ double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
    }
    else
    {
-      assert(ptfun!=NULL);
+      assert(ptfun != NULL);
+
       fRes = ptfun();
 
       StartTimer();

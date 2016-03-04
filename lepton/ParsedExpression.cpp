@@ -29,12 +29,12 @@
  * USE OR OTHER DEALINGS IN THE SOFTWARE.                                     *
  * -------------------------------------------------------------------------- */
 
-#include "ParsedExpression.h"
-#include "ExpressionProgram.h"
-#include "Operation.h"
+#include "lepton/ParsedExpression.h"
+#include "lepton/CompiledExpression.h"
+#include "lepton/ExpressionProgram.h"
+#include "lepton/Operation.h"
 #include <limits>
 #include <vector>
-#include <algorithm>
 
 using namespace Lepton;
 using namespace std;
@@ -60,7 +60,7 @@ double ParsedExpression::evaluate(const map<string, double>& variables) const {
 }
 
 double ParsedExpression::evaluate(const ExpressionTreeNode& node, const map<string, double>& variables) {
-    int numArgs = node.getChildren().size();
+    int numArgs = (int) node.getChildren().size();
     vector<double> args(max(numArgs, 1));
     for (int i = 0; i < numArgs; i++)
         args[i] = evaluate(node.getChildren()[i], variables);
@@ -190,6 +190,12 @@ ExpressionTreeNode ParsedExpression::substituteSimplerExpression(const Expressio
                 return ExpressionTreeNode(new Operation::Divide(), children[0], children[1].getChildren()[0]);
             if (children[0].getOperation().getId() == Operation::RECIPROCAL) // (1/a)*b = b/a
                 return ExpressionTreeNode(new Operation::Divide(), children[1], children[0].getChildren()[0]);
+            if (children[0] == children[1])
+                return ExpressionTreeNode(new Operation::Square(), children[0]); // x*x = square(x)
+            if (children[0].getOperation().getId() == Operation::SQUARE && children[0].getChildren()[0] == children[1])
+                return ExpressionTreeNode(new Operation::Cube(), children[1]); // x*x*x = cube(x)
+            if (children[1].getOperation().getId() == Operation::SQUARE && children[1].getChildren()[0] == children[0])
+                return ExpressionTreeNode(new Operation::Cube(), children[0]); // x*x*x = cube(x)
             break;
         }
         case Operation::DIVIDE:
@@ -263,7 +269,15 @@ ExpressionTreeNode ParsedExpression::substituteSimplerExpression(const Expressio
                 return ExpressionTreeNode(new Operation::Constant(dynamic_cast<const Operation::MultiplyConstant*>(&node.getOperation())->getValue()*getConstantValue(children[0])));
             if (children[0].getOperation().getId() == Operation::NEGATE) // Combine a multiply and a negate into a single multiply
                 return ExpressionTreeNode(new Operation::MultiplyConstant(-dynamic_cast<const Operation::MultiplyConstant*>(&node.getOperation())->getValue()), children[0].getChildren()[0]);
+            break;
         }
+        default:
+        {
+            // If operation ID is not one of the above,
+            // we don't substitute a simpler expression.
+            break;
+        }
+
     }
     return ExpressionTreeNode(node.getOperation().clone(), children);
 }
@@ -287,6 +301,10 @@ double ParsedExpression::getConstantValue(const ExpressionTreeNode& node) {
 
 ExpressionProgram ParsedExpression::createProgram() const {
     return ExpressionProgram(*this);
+}
+
+CompiledExpression ParsedExpression::createCompiledExpression() const {
+    return CompiledExpression(*this);
 }
 
 ParsedExpression ParsedExpression::renameVariables(const map<string, string>& replacements) const {

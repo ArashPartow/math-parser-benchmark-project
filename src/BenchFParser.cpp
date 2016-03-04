@@ -29,28 +29,28 @@ double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
    }
    else
    {
-     double vals[] = {
-                       1.1,
-                       2.2,
-                       3.3,
-                       2.123456,
-                       3.123456,
-                       4.123456,
-                       5.123456
-                     };
+      double vals[] = {
+                        1.1,
+                        2.2,
+                        3.3,
+                        2.123456,
+                        3.123456,
+                        4.123456,
+                        5.123456
+                      };
 
-     fRes = Parser.Eval(vals);
+      fRes = Parser.Eval(vals);
 
-     StartTimer();
+      StartTimer();
 
-     for (int j = 0; j < iCount; ++j)
-     {
-        fSum += Parser.Eval(vals);
-        std::swap(vals[0], vals[1]);
-        std::swap(vals[3], vals[4]);
-     }
+      for (int j = 0; j < iCount; ++j)
+      {
+         fSum += Parser.Eval(vals);
+         std::swap(vals[0], vals[1]);
+         std::swap(vals[3], vals[4]);
+      }
 
-     StopTimer(fRes, fSum, iCount);
+      StopTimer(fRes, fSum, iCount);
    }
 
    return m_fTime1;

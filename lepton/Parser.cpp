@@ -6,7 +6,7 @@
  * Biological Structures at Stanford, funded under the NIH Roadmap for        *
  * Medical Research, grant U54 GM072970. See https://simtk.org.               *
  *                                                                            *
- * Portions copyright (c) 2009 Stanford University and the Authors.           *
+ * Portions copyright (c) 2009-2015 Stanford University and the Authors.      *
  * Authors: Peter Eastman                                                     *
  * Contributors:                                                              *
  *                                                                            *
@@ -29,12 +29,13 @@
  * USE OR OTHER DEALINGS IN THE SOFTWARE.                                     *
  * -------------------------------------------------------------------------- */
 
-#include "Parser.h"
-#include "CustomFunction.h"
-#include "Exception.h"
-#include "ExpressionTreeNode.h"
-#include "Operation.h"
-#include "ParsedExpression.h"
+#include "lepton/Parser.h"
+#include "lepton/CustomFunction.h"
+#include "lepton/Exception.h"
+#include "lepton/ExpressionTreeNode.h"
+#include "lepton/Operation.h"
+#include "lepton/ParsedExpression.h"
+#include <cctype>
 #include <iostream>
 
 using namespace Lepton;
@@ -65,13 +66,13 @@ private:
 
 string Parser::trim(const string& expression) {
     // Remove leading and trailing spaces.
-
+    
     int start, end;
-    for (start = 0; start < (int) expression.size() && expression[start] == ' '; start++)
+    for (start = 0; start < (int) expression.size() && isspace(expression[start]); start++)
         ;
-    for (end = expression.size()-1; end > start && expression[end] == ' '; end--)
+    for (end = (int) expression.size()-1; end > start && isspace(expression[end]); end--)
         ;
-    if (start == end && expression[end] == ' ')
+    if (start == end && isspace(expression[end]))
         return "";
     return expression.substr(start, end-start+1);
 }
@@ -86,11 +87,11 @@ ParseToken Parser::getNextToken(const string& expression, int start) {
         return ParseToken(",", ParseToken::Comma);
     if (Operators.find(c) != string::npos)
         return ParseToken(string(1, c), ParseToken::Operator);
-    if (c == ' ') {
+    if (isspace(c)) {
         // White space
 
         for (int pos = start+1; pos < (int) expression.size(); pos++) {
-            if (expression[pos] != ' ')
+            if (!isspace(expression[pos]))
                 return ParseToken(expression.substr(start, pos-start), ParseToken::Whitespace);
         }
         return ParseToken(expression.substr(start, string::npos), ParseToken::Whitespace);
@@ -111,7 +112,7 @@ ParseToken Parser::getNextToken(const string& expression, int start) {
             }
             if ((c == 'e' || c == 'E') && !foundExp) {
                 foundExp = true;
-                if (pos < (int) expression.size()-1 && expression[pos+1] == '-')
+                if (pos < (int) expression.size()-1 && (expression[pos+1] == '-' || expression[pos+1] == '+'))
                     pos++;
                 continue;
             }
@@ -126,7 +127,7 @@ ParseToken Parser::getNextToken(const string& expression, int start) {
         c = expression[pos];
         if (c == '(')
             return ParseToken(expression.substr(start, pos-start+1), ParseToken::Function);
-        if (Operators.find(c) != string::npos || c == ',' || c == ')' || c == ' ')
+        if (Operators.find(c) != string::npos || c == ',' || c == ')' || isspace(c))
             return ParseToken(expression.substr(start, pos-start), ParseToken::Variable);
     }
     return ParseToken(expression.substr(start, string::npos), ParseToken::Variable);
@@ -139,7 +140,7 @@ vector<ParseToken> Parser::tokenize(const string& expression) {
         ParseToken token = getNextToken(expression, pos);
         if (token.getType() != ParseToken::Whitespace)
             tokens.push_back(token);
-        pos += token.getText().size();
+        pos += (int) token.getText().size();
     }
     return tokens;
 }
@@ -149,51 +150,56 @@ ParsedExpression Parser::parse(const string& expression) {
 }
 
 ParsedExpression Parser::parse(const string& expression, const map<string, CustomFunction*>& customFunctions) {
-    // First split the expression into subexpressions.
+    try {
+        // First split the expression into subexpressions.
 
-    string primaryExpression = expression;
-    vector<string> subexpressions;
-    while (true) {
-        string::size_type pos = primaryExpression.find_last_of(';');
-        if (pos == string::npos)
-            break;
-        string sub = trim(primaryExpression.substr(pos+1));
-        if (sub.size() > 0)
-            subexpressions.push_back(sub);
-        primaryExpression = primaryExpression.substr(0, pos);
-    }
+        string primaryExpression = expression;
+        vector<string> subexpressions;
+        while (true) {
+            string::size_type pos = primaryExpression.find_last_of(';');
+            if (pos == string::npos)
+                break;
+            string sub = trim(primaryExpression.substr(pos+1));
+            if (sub.size() > 0)
+                subexpressions.push_back(sub);
+            primaryExpression = primaryExpression.substr(0, pos);
+        }
 
-    // Parse the subexpressions.
+        // Parse the subexpressions.
 
-    map<string, ExpressionTreeNode> subexpDefs;
-    for (int i = 0; i < (int) subexpressions.size(); i++) {
-        string::size_type equalsPos = subexpressions[i].find('=');
-        if (equalsPos == string::npos)
-            throw Exception("Parse error: subexpression does not specify a name");
-        string name = trim(subexpressions[i].substr(0, equalsPos));
-        if (name.size() == 0)
-            throw Exception("Parse error: subexpression does not specify a name");
-        vector<ParseToken> tokens = tokenize(subexpressions[i].substr(equalsPos+1));
+        map<string, ExpressionTreeNode> subexpDefs;
+        for (int i = 0; i < (int) subexpressions.size(); i++) {
+            string::size_type equalsPos = subexpressions[i].find('=');
+            if (equalsPos == string::npos)
+                throw Exception("subexpression does not specify a name");
+            string name = trim(subexpressions[i].substr(0, equalsPos));
+            if (name.size() == 0)
+                throw Exception("subexpression does not specify a name");
+            vector<ParseToken> tokens = tokenize(subexpressions[i].substr(equalsPos+1));
+            int pos = 0;
+            subexpDefs[name] = parsePrecedence(tokens, pos, customFunctions, subexpDefs, 0);
+            if (pos != tokens.size())
+                throw Exception("unexpected text at end of subexpression: "+tokens[pos].getText());
+        }
+
+        // Now parse the primary expression.
+
+        vector<ParseToken> tokens = tokenize(primaryExpression);
         int pos = 0;
-        subexpDefs[name] = parsePrecedence(tokens, pos, customFunctions, subexpDefs, 0);
+        ExpressionTreeNode result = parsePrecedence(tokens, pos, customFunctions, subexpDefs, 0);
         if (pos != tokens.size())
-            throw Exception("Parse error: unexpected text at end of subexpression");
+            throw Exception("unexpected text at end of expression: "+tokens[pos].getText());
+        return ParsedExpression(result);
     }
-
-    // Now parse the primary expression.
-
-    vector<ParseToken> tokens = tokenize(primaryExpression);
-    int pos = 0;
-    ExpressionTreeNode result = parsePrecedence(tokens, pos, customFunctions, subexpDefs, 0);
-    if (pos != tokens.size())
-        throw Exception("Parse error: unexpected text at end of expression");
-    return ParsedExpression(result);
+    catch (Exception& ex) {
+        throw Exception("Parse error in expression \""+expression+"\": "+ex.what());
+    }
 }
 
 ExpressionTreeNode Parser::parsePrecedence(const vector<ParseToken>& tokens, int& pos, const map<string, CustomFunction*>& customFunctions,
             const map<string, ExpressionTreeNode>& subexpressionDefs, int precedence) {
     if (pos == tokens.size())
-        throw Exception("Parse error: unexpected end of expression");
+        throw Exception("unexpected end of expression");
 
     // Parse the next value (number, variable, function, parenthesized expression)
 
@@ -219,7 +225,7 @@ ExpressionTreeNode Parser::parsePrecedence(const vector<ParseToken>& tokens, int
         pos++;
         result = parsePrecedence(tokens, pos, customFunctions, subexpressionDefs, 0);
         if (pos == tokens.size() || tokens[pos].getType() != ParseToken::RightParen)
-            throw Exception("Parse error: unbalanced parentheses");
+            throw Exception("unbalanced parentheses");
         pos++;
     }
     else if (token.getType() == ParseToken::Function) {
@@ -233,7 +239,7 @@ ExpressionTreeNode Parser::parsePrecedence(const vector<ParseToken>& tokens, int
                 pos++;
         } while (moreArgs);
         if (pos == tokens.size() || tokens[pos].getType() != ParseToken::RightParen)
-            throw Exception("Parse error: unbalanced parentheses");
+            throw Exception("unbalanced parentheses");
         pos++;
         Operation* op = getFunctionOperation(token.getText(), customFunctions);
         try {
@@ -250,13 +256,13 @@ ExpressionTreeNode Parser::parsePrecedence(const vector<ParseToken>& tokens, int
         result = ExpressionTreeNode(new Operation::Negate(), toNegate);
     }
     else
-        throw Exception("Parse error: unexpected token");
+        throw Exception("unexpected token: "+token.getText());
 
     // Now deal with the next binary operator.
 
     while (pos < (int) tokens.size() && tokens[pos].getType() == ParseToken::Operator) {
         token = tokens[pos];
-        int opIndex = Operators.find(token.getText());
+        int opIndex = (int) Operators.find(token.getText());
         int opPrecedence = Precedence[opIndex];
         if (opPrecedence < precedence)
             return result;
@@ -287,7 +293,7 @@ Operation* Parser::getOperatorOperation(const std::string& name) {
         case Operation::POWER:
             return new Operation::Power();
         default:
-            throw Exception("Parse error: unknown operator");
+            throw Exception("unknown operator");
     }
 }
 
@@ -296,7 +302,6 @@ Operation* Parser::getFunctionOperation(const std::string& name, const map<strin
     static map<string, Operation::Id> opMap;
     if (opMap.size() == 0) {
         opMap["sqrt"] = Operation::SQRT;
-        opMap["abs"] = Operation::ABS;
         opMap["exp"] = Operation::EXP;
         opMap["log"] = Operation::LOG;
         opMap["sin"] = Operation::SIN;
@@ -314,9 +319,16 @@ Operation* Parser::getFunctionOperation(const std::string& name, const map<strin
         opMap["erf"] = Operation::ERF;
         opMap["erfc"] = Operation::ERFC;
         opMap["step"] = Operation::STEP;
+        opMap["delta"] = Operation::DELTA;
         opMap["square"] = Operation::SQUARE;
         opMap["cube"] = Operation::CUBE;
         opMap["recip"] = Operation::RECIPROCAL;
+        opMap["min"] = Operation::MIN;
+        opMap["max"] = Operation::MAX;
+        opMap["abs"] = Operation::ABS;
+        opMap["floor"] = Operation::FLOOR;
+        opMap["ceil"] = Operation::CEIL;
+        opMap["select"] = Operation::SELECT;
     }
     string trimmed = name.substr(0, name.size()-1);
 
@@ -330,12 +342,10 @@ Operation* Parser::getFunctionOperation(const std::string& name, const map<strin
 
     map<string, Operation::Id>::const_iterator iter = opMap.find(trimmed);
     if (iter == opMap.end())
-        throw Exception("Parse error: unknown function");
+        throw Exception("unknown function: "+trimmed);
     switch (iter->second) {
         case Operation::SQRT:
             return new Operation::Sqrt();
-        case Operation::ABS:
-            return new Operation::Abs();
         case Operation::EXP:
             return new Operation::Exp();
         case Operation::LOG:
@@ -370,13 +380,27 @@ Operation* Parser::getFunctionOperation(const std::string& name, const map<strin
             return new Operation::Erfc();
         case Operation::STEP:
             return new Operation::Step();
+        case Operation::DELTA:
+            return new Operation::Delta();
         case Operation::SQUARE:
             return new Operation::Square();
         case Operation::CUBE:
             return new Operation::Cube();
         case Operation::RECIPROCAL:
             return new Operation::Reciprocal();
+        case Operation::MIN:
+            return new Operation::Min();
+        case Operation::MAX:
+            return new Operation::Max();
+        case Operation::ABS:
+            return new Operation::Abs();
+        case Operation::FLOOR:
+            return new Operation::Floor();
+        case Operation::CEIL:
+            return new Operation::Ceil();
+        case Operation::SELECT:
+            return new Operation::Select();
         default:
-            throw Exception("Parse error: unknown function");
+            throw Exception("unknown function");
     }
 }

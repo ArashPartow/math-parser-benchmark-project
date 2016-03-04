@@ -23,7 +23,6 @@ BenchLepton::BenchLepton()
 double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
 {
    std::map<std::string,double> var_list;
-
    var_list["a" ] = 1.1;
    var_list["b" ] = 2.2;
    var_list["c" ] = 3.3;

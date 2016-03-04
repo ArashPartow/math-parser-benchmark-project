@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Examples and Unit-Tests                                    *
- * Author: Arash Partow (1999-2015)                           *
+ * Author: Arash Partow (1999-2016)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -301,6 +301,14 @@ static const test_t global_test_list[] =
                     test_t("( 7 + 2 )",9.0),
                     test_t("( 8 + 1 )",9.0),
                     test_t("( 9 + 0 )",9.0),
+                    test_t("1E1+1",11.0),
+                    test_t("1e1+1",11.0),
+                    test_t("1E1-1", 9.0),
+                    test_t("1e1-1", 9.0),
+                    test_t("1E01+1",11.0),
+                    test_t("1e01+1",11.0),
+                    test_t("1E01-1", 9.0),
+                    test_t("1e01-1", 9.0),
                     test_t("1+2",+3.0),
                     test_t("1-2",-1.0),
                     test_t("1*2",+2.0),
@@ -2348,8 +2356,8 @@ inline bool run_test02()
                if (!parser.compile(test.expr, expression))
                {
                   printf("run_test02() - Error: %s   Expression: %s\n",
-                     parser.error().c_str(),
-                     test.expr.c_str());
+                         parser.error().c_str(),
+                         test.expr.c_str());
 
                   result = false;
                   continue;
@@ -2365,13 +2373,13 @@ inline bool run_test02()
             if (not_equal(expr_result, test.result))
             {
                printf("run_test02() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\t"
-                  "a='%s'\tb='%s'\tc='%s'\n",
-                  test.expr.c_str(),
-                  (double)test.result,
-                  (double)expr_result,
-                  str_a.c_str(),
-                  str_b.c_str(),
-                  str_c.c_str());
+                      "a='%s'\tb='%s'\tc='%s'\n",
+                      test.expr.c_str(),
+                      (double)test.result,
+                      (double)expr_result,
+                      str_a.c_str(),
+                      str_b.c_str(),
+                      str_c.c_str());
 
                result = false;
                continue;
@@ -6325,11 +6333,13 @@ inline bool run_test19()
                               104683,  104693,  104701,  104707,  104711,  104717,  104723,  104729,
                              1000621, 1000639, 1000651, 1000667, 1000669, 1001023, 1001027, 1001041
                            };
+
       const std::size_t prime_list_size = sizeof(prime_list) / sizeof(std::size_t);
 
       for (std::size_t i = 0; (i < prime_list_size) && (!failure); ++i)
       {
-         x = prime_list[i];
+         x = static_cast<T>(prime_list[i]);
+
          std::vector<T> result(expression_count,T(0));
 
          for (std::size_t j = 0; j < expression_list.size(); ++j)
@@ -6467,6 +6477,7 @@ inline bool run_test19()
               "x"));
 
       symbol_table_t& symbol_table = compositor.symbol_table();
+
       symbol_table.add_constants();
       symbol_table.add_variable("x",x);
 
@@ -6515,11 +6526,13 @@ inline bool run_test19()
                               46368,   75025, 121393,  196418,
                              317811,  514229, 832040, 1346269
                            };
+
       const std::size_t fibonacci_list_size = sizeof(fibonacci_list) / sizeof(std::size_t);
 
       for (std::size_t i = 0; (i < fibonacci_list_size) && (!failure); ++i)
       {
-         x = i;
+         x = static_cast<T>(i);
+
          std::vector<T> result(expression_count,T(0));
 
          for (std::size_t j = 0; j < expression_list.size(); ++j)
@@ -6629,7 +6642,8 @@ inline bool run_test19()
 
       for (std::size_t i = 0; i < 100; ++i)
       {
-         x = i;
+         x = static_cast<T>(i);
+
          T result = expression.value();
 
          if (not_equal(result,std::sqrt(x),T(0.0000001)))
@@ -6757,7 +6771,9 @@ inline bool run_test19()
       for (std::size_t i = 0; i < 100; ++i)
       {
          x = T(i);
+
          sum += x;
+
          T result = expression.value();
 
          if (result != sum)
@@ -6847,7 +6863,7 @@ struct my_usr : public exprtk::parser<T>::unknown_symbol_resolver
       {
          st = usr_t::e_usr_variable_type;
          default_value = next_value();
-         error_message = "";
+         error_message.clear();
 
          return true;
       }
@@ -6855,7 +6871,7 @@ struct my_usr : public exprtk::parser<T>::unknown_symbol_resolver
       {
          st = usr_t::e_usr_constant_type;
          default_value = next_value();
-         error_message = "";
+         error_message.clear();
 
          return true;
       }
