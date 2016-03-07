@@ -11,19 +11,19 @@ class BenchATMSP : public Benchmark
 {
 public:
 
-  BenchATMSP();
+   BenchATMSP();
 
-  double DoBenchmark(const std::string &sExpr, long iCount);
+   double DoBenchmark(const std::string& sExpr, long iCount);
 
-  void PreprocessExpr(std::vector<std::string> &vExpr);
+   void PreprocessExpr(std::vector<std::string>& vExpr);
 
-  void PreprocessExpr(std::string &vExpr);
+   void PreprocessExpr(std::string& vExpr);
 
 private:
 
-  std::string replaceAll(std::string result,
-                         const std::string& replaceWhat,
-                         const std::string& replaceWithWhat);
+   std::string replaceAll(std::string result,
+                          const std::string& replaceWhat,
+                          const std::string& replaceWithWhat);
 };
 
 #endif

@@ -11,10 +11,9 @@ class BenchExprTkFloat : public Benchmark
 {
 public:
 
-  BenchExprTkFloat();
+   BenchExprTkFloat();
 
-  double DoBenchmark(const std::string &sExpr, long iCount);
-
+   double DoBenchmark(const std::string& sExpr, long iCount);
 };
 
 #endif

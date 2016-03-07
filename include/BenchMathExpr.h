@@ -11,10 +11,9 @@ class BenchMathExpr : public Benchmark
 {
 public:
 
-  BenchMathExpr();
+   BenchMathExpr();
 
-  double DoBenchmark(const std::string &sExpr, long iCount);
-
+   double DoBenchmark(const std::string& sExpr, long iCount);
 };
 
 #endif

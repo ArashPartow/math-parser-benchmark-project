@@ -25,7 +25,7 @@ BenchMuParser2::BenchMuParser2(bool bUseBulkMode)
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMuParser2::DoBenchmarkStd(const std::string &sExpr, long iCount)
+double BenchMuParser2::DoBenchmarkStd(const std::string& sExpr, long iCount)
 {
    Parser p;
 
@@ -96,7 +96,7 @@ void BenchMuParser2::PreprocessExpr(std::string&)
 }
 
 //-------------------------------------------------------------------------------------------------
-double BenchMuParser2::DoBenchmarkBulk(const std::string &sExpr, long iCount)
+double BenchMuParser2::DoBenchmarkBulk(const std::string& sExpr, long iCount)
 {
    int nBulkSize = (int)iCount;
 

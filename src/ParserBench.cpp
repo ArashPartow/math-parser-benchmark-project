@@ -124,7 +124,7 @@ void WriteResultTable(FILE* pRes, std::vector<Benchmark*>& vBenchmarks, std::vec
    output(pRes, "\n\n\n");
 }
 
-void Shootout(const std::string &sCaption,
+void Shootout(const std::string& sCaption,
               std::vector<Benchmark*> vBenchmarks,
               std::vector<std::string> vExpr,
               int iCount,

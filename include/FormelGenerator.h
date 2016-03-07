@@ -7,22 +7,22 @@
 class FormelGenerator
 {
 public:
-  int Make(char *Buffer, int Length, int Items, int NumberOfVars);
+
+   int Make(char *Buffer, int Length, int Items, int NumberOfVars);
 
 private:
 
-  char   *buf;
-  int len, pos, items, vars;
+   char   *buf;
+   int len, pos, items, vars;
 
-  void Make();
-  void MakeVar();
+   void Make();
+   void MakeVar();
 
-  int RandInt(int number);
-  void RandFunction();
-  char RandOp();
-  bool RandBool();
-  double RandDouble();
+   int    RandInt(int number);
+   void   RandFunction();
+   char   RandOp();
+   bool   RandBool();
+   double RandDouble();
 };
 
 #endif
-

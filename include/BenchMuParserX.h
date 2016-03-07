@@ -9,12 +9,11 @@ class BenchMuParserX : public Benchmark
 {
 public:
 
-  BenchMuParserX();
+   BenchMuParserX();
 
-  double DoBenchmark(const std::string &sExpr, long iCount);
+   double DoBenchmark(const std::string& sExpr, long iCount);
 
-  std::string GetShortName() const;
-
+   std::string GetShortName() const;
 };
 
 #endif

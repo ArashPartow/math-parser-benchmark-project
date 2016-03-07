@@ -43,8 +43,8 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    p.defineConst("pi", M_PI);
 
    double fTime = 0;
-   double fRes = 0;
-   double fSum = 0;
+   double fRes  = 0;
+   double fSum  = 0;
 
    try
    {

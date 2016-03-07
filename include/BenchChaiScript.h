@@ -11,10 +11,9 @@ class BenchChaiScript : public Benchmark
 {
 public:
 
-  BenchChaiScript();
+   BenchChaiScript();
 
-  double DoBenchmark(const std::string &sExpr, long iCount);
-
+   double DoBenchmark(const std::string& sExpr, long iCount);
 };
 
 #endif

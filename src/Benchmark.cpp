@@ -224,7 +224,7 @@ const std::map<std::string, std::string> Benchmark::GetFails() const
 }
 
 //-------------------------------------------------------------------------------------------------
-void Benchmark::AddFail(const std::string &sExpr)
+void Benchmark::AddFail(const std::string& sExpr)
 {
    m_allFails[sExpr] = DidNotEvaluate() ? m_sFailReason : std::string("incorrect result");
 }

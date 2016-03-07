@@ -27,9 +27,9 @@ public:
 
    void DoAll(std::vector<std::string> vExpr, long num);
 
-   virtual double DoBenchmark(const std::string &sExpr, long iCount) = 0;
-   virtual void PreprocessExpr(std::vector<std::string> &vExpr);
-   virtual void PreprocessExpr(std::string & /*vExpr*/) {};
+   virtual double DoBenchmark(const std::string& sExpr, long iCount) = 0;
+   virtual void PreprocessExpr(std::vector<std::string>& vExpr);
+   virtual void PreprocessExpr(std::string& /*vExpr*/) {};
    virtual std::string GetShortName() const;
    std::string GetName() const;
    std::string GetBaseType() const;
@@ -37,9 +37,9 @@ public:
 
    void StartTimer();
    void StopTimer(double fRes, double fSum, int iCount);
-   void StopTimerAndReport(const std::string &msg);
+   void StopTimerAndReport(const std::string& msg);
 
-   const std::string &GetFailReason() const;
+   const std::string& GetFailReason() const;
    bool DidNotEvaluate() const;
 
    void AddPoints(int pt);
@@ -54,7 +54,7 @@ public:
 
    const std::map<std::string, std::string> GetFails() const;
    bool ExpressionFailed(const std::string& expr) const;
-   void AddFail(const std::string &sExpr);
+   void AddFail(const std::string& sExpr);
 
    double GetRate(const std::size_t& index) const;
    void IgnoreLastRate();
