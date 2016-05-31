@@ -30,35 +30,22 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
    Value buf((float_type)0);
    double fTime(0);
 
+   p.SetExpr(sExpr.c_str());
+   p.DefineVar("a", Variable(&a));
+   p.DefineVar("b", Variable(&b));
+   p.DefineVar("c", Variable(&c));
+
+   p.DefineVar("x", Variable(&x));
+   p.DefineVar("y", Variable(&y));
+   p.DefineVar("z", Variable(&z));
+   p.DefineVar("w", Variable(&w));
+
    try
    {
-      p.SetExpr(sExpr.c_str());
-      p.DefineVar("a", Variable(&a));
-      p.DefineVar("b", Variable(&b));
-      p.DefineVar("c", Variable(&c));
-
-      p.DefineVar("x", Variable(&x));
-      p.DefineVar("y", Variable(&y));
-      p.DefineVar("z", Variable(&z));
-      p.DefineVar("w", Variable(&w));
-
-      //p.DefineConst("pi", (float_type)M_PI);
-      //p.DefineConst("e", (float_type)M_E);
-      double fSum = 0;
 
       fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
                        // since fparser does it in Parse(...) wich is outside too
                        // (Speed of bytecode creation is irrelevant)
-      StartTimer();
-
-      for (int j = 0; j < iCount; ++j)
-      {
-         fSum += p.Eval().GetFloat();
-         std::swap(a,b);
-         std::swap(x,y);
-      }
-
-      StopTimer(fRes.GetFloat(), fSum, iCount);
    }
    catch(mup::ParserError &exc)
    {
@@ -70,6 +57,41 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
       fTime = std::numeric_limits<double>::quiet_NaN();
       StopTimerAndReport("unexpected exception");
    }
+
+   //Prime the I and D caches for the expression
+   {
+      double d0 = 0.0;
+      double d1 = 0.0;
+
+      for (std::size_t i = 0; i < priming_rounds; ++i)
+      {
+         if (i & 1)
+            d0 += p.Eval().GetFloat();
+         else
+            d1 += p.Eval().GetFloat();
+      }
+
+      if (
+            (d0 == std::numeric_limits<double>::infinity()) &&
+            (d1 == std::numeric_limits<double>::infinity())
+         )
+      {
+         printf("\n");
+      }
+   }
+
+   double fSum = 0;
+
+   StartTimer();
+
+   for (int j = 0; j < iCount; ++j)
+   {
+      fSum += p.Eval().GetFloat();
+      std::swap(a,b);
+      std::swap(x,y);
+   }
+
+   StopTimer(fRes.GetFloat(), fSum, iCount);
 
    return m_fTime1;
 }

@@ -457,7 +457,7 @@ int main(int argc, const char *argv[])
 
    std::vector<Benchmark*> vBenchmarks;
 
-   // *** Important: ***
+   // *** IMPORTANT NOICE ***
    // The first parser in the list is denoted as being the reference parser.
    // Parsing engines that produce results which deviate from the reference
    // parser are disqualified for the round. As such it is paramount that

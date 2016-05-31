@@ -36,7 +36,7 @@ double BenchChaiScript::DoBenchmark(const std::string& sExpr, long iCount)
    chai.add(chaiscript::var(z), "z");
    chai.add(chaiscript::var(w), "w");
 
-   // Calculate/bench and show result finally
+   // Perform benchmark then return results
    double fRes  = 0;
    double fSum  = 0;
 

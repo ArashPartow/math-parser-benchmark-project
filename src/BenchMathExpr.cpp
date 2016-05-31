@@ -57,26 +57,47 @@ double BenchMathExpr::DoBenchmark(const std::string& sExpr, long iCount)
    {
       // I did not find functions for reporting an error, taking generic message instead
       StopTimerAndReport("parsing error");
+      return m_fTime1;
    }
-   else
+
+   // Perform benchmark then return results
+   double fRes  = 0;
+   double fSum  = 0;
+
+   //Prime the I and D caches for the expression
    {
-      // Calculate/bench and show result finally
-      double fRes  = 0;
-      double fSum  = 0;
+      double d0 = 0.0;
+      double d1 = 0.0;
 
-      fRes = op.Val();
-
-      StartTimer();
-
-      for (int j = 0; j < iCount; j++)
+      for (std::size_t i = 0; i < priming_rounds; ++i)
       {
-         fSum += op.Val();
-         std::swap(a,b);
-         std::swap(x,y);
+         if (i & 1)
+            d0 += op.Val();
+         else
+            d1 += op.Val();
       }
 
-      StopTimer(fRes, fSum, iCount);
+      if (
+            (d0 == std::numeric_limits<double>::infinity()) &&
+            (d1 == std::numeric_limits<double>::infinity())
+         )
+      {
+         printf("\n");
+      }
    }
+
+   fRes = op.Val();
+
+   StartTimer();
+
+   for (int j = 0; j < iCount; j++)
+   {
+      fSum += op.Val();
+      std::swap(a,b);
+      std::swap(x,y);
+   }
+
+   StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;
 }

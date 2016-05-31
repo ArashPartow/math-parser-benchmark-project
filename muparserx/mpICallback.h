@@ -57,8 +57,7 @@ MUP_NAMESPACE_START
 
       ICallback(ECmdCode a_iCode, 
                 const char_type *a_szName, 
-                int a_nArgNum = 1,
-                const IPackage *a_pPackage = nullptr);
+                int a_nArgNum = 1);
       virtual ~ICallback();
 
       virtual ICallback* AsICallback();
@@ -79,7 +78,6 @@ MUP_NAMESPACE_START
 
   private:
       parent_type *m_pParent;      ///< Pointer to the parser object using this callback
-      const IPackage *m_pPackage;  ///< Pointer to the package this callback is belonging to (may be zero)
       int  m_nArgc;                ///< Number of this function can take Arguments.
       int  m_nArgsPresent;         ///< Number of arguments actually submitted
   }; // class ICallback

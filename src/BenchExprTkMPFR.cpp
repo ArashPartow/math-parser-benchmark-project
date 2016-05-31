@@ -59,8 +59,30 @@ double BenchExprTkMPFR::DoBenchmark(const std::string& sExpr, long iCount)
       }
    }
 
+   //Prime the I and D caches for the expression
+   {
+      mpfr::mpreal d0 = mpfr::mpreal(0);
+      mpfr::mpreal d1 = mpfr::mpreal(0);
+
+      for (std::size_t i = 0; i < priming_rounds; ++i)
+      {
+         if (i & 1)
+            d0 += expression.value().toDouble();
+         else
+            d1 += expression.value().toDouble();
+      }
+
+      if (
+            (d0 == std::numeric_limits<mpfr::mpreal>::infinity()) &&
+            (d1 == std::numeric_limits<mpfr::mpreal>::infinity())
+         )
+      {
+         printf("\n");
+      }
+   }
+
    mpfr::mpreal fRes = mpfr::mpreal(0);
-   double       fSum = 0.0;
+   mpfr::mpreal fSum = mpfr::mpreal(0);
 
    fRes = expression.value();
 
@@ -68,12 +90,12 @@ double BenchExprTkMPFR::DoBenchmark(const std::string& sExpr, long iCount)
 
    for (int j = 0; j < iCount; ++j)
    {
-      fSum += expression.value().toDouble();
+      fSum += expression.value();
       std::swap(a,b);
       std::swap(x,y);
    }
 
-   StopTimer(fRes.toDouble(), fSum, iCount);
+   StopTimer(fRes.toDouble(), fSum.toDouble(), iCount);
 
    return m_fTime1;
 }

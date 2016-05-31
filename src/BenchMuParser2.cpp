@@ -39,35 +39,25 @@ double BenchMuParser2::DoBenchmarkStd(const std::string& sExpr, long iCount)
    double z = 4.123456;
    double w = 5.123456;
 
+   p.SetExpr(sExpr.c_str());
+   p.DefineVar("a", &a);
+   p.DefineVar("b", &b);
+   p.DefineVar("c", &c);
+
+   p.DefineVar("x", &x);
+   p.DefineVar("y", &y);
+   p.DefineVar("z", &z);
+   p.DefineVar("w", &w);
+
+   p.DefineConst("pi", (double)M_PI);
+   p.DefineConst("e", (double)M_E);
+
    try
    {
-      p.SetExpr(sExpr.c_str());
-      p.DefineVar("a", &a);
-      p.DefineVar("b", &b);
-      p.DefineVar("c", &c);
-
-      p.DefineVar("x", &x);
-      p.DefineVar("y", &y);
-      p.DefineVar("z", &z);
-      p.DefineVar("w", &w);
-
-      p.DefineConst("pi", (double)M_PI);
-      p.DefineConst("e", (double)M_E);
 
       fRes = p.Eval(); // create bytecode on first time parsing, don't want to have this in the benchmark loop
                        // since fparser does it in Parse(...) wich is outside too
                        // (Speed of bytecode creation is irrelevant)
-
-      StartTimer();
-
-      for (int j = 0; j < iCount; ++j)
-      {
-         fSum += p.Eval();
-         std::swap(a,b);
-         std::swap(x,y);
-      }
-
-      StopTimer(fRes, fSum, iCount);
    }
    catch(ParserError &exc)
    {
@@ -77,6 +67,39 @@ double BenchMuParser2::DoBenchmarkStd(const std::string& sExpr, long iCount)
    {
       StopTimerAndReport("unexpected exception");
    }
+
+   //Prime the I and D caches for the expression
+   {
+      double d0 = 0.0;
+      double d1 = 0.0;
+
+      for (std::size_t i = 0; i < priming_rounds; ++i)
+      {
+         if (i & 1)
+            d0 += p.Eval();
+         else
+            d1 += p.Eval();
+      }
+
+      if (
+            (d0 == std::numeric_limits<double>::infinity()) &&
+            (d1 == std::numeric_limits<double>::infinity())
+         )
+      {
+         printf("\n");
+      }
+   }
+
+   StartTimer();
+
+   for (int j = 0; j < iCount; ++j)
+   {
+      fSum += p.Eval();
+      std::swap(a,b);
+      std::swap(x,y);
+   }
+
+   StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;
 }

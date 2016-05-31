@@ -57,6 +57,28 @@ double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
    {
       assert(ptfun != NULL);
 
+      //Prime the I and D caches for the expression
+      {
+         double d0 = 0.0;
+         double d1 = 0.0;
+
+         for (std::size_t i = 0; i < priming_rounds; ++i)
+         {
+            if (i & 1)
+               d0 += ptfun();
+            else
+               d1 += ptfun();
+         }
+
+         if (
+               (d0 == std::numeric_limits<double>::infinity()) &&
+               (d1 == std::numeric_limits<double>::infinity())
+            )
+         {
+            printf("\n");
+         }
+      }
+
       fRes = ptfun();
 
       StartTimer();

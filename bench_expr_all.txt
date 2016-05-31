@@ -61,6 +61,17 @@ a*b*c
 a-b-c
 a/b/c
 
+a-b+c-a+b-c
+a+b-c+a-b+c
+
+a*b/c*a/b*c
+a/b*c/a*b/c
+
+a-b-c+a+b+c
+a+b+c-a-b-c
+
+a*b*c*a/b/c
+a/b/c*a*b*c
 
 #
 a+-b
@@ -114,10 +125,22 @@ a^2.2^3.3-a^13.48946876053338489126547
 
 # Gleichungen von Garry Beenes benchmark
 a*2+b*2
-sin(a)+sin(b)
 a^2+b^2
 (1.1+a^2)+(2.2+b^2)
 (a^2.1/3.3)+(b^2.1/3.3)
+sin(a)+sin(b)
+sqrt(a)+sqrt(b)
+sqrt(a^2)+sqrt(b^2)
+sqrt(a^2+b^2)
+abs(sqrt(a^2+b^2))
+sin(sqrt(a^2+b^2))
+tan(sqrt(a^2+b^2+1))
+abs(sin(sqrt(a^2+b^2)))
+sqrt(a^2.1+b^2.1)
+abs(sqrt(a^2.1+b^2.1))
+sin(sqrt(a^2.1+b^2.1))
+tan(sqrt(a^2.1+b^2.1+1))
+abs(sin(sqrt(a^2.1+b^2.1)))
 abs(sin(sqrt(a^2.1+b^2.1))*255)
 abs(sin(sqrt(a^2+b^2))*255)
 abs(sin(sqrt(a*a+b*b))*255)
@@ -138,6 +161,7 @@ abs(sin(sqrt(a*a+b*b))*255)
 # Gleichungen mit logischen verknüpfungen
 sqrt(a)<sin(8)
 (10+sqrt(a))<(sin(8)^2)
+(a+b)<(a/b)
 
 
 # Gleichungen mit Variablen, ohne Funktionen

@@ -20,6 +20,8 @@ public:
      MPFR
    };
 
+   const std::size_t priming_rounds = 1000;
+
    typedef std::vector<std::string> expr_vec;
 
    Benchmark(EBaseType eBaseType = DOUBLE);

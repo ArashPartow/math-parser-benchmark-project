@@ -49,24 +49,46 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    try
    {
       p.compile(sExpr.c_str());
-
-      fRes = p.evaluate();
-
-      StartTimer();
-
-      for (int j = 0; j < iCount; ++j)
-      {
-         fSum += p.evaluate();
-         std::swap(a,b);
-         std::swap(x,y);
-      }
-
-      StopTimer(fRes, fSum, iCount);
    }
    catch(MTParserException &e)
    {
       StopTimerAndReport(e.getDesc(0).c_str());
    }
+
+   //Prime the I and D caches for the expression
+   {
+      double d0 = 0.0;
+      double d1 = 0.0;
+
+      for (std::size_t i = 0; i < priming_rounds; ++i)
+      {
+         if (i & 1)
+            d0 += p.evaluate();
+         else
+            d1 += p.evaluate();
+      }
+
+      if (
+            (d0 == std::numeric_limits<double>::infinity()) &&
+            (d1 == std::numeric_limits<double>::infinity())
+         )
+      {
+         printf("\n");
+      }
+   }
+
+   fRes = p.evaluate();
+
+   StartTimer();
+
+   for (int j = 0; j < iCount; ++j)
+   {
+      fSum += p.evaluate();
+      std::swap(a,b);
+      std::swap(x,y);
+   }
+
+   StopTimer(fRes, fSum, iCount);
 
    return m_fTime1;
 }

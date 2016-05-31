@@ -54,6 +54,28 @@ double BenchExprTkFloat::DoBenchmark(const std::string& sExpr, long iCount)
       }
    }
 
+   //Prime the I and D caches for the expression
+   {
+      float d0 = 0.0;
+      float d1 = 0.0;
+
+      for (std::size_t i = 0; i < priming_rounds; ++i)
+      {
+         if (i & 1)
+            d0 += expression.value();
+         else
+            d1 += expression.value();
+      }
+
+      if (
+           (d0 == std::numeric_limits<float>::infinity()) &&
+           (d1 == std::numeric_limits<float>::infinity())
+         )
+      {
+         printf("\n");
+      }
+   }
+
    float  fRes  = 0;
    double fSum  = 0;
 

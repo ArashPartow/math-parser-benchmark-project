@@ -92,7 +92,29 @@ double BenchATMSP::DoBenchmark(const std::string& sExpr, long iCount)
       bc.var[5] = 4.123456;
       bc.var[6] = 5.123456;
 
-      // Calculate/bench and show result finally
+      //Prime the I and D caches for the expression
+      {
+         double d0 = 0.0;
+         double d1 = 0.0;
+
+         for (std::size_t i = 0; i < priming_rounds; ++i)
+         {
+            if (i & 1)
+               d0 += bc.run();
+            else
+               d1 += bc.run();
+         }
+
+         if (
+               (d0 == std::numeric_limits<double>::infinity()) &&
+               (d1 == std::numeric_limits<double>::infinity())
+            )
+         {
+            printf("\n");
+         }
+      }
+
+      // Perform benchmark then return results
       double fRes (0);
       double fSum (0);
 

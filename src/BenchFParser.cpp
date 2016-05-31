@@ -39,6 +39,28 @@ double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
                         5.123456
                       };
 
+      //Prime the I and D caches for the expression
+      {
+         double d0 = 0.0;
+         double d1 = 0.0;
+
+         for (std::size_t i = 0; i < priming_rounds; ++i)
+         {
+            if (i & 1)
+               d0 += Parser.Eval(vals);
+            else
+               d1 += Parser.Eval(vals);
+         }
+
+         if (
+               (d0 == std::numeric_limits<double>::infinity()) &&
+               (d1 == std::numeric_limits<double>::infinity())
+            )
+         {
+            printf("\n");
+         }
+      }
+
       fRes = Parser.Eval(vals);
 
       StartTimer();
