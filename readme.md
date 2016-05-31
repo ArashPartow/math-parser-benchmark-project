@@ -26,15 +26,15 @@ The benchmark takes two parameters:
 
 The mathematical expression benchmark files are as follows:
 
-1.  [*"bench_expr.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr.txt)
-1.  [*"bench_expr_all.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt)
-1.  [*"bench_expr_all_permutations.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all_permutations.txt)
-1.  [*"bench_expr_complete.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_complete.txt)
-1.  [*"bench_expr_extensive.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_extensive.txt)
-1.  [*"bench_expr_precedence.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_precedence.txt)
-1.  [*"bench_expr_random_with_functions.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_with_functions.txt)
-1.  [*"bench_expr_random_without_functions.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_without_functions.txt)
-1.  [*"bench_expr_weird.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_weird.txt)
+1.  [*bench_expr.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr.txt)
+1.  [*bench_expr_all.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt)
+1.  [*bench_expr_all_permutations.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all_permutations.txt)
+1.  [*bench_expr_complete.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_complete.txt)
+1.  [*bench_expr_extensive.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_extensive.txt)
+1.  [*bench_expr_precedence.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_precedence.txt)
+1.  [*bench_expr_random_with_functions.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_with_functions.txt)
+1.  [*bench_expr_random_without_functions.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_without_functions.txt)
+1.  [*bench_expr_weird.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_weird.txt)
 
 
 As an example, the following execution will use the [*"bench_expr_all.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt) set of expressions, executing each expression 100000 times.
