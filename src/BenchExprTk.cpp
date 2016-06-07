@@ -77,8 +77,8 @@ double BenchExprTk::DoBenchmark(const std::string& sExpr, long iCount)
    }
 
    // Perform benchmark then return results
-   double fRes  = 0;
-   double fSum  = 0;
+   double fRes = 0;
+   double fSum = 0;
 
    fRes = expression.value();
 

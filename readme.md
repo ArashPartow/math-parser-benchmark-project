@@ -63,3 +63,10 @@ The following is a chart depicting the results as executions per second obtained
 
     ParserBenchmark.exe 5000000 bench_expr_random_without_functions.txt write_table
 
+## Native Mode
+The benchmark has a special mode called **"Native"**. In this mode a predefined set of expressions are employed, and benchmarked against both native equivalent implementations and the standard parsers/evaluators.
+
+The command to execute the benchmark in native mode is as follows:
+
+    ParserBenchmark.exe 1000000 native
+

@@ -244,3 +244,20 @@ void Benchmark::IgnoreLastRate()
    if (!rate_list.empty())
       rate_list.pop_back();
 }
+
+void Benchmark::copy(Benchmark* b)
+{
+   m_sName              = b->m_sName;
+   m_sInfo              = b->m_sInfo;
+   m_nTotalBytecodeSize = b->m_nTotalBytecodeSize;
+   m_nNum               = b->m_nNum;
+   m_fTime1             = b->m_fTime1;
+   m_fResult            = b->m_fResult;
+   m_fSum               = b->m_fSum;
+   m_bFail              = b->m_bFail;
+   m_sFailReason        = b->m_sFailReason;
+   m_timer              = b->m_timer;
+   m_eBaseType          = b->m_eBaseType;
+   m_allFails           = b->m_allFails;
+   rate_list            = b->rate_list;
+}

@@ -31,6 +31,7 @@
 #include "BenchLepton.h"
 #include "BenchFParser.h"
 #include "BenchMathExpr.h"
+#include "BenchNative.h"
 
 #ifdef ENABLE_MPFR
 #include "BenchExprTkMPFR.h"
@@ -269,7 +270,7 @@ void Shootout(const std::string& sCaption,
                   continue;
 
                pBench->AddPoints(0);
-               pBench->AddScore(0);
+               pBench->AddScore (0);
 
                if (pBench->DidNotEvaluate())
                {
@@ -413,6 +414,7 @@ int main(int argc, const char *argv[])
    int iCount = 10000000;
 
    bool writeResultTable = false;
+   bool nativeBenchmark  = false;
 
    const std::string benchmark_file_set[] =
                      {
@@ -439,7 +441,10 @@ int main(int argc, const char *argv[])
 
    if (argc >= 3)
    {
-      benchmark_file = argv[2];
+      if (std::string(argv[2]) == "native")
+         nativeBenchmark = true;
+      else
+         benchmark_file = argv[2];
    }
 
    if ((argc >= 4) && (std::string(argv[3]) == "write_table"))
@@ -447,7 +452,15 @@ int main(int argc, const char *argv[])
       writeResultTable = true;
    }
 
-   std::vector<std::string> vExpr = load_expressions(benchmark_file);
+   std::vector<std::string> vExpr;
+
+   if (nativeBenchmark)
+   {
+      benchmark_file = "Set of expressions for Native mode";
+      vExpr = BenchNative::load_native_expressions();
+   }
+   else
+      vExpr = load_expressions(benchmark_file);
 
    if (vExpr.empty())
    {
@@ -464,16 +477,16 @@ int main(int argc, const char *argv[])
    // the reference parser be precise when computing expressions.
    //
 
-   vBenchmarks.push_back(new BenchExprTk()          );  // <-- Note: first parser becomes the reference!
-   vBenchmarks.push_back(new BenchMuParser2(false)  );
-   vBenchmarks.push_back(new BenchMuParser2(true)   );
-   vBenchmarks.push_back(new BenchMuParserX()       );
-   vBenchmarks.push_back(new BenchATMSP()           );
-   vBenchmarks.push_back(new BenchLepton()          );
-   vBenchmarks.push_back(new BenchFParser()         );
-   vBenchmarks.push_back(new BenchMathExpr()        );
+   vBenchmarks.push_back(new BenchExprTk()        );  // <-- Note: first parser becomes the reference!
+   vBenchmarks.push_back(new BenchMuParser2(false));
+   vBenchmarks.push_back(new BenchMuParser2(true) );
+   vBenchmarks.push_back(new BenchMuParserX()     );
+   vBenchmarks.push_back(new BenchATMSP()         );
+   vBenchmarks.push_back(new BenchLepton()        );
+   vBenchmarks.push_back(new BenchFParser()       );
+   vBenchmarks.push_back(new BenchMathExpr()      );
    #if defined(_MSC_VER) && defined(NDEBUG)
-   vBenchmarks.push_back(new BenchMTParser()        ); // <-- Crash in debug mode
+   vBenchmarks.push_back(new BenchMTParser()      ); // <-- Crash in debug mode
    #endif
 
    #ifdef _MSC_VER
@@ -484,6 +497,9 @@ int main(int argc, const char *argv[])
    #ifdef ENABLE_MPFR
    vBenchmarks.push_back(new BenchExprTkMPFR ());
    #endif
+
+   if (nativeBenchmark)
+      vBenchmarks.push_back(new BenchNative());
 
    Shootout(benchmark_file, vBenchmarks, vExpr, iCount, writeResultTable);
 

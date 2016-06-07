@@ -59,7 +59,9 @@ public:
    void AddFail(const std::string& sExpr);
 
    double GetRate(const std::size_t& index) const;
-   void IgnoreLastRate();
+   void   IgnoreLastRate();
+
+   void   copy(Benchmark* n);
 
 protected:
 

@@ -212,6 +212,7 @@
     <ClCompile Include="..\lepton\Parser.cpp">
       <Filter>lepton</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BenchNative.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\atmsp\atmsp.h">
@@ -660,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="..\lepton\lepton\ParsedExpression.h">
       <Filter>lepton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BenchNative.h">
+      <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
