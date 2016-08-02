@@ -70,3 +70,17 @@ The command to execute the benchmark in native mode is as follows:
 
     ParserBenchmark.exe 1000000 native
 
+## Customised Tests
+Creating a customised test is very simple. All that is required is to create a utf-8 encoded text file.
+
+Expressions are assumed to be one per line, comprised of the following operations, variables and functions:
+
+1.  +, -, *, /, ^
+1.  a, b, c, x, y, z, w, e and pi
+1.  sin, cos, tan, abs, exp, sqrt, log, pow
+1.  Round parentheses ()
+
+Furthermore lines beginning with a **#**-symbol will be ignored (aka comments).
+
+## New Parsers
+The addition of new C++ mathematical expression parsers is always welcome. If you know of a parser and would like it included in the suite feel free to make a request. Additionally if the associated benchmark implementation *(eg: src/BenchXYZW.cpp)* could be made available as part of the request that would very helpful.
