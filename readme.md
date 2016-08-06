@@ -1,6 +1,8 @@
 # The Great C++ Mathematical Expression Parser Benchmark
 
-This is a benchmark suite for different implementations of open source math expression parsers and evaluators written in C++. Currently the following expression parsers are part of this benchmark:
+This is a benchmark suite for different implementations of open source
+math expression parsers and evaluators written in C++. Currently the
+following expression parsers are part of this benchmark:
 
 |#    |  Library       |  Author                       |  License   |
 | --- | :------------- | :---------------------------- | :----------|
@@ -14,7 +16,9 @@ This is a benchmark suite for different implementations of open source math expr
 | 07  | [muParserX](http://muparserx.beltoforion.de/)      | Ingo Berg                      | [MIT](http://www.opensource.org/licenses/mit-license.php) |
 
 
-**Note:** This archive is not meant as a primary source for any of the libraries listed above as it may contain outdated versions of said libraries.
+**Note:** This archive is not meant as a primary source for any of the
+libraries listed above as it may contain outdated versions of said
+libraries.
 
 
 ## The Setup
@@ -37,12 +41,20 @@ The mathematical expression benchmark files are as follows:
 1.  [bench_expr_weird.txt](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_weird.txt)
 
 
-As an example, the following execution will use the [*"bench_expr_all.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt) set of expressions, executing each expression 100000 times.
+As an example, the following execution will use the
+[*"bench_expr_all.txt"*](https://github.com/ArashPartow/math-parser-
+benchmark-project/blob/master/bench_expr_all.txt) set of expressions,
+executing each expression 100000 times:
 
     ParserBench.exe 100000 bench_expr_all.txt
 
 ## The Rounds
-For every expression in the benchmark file, every parser evaluates the given expression N times, this is known as a round. The total time each parser takes to evaluate the expression N times is recorded. Ranking of the parsers for the round is done from the fastest to the slowest.
+For every expression in the benchmark file, every parser evaluates the
+given expression N times, this is known as a round. The total time
+each parser takes to evaluate the expression N times is recorded.
+Ranking of the parsers for the round is done from the fastest to the
+slowest. The following is an example summary for the expression
+'(a^2/sin(2*pi/b))-a/2':
 
     Expression 61 of 67: "(a^2/sin(2*pi/b))-a/2"; Progress: ###########
     [01] ExprTk              ( 34.373 ns, 3.744853294789905362, -3153742.968144028913229704)
@@ -58,7 +70,11 @@ For every expression in the benchmark file, every parser evaluates the given exp
     [11] muparserx           (545.148 ns, 3.744853294789905362, -3153742.968144028913229704)
 
 
-Parsers that can't parse the expression or produce a result different to the expected result (based on a normalized epsilon approach) are disqualified for the round and do not participate in point accumulation.
+Parsers that can't parse the expression or produce a result different
+to the expected result (based on a normalized epsilon approach) are
+disqualified for the round and do not participate in point
+accumulation. The following is an example where are few of the parsers
+failed to either parse or evaluate the given expression correctly:
 
     Expression 69 of 96: "+1.1+a^b"; Progress: ###########
     [01] ExprTk              ( 40.885 ns, 2.333286300554663129, 2906884.279087092727422714)
@@ -75,7 +91,7 @@ Parsers that can't parse the expression or produce a result different to the exp
     [03] Lepton               (Parse error in expression "+1.1+a^b ": unexpected token: +)
     **** ERROR ****   Excessive number of evaluation failures!  [3]
 
-The definitions of each column are as follows:
+The meanings of each of the columns are as follows:
 
 1. Rank
 2. Parser
@@ -84,8 +100,12 @@ The definitions of each column are as follows:
 5. Sum of evaluating the expression N-time
 
 
-## The Summary
-Once all the expressions have been completed, a summary is provided, that includes information relating to the build parameters of the benchmark binary, the architecture which the benchmark was run upon, a final ranking of the parsers, and a listing of expressions per parser that were deemed as disqualified during the benchmark.
+## The Final Summary
+Once all the expressions have been completed, a summary is provided,
+that includes information relating to the build parameters of the
+benchmark binary, the architecture which the benchmark was run upon, a
+final ranking of the parsers, and a listing of expressions per parser
+that were deemed as disqualified during the benchmark.
 
 The following is an example summary generated at the completion of the benchmark:
 
@@ -139,25 +159,38 @@ The following is an example summary generated at the completion of the benchmark
 The summaries of runs of the benchmark suite upon various architectures can be found here: [Results](https://github.com/ArashPartow/math-parser-benchmark-project/tree/master/logs)
 
 ## Example Results
-The following is a chart depicting the results as executions per second obtained by running the ['bench_expr_random_without_functions.txt'](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_without_functions.txt) benchmark, using the double type, 5000000 iterations per expression on an Intel Xeon E5-2687W 3GHz. The horizontal measure on the chart is the length of the expression in bytes.
+The following is a chart depicting the results as executions per
+second obtained by running the
+['bench_expr_random_without_functions.txt'](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_without_functions.txt)
+benchmark, using the double type, 5000000 iterations per expression on
+an Intel Xeon E5-2687W 3GHz. The horizontal measure on the chart is
+the length of the expression in bytes.
 
 ![ScreenShot](http://www.partow.net/experimental/images/benchmark_result.png?raw=true "C++ Mathematical Expression Parser Benchmark Results")
 
-**Note:** The parsers *muParserSSE* and *ExprTKFloat* were excluded due to their use of the float type, and the *Lepton* and *muParserX* parsers were excluded due to the fact that their results were consistently 2-3 orders of magnitude slower than all the others.
+**Note:** The parsers *muParserSSE* and *ExprTKFloat* were excluded
+due to their use of the float type, and the *Lepton* and *muParserX*
+parsers were excluded due to the fact that their results were
+consistently 2-3 orders of magnitude slower than all the others.
 
 **Note:** The command executed to generate the above results is as follows:
 
     ParserBenchmark.exe 5000000 bench_expr_random_without_functions.txt write_table
 
 ## Native Mode
-The benchmark has a special mode called **"Native"**. In this mode a predefined set of expressions are employed, and benchmarked against both native equivalent implementations and the standard parsers/evaluators.
+The benchmark has a special mode called **"Native"**. In this mode a
+predefined set of expressions are employed, and benchmarked against
+both native equivalent implementations and the standard
+parsers/evaluators.
 
 The command to execute the benchmark in native mode is as follows:
 
     ParserBenchmark.exe 1000000 native
 
 ## Customised Tests
-Creating a customised test is very simple. All that is required is to create a utf-8 encoded text file, and pass it as the 2nd parameter to the benchmark executable.
+Creating a customised test is very simple. All that is required is to
+create a utf-8 encoded text file, and pass it as the 2nd parameter to
+the benchmark executable.
 
 Each line can only have one expression, comprised of the following:
 
@@ -169,4 +202,8 @@ Each line can only have one expression, comprised of the following:
 Furthermore lines beginning with a **#**-symbol will be ignored (aka comments or white-space).
 
 ## New Parsers
-The addition of new C++ mathematical expression parsers is always welcome. If you know of a parser and would like it included in the suite feel free to make a request. Additionally if the associated benchmark implementation *(eg: src/BenchXYZW.cpp)* could be made available as part of the request that would very helpful.
+The addition of new C++ mathematical expression parsers is always
+welcome. If you know of a parser and would like it included in the
+suite feel free to make a request. Additionally if the associated
+benchmark implementation *(eg: src/BenchXYZW.cpp)* could be made
+available as part of the request that would very helpful.
