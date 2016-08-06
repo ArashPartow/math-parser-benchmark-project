@@ -6,14 +6,14 @@ following expression parsers are part of this benchmark:
 
 |#    |  Library       |  Author                       |  License   |
 | --- | :------------- | :---------------------------- | :----------|
-| 00  | [ATMSP](http://sourceforge.net/projects/atmsp/)     | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) |
-| 01  | [ExprTk](http://www.partow.net/programming/exprtk/) | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) |
-| 02  | [FParser](http://warp.povusers.org/FunctionParser/) | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           |
-| 03  | [Lepton](https://simtk.org/home/lepton)             | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) |
-| 04  | [MathExpr](http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier            | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)|
-| 05  | [MTParser](http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)       |
-| 06  | [muParser](http://muparser.beltoforion.de/)        | Ingo Berg                      | [MIT](http://www.opensource.org/licenses/mit-license.php) |
-| 07  | [muParserX](http://muparserx.beltoforion.de/)      | Ingo Berg                      | [MIT](http://www.opensource.org/licenses/mit-license.php) |
+| 00  | [ATMSP]    (http://sourceforge.net/projects/atmsp/)    | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) |
+| 01  | [ExprTk]   (http://www.partow.net/programming/exprtk/) | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) |
+| 02  | [FParser]  (http://warp.povusers.org/FunctionParser/)  | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           |
+| 03  | [Lepton]   (https://simtk.org/home/lepton)             | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) |
+| 04  | [MathExpr] (http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier              | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)|
+| 05  | [MTParser] (http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)|
+| 06  | [muParser] (http://muparser.beltoforion.de/)           | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) |
+| 07  | [muParserX](http://muparserx.beltoforion.de/)          | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) |
 
 
 **Note:** This archive is not meant as a primary source for any of the
@@ -41,10 +41,8 @@ The mathematical expression benchmark files are as follows:
 1.  [bench_expr_weird.txt](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_weird.txt)
 
 
-As an example, the following execution will use the
-[*"bench_expr_all.txt"*](https://github.com/ArashPartow/math-parser-
-benchmark-project/blob/master/bench_expr_all.txt) set of expressions,
-executing each expression 100000 times:
+As an example, the following execution will use the[*"bench_expr_all.txt"*]
+(https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt) set of expressions, executing each expression 100000 times:
 
     ParserBench.exe 100000 bench_expr_all.txt
 
@@ -74,7 +72,7 @@ Parsers that can't parse the expression or produce a result different
 to the expected result (based on a normalized epsilon approach) are
 disqualified for the round and do not participate in point
 accumulation. The following is an example where are few of the parsers
-failed to either parse or evaluate the given expression correctly:
+failed to either parse or evaluate the given expression of '+1.1+a^b' correctly:
 
     Expression 69 of 96: "+1.1+a^b"; Progress: ###########
     [01] ExprTk              ( 40.885 ns, 2.333286300554663129, 2906884.279087092727422714)
@@ -88,16 +86,16 @@ failed to either parse or evaluate the given expression correctly:
     DNQ List
     [01] FParser 4.5          (Syntax error)
     [02] MathExpr             (parsing error)
-    [03] Lepton               (Parse error in expression "+1.1+a^b ": unexpected token: +)
+    [03] Lepton               (Parse error in expression "+1.1+a^b": unexpected token: +)
     **** ERROR ****   Excessive number of evaluation failures!  [3]
 
 The meanings of each of the columns are as follows:
 
-1. Rank
-2. Parser
-3. Average time *(in nano-seconds)* to evaluate the expression once - taken over N-Times.
-4. Result of evaluating the expression
-5. Sum of evaluating the expression N-time
+1.  Rank
+2.  Parser
+3.  Average time *(in nano-seconds)* to evaluate the expression once, taken over N-times
+4.  Result of evaluating the expression
+5.  Sum of N-evaluations of the given expression
 
 
 ## The Final Summary
@@ -199,11 +197,30 @@ Each line can only have one expression, comprised of the following:
 * **Functions:** sin, cos, tan, abs, exp, sqrt, log, pow
 * **Parentheses:** Round '(' and ')'
 
-Furthermore lines beginning with a **#**-symbol will be ignored (aka comments or white-space).
+Furthermore blank lines or lines beginning with a **#**-symbol will be ignored (aka comments or white-space).
+
+The following is a simple example of a custom test:
+
+    ---- snip ----
+
+    # My first expression:
+    (x + 1) / 2 * b
+
+    # Pythagoras
+    a^2 + b^2
+
+    # A constant expression
+    1 + (2 * 3) / 7
+
+    # Definition of tan in terms of sine and cosine
+    sin(x) / cos(x)
+
+    ---- snip ----
+
 
 ## New Parsers
-The addition of new C++ mathematical expression parsers is always
-welcome. If you know of a parser and would like it included in the
-suite feel free to make a request. Additionally if the associated
+The addition of new or unlisted C++ mathematical expression parsers is
+always welcome. If you know of a parser and would like it included in
+the suite feel free to make a request. Additionally if the associated
 benchmark implementation *(eg: src/BenchXYZW.cpp)* could be made
 available as part of the request that would very helpful.
