@@ -4,16 +4,16 @@ This is a benchmark suite for different implementations of open source
 math expression parsers and evaluators written in C++. Currently the
 following expression parsers are part of this benchmark:
 
-|#    |  Library       |  Author                       |  License   |
-| --- | :------------- | :---------------------------- | :----------|
-| 00  | [ATMSP]    (http://sourceforge.net/projects/atmsp/)    | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) |
-| 01  | [ExprTk]   (http://www.partow.net/programming/exprtk/) | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) |
-| 02  | [FParser]  (http://warp.povusers.org/FunctionParser/)  | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           |
-| 03  | [Lepton]   (https://simtk.org/home/lepton)             | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) |
-| 04  | [MathExpr] (http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier              | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)|
-| 05  | [MTParser] (http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)|
-| 06  | [muParser] (http://muparser.beltoforion.de/)           | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) |
-| 07  | [muParserX](http://muparserx.beltoforion.de/)          | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) |
+|#    |  Library       |  Author                       |  License   |  Numeric Type   |
+| --- | :------------- | :---------------------------- | :----------| :----------:|
+| 00  | [ATMSP]    (http://sourceforge.net/projects/atmsp/)    | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) | double |
+| 01  | [ExprTk]   (http://www.partow.net/programming/exprtk/) | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) | double, float, MPFR |
+| 02  | [FParser]  (http://warp.povusers.org/FunctionParser/)  | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           | double |
+| 03  | [Lepton]   (https://simtk.org/home/lepton)             | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) | double |
+| 04  | [MathExpr] (http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier              | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)| double |
+| 05  | [MTParser] (http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
+| 06  | [muParser] (http://muparser.beltoforion.de/)           | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float |
+| 07  | [muParserX](http://muparserx.beltoforion.de/)          | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float |
 
 
 **Note:** This archive is not meant as a primary source for any of the
@@ -71,7 +71,7 @@ slowest. The following is an example summary for the expression
 Parsers that can't parse the expression or produce a result different
 to the expected result (based on a normalized epsilon approach) are
 disqualified for the round and do not participate in point
-accumulation. The following is an example where are few of the parsers
+accumulation. The following is an example where a few of the parsers
 failed to either parse or evaluate the given expression of '+1.1+a^b' correctly:
 
     Expression 69 of 96: "+1.1+a^b"; Progress: ###########
