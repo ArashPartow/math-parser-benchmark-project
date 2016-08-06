@@ -44,7 +44,45 @@ As an example, the following execution will use the [*"bench_expr_all.txt"*](htt
 ## The Rounds
 For every expression in the benchmark file, every parser evaluates the given expression N times, this is known as a round. The total time each parser takes to evaluate the expression N times is recorded. Ranking of the parsers for the round is done from the fastest to the slowest.
 
+    Expression 61 of 67: "(a^2/sin(2*pi/b))-a/2"; Progress: ###########
+    [01] ExprTk              ( 34.373 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [02] ExprTkFloat         ( 35.141 ns, 3.744853734970092773, -3153743.237257003784179688)
+    [03] muparserSSE         ( 43.155 ns, 3.744852304458618164, -3153743.147850036621093750)
+    [04] muparser 2.2.4 (omp)( 48.223 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [05] muparser 2.2.4      ( 52.411 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [06] MTParser            ( 56.825 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [07] FParser 4.5         ( 62.949 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [08] atmsp 1.0.4         ( 77.320 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [09] MathExpr            (124.067 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [10] Lepton              (376.444 ns, 3.744853294789905362, -3153742.968144028913229704)
+    [11] muparserx           (545.148 ns, 3.744853294789905362, -3153742.968144028913229704)
+
+
 Parsers that can't parse the expression or produce a result different to the expected result (based on a normalized epsilon approach) are disqualified for the round and do not participate in point accumulation.
+
+    Expression 69 of 96: "+1.1+a^b"; Progress: ###########
+    [01] ExprTk              ( 40.885 ns, 2.333286300554663129, 2906884.279087092727422714)
+    [02] muparserSSE         ( 41.089 ns, 2.333286285400390625, 2906884.431838989257812500)
+    [03] ExprTkFloat         ( 41.434 ns, 2.333286285400390625, 2906884.431838989257812500)
+    [04] atmsp 1.0.4         ( 48.107 ns, 2.333286300554663129, 2906884.279087092727422714)
+    [05] MTParser            ( 49.801 ns, 2.333286300554663129, 2906884.279087092727422714)
+    [06] muparser 2.2.4      ( 52.583 ns, 2.333286300554663129, 2906884.279087092727422714)
+    [07] muparser 2.2.4 (omp)( 53.922 ns, 2.333286300554663129, 2906884.279087092727422714)
+    [08] muparserx           (199.955 ns, 2.333286300554663129, 2906884.279087092727422714)
+    DNQ List
+    [01] FParser 4.5          (Syntax error)
+    [02] MathExpr             (parsing error)
+    [03] Lepton               (Parse error in expression "+1.1+a^b ": unexpected token: +)
+    **** ERROR ****   Excessive number of evaluation failures!  [3]
+
+The definitions of each column are as follows:
+
+1. Rank
+2. Parser
+3. Average time *(in nano-seconds)* to evaluate the expression once - taken over N-Times.
+4. Result of evaluating the expression
+5. Sum of evaluating the expression N-time
+
 
 ## The Summary
 Once all the expressions have been completed, a summary is provided, that includes information relating to the build parameters of the benchmark binary, the architecture which the benchmark was run upon, a final ranking of the parsers, and a listing of expressions per parser that were deemed as disqualified during the benchmark.
@@ -83,19 +121,19 @@ The following is an example summary generated at the completion of the benchmark
                         pse pse36 sep smx ss sse sse2 sse4_1 sse4_2 ssse3 tm tm2
                         tsc vme vmx xd xsave xtpr
       Scores:
-      #  Parser               Type           Points   Score    Failures
-      ------------------------------------------------------------------
-      00 ExprTk               double         671      100      0
-      01 ExprTkFloat          float          600       91      5
-      02 muparserSSE          float          591      104      5
-      03 FParser 4.5          double         457       47      0
-      04 atmsp 1.0.4          double         411       42      2
-      05 muparser 2.2.4       double         386       39      0
-      06 MTParser             double         355       41      7
-      07 muparser 2.2.4 (omp) double         300       36      0
-      08 MathExpr             double         280       31      2
-      09 Lepton               double         104        7      2
-      10 muparserx            double          94        6      0
+      #  Parser               Type       Points   Score    Failures
+      --------------------------------------------------------------
+      00 ExprTk               double     671      100      0
+      01 ExprTkFloat          float      600       91      5
+      02 muparserSSE          float      591      104      5
+      03 FParser 4.5          double     457       47      0
+      04 atmsp 1.0.4          double     411       42      2
+      05 muparser 2.2.4       double     386       39      0
+      06 MTParser             double     355       41      7
+      07 muparser 2.2.4 (omp) double     300       36      0
+      08 MathExpr             double     280       31      2
+      09 Lepton               double     104        7      2
+      10 muparserx            double      94        6      0
 
 ## The Results
 The summaries of runs of the benchmark suite upon various architectures can be found here: [Results](https://github.com/ArashPartow/math-parser-benchmark-project/tree/master/logs)
