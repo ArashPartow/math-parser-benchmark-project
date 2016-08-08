@@ -193,7 +193,8 @@ the benchmark executable.
 Each line can only have one expression, comprised of the following:
 
 * **Operators:** +, -, *, /, ^
-* **Variables:** a, b, c, x, y, z, w, e and pi
+* **Variables:** a, b, c, x, y, z, w
+* **Constants:** e and pi
 * **Functions:** sin, cos, tan, abs, exp, sqrt, log, pow
 * **Parentheses:** Round '(' and ')'
 
