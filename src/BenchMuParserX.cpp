@@ -1,7 +1,6 @@
 #include "BenchMuParserX.h"
 
 #include <cmath>
-//#include <windows.h>
 
 #include "muparserx/mpParser.h"
 
@@ -20,17 +19,19 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
    ParserX p(pckALL_NON_COMPLEX);
 
    Value fRes((float_type)0);
-   Value a((float_type)1.1);
-   Value b((float_type)2.2);
-   Value c((float_type)3.3);
-   Value x((float_type)2.123456);
-   Value y((float_type)3.123456);
-   Value z((float_type)4.123456);
-   Value w((float_type)5.123456);
-   Value buf((float_type)0);
+   Value    a((float_type)1.1);
+   Value    b((float_type)2.2);
+   Value    c((float_type)3.3);
+   Value    x((float_type)2.123456);
+   Value    y((float_type)3.123456);
+   Value    z((float_type)4.123456);
+   Value    w((float_type)5.123456);
+   Value  buf((float_type)0);
+
    double fTime(0);
 
    p.SetExpr(sExpr.c_str());
+
    p.DefineVar("a", Variable(&a));
    p.DefineVar("b", Variable(&b));
    p.DefineVar("c", Variable(&c));

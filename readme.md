@@ -68,7 +68,7 @@ slowest. The following is an example summary for the expression
     [11] muparserx           (545.148 ns, 3.744853294789905362, -3153742.968144028913229704)
 
 
-Parsers that can't parse the expression or produce a result different
+Parsers that can't parse the expression or produce a result *different*
 to the expected result (based on a normalized epsilon approach) are
 disqualified for the round and do not participate in point
 accumulation. The following is an example where a few of the parsers
