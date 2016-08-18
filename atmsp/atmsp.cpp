@@ -162,15 +162,22 @@ void ATMSP<T>::term(ATMSB<T> &bc) {
 	// Enter next recursion level
 	factor(bc);
 
-	while ( *cp=='*' || *cp=='/' )
-		if ( *cp++ == '*' ) {
+	while ( *cp=='*' || *cp=='/' || *cp=='%' )
+   {
+      char c = *cp++;
+		if ( c == '*' ) {
 			factor(bc);
 			bc.fun[opCnt++] = &ATMSB<T>::pmul;
 		}
-		else {
+		else if ( c == '/' ) {
 			factor(bc);
 			bc.fun[opCnt++] = &ATMSB<T>::pdiv;
 		}
+		else {
+			factor(bc);
+			bc.fun[opCnt++] = &ATMSB<T>::pmod;
+		}
+   }
 }
 
 // Calculate factors

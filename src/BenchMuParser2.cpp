@@ -62,10 +62,12 @@ double BenchMuParser2::DoBenchmarkStd(const std::string& sExpr, long iCount)
    catch(ParserError &exc)
    {
       StopTimerAndReport(exc.GetMsg());
+      return std::numeric_limits<double>::quiet_NaN();
    }
    catch(...)
    {
       StopTimerAndReport("unexpected exception");
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
    //Prime the I and D caches for the expression

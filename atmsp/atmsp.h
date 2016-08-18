@@ -44,6 +44,14 @@ struct ATMSB {
 	void psub()   { T t(stk.pop()); stk.setTop(stk.top()-t); }
 	void pmul()   { T t(stk.pop()); stk.setTop(t*stk.top()); }
 	void pdiv()   { T t(stk.pop()); t!=(T)0 ? stk.setTop(stk.top()/t) : stk.setTop(T((fltErr=1)-1)); }
+
+	template <typename TT>
+	TT     atmsb_mod(TT t0, TT t1)          { return t0 % t1; }
+	double atmsb_mod(double t0, double t1)  { return std::fmod  (t0,t1); }
+	float  atmsb_mod(float t0, float t1)    { return std::fmodf (t0,t1); }
+	long double atmsb_mod(long double t0, long double t1) { return std::fmodld(t0,t1); }
+	void pmod()   { T t(stk.pop()); t!=(T)0 ? stk.setTop(atmsb_mod(stk.top(),t)) : stk.setTop(T((fltErr=1)-1)); }
+	   
 	void pchs()   { stk.setTop(-stk.top()); }
 
 	#if !defined(COMPLEX) && !defined(MPFR)

@@ -5,7 +5,6 @@
 #include <cassert>
 
 #include "muParserSSE/muParserSSE.h"
-#pragma comment(lib, "muParserSSE.lib")
 
 using namespace std;
 

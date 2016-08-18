@@ -52,11 +52,13 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
    {
       fTime = std::numeric_limits<double>::quiet_NaN();
       StopTimerAndReport(exc.GetMsg());
+      return std::numeric_limits<double>::quiet_NaN();
    }
    catch(...)
    {
       fTime = std::numeric_limits<double>::quiet_NaN();
       StopTimerAndReport("unexpected exception");
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
    //Prime the I and D caches for the expression

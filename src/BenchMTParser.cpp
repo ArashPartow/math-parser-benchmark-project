@@ -53,6 +53,7 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    catch(MTParserException &e)
    {
       StopTimerAndReport(e.getDesc(0).c_str());
+      return std::numeric_limits<double>::quiet_NaN();
    }
 
    //Prime the I and D caches for the expression

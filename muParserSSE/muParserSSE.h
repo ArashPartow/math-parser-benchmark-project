@@ -46,7 +46,21 @@ extern "C"
 
 // Basic types
 typedef void*  mecParserHandle_t;    // parser handle
-typedef char   mecChar_t;            // character type
+
+#ifdef _UNICODE
+    typedef wchar_t   mecChar_t;         // character type
+
+   #if !defined(_T)
+     #define _T(x) L##x
+   #endif // not defined _T
+#else
+  typedef char   mecChar_t;            // character type
+
+  #if !defined(_T)
+    #define _T(x) x
+  #endif // not defined _T
+#endif
+
 typedef int    mecBool_t;            // boolean type
 typedef int    mecInt_t;             // integer type 
 typedef float  mecFloat_t;           // floating point type
@@ -166,7 +180,6 @@ API_EXPORT(mecEvalFun_t) mecDbgCompile(mecParserHandle_t a_hParser, int nRegNum)
 API_EXPORT(void) mecRelease(mecParserHandle_t a_hParser);
 API_EXPORT(const mecChar_t*) mecGetExpr(mecParserHandle_t a_hParser);
 API_EXPORT(void) mecSetExpr(mecParserHandle_t a_hParser, const mecChar_t *a_szExpr);
-//API_EXPORT(void) mecSetVarFactory(mecParserHandle_t a_hParser, mecFacFun_t a_pFactory, void* pUserData);
 API_EXPORT(const mecChar_t*) mecGetVersion(mecParserHandle_t a_hParser);
 
 // Defining callbacks / variables / constants

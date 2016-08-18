@@ -213,11 +213,72 @@
       <Filter>lepton</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BenchNative.cpp" />
+    <ClCompile Include="..\muParserSSE\muParserSSE.cpp" />
+    <ClCompile Include="..\muParserSSE\mecCallback.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecError.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecExprCompiler.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecParser.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecParserBase.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecReversePolishNotation.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecToken.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecTokenReader.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\muParserSSE\mecUnitTest.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\AssemblerX86X64.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\CompilerX86X64.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\CpuInfo.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\Defs.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\Lock.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\Logger.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\LoggerX86X64.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\LoggerX86X64Dump.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\MemoryManager.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\SerializerX86X64.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\Util.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AsmJit\VirtualMemory.cpp">
+      <Filter>asmjit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\atmsp\atmsp.h">
-      <Filter>atmsp</Filter>
-    </ClInclude>
     <ClInclude Include="..\atmsp\atmsp.base.h">
       <Filter>atmsp</Filter>
     </ClInclude>
@@ -665,6 +726,99 @@
     <ClInclude Include="..\include\BenchNative.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecCallback.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecDef.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecError.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecExprCompiler.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecParser.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecParserBase.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecReversePolishNotation.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecStack.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecToken.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecTokenReader.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\muParserSSE\mecUnitTest.h">
+      <Filter>muparsersse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\AsmJit.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Assembler.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\AssemblerX86X64.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Build.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Compiler.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\CompilerX86X64.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Config.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\CpuInfo.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Defs.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\DefsX86X64.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Lock.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Logger.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\LoggerX86X64.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\MemoryManager.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Serializer.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\SerializerX86X64.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\Util.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\VirtualMemory.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\WarningsPop.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AsmJit\WarningsPush.h">
+      <Filter>asmjit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
@@ -714,10 +868,8 @@
     <Filter Include="mpfr">
       <UniqueIdentifier>{7d03bb0e-8cbc-4f3f-8619-2050f99cd007}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\muParserSSE\muParserSSE.lib">
-      <Filter>muparsersse</Filter>
-    </Library>
+    <Filter Include="asmjit">
+      <UniqueIdentifier>{64c71230-dd29-4c16-99e9-34d50edaf410}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

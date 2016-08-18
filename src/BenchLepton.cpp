@@ -46,6 +46,7 @@ double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
    try
    {
       Lepton::ExpressionProgram program = Lepton::Parser::parse(sExpr).optimize().createProgram();
+      program.evaluate(var_list);
    }
    catch (std::exception& e)
    {
