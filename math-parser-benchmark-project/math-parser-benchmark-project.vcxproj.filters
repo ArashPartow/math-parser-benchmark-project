@@ -277,6 +277,10 @@
     <ClCompile Include="..\AsmJit\VirtualMemory.cpp">
       <Filter>asmjit</Filter>
     </ClCompile>
+    <ClCompile Include="..\tinyexpr\tinyexpr.c">
+      <Filter>tinyexpr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BenchTinyExpr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\atmsp\atmsp.base.h">
@@ -819,6 +823,12 @@
     <ClInclude Include="..\AsmJit\WarningsPush.h">
       <Filter>asmjit</Filter>
     </ClInclude>
+    <ClInclude Include="..\tinyexpr\tinyexpr.h">
+      <Filter>tinyexpr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BenchTinyExpr.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
@@ -870,6 +880,9 @@
     </Filter>
     <Filter Include="asmjit">
       <UniqueIdentifier>{64c71230-dd29-4c16-99e9-34d50edaf410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tinyexpr">
+      <UniqueIdentifier>{b1b43109-aa45-419d-bf8d-437e1b5cbab8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

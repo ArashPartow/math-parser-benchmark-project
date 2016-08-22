@@ -172,6 +172,7 @@
     <ClInclude Include="..\include\BenchMuParserSSE.h" />
     <ClInclude Include="..\include\BenchMuParserX.h" />
     <ClInclude Include="..\include\BenchNative.h" />
+    <ClInclude Include="..\include\BenchTinyExpr.h" />
     <ClInclude Include="..\include\cpuid.h" />
     <ClInclude Include="..\include\FormelGenerator.h" />
     <ClInclude Include="..\include\Stopwatch.h" />
@@ -281,6 +282,7 @@
     <ClInclude Include="..\muparserx\suSortPred.h" />
     <ClInclude Include="..\muparserx\suStringTokens.h" />
     <ClInclude Include="..\muparserx\utGeneric.h" />
+    <ClInclude Include="..\tinyexpr\tinyexpr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AsmJit\AssemblerX86X64.cpp" />
@@ -383,10 +385,12 @@
     <ClCompile Include="..\src\BenchMuParserSSE.cpp" />
     <ClCompile Include="..\src\BenchMuParserX.cpp" />
     <ClCompile Include="..\src\BenchNative.cpp" />
+    <ClCompile Include="..\src\BenchTinyExpr.cpp" />
     <ClCompile Include="..\src\cpuid.cpp" />
     <ClCompile Include="..\src\FormelGenerator.cpp" />
     <ClCompile Include="..\src\ParserBench.cpp" />
     <ClCompile Include="..\src\Stopwatch.cpp" />
+    <ClCompile Include="..\tinyexpr\tinyexpr.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\chaiscript\language\chaiscript_prelude.chai" />
