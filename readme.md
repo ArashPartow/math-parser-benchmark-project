@@ -14,7 +14,7 @@ following expression parsers are part of this benchmark:
 | 05  | [MTParser] (http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
 | 06  | [muParser] (http://muparser.beltoforion.de)            | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float |
 | 07  | [muParserX](http://muparserx.beltoforion.de)           | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float |
-| 08  | [TinyExpr] (https://github.com/codeplea/tinyexpr)      | Lewis Van Winkle              | [zlib](https://opensource.org/licenses/Zlib)              | double        |
+| 08  | [TinyExpr] (https://github.com/codeplea/tinyexpr)      | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double        |
 
 
 **Note:** This archive is not meant as a primary source for any of the
