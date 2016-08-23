@@ -152,7 +152,7 @@ abs(sin(sqrt(a*a+b*b))*255)
 (x*y-abs(x/y)^4)^3
 (x*y)^-3+(x/y)^-4
 (x*y-abs(x/y)^-4)^-3
-
+abs((x*y)^-3+(x/y)^-4)/abs((x*y)^-3+(x/y)^-4)
 
 # http://dabroz.scythe.pl/2010/11/18/quick-data-transformation
 #2+min(a+a+a,1/5)*(2+a*3)
