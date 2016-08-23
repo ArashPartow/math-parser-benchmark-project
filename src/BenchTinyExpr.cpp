@@ -4,6 +4,7 @@
 
 #include "tinyexpr/tinyexpr.h"
 
+#include <string.h>
 
 //-------------------------------------------------------------------------------------------------
 BenchTinyExpr::BenchTinyExpr()
@@ -22,8 +23,6 @@ double BenchTinyExpr::DoBenchmark(const std::string& sExpr, long iCount)
    double y = 3.123456;
    double z = 4.123456;
    double w = 5.123456;
-   double e = 2.718281828459045235360;
-   double p = 3.141592653589793238462;
 
    te_variable vars[] =
                {
@@ -33,9 +32,7 @@ double BenchTinyExpr::DoBenchmark(const std::string& sExpr, long iCount)
                  {"x", &x},
                  {"y", &y},
                  {"z", &z},
-                 {"w", &w},
-                 {"e", &e},
-                 {"pi",&p}
+                 {"w", &w}
                };
 
    int error           = 0;
@@ -43,13 +40,13 @@ double BenchTinyExpr::DoBenchmark(const std::string& sExpr, long iCount)
 
    expression = te_compile(sExpr.c_str(), vars, sizeof(vars) / sizeof(te_variable), &error);
 
+
    if ((0 == expression) || error)
    {
-      StopTimer(std::numeric_limits<double>::quiet_NaN(),
-                std::numeric_limits<double>::quiet_NaN(),
-                1);
-
-      return std::numeric_limits<double>::quiet_NaN();
+	   char buf[128];
+	   sprintf(buf, "Parsing error at %d.", error);
+	   StopTimerAndReport(buf);
+	   return m_fTime1;
    }
 
    //Prime the I and D caches for the expression

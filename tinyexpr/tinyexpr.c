@@ -22,6 +22,18 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+/* COMPILE TIME OPTIONS */
+
+/* Exponentiation associativity:
+For a^b^c = (a^b)^c and -a^b = (-a)^b do nothing.
+For a^b^c = a^(b^c) and -a^b = -(a^b) uncomment the next line.*/
+#define TE_POW_FROM_RIGHT
+
+/* Logarithms
+For log = base 10 log do nothing
+For log = natural log uncomment the next line. */
+#define TE_NAT_LOG
+
 #include "tinyexpr.h"
 #include <stdlib.h>
 #include <math.h>
@@ -66,7 +78,7 @@ typedef struct state {
 static te_expr *new_expr(const int type, const te_expr *parameters[]) {
     const int arity = ARITY(type);
     const int psize = sizeof(void*) * arity;
-    const int size = sizeof(te_expr) + psize + (IS_CLOSURE(type) ? sizeof(void*) : 0);
+    const int size = (sizeof(te_expr) - sizeof(void*)) + psize + (IS_CLOSURE(type) ? sizeof(void*) : 0);
     te_expr *ret = malloc(size);
     memset(ret, 0, size);
     if (arity && parameters) {
@@ -116,7 +128,12 @@ static const te_variable functions[] = {
     {"exp", exp,      TE_FUNCTION1 | TE_FLAG_PURE},
     {"floor", floor,  TE_FUNCTION1 | TE_FLAG_PURE},
     {"ln", log,       TE_FUNCTION1 | TE_FLAG_PURE},
+#ifdef TE_NAT_LOG
+    {"log", log,      TE_FUNCTION1 | TE_FLAG_PURE},
+#else
     {"log", log10,    TE_FUNCTION1 | TE_FLAG_PURE},
+#endif
+    {"log10", log10,  TE_FUNCTION1 | TE_FLAG_PURE},
     {"pi", pi,        TE_FUNCTION0 | TE_FLAG_PURE},
     {"pow", pow,      TE_FUNCTION2 | TE_FLAG_PURE},
     {"sin", sin,      TE_FUNCTION1 | TE_FLAG_PURE},
@@ -149,11 +166,13 @@ static const te_variable *find_builtin(const char *name, int len) {
 }
 
 static const te_variable *find_lookup(const state *s, const char *name, int len) {
-    int i;
+    int iters;
+    const te_variable *var;
     if (!s->lookup) return 0;
-    for (i = 0; i < s->lookup_len; ++i) {
-        if (strncmp(name, s->lookup[i].name, len) == 0 && s->lookup[i].name[len] == '\0') {
-            return s->lookup + i;
+
+    for (var = s->lookup, iters = s->lookup_len; iters; ++var, --iters) {
+        if (strncmp(name, var->name, len) == 0 && var->name[len] == '\0') {
+            return var;
         }
     }
     return 0;
@@ -172,12 +191,12 @@ static double comma(double a, double b) {return b;}
 void next_token(state *s) {
     s->type = TOK_NULL;
 
-    if (!*s->next){
-        s->type = TOK_END;
-        return;
-    }
-
     do {
+
+        if (!*s->next){
+            s->type = TOK_END;
+            return;
+        }
 
         /* Try reading a number. */
         if ((s->next[0] >= '0' && s->next[0] <= '9') || s->next[0] == '.') {
@@ -217,8 +236,7 @@ void next_token(state *s) {
 
             } else {
                 /* Look for an operator or special character. */
-               char c = s->next[0]; s->next++;
-                switch (c) {
+                switch (s->next++[0]) {
                     case '+': s->type = TOK_INFIX; s->function = add; break;
                     case '-': s->type = TOK_INFIX; s->function = sub; break;
                     case '*': s->type = TOK_INFIX; s->function = mul; break;
@@ -228,9 +246,8 @@ void next_token(state *s) {
                     case '(': s->type = TOK_OPEN; break;
                     case ')': s->type = TOK_CLOSE; break;
                     case ',': s->type = TOK_SEP; break;
-                    case ' ': case '\t': case '\n': case '\r' : break;
-                    case 0  : s->type = TOK_END;   break;
-                    default:  s->type = TOK_ERROR; break;
+                    case ' ': case '\t': case '\n': case '\r': break;
+                    default: s->type = TOK_ERROR; break;
                 }
             }
         }
@@ -357,7 +374,46 @@ static te_expr *power(state *s) {
     return ret;
 }
 
+#ifdef TE_POW_FROM_RIGHT
+static te_expr *factor(state *s) {
+    /* <factor>    =    <power> {"^" <power>} */
+    te_expr *ret = power(s);
 
+    int neg = 0;
+    te_expr *insertion = 0;
+
+    if (ret->type == (TE_FUNCTION1 | TE_FLAG_PURE) && ret->function == negate) {
+        te_expr *se = ret->parameters[0];
+        free(ret);
+        ret = se;
+        neg = 1;
+    }
+
+    while (s->type == TOK_INFIX && (s->function == pow)) {
+        te_fun2 t = s->function;
+        next_token(s);
+
+        if (insertion) {
+            /* Make exponentiation go right-to-left. */
+            te_expr *insert = NEW_EXPR(TE_FUNCTION2 | TE_FLAG_PURE, insertion->parameters[1], power(s));
+            insert->function = t;
+            insertion->parameters[1] = insert;
+            insertion = insert;
+        } else {
+            ret = NEW_EXPR(TE_FUNCTION2 | TE_FLAG_PURE, ret, power(s));
+            ret->function = t;
+            insertion = ret;
+        }
+    }
+
+    if (neg) {
+        ret = NEW_EXPR(TE_FUNCTION1 | TE_FLAG_PURE, ret);
+        ret->function = negate;
+    }
+
+    return ret;
+}
+#else
 static te_expr *factor(state *s) {
     /* <factor>    =    <power> {"^" <power>} */
     te_expr *ret = power(s);
@@ -371,6 +427,8 @@ static te_expr *factor(state *s) {
 
     return ret;
 }
+#endif
+
 
 
 static te_expr *term(state *s) {

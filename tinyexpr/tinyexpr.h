@@ -53,7 +53,7 @@ enum {
 
 typedef struct te_variable {
     const char *name;
-    void *address;
+    const void *address;
     int type;
     void *context;
 } te_variable;
