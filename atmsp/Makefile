@@ -18,7 +18,7 @@ ICCFLAGS = -O3
 
 ### General compiler settings. "Fix" ICC-iomanip-incompatibilty for ICC 12.x
 GCCFLAGS += -Wall -Wextra -pedantic -ansi
-ICCFLAGS += -Wall -std=c++0x
+ICCFLAGS += -Wall
 
 
 ### General linker settings. Add flags as needed

@@ -1,8 +1,9 @@
 1.0.4
 
-- Bug fix for unary plus. Thanks Arash for reporting
-- Improved test-codes
-- Code size is 325 LOC in total now
+- Bug fix for unary plus. Thanks to Arash for reporting
+- Improved self-tests
+- Retired atmsp.base.h and atmsp.cpp
+- Another slight code-shrink to 320 LOC now
 
 1.0.3
 

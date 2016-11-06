@@ -2,53 +2,47 @@ TEST-SYSTEM
 ========================================================================
 Linux 64 bit Core2 Duo 2.4 GHz
 Kernel 2.6.37 + GCC 4.7.2
-Compiler switches: -O3 -ffast-math -flto -fwhole-program [-static]
+Compiler switches: -O3 -ffast-math -flto -fwhole-program
 
 
 PARSERS COMPARED
 ========================================================================
-MP = muParser 2.1.0
-FP = fParser 4.4.3
+MP = muParser 2.2.3
+FP = fParser 4.5.1
+ET = ExpressionTk 20130707
 AP = ATMSP 1.0.4
 
 
-BASIC INFORMATION     MP      FP    AP
+BASIC INFORMATION     MP      FP     ET   AP
 ========================================================================
-Code total (KB)      243     420    22
-Code lines (net)    6066   24208   325   (Comments, blank lines removed)
-Executable (KB)      111     292    28   (Dynamic executable stripped)
-Executable (KB)     1326    1518  1251   (Static executable stripped)
-Compile time (s)      11      27     2   (Dynamic executable)
+Code total (KB)      370     413    749   21
+Code lines (net)    6092  143526  16191  320  (Comments, blank lines removed)
+Executable (KB)      119     308   2000   28  (Dynamic executable stripped)
+Compile time (s)      16      27    187    2  (Dynamic executable)
 
 Notes: values rounded. Measured sizes contain the minimum to calculate
 a small expression for standard-type double without bells and whistles.
 
 
-AVAILABLE TYPES       MP      FP    AP
+AVAILABLE TYPES       MP    FP     ET     AP
 ========================================================================
-int8                                 x
-uint8                                x
-int16                                x
-uint16                               x
-int32                          x     x
-uint32                               x
-int64                                x
-uint64                               x
-int128                               x
-uint128                              x
-float                  x       x     x
-double                 x       x     x
-long double            x       x     x
-complex<float>                 x     x
-complex<double>                x     x
-complex<long double>           x     x
-GMP-integer                    x
-MPFR-float                     x     x
+int8                                x      x
+uint8                               x      x
+int16                  x            x      x
+uint16                 x            x      x
+int32                        x      x      x
+uint32                 x            x      x
+int64                  x            x      x
+uint64                 x            x      x
+int128                              x      x
+uint128                             x      x
+float                  x     x      x      x
+double                 x     x      x      x
+long double            x     x      x      x
+complex<float>               x      x      x
+complex<double>              x      x      x
+complex<long double>         x      x      x
+MPFR-float                   x      x      x
 
-Notes: int128-types are available on X86_64 with GCC only. On thumb MSVC
-long double is fake for double only. For special types like GMP, MPFR, NTL
-or SSE2 external libs needed to be linked.
-
-GMP  = GNU Multiple Precision Arithmetic Library
-MPFR = GNU Multiple Precision Float Library
-NTL  = Number Theory Library for bignums and multiprecision-floats
+Notes: for special types like GMP, MPFR, NTL, 128-bit, SSE2 or similar
+"special" types external libs needed to be linked.

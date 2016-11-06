@@ -283,9 +283,6 @@
     <ClCompile Include="..\src\BenchTinyExpr.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\atmsp\atmsp.base.h">
-      <Filter>atmsp</Filter>
-    </ClInclude>
     <ClInclude Include="..\chaiscript\chaiscript_threading.hpp">
       <Filter>chaiscript</Filter>
     </ClInclude>
@@ -828,6 +825,9 @@
     </ClInclude>
     <ClInclude Include="..\include\BenchTinyExpr.h">
       <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\atmsp\atmsp.h">
+      <Filter>atmsp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

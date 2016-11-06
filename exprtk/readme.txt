@@ -291,6 +291,8 @@ of C++ compilers:
 +----------+---------------------------------------------------------+
 | nequal   | Not-equal test between x and y using normalized epsilon |
 +----------+---------------------------------------------------------+
+| pow      | x to the power of y.  (eg: pow(x,y) == x ^ y)           |
++----------+---------------------------------------------------------+
 | root     | Nth-Root of x. where n is a positive integer.           |
 |          | (eg: root(x,3) == x^(1/3))                              |
 +----------+---------------------------------------------------------+
@@ -454,10 +456,10 @@ of C++ compilers:
 +----------+---------------------------------------------------------+
 | if       | If x is true then return y else return z.               |
 |          | eg:                                                     |
-|          | 1. if(x, y, z)                                          |
-|          | 2. if((x + 1) > 2y, z + 1, w / v)                       |
-|          | 3. if(x > y) z;                                         |
-|          | 4. if(x <= 2*y) { z + w };                              |
+|          | 1. if (x, y, z)                                         |
+|          | 2. if ((x + 1) > 2y, z + 1, w / v)                      |
+|          | 3. if (x > y) z;                                        |
+|          | 4. if (x <= 2*y) { z + w };                             |
 +----------+---------------------------------------------------------+
 | if-else  | The if-else/else-if statement. Subject to the condition |
 |          | branch the statement will return either the value of the|
@@ -627,7 +629,7 @@ A  vector  can be  indexed  resulting in  a  scalar value.  Operations
 between a vector and scalar will result in a vector with a size  equal
 to that  of the  original vector,  whereas operations  between vectors
 will result in a  vector of size equal  to that of the  smaller of the
-two.
+two. In both mentioned cases, the operations will occur element-wise.
 
 
 (3) String Type
@@ -745,6 +747,25 @@ registration of the symbol_tables to the expression.
    expression.value(); // 123 + 1
 
 
+The symbol table supports  adding references to external  instances of
+types  that  can  be accessed  within  expressions  via the  following
+methods:
+
+   1. bool add_variable (const std::string& name,       scalar_t&)
+   2. bool add_constant (const std::string& name, const scalar_t&)
+   3. bool add_stringvar(const std::string& name,    std::string&)
+   4. bool add_vector   (const std::string& name,    vector_type&)
+
+
+The 'vector' type must consist of a contiguous array of scalars  which
+can be one of the following:
+
+   1. std::vector<scalar_t>
+   2. scalar_t(&v)[N]
+   3. scalar_t* and array size
+   4. exprtk::vector_view<scalar_t>
+
+
 (2) Expression
 A structure that holds an abstract syntax tree or AST for a  specified
 expression and is used to evaluate said expression. Evaluation of  the
@@ -858,8 +879,8 @@ behaviours  when  using the  expressions in  various contexts such  as
 muli-threading et al.
 
 The prescribed method for cloning an expression is to compile it  from
-its string form. Doing so will allow the one to properly consider  the
-exact source of user defined variables and functions.
+its string  form. Doing so will allow the 'user' to  properly consider
+the exact source of user defined variables and functions.
 
 Note:  The  exprtk::parser  is  a  non-copyable  and  non-thread  safe
 component, and should only be shared via either a reference, a  shared
@@ -874,19 +895,19 @@ operations  for  compiling  multiple expressions  via  the  parser and
 inserting  the  newly  minted  exprtk::expression  instances  into   a
 std::vector.
 
-
-                        +--[exprtk::parser]--+
-                        | expression factory |
-                     +---->- compile(....) ->---+
-                     |  +--------------------+  |
-  Expressions        |                          |   Expressions as
-  in string form     A                          V   exprtk::expression
-                     |                          |   instances
-  [s0:'x+1']------+  |                          |   +-[e0: x+1]
-                  |  |                          |   |
-  [s1:'2z+y']-----+--+                          +-->+-[e1: 2z+y]
-                  |                                 |
-  [s2:'sin(k+w)']-+                                 +-[e2: sin(k+w)]
+                      +----[exprtk::parser]---+
+                      |   Expression Factory  |
+                      | parser_t::compile(...)|
+                    +--> ~.~.~.~.~.~.~.~.~.~ ->--+
+                    | +-----------------------+  |
+ Expressions in     |                            |  Expressions as
+ string form        A                            V  exprtk::expression
+                    |                            |  instances
+ [s0:'x+1']--->--+  |                            |  +-[e0: x+1]
+                 |  |                            |  |
+ [s1:'2z+y']-->--+--+                            +->+-[e1: 2z+y]
+                 |                                  |
+ [s2:'sin(k+w)']-+                                  +-[e2: sin(k+w)]
 
 
    const std::string expression_str[3]
@@ -1143,7 +1164,7 @@ zero. The following are examples of variable definitions:
        var y := 3;
 
    (c) Initialise z to the expression
-       var z := if(max(1,x + y) > 2,w,v);
+       var z := if (max(1,x + y) > 2,w,v);
 
 
 (2) Vector Definition
@@ -1174,10 +1195,13 @@ zero. The following are examples of vector definitions:
        var x[3] := { 1, 2, 3 };
        var y[5] := x;   // 1, 2, 3, ??, ??
 
-   (h) Error as there are too many initialisers
+   (h) Non-initialised vector
+       var x[3] := null; // ?? ?? ??
+
+   (i) Error as there are too many initialisers
        var x[3] := { 1, 2, 3, 4 };
 
-   (i) Error as a vector of size zero is not allowed.
+   (j) Error as a vector of size zero is not allowed.
        var x[0];
 
 
@@ -1268,19 +1292,26 @@ with vectors:
    (a) Arithmetic:       +, -, *, /, %
    (b) Exponentiation:   vector ^ scalar
    (c) Assignment:       :=, +=, -=, *=, /=, %=, <=>
-   (d) Inequalities:     <, <=, >, >=, ==, =
-   (e) Unary operations:
+   (d) Inequalities:     <, <=, >, >=, ==, =, equal
+   (e) Boolean logic:    and, nand, nor, or, xnor, xor
+   (f) Unary operations:
        abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos,  cosh,
        cot, csc,  deg2grad, deg2rad,  erf, erfc,  exp, expm1, floor,
        frac, grad2deg, log, log10, log1p, log2, rad2deg, round, sec,
        sgn, sin, sinc, sinh, sqrt, swap, tan, tanh, trunc
-   (f) Aggregate and Reduce operations:
-       avg, max, min, mul, sum
+   (g) Aggregate and Reduce operations:
+       avg, max, min, mul,  dot, dotk, sum, sumk,  count, all_true,
+       all_false, any_true, any_false
+   (h) Transformation operations:
+       copy, rotate-left/right, shift-left/right, sort, nth_element
+   (i) BLAS-L1:
+       axpy, axpby, axpyz, axpbyz, axpbz
 
 Note: When one of  the above  described operations  is being performed
 between two  vectors, the  operation will  only span  the size  of the
 smallest vector.  The elements  of the  larger vector  outside of  the
-range will not be included.
+range will  not be included. The  operation  itself will  be processed
+element-wise over values the smaller of the two ranges.
 
 The  following  simple  example  demonstrates  the  vector  processing
 capabilities by computing the dot-product of the vectors v0 and v1 and
@@ -1304,20 +1335,9 @@ the previously mentioned dot-product computation expression:
    }
 
 
-Note: In the scenario of inequalities between two vectors, the  result
-is not  a vector  but rather  a singular  variable denoting  a boolean
-state  of either  'true' or  'false' depending  on the  nature of  the
-inequality.
-
-   var x[3] := { 1, 1, 1 };
-   var y[3] := { 3, 2, 1 };
-
-   y > x == false
-
-
-Note:  When  the  aggregate  operations  denoted  above  are  used  in
-conjunction with a  vector or vector  expression, the return  value is
-not a vector but rather a single value.
+Note: When  the aggregate or reduction  operations denoted  above  are
+used  in conjunction with a  vector or  vector  expression, the return
+value is not a vector but rather a single value.
 
    var x[3] := { 1, 2, 3 };
 
@@ -1326,6 +1346,81 @@ not a vector but rather a single value.
    avg(3x + 1) ==  7
    min(1 / x)  == (1 / 3)
    max(x / 2)  == (3 / 2)
+   sum(x > 0 and x < 5) == x[]
+
+
+When utilizing external user defined  vectors via the symbol table  as
+opposed to expression local defined vectors, the typical  'add_vector'
+method from the symbol table will register the entirety of the  vector
+that is passed. The following example attempts to evaluate the sum  of
+elements of  the external  user defined  vector within  a typical  yet
+trivial expression:
+
+   std::string reduce_program = " sum(2 * v + 1) ";
+
+   std::vector<T> v0 { T(1.1), T(2.2), ..... , T(99.99) };
+
+   symbol_table_t symbol_table;
+   symbol_table.add_vector("v",v);
+
+   expression_t expression;
+   expression.register_symbol_table(symbol_table);
+
+   parser_t parser;
+   parser.compile(reduce_program,expression);
+
+   T sum = expression.value();
+
+
+For the most part, this is  a very common use-case. However there  may
+be situations where one may want to evaluate the same vector  oriented
+expression many times over, but using different vectors or sub  ranges
+of the same vector of the same size to that of the original upon every
+evaluation.
+
+The usual solution is to  either recompile the expression for  the new
+vector instance, or to  copy the contents from  the new vector to  the
+symbol table registered vector  and then perform the  evaluation. When
+the  vectors are  large or  the re-evaluation  attempts are  numerous,
+these  solutions  can  become  rather  time  consuming  and  generally
+inefficient.
+
+   std::vector<T> v1 { T(2.2), T(2.2), ..... , T(2.2) };
+   std::vector<T> v2 { T(3.3), T(3.3), ..... , T(3.3) };
+   std::vector<T> v3 { T(4.4), T(4.4), ..... , T(4.4) };
+
+   std::vector<std::vector<T>> vv { v1, v2, v3 };
+   ...
+   T sum = T(0);
+
+   for (auto& new_vec : vv)
+   {
+      v = new_vec; // update vector
+      sum += expression.value();
+   }
+
+
+A  solution  to  the  above  'efficiency'  problem,  is  to  use   the
+exprtk::vector_view  object. The  vector_view is  instantiated with  a
+size and backing based upon a vector. Upon evaluations if the  backing
+needs  to  be  'updated' to  either another  vector or  sub-range, the
+vector_view instance  can be  efficiently rebased,  and the expression
+evaluated as normal.
+
+   exprtk::vector_view<T> view = exprtk::make_vector_view(v, v.size());
+
+   symbol_table_t symbol_table;
+   symbol_table.add_vector("v",view);
+
+   ...
+
+   T sum = T(0);
+
+   for (auto& new_vec : vv)
+   {
+      view.rebase(new_vec.data()); // update vector
+      sum += expression.value();
+   }
 
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2498,6 +2593,16 @@ in the event of a failed compilation.
    }
 
 
+Assuming the  following expression '2 + (3 / log(1 + x))' which uses a
+variable named 'x'  that has not been registered  with the appropriate
+symbol_table  instance and  is not  a locally  defined variable,  once
+compiled the  above denoted post compilation error handling code shall
+produce the following output:
+
+  Error: ERR184 - Undefined symbol: 'x'
+  Error[00] Pos:17 Type:[Syntax] Msg: ERR184 - Undefined symbol: 'x'
+
+
 For  expressions  comprised  of  multiple  lines,  the  error position
 provided in the  parser_error object can  be converted into  a pair of
 line and column numbers by invoking the 'update_error' function as  is
@@ -2565,7 +2670,82 @@ via the 'unknown symbol resolver' mechanism.
 
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[20 - EXPRTK NOTES]
+[20 - RUNTIME LIBRARY PACKAGES]
+ExprTk   contains   a   set  of   simple   extensions,   that  provide
+functionalities  beyond  basic numerical  calculations.  Currently the
+available packages are:
+
+  +---+--------------------+-----------------------------------+
+  | # |    Package Name    |          Namespace/Type           |
+  +---+--------------------+-----------------------------------+
+  | 1 | Basic I/O          | exprtk::rtl::io::package<T>       |
+  | 2 | File I/O           | exprtk::rtl::io::file::package<T> |
+  | 3 | Vector Operations  | exprtk::rtl::vecops::package<T>   |
+  +---+--------------------+-----------------------------------+
+
+
+In order to make the  features of a specific package  available within
+an  expression,  an instance  of  the package  must  be added  to  the
+expression's associated  symbol table.  In the  following example, the
+file I/O package is made available for the given expression:
+
+   typedef exprtk::symbol_table<T> symbol_table_t;
+   typedef exprtk::expression<T>     expression_t;
+   typedef exprtk::parser<T>             parser_t;
+
+   exprtk::rtl::io::file::package<T> fileio_package;
+
+   std::string expression_string =
+      " var file_name := 'file.txt';        "
+      " var stream    := null;              "
+      "                                     "
+      " stream := open(file_name,'w');      "
+      "                                     "
+      " write(stream,'Hello world....\n');  "
+      "                                     "
+      " close(stream);                      "
+      "                                     ";
+
+   symbol_table_t symbol_table;
+   symbol_table.add_package(fileio_package);
+
+   expression_t expression;
+   expression.register_symbol_table(symbol_table);
+
+   parser_t parser;
+   parser.compile(expression_string,expression);
+
+   expression.value();
+
+
+(1) Basic I/O functions:
+
+   (a) print
+   (b) println
+
+(2) File I/O functions:
+
+   (a) open    (b) close
+   (c) write   (d) read
+   (e) getline (f) eof
+
+(3) Vector Operations functions:
+
+   (a) all_true    (b) all_false
+   (c) any_true    (d) any_false
+   (e) count       (f) copy
+   (g) rotate-left (h) rotate-right
+   (i) shift-left  (j) shift-right
+   (k) sort        (l) nth_element
+   (m) iota        (n) sumk
+   (o) axpy        (p) axpby
+   (q) axpyz       (r) axpbyz
+   (s) axpbz       (t) dot
+   (u) dotk
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[21 - EXPRTK NOTES]
 The following is a list of facts and suggestions one may want to take
 into account when using ExprTk:
 
@@ -2592,9 +2772,9 @@ into account when using ExprTk:
       function names are case-insensitive.
 
  (07) Variable, vector, string variable and function names must begin
-      with  a  letter  (A-Z or  a-z), then  can be  comprised of  any
-      combination of letters, digits and underscores. (eg: x, var1 or
-      power_func99)
+      with  a letter  (A-Z or  a-z), then  can be  comprised of  any
+      combination of letters, digits,  underscores and dots. (eg:  x,
+      var1 or power_func99, person.age, item.size.0)
 
  (08) Expression lengths and sub-expression lists are limited only by
       storage capacity.
@@ -2731,7 +2911,7 @@ into account when using ExprTk:
                     };
            x != while (y > 0) { y -= 1; };
            x -= {
-                  if(min(x,y) < 2 * max(x,y))
+                  if (min(x,y) < 2 * max(x,y))
                     x + 2;
                   else
                     x + y - 3;
@@ -2741,9 +2921,49 @@ into account when using ExprTk:
         (x + y) / (x - y);
       }
 
+ (30) It is recommended when prototyping expressions that the  ExprTk
+      REPL be utilised, as it supports all the features available  in
+      the library,  including complete  error analysis,  benchmarking
+      and   dependency   dumps    etc   which   allows    for   rapid
+      coding/prototyping  and  debug  cycles  without  the  hassle of
+      having to  recompile test  programs with  expressions that have
+      been hard-coded. It's also a  good source of truth for  how the
+      library's various features can be applied.
+
+ (31) For performance considerations,  one should assume  the actions
+      of expression, symbol  table and parser  instance instantiation
+      and destruction, and the expression compilation process  itself
+      to be of high latency. Hence none of them should be part of any
+      performance  critical  code  paths, and  should  instead  occur
+      entirely either before or after such code paths.
+
+ (32) Before jumping in and using ExprTk, do take the time to  peruse
+      the documentation and all of the examples, both in the main and
+      the extras  distributions. Having  an informed  general view of
+      what can and  can't be done,  and how something  should be done
+      with ExprTk, will  likely result in  a far more  productive and
+      enjoyable programming experience.
+
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[21 - SIMPLE EXPRTK EXAMPLE]
+[22 - SIMPLE EXPRTK EXAMPLE]
+The following is a  simple yet complete example  demonstrating typical
+usage of the ExprTk Library.  The example instantiates a symbol  table
+object, adding to it  three variables named x,  y and z, and  a custom
+user defined function, that accepts only two parameters, named myfunc.
+The  example then  proceeds to  instantiate an  expression object  and
+register to it the symbol table instance.
+
+A parser is  then instantiated, and  the string representation  of the
+expression  and  the  expression object  are  passed  to the  parser's
+compile  method   for  compilation.   If  an   error  occurred  during
+compilation, the compile method will return false, leading to a series
+of  error diagnostics  being printed  to stdout.  Otherwise the  newly
+compiled expression is evaluated  by invoking  the expression object's
+value method, and subsequently printing the result  of the computation
+to stdout.
+
+
 --- snip ---
 #include <cstdio>
 #include <string>
@@ -2831,7 +3051,7 @@ int main()
 
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[22 - BUILD OPTIONS]
+[23 - BUILD OPTIONS]
 When building ExprTk there are a number of defines that will enable or
 disable certain features and  capabilities. The defines can  either be
 part of a compiler command line switch or scoped around the include to
@@ -2844,6 +3064,7 @@ the ExprTk header. The defines are as follows:
    (5) exprtk_disable_enhanced_features
    (6) exprtk_disable_string_capabilities
    (7) exprtk_disable_superscalar_unroll
+   (8) exprtk_disable_rtl_io_file
 
 
 (1) exprtk_enable_debugging
@@ -2884,9 +3105,20 @@ targeting  non-superscalar  architectures, it  may  be recommended  to
 build using this particular option if efficiency of evaluations is  of
 concern.
 
+(8) exprtk_disable_rtl_io_file
+This  define will  disable  the  file I/O  RTL package  features. When
+present, any  attempts to register  the file I/O package with  a given
+symbol table will fail causing a compilation error.
+
+(9) exprtk_disable_rtl_vecops
+This define will  disable the extended  vector operations RTL  package
+features. When present, any attempts to register the vector operations
+package with  a given  symbol table  will fail  causing a  compilation
+error.
+
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[23 - FILES]
+[24 - FILES]
 The source distribution of ExprTk is comprised of the following set of
 files:
 
@@ -2911,10 +3143,13 @@ files:
    (18) exprtk_simple_example_14.cpp
    (19) exprtk_simple_example_15.cpp
    (20) exprtk_simple_example_16.cpp
+   (21) exprtk_simple_example_17.cpp
+   (22) exprtk_simple_example_18.cpp
+   (23) exprtk_simple_example_19.cpp
 
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[24 - LANGUAGE STRUCTURE]
+[25 - LANGUAGE STRUCTURE]
 +-------------------------------------------------------------+
 |00 - If Statement                                            |
 |                                                             |

@@ -2,7 +2,7 @@
 
 /** *********************************************************************** **
  **                                                                         **
- ** Copyright (C) 1989-2012 Heinz van Saanen                                **
+ ** Copyright (C) 1989-2013 Heinz van Saanen                                **
  **                                                                         **
  ** This file may be used under the terms of the GNU General Public         **
  ** License version 3 or later as published by the Free Software Foundation **

@@ -49,7 +49,7 @@ void composite()
       .add(
       function_t("g","3*[f(x) + f(y)]","x","y"));  // g(x,y) = 3[f(x) + f(y)]
 
-   std::string expression_string = "g(1 + f(x),f(y) / 2)";
+   std::string expression_string = "g(1 + f(x), f(y) / 2)";
 
    expression_t expression;
    expression.register_symbol_table(symbol_table);
@@ -65,6 +65,7 @@ void composite()
       for (std::size_t i = 0; i < parser.error_count(); ++i)
       {
          error_t error = parser.get_error(i);
+
          printf("Error: %02d  Position: %02d Type: [%14s] Msg: %s\tExpression: %s\n",
                 static_cast<unsigned int>(i),
                 static_cast<unsigned int>(error.token.position),

@@ -2,7 +2,7 @@
  **************************************************************
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
- * Simple Example 11                                          *
+ * Simple Example 17                                          *
  * Author: Arash Partow (1999-2016)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
@@ -17,54 +17,62 @@
 
 
 #include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <string>
+
 #include "exprtk.hpp"
 
 
 template <typename T>
-void square_wave2()
+struct rnd_01 : public exprtk::ifunction<T>
+{
+   using exprtk::ifunction<T>::operator();
+
+   rnd_01() : exprtk::ifunction<T>(0)
+   { ::srand(static_cast<unsigned int>(time(NULL))); }
+
+   inline T operator()()
+   {
+      // Note: Do not use this in production
+      // Result is in the interval [0,1)
+      return T(::rand() / T(RAND_MAX + 1.0));
+   }
+};
+
+template <typename T>
+void monte_carlo_pi()
 {
    typedef exprtk::symbol_table<T> symbol_table_t;
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string wave_program =
-                  " var r := 0;                                         "
-                  " for (var i := 0; i < 1000; i += 1)                  "
-                  " {                                                   "
-                  "   r += (1 / (2i + 1)) * sin((4i + 2) * pi * f * t); "
-                  " };                                                  "
-                  " r *= a * (4 / pi);                                  ";
+   std::string monte_carlo_pi_program =
+                  " var experiments[5 * 10^7] := [(rnd_01^2 + rnd_01^2) <= 1]; "
+                  " 4 * sum(experiments) / experiments[];                      ";
 
-   static const T pi = T(3.141592653589793238462643383279502);
-
-   T f = pi / T(10);
-   T t = T(0);
-   T a = T(10);
+   rnd_01<T> rnd01;
 
    symbol_table_t symbol_table;
-   symbol_table.add_variable("f",f);
-   symbol_table.add_variable("t",t);
-   symbol_table.add_variable("a",a);
-   symbol_table.add_constants();
+   symbol_table.add_function("rnd_01",rnd01);
 
    expression_t expression;
    expression.register_symbol_table(symbol_table);
 
    parser_t parser;
-   parser.compile(wave_program,expression);
+   parser.compile(monte_carlo_pi_program,expression);
 
-   const T delta = (T(4) * pi) / T(1000);
+   const T approximate_pi = expression.value();
 
-   for (t = (T(-2) * pi); t <= (T(+2) * pi); t += delta)
-   {
-      T result = expression.value();
-      printf("%19.15f\t%19.15f\n",t,result);
-   }
+   const T real_pi = T(3.141592653589793238462643383279502); // or close enough...
+
+   printf("pi ~ %20.17f\terror: %20.17f\n",
+          approximate_pi,
+          std::abs(real_pi - approximate_pi));
 }
 
 int main()
 {
-   square_wave2<double>();
+   monte_carlo_pi<double>();
    return 0;
 }

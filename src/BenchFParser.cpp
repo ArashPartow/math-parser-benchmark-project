@@ -15,8 +15,8 @@ BenchFParser::BenchFParser()
 //-------------------------------------------------------------------------------------------------
 double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
 {
-   double fRes (0);
-   double fSum (0);
+   double fRes = 0.0;
+   double fSum = 0.0;
 
    FunctionParser Parser;
    Parser.AddConstant("pi", (double)M_PI);

@@ -61,7 +61,7 @@ void savitzky_golay_filter()
    std::vector<T> v_in;
    std::vector<T> v_out;
 
-   const T pi = T(3.141592653589793238462);
+   const T pi = T(3.141592653589793238462643383279502);
 
    srand(static_cast<unsigned int>(time(0)));
 
@@ -82,7 +82,6 @@ void savitzky_golay_filter()
    expression.register_symbol_table(symbol_table);
 
    parser_t parser;
-
    parser.compile(sgfilter_program,expression);
 
    expression.value();

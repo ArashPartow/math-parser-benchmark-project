@@ -29,7 +29,12 @@
 #include "exprtk.hpp"
 
 
+#ifdef exprtk_test_float32_type
+typedef float numeric_type;
+#else
 typedef double numeric_type;
+#endif
+
 typedef std::pair<std::string,numeric_type> test_t;
 
 static const test_t global_test_list[] =
@@ -1791,6 +1796,7 @@ inline bool run_test01()
       for (std::size_t r = 0; r < rounds; ++r)
       {
          bool loop_result = true;
+
          for (std::size_t i = 0; i < expr_list_size; ++i)
          {
             T v[]     = { T(0.0), T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
@@ -1799,6 +1805,66 @@ inline bool run_test01()
             T x = T(6.6);
             T y = T(7.7);
             T z = T(8.8);
+
+            exprtk::symbol_table<T> symbol_table;
+            symbol_table.add_variable("x",x);
+            symbol_table.add_variable("y",y);
+            symbol_table.add_variable("z",z);
+            symbol_table.add_vector  ("v",v);
+            symbol_table.add_vector  ("i",index);
+
+            exprtk::expression<T> expression;
+            expression.register_symbol_table(symbol_table);
+
+            {
+               exprtk::parser<T> parser;
+
+               if (!parser.compile(expr_list[i],expression))
+               {
+                  printf("run_test01() - Error: %s   Expression: %s\n",
+                         parser.error().c_str(),
+                         expr_list[i].c_str());
+
+                  loop_result = false;
+
+                  continue;
+               }
+            }
+
+            T result = expression.value();
+
+            if (not_equal(result,T(1)))
+            {
+               printf("run_test01() - Computation Error:  Expression: [%s]\tExpected: %19.15f\tResult: %19.15f\n",
+                      expr_list[i].c_str(),
+                      (double)1.0,
+                      (double)result);
+
+               loop_result = false;
+            }
+         }
+
+         if (!loop_result)
+         {
+            return false;
+         }
+      }
+
+      for (std::size_t r = 0; r < rounds; ++r)
+      {
+         bool loop_result = true;
+
+         for (std::size_t i = 0; i < expr_list_size; ++i)
+         {
+            T v_[]     = { T(0.0), T(1.1), T(2.2), T(3.3), T(4.4), T(5.5) };
+            T index_[] = { T(0)  , T(1)  , T(2)  , T(3)  , T(4)  , T(5)   };
+
+            T x = T(6.6);
+            T y = T(7.7);
+            T z = T(8.8);
+
+            exprtk::vector_view<T> v     = exprtk::make_vector_view(v_    ,6);
+            exprtk::vector_view<T> index = exprtk::make_vector_view(index_,6);
 
             exprtk::symbol_table<T> symbol_table;
             symbol_table.add_variable("x",x);
@@ -2750,7 +2816,7 @@ inline bool run_test04()
       }
    }
 
-   const T pi = T(3.14159265358979323846);
+   const T pi = T(3.141592653589793238462643383279502);
    const T increment = T(0.0001);
 
    while ((x <= T(+1000)) && (y <= T(+1000)))
@@ -2815,7 +2881,7 @@ inline bool run_test05()
       expression_list.push_back(e);
    }
 
-   const T pi = T(3.14159265358979323846);
+   const T pi = T(3.141592653589793238462643383279502);
    const T increment = T(0.001);
 
    while ((x <= T(+1000)) && (y <= T(+1000)))
@@ -2878,7 +2944,7 @@ inline bool run_test06()
 
    T total_area1 = exprtk::integrate(expression,x,T(-1),T(1));
    T total_area2 = exprtk::integrate(expression,"x",T(-1),T(1));
-   const T pi = T(3.14159265358979323846);
+   const T pi = T(3.141592653589793238462643383279502);
 
    if (not_equal(total_area1,total_area2,T(0.000001)))
    {
@@ -3188,6 +3254,8 @@ inline bool run_test08()
 template <typename T>
 struct myfunc : public exprtk::ifunction<T>
 {
+   using exprtk::ifunction<T>::operator();
+
    myfunc() : exprtk::ifunction<T>(2) {}
 
    inline T operator()(const T& v1, const T& v2)
@@ -3196,12 +3264,16 @@ struct myfunc : public exprtk::ifunction<T>
    }
 };
 
-double foo1(double v0) { return v0; }
-double foo2(double v0, double v1) { return v0 + v1; }
-double foo3(double v0, double v1, double v2) { return v0 + v1 + v2; }
-double foo4(double v0, double v1, double v2, double v3) { return v0 + v1 + v2 + v3; }
-double foo5(double v0, double v1, double v2, double v3, double v4) { return v0 + v1 + v2 + v3 + v4; }
-double foo6(double v0, double v1, double v2, double v3, double v4, double v5) { return v0 + v1 + v2 + v3 + v4 + v5; }
+#define define_free_functions(Type)                                                                     \
+Type foo1(Type v0) { return v0; }                                                                       \
+Type foo2(Type v0, Type v1) { return v0 + v1; }                                                         \
+Type foo3(Type v0, Type v1, Type v2) { return v0 + v1 + v2; }                                           \
+Type foo4(Type v0, Type v1, Type v2, Type v3) { return v0 + v1 + v2 + v3; }                             \
+Type foo5(Type v0, Type v1, Type v2, Type v3, Type v4) { return v0 + v1 + v2 + v3 + v4; }               \
+Type foo6(Type v0, Type v1, Type v2, Type v3, Type v4, Type v5) { return v0 + v1 + v2 + v3 + v4 + v5; } \
+
+define_free_functions(numeric_type)
+#undef define_free_functions
 
 template <typename T>
 inline bool run_test09()
@@ -3267,7 +3339,7 @@ inline bool run_test09()
             }
          }
 
-         const T pi = T(3.141592653589793238462);
+         const T pi = T(3.141592653589793238462643383279502);
 
          T result = expression.value();
 
@@ -4199,9 +4271,9 @@ inline bool run_test10()
         "var x[3] := {1,2,3};  var y := 5; y + 1 > x ",
         "var x[3] := {1,1,1};  var y := 1; y == x    ",
         "var x[3] := {1,1,1};  var y := 2; y - 1 == x",
-        "var x[3] := {1,2,3};  var y := 5; (x += 1) < y     ",
-        "var x[3] := {1,2,3};  var y := 3; (x -= 1) < y + 1 ",
-        "var x[3] := {1,2,3};  var y := 5; (x -= 1) <= y    ",
+        "var x[3] := {1,2,3};  var y := 5; equal(true,(x += 1) < y)    ",
+        "var x[3] := {1,2,3};  var y := 3; equal(true,(x -= 1) < y + 1)",
+        "var x[3] := {1,2,3};  var y := 5; equal(true,(x -= 1) <= y)   ",
         "var x[3] := {2,2,2};  var y := 1; (x -= 1) == y    ",
         "var x[3] := {1,2,3};  var y := 5; y > (x += 1)     ",
         "var x[3] := {1,2,3};  var y := 5; y + 1 > (x += 1) ",
@@ -4263,7 +4335,9 @@ inline bool run_test10()
         "7 == (for (var i := 0; i < 10; i += 1) { ~{break[7]; continue; i += i} })",
         "0 == (for (var i := 0; i < 10; i += 1) { ~{break[i]; continue; i += i} })",
         "0 == (for (var i := 0; i < 10; i += 1) { ~{continue; break[7]; i += i} })",
-        "1 == (for (var i := 0; i < 10; i += 1) { ~{break[i += 1]; continue; i += i} })"
+        "1 == (for (var i := 0; i < 10; i += 1) { ~{break[i += 1]; continue; i += i} })",
+
+        "var x[10^6] := null; var y[10^7] := null; 0 * (min(x) + min(y)) + x[] + y[] == 10^7 + 10^6"
       };
 
       const std::size_t expression_list_size = sizeof(expression_list) / sizeof(std::string);
@@ -4277,6 +4351,7 @@ inline bool run_test10()
 
       symbol_table.add_variable("zero",zero);
       symbol_table.add_variable("one" , one);
+      symbol_table.add_pi();
 
       bool failed = false;
 
@@ -4539,6 +4614,8 @@ inline bool run_test12()
 template <typename T>
 struct sine_deg : public exprtk::ifunction<T>
 {
+   using exprtk::ifunction<T>::operator();
+
    sine_deg() : exprtk::ifunction<T>(1) {}
 
    inline T operator()(const T& v)
@@ -4550,6 +4627,8 @@ struct sine_deg : public exprtk::ifunction<T>
 template <typename T>
 struct cosine_deg : public exprtk::ifunction<T>
 {
+   using exprtk::ifunction<T>::operator();
+
    cosine_deg() : exprtk::ifunction<T>(1) {}
 
    inline T operator()(const T& v)
@@ -4936,6 +5015,8 @@ inline bool run_test15()
 template <typename T>
 struct base_func : public exprtk::ifunction<T>
 {
+   using exprtk::ifunction<T>::operator();
+
    typedef const T& type;
    base_func(const std::size_t& n) : exprtk::ifunction<T>(n) {}
    inline T operator()(type v0, type v1, type v2, type v3, type v4) { return (v0 + v1 + v2 + v3 + v4); }
@@ -5242,6 +5323,8 @@ struct gen_func : public exprtk::igeneric_function<T>
    typedef typename generic_type::vector_view vector_t;
    typedef typename generic_type::string_view string_t;
 
+   using exprtk::igeneric_function<T>::operator();
+
    gen_func()
    : scalar_count(0),
      vector_count(0),
@@ -5292,10 +5375,12 @@ struct gen_func2 : public exprtk::igeneric_function<T>
 {
    typedef typename exprtk::igeneric_function<T>::parameter_list_t parameter_list_t;
 
+   using exprtk::igeneric_function<T>::operator();
+
    gen_func2()
    {}
 
-   inline T operator()(parameter_list_t&)
+   inline T operator()(parameter_list_t)
    {
       return T(0);
    }
@@ -5315,6 +5400,8 @@ struct inc_func : public exprtk::igeneric_function<T>
    typedef typename generic_type::scalar_view scalar_t;
    typedef typename generic_type::vector_view vector_t;
    typedef typename generic_type::string_view string_t;
+
+   using exprtk::igeneric_function<T>::operator();
 
    inc_func()
    {}
@@ -5374,6 +5461,8 @@ struct rem_space_and_uppercase : public exprtk::igeneric_function<T>
    typedef typename igenfunc_t::parameter_list_t parameter_list_t;
    typedef typename generic_type::string_view    string_t;
 
+   using exprtk::igeneric_function<T>::operator();
+
    rem_space_and_uppercase()
    : igenfunc_t("S",igenfunc_t::e_rtrn_string)
    {}
@@ -5416,6 +5505,8 @@ struct vararg_func : public exprtk::igeneric_function<T>
 
    typedef typename generic_type::scalar_view scalar_t;
    typedef typename generic_type::vector_view vector_t;
+
+   using exprtk::igeneric_function<T>::operator();
 
    vararg_func()
    : exprtk::igeneric_function<T>("Z|T*|V")
@@ -6086,6 +6177,425 @@ inline bool run_test18()
          {
             printf("run_test18() - Error in evaluation! (5) Expression: %s\n",
                    programs[i].c_str());
+
+            failure = true;
+         }
+      }
+
+      if (failure)
+         return false;
+   }
+
+   {
+      bool failure = false;
+
+      typedef exprtk::symbol_table<T> symbol_table_t;
+      typedef exprtk::expression<T>     expression_t;
+      typedef exprtk::parser<T>             parser_t;
+
+      std::vector<T> v0;
+      std::vector<T> v1;
+      std::vector<T> v2;
+      std::vector<T> v3;
+
+      #define pb(v,N)    \
+      v.push_back(T(N)); \
+
+      pb(v0,0) pb(v0,0) pb(v0,0) pb(v0,0) pb(v0,0) pb(v0, 0) pb(v0, 0)
+      pb(v1,0) pb(v1,2) pb(v1,4) pb(v1,6) pb(v1,8) pb(v1,10) pb(v1,12)
+      pb(v2,1) pb(v2,3) pb(v2,5) pb(v2,7) pb(v2,9) pb(v2,11) pb(v2,13)
+      pb(v3,0) pb(v3,1) pb(v3,2) pb(v3,3) pb(v3,4) pb(v3, 5) pb(v3, 6)
+      #undef pb
+
+      const std::string expr_string = "sum(v + 1)";
+
+      exprtk::vector_view<T> v = exprtk::make_vector_view(v0,v0.size());
+
+      symbol_table_t symbol_table;
+      symbol_table.add_vector("v",v);
+
+      expression_t expression;
+      expression.register_symbol_table(symbol_table);
+
+      parser_t parser;
+
+      if (!parser.compile(expr_string,expression))
+      {
+         printf("run_test18() - Error: %s\tExpression: %s\n",
+                parser.error().c_str(),
+                expr_string.c_str());
+
+         failure = true;
+      }
+
+      T sum = { T(0) };
+
+      sum = expression.value();
+
+      if (not_equal(sum,T(7)))
+      {
+         printf("run_test18() - Error in evaluation! (6) Expression: %s\n",
+                expr_string.c_str());
+         failure = true;
+      }
+
+      v.rebase(v1.data());
+      sum = expression.value();
+
+      if (not_equal(sum,T(49)))
+      {
+         printf("run_test18() - Error in evaluation! (7) Expression: %s\n",
+                expr_string.c_str());
+         failure = true;
+      }
+
+      v.rebase(v2.data());
+      sum = expression.value();
+
+      if (not_equal(sum,T(56)))
+      {
+         printf("run_test18() - Error in evaluation! (8) Expression: %s\n",
+                expr_string.c_str());
+         failure = true;
+      }
+
+      v.rebase(v3.data());
+      sum = expression.value();
+
+      if (not_equal(sum,T(28)))
+      {
+         printf("run_test18() - Error in evaluation! (9) Expression: %s\n",
+                expr_string.c_str());
+         failure = true;
+      }
+
+      if (failure)
+         return false;
+   }
+
+   {
+      bool failure = false;
+
+      typedef exprtk::symbol_table<T> symbol_table_t;
+      typedef exprtk::expression<T>     expression_t;
+      typedef exprtk::parser<T>             parser_t;
+
+      std::vector<T> v0;
+      std::vector<T> s;
+
+      #define pb(v,N)    \
+      v.push_back(T(N)); \
+
+      pb(v0,0) pb(v0,1) pb(v0,2) pb(v0,3) pb(v0,4)
+      pb(v0,5) pb(v0,6) pb(v0,7) pb(v0,8) pb(v0,9)
+
+      pb(s, 3) pb(s, 6) pb(s, 9) pb(s,12)
+      pb(s,15) pb(s,18) pb(s,21)
+      #undef pb
+
+      const std::string expr_string = "v[0] + v[1] + v[2]";
+
+      exprtk::vector_view<T> v = exprtk::make_vector_view(v0,4);
+
+      symbol_table_t symbol_table;
+      symbol_table.add_vector("v",v);
+
+      expression_t expression;
+      expression.register_symbol_table(symbol_table);
+
+      parser_t parser;
+
+      if (!parser.compile(expr_string,expression))
+      {
+         printf("run_test18() - Error: %s\tExpression: %s\n",
+                parser.error().c_str(),
+                expr_string.c_str());
+
+         failure = true;
+      }
+
+      for (std::size_t i = 0; i < v0.size() - 4; ++i)
+      {
+         v.rebase(v0.data() + i);
+
+         T sum = expression.value();
+
+         if (not_equal(sum,s[i]))
+         {
+            printf("run_test18() - Error in evaluation! (7) Expression: %s  Expected: %5.3f  Computed: %5.3f\n",
+                   expr_string.c_str(),
+                   s[i],
+                   sum);
+
+            failure = true;
+         }
+
+      }
+
+      if (failure)
+         return false;
+   }
+
+   {
+      bool failure = false;
+
+      typedef exprtk::symbol_table<T> symbol_table_t;
+      typedef exprtk::expression<T>     expression_t;
+      typedef exprtk::parser<T>             parser_t;
+
+      std::vector<T> v0;
+      std::vector<T> s;
+
+      #define pb(v,N)    \
+      v.push_back(T(N)); \
+
+      pb(v0,0) pb(v0,1) pb(v0,2) pb(v0,3) pb(v0,4)
+      pb(v0,5) pb(v0,6) pb(v0,7) pb(v0,8) pb(v0,9)
+
+      pb(s, 3) pb(s, 6) pb(s, 9) pb(s,12)
+      pb(s,15) pb(s,18) pb(s,21)
+      #undef pb
+
+      const std::string expr_string = "var i := 0; var j := 1; var k := 2; v[i] + v[j] + v[k]";
+
+      exprtk::vector_view<T> v = exprtk::make_vector_view(v0,4);
+
+      symbol_table_t symbol_table;
+      symbol_table.add_vector("v",v);
+
+      expression_t expression;
+      expression.register_symbol_table(symbol_table);
+
+      parser_t parser;
+
+      if (!parser.compile(expr_string,expression))
+      {
+         printf("run_test18() - Error: %s\tExpression: %s\n",
+                parser.error().c_str(),
+                expr_string.c_str());
+
+         failure = true;
+      }
+
+      for (std::size_t i = 0; i < v0.size() - 4; ++i)
+      {
+         v.rebase(v0.data() + i);
+
+         T sum = expression.value();
+
+         if (not_equal(sum,s[i]))
+         {
+            printf("run_test18() - Error in evaluation! (8) Expression: %s  Expected: %5.3f  Computed: %5.3f\n",
+                   expr_string.c_str(),
+                   s[i],
+                   sum);
+
+            failure = true;
+         }
+
+      }
+
+      if (failure)
+         return false;
+   }
+
+   {
+      bool failure = false;
+
+      typedef exprtk::symbol_table<T> symbol_table_t;
+      typedef exprtk::expression<T>     expression_t;
+      typedef exprtk::parser<T>             parser_t;
+
+      std::vector<T> v0;
+      std::vector<T> s;
+
+      #define pb(v,N)    \
+      v.push_back(T(N)); \
+
+      pb(v0,0) pb(v0,1) pb(v0,2) pb(v0,3) pb(v0,4)
+      pb(v0,5) pb(v0,6) pb(v0,7) pb(v0,8) pb(v0,9)
+
+      pb(s, 3) pb(s, 6) pb(s, 9) pb(s,12)
+      pb(s,15) pb(s,18) pb(s,21)
+      #undef pb
+
+      const std::string expr_string = "var i := 0; v[i + 0] + v[i + 1] + v[i + 2]";
+
+      exprtk::vector_view<T> v = exprtk::make_vector_view(v0,4);
+
+      symbol_table_t symbol_table;
+      symbol_table.add_vector("v",v);
+
+      expression_t expression;
+      expression.register_symbol_table(symbol_table);
+
+      parser_t parser;
+
+      if (!parser.compile(expr_string,expression))
+      {
+         printf("run_test18() - Error: %s\tExpression: %s\n",
+                parser.error().c_str(),
+                expr_string.c_str());
+
+         failure = true;
+      }
+
+      for (std::size_t i = 0; i < v0.size() - 4; ++i)
+      {
+         v.rebase(v0.data() + i);
+
+         T sum = expression.value();
+
+         if (not_equal(sum,s[i]))
+         {
+            printf("run_test18() - Error in evaluation! (9) Expression: %s  Expected: %5.3f  Computed: %5.3f\n",
+                   expr_string.c_str(),
+                   s[i],
+                   sum);
+
+            failure = true;
+         }
+
+      }
+
+      if (failure)
+         return false;
+   }
+
+   {
+      bool failure = false;
+
+      typedef exprtk::symbol_table<T> symbol_table_t;
+      typedef exprtk::expression<T>     expression_t;
+      typedef exprtk::parser<T>             parser_t;
+
+      exprtk::rtl::vecops::package<T> vecops_pkg;
+
+      symbol_table_t symbol_table;
+      symbol_table.add_package(vecops_pkg);
+
+      std::string expr_str_list[] =
+                  {
+                     "var v[9] := {1,2,3,4,5,6,7,8,9};  all_true(v) == true" ,
+                     "var v[6] := {-1,-2,-3,-4,-5,-6};  all_true(v) == true" ,
+                     "var v[8] := {1,2,3,0,0,0,0,0};    all_true(v) == false",
+                     "var v[8] := {-1,-2,-3,0,0,0,0,0}; all_true(v) == false",
+                     "var v[9] := {0,0,0,0,0,0,0,0,0};  all_true(v + 1) == true",
+
+                     "var v[9] := {0,0,0,0,0,0,0,0,0};  all_false(v) == true"  ,
+                     "var v[9] := {0,0,0,0,0,1,2,3,4};  all_false(v) == false" ,
+                     "var v[8] := {0,0,0,0,0,-1,-2,-3}; all_false(v) == false" ,
+                     "var v[9] := {1,1,1,1,1,1,1,1,1};  any_false(v - 1) == true",
+
+                     "var v[9] := {0,0,0,0,0,0,0,0,1};  any_true(v) == true"  ,
+                     "var v[9] := {0,0,0,0,1,0,0,0,0};  any_true(v) == true"  ,
+                     "var v[9] := {0,0,0,0,0,0,0,0,0};  any_true(v) == false" ,
+                     "var v[9] := {0,0,0,0,0,0,0,0,0};  any_true(v + 1) == true",
+
+                     "var v[9] := {1,1,1,1,1,1,1,1,0};  any_false(v) == true"  ,
+                     "var v[9] := {1,1,1,1,0,1,1,1,1};  any_false(v) == true"  ,
+                     "var v[9] := {1,1,1,1,1,1,1,1,1};  any_false(v) == false" ,
+                     "var v[9] := {1,1,1,1,1,1,1,1,1};  any_false(v - 1) == true",
+
+                     "var v[9] := {0,0,0,0,0,0,0,0,0};  count(v) == 0"  ,
+                     "var v[9] := {0,0,0,0,0,0,0,0,1};  count(v) == 1"  ,
+                     "var v[9] := {0,0,0,0,0,0,0,2,1};  count(v) == 2"  ,
+                     "var v[9] := {0,0,0,0,0,0,3,2,1};  count(v) == 3"  ,
+                     "var v[9] := {0,0,0,0,0,0,0,0,0};  count(v + 1) == v[]",
+                     "var v[9] := {1,1,1,1,1,1,1,1,1};  count(v - 1) == 0",
+
+                     "var v[9] := {1,2,3,4,5,6,7,8,9};  var r[9] := [0]; copy(v,r); sum(v == r) == v[]",
+                     "var v[9] := {1,2,3,4,5,6,7,8,9};  var r[9] := [0]; copy(v,0,8,r,0,8); sum(r) == 45",
+                     "var v[9] := {1,2,3,4,5,6,7,8,9};  var r[9] := [0]; copy(v,1,7,r,1,7); sum(r) == 35",
+                     "var v[9] := {1,2,3,4,5,6,7,8,9};  var r[5] := [0]; copy(v,0,4,r,0,4); sum(r) == 15",
+
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {4,5,1,2,3}; rol(v,3); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {3,4,5,1,2}; ror(v,3); sum(v == r) == v[]",
+
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {3,4,5,1,2}; rol(v,2); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {4,5,1,2,3}; ror(v,2); sum(v == r) == v[]",
+
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {1,3,4,2,5}; rol(v,1,1,3); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {1,4,2,3,5}; ror(v,1,1,3); sum(v == r) == v[]",
+
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {3,4,5,0,0}; shftl(v,2); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {5,0,0,0,0}; shftl(v,4); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {0,0,0,0,0}; shftl(v,5); sum(v == r) == v[]",
+
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {0,0,1,2,3}; shftr(v,2); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {0,0,0,0,1}; shftr(v,4); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {0,0,0,0,0}; shftr(v,5); sum(v == r) == v[]",
+
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {1,3,4,0,5}; shftl(v,1,1,3); sum(v == r) == v[]",
+                     "var v[5] := {1,2,3,4,5}; var r[5] := {1,0,2,3,5}; shftr(v,1,1,3); sum(v == r) == v[]",
+
+                     "var v[5] := {1,3,5,2,4}; var r[5] := {1,2,3,4,5}; sort(v); sum(v == r) == v[]",
+                     "var v[5] := {5,4,3,2,1}; var r[5] := {1,2,3,4,5}; sort(v); sum(v == r) == v[]",
+                     "var v[5] := {1,4,2,3,5}; var r[5] := {1,2,3,4,5}; sort(v,1,3); sum(v == r) == v[]",
+                     "var v[5] := {5,4,2,3,1}; var r[5] := {5,2,3,4,1}; sort(v,1,3); sum(v == r) == v[]",
+                     "var v[5] := {3,1,2,4,5}; var r[5] := {1,2,3,4,5}; sort(v,0,2); sum(v == r) == v[]",
+                     "var v[5] := {1,2,5,3,4}; var r[5] := {1,2,3,4,5}; sort(v,2,4); sum(v == r) == v[]",
+
+                     "var v[5] := {1,3,5,2,4}; var r[5] := {1,2,3,4,5}; sort(v,'ascending'); sum(v == r) == v[]",
+                     "var v[5] := {1,3,5,2,4}; var r[5] := {1,2,3,4,5}; sort(v,'aScEnDiNg'); sum(v == r) == v[]",
+                     "var v[5] := {5,4,3,2,1}; var r[5] := {1,2,3,4,5}; sort(v,'ascending'); sum(v == r) == v[]",
+                     "var v[5] := {1,4,2,3,5}; var r[5] := {1,2,3,4,5}; sort(v,'ascending',1,3); sum(v == r) == v[]",
+                     "var v[5] := {3,1,2,4,5}; var r[5] := {1,2,3,4,5}; sort(v,'ascending',0,2); sum(v == r) == v[]",
+                     "var v[5] := {1,2,5,3,4}; var r[5] := {1,2,3,4,5}; sort(v,'ascending',2,4); sum(v == r) == v[]",
+
+                     "var v[5] := {1,3,5,2,4}; var r[5] := {5,4,3,2,1}; sort(v,'descending'); sum(v == r) == v[]",
+                     "var v[5] := {1,3,5,2,4}; var r[5] := {5,4,3,2,1}; sort(v,'DeScEnDiNg'); sum(v == r) == v[]",
+                     "var v[5] := {5,4,3,2,1}; var r[5] := {5,4,3,2,1}; sort(v,'descending'); sum(v == r) == v[]",
+                     "var v[5] := {1,4,2,3,5}; var r[5] := {1,4,3,2,5}; sort(v,'descending',1,3); sum(v == r) == v[]",
+                     "var v[5] := {3,1,2,4,5}; var r[5] := {3,2,1,4,5}; sort(v,'descending',0,2); sum(v == r) == v[]",
+                     "var v[5] := {1,2,5,3,4}; var r[5] := {1,2,5,4,3}; sort(v,'descending',2,4); sum(v == r) == v[]",
+
+                     "var v[9] := {7,8,9,1,2,3,4,5,6}; nth_element(v,trunc(v[] / 2)); v[v[] / 2] == 5",
+                     "var v[9] := {7,8,9,1,2,3,4,5,6}; nth_element(v,trunc(v[] / 3)); v[v[] / 3] == 4",
+
+                     "var v[9] := {7,8,9,1,2,3,4,5,6}; nth_element(v,trunc(v[] / 2)); sort(v,0,trunc(v[] / 2)); (v[v[] / 2] == 5) and (v[0] == 1)",
+                     "var v[9] := {7,8,9,1,2,3,4,5,6}; nth_element(v,trunc(v[] / 3)); sort(v,0,trunc(v[] / 3)); (v[v[] / 3] == 4) and (v[0] == 1)",
+
+                     "var v[5]; iota(v,2);      var r[5] := {0,2,4,6,8}; sum(v == r) == v[]",
+                     "var v[5]; iota(v,2,1);    var r[5] := {1,3,5,7,9}; sum(v == r) == v[]",
+                     "var v[5]; iota(v,1,1,3);  var r[5] := {0,0,1,2,0}; sum(v == r) == v[]",
+                     "var v[5]; iota(v,2,2,1,3);var r[5] := {0,2,4,6,0}; sum(v == r) == v[]",
+                     "var v[5]; iota(v,2,1,1,3);var r[5] := {0,1,3,5,0}; sum(v == r) == v[]",
+
+                     " var a := 2; var x[3] := {1,2,3}; var y[3] := {1,2,3}; var r[3] := [0]; r := a * x + y; axpy(a,x,y); sum(y == r) == y[]",
+                     " var a := 2; var b := 3; var x[3] := {1,2,3}; var y[3] := {1,2,3}; var r[3] := [0]; r := a * x + b * y; axpby(a,x,b,y); sum(y == r) == y[]",
+
+                     " var a := 2; var x[3] := {1,2,3}; var y[3] := {1,2,3}; var z[3] := [0]; var r[3] := [0]; r := a * x + y; axpyz(a,x,y,z); sum(z == r) == z[]",
+                     " var a := 2; var b := 3; var x[3] := {1,2,3}; var y[3] := {1,2,3}; var z[3] := [0]; var r[3] := [0]; r := a * x + b * y; axpbyz(a,x,b,y,z); sum(z == r) == z[]",
+                     " var a := 2; var b := 3; var x[3] := {1,2,3}; var z[3] := [0]; var r[3] := [0]; r := a * x + b; axpbz(a,x,b,z); sum(z == r) == z[]",
+                  };
+
+      const std::size_t expr_str_list_size = sizeof(expr_str_list) / sizeof(std::string);
+
+      parser_t parser;
+
+      for (std::size_t i = 0; i < expr_str_list_size; ++i)
+      {
+         expression_t expression;
+         expression.register_symbol_table(symbol_table);
+
+         if (!parser.compile(expr_str_list[i], expression))
+         {
+            printf("run_test18() - Error: %s   Expression: %s\n",
+                   parser.error().c_str(),
+                   expr_str_list[i].c_str());
+
+            failure = true;
+
+            continue;
+         }
+
+         T result = expression.value();
+
+         if (result != T(1))
+         {
+            printf("run_test18() - Error in evaluation! (10) Expression: %s\n",
+                   expr_str_list[i].c_str());
 
             failure = true;
          }
@@ -7010,6 +7520,47 @@ inline bool run_test19()
          printf("run_test19() - Prime Sieve Computation Error");
 
          return false;
+      }
+   }
+
+   {
+      symbol_table_t symbol_table;
+
+      symbol_table.add_constants();
+
+      std::string expression_str[] =
+                    {
+                      "var delta := 10^-7; var total := 0; for (var i := 0; i <= 3; i += delta) { total +=   "
+                      "erf(i) }; abs((delta * total) - (3 * erf(3) + (1 / exp(9) - 1) / sqrt(pi))) < 0.000001",
+
+                      "var delta := 10^-7; var total := 0; for (var i := 0; i <= 3; i += delta) { total +=  "
+                      "erfc(i) }; abs((delta * total) - (3 * erfc(3) + ((1 - 1 / exp(9)) / sqrt(pi)))) < 0.000001"
+                    };
+
+      expression_t e[2];
+
+      parser_t parser;
+
+      for (std::size_t i = 0; i < 2; ++i)
+      {
+         e[i].register_symbol_table(symbol_table);
+
+         if (!parser.compile(expression_str[i],e[i]))
+         {
+            printf("run_test19() - Error: %s   Expression: %s\n",
+                   parser.error().c_str(),
+                   expression_str[i].c_str());
+
+            return false;
+         }
+
+         if (T(1) != e[i].value())
+         {
+            printf("run_test19() - erf/erfc computation error %d",
+                   static_cast<unsigned int>(i));
+
+            return false;
+         }
       }
    }
 

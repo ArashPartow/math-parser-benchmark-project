@@ -1,8 +1,8 @@
 # The Great C++ Mathematical Expression Parser Benchmark
 
-This is a benchmark suite for different implementations of open source
-math expression parsers and evaluators written in C++. Currently the
-following expression parsers are part of this benchmark:
+This is a benchmark suite for different implementations of open source math
+expression parsers and evaluators written in C++. Currently the following
+expression parsers are part of this benchmark:
 
 |#    |  Library       |  Author                       |  License   |  Numeric Type   |
 | --- | :------------- | :---------------------------- | :----------| :----------:|
@@ -17,9 +17,8 @@ following expression parsers are part of this benchmark:
 | 08  | [TinyExpr] (https://github.com/codeplea/tinyexpr)      | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double        |
 
 
-**Note:** This archive is not meant as a primary source for any of the
-libraries listed above as it may contain outdated versions of said
-libraries.
+**Note:** This archive is not meant as a primary source for any of the libraries
+listed above as it may contain outdated versions of said libraries.
 
 
 ## The Setup
@@ -41,53 +40,74 @@ The mathematical expression benchmark files are as follows:
 1.  [bench_expr_random_without_functions.txt](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_random_without_functions.txt)
 1.  [bench_expr_weird.txt](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_weird.txt)
 
+The following is a short sampling of expressions taken from the [*bench_expr.txt*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr.txt)
+expression suite:
+
+*   a+1.1
+*   a*2.2
+*   2.2*a+1.1
+*   (2.2*a+1.1)*3.3
+*   sin(2.2 * a) + cos(pi / b)
+*   1 - sin(2.2 * a) + cos(pi / b)
+*   sqrt(1 - sin(2.2 * a) + cos(pi / b) / 3.3)
+*   (a^2 / sin(2 * pi / b)) -a / 2.2
+*   1-(a/b*0.5)
+*   e^log(7*a)
+*   10^log(3+b)
+*   (cos(2.41)/b)
+*   -(sin(pi+a)+1)
+*   a-(e^(log(7+b)))
+
 
 As an example, the following execution will use the[*"bench_expr_all.txt"*]
-(https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt) set of expressions, executing each expression 100000 times:
+(https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt)
+set of expressions, executing each expression 100000 times:
 
     ParserBench.exe 100000 bench_expr_all.txt
 
 ## The Rounds
-For every expression in the benchmark file, every parser evaluates the
-given expression N times, this is known as a round. The total time
-each parser takes to evaluate the expression N times is recorded.
-Ranking of the parsers for the round is done from the fastest to the
-slowest. The following is an example summary for the expression
-'(a^2/sin(2*pi/b))-a/2':
+For every expression in the benchmark file, every parser evaluates the given
+expression N times, this is known as a round. The total time each parser takes
+to evaluate the expression N times is recorded. Ranking of the parsers for
+the round is done from the fastest to the slowest. The following is an example
+summary for the expression '(a^2/sin(2*pi/b))-a/2':
 
-    Expression 61 of 67: "(a^2/sin(2*pi/b))-a/2"; Progress: ###########
-    [01] ExprTk              ( 34.373 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [02] ExprTkFloat         ( 35.141 ns, 3.744853734970092773, -3153743.237257003784179688)
-    [03] muparserSSE         ( 43.155 ns, 3.744852304458618164, -3153743.147850036621093750)
-    [04] muparser 2.2.4 (omp)( 48.223 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [05] muparser 2.2.4      ( 52.411 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [06] MTParser            ( 56.825 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [07] FParser 4.5         ( 62.949 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [08] atmsp 1.0.4         ( 77.320 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [09] MathExpr            (124.067 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [10] Lepton              (376.444 ns, 3.744853294789905362, -3153742.968144028913229704)
-    [11] muparserx           (545.148 ns, 3.744853294789905362, -3153742.968144028913229704)
+    Expression 64 of 70: "(a^2/sin(2*pi/b))-a/2"; Progress: ############
+    [01] ExprTk              ( 35.863 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [02] ExprTkFloat         ( 37.413 ns, 3.744852304458618164, -15768714.994192123413085938)
+    [03] muparserSSE         ( 44.672 ns, 3.744852304458618164, -15768715.739250183105468750)
+    [04] muparser 2.2.4 (omp)( 50.093 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [05] MTParser            ( 54.681 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [06] muparser 2.2.4      ( 55.816 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [07] FParser 4.5         ( 65.141 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [08] atmsp 1.0.4         ( 78.809 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [09] MathExpr            (131.242 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [10] TinyExpr            (168.341 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [11] Lepton              (402.011 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [12] muparserx           (572.611 ns, 3.744853294789905362, -15768714.840563148260116577)
 
 
-Parsers that can't parse the expression or produce a result *different*
-to the expected result (based on a normalized epsilon approach) are
-disqualified for the round and do not participate in point
-accumulation. The following is an example where a few of the parsers
-failed to either parse or evaluate the given expression of '+1.1+a^b' correctly:
 
-    Expression 69 of 96: "+1.1+a^b"; Progress: ###########
-    [01] ExprTk              ( 40.885 ns, 2.333286300554663129, 2906884.279087092727422714)
-    [02] muparserSSE         ( 41.089 ns, 2.333286285400390625, 2906884.431838989257812500)
-    [03] ExprTkFloat         ( 41.434 ns, 2.333286285400390625, 2906884.431838989257812500)
-    [04] atmsp 1.0.4         ( 48.107 ns, 2.333286300554663129, 2906884.279087092727422714)
-    [05] MTParser            ( 49.801 ns, 2.333286300554663129, 2906884.279087092727422714)
-    [06] muparser 2.2.4      ( 52.583 ns, 2.333286300554663129, 2906884.279087092727422714)
-    [07] muparser 2.2.4 (omp)( 53.922 ns, 2.333286300554663129, 2906884.279087092727422714)
-    [08] muparserx           (199.955 ns, 2.333286300554663129, 2906884.279087092727422714)
+Parsers that can't parse the given expression or produce a result *different*
+to the expected result (based on a normalized epsilon approach) are disqualified
+for the round and do not participate in point accumulation. The following is an
+example where a few of the parsers failed to either parse or evaluate the given
+expression of '+1.1+a^b' correctly:
+
+    Expression 63 of 96: "+a^+b+1.1"; Progress: ############
+    [01] ExprTk              ( 40.631 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [02] ExprTkFloat         ( 44.212 ns, 2.333286285400390625, 14534422.159194946289062500)
+    [03] muparserSSE         ( 44.556 ns, 2.333286285400390625, 14534422.159194946289062500)
+    [04] atmsp 1.0.4         ( 47.906 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [05] TinyExpr            ( 52.831 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [06] MTParser            ( 56.045 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [07] muparser 2.2.4      ( 67.061 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [08] muparser 2.2.4 (omp)( 67.231 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [09] muparserx           (251.338 ns, 2.333286300554663129, 14534421.395495440810918808)
     DNQ List
-    [01] FParser 4.5          (Syntax error)
-    [02] MathExpr             (parsing error)
-    [03] Lepton               (Parse error in expression "+1.1+a^b": unexpected token: +)
+    [01] FParser 4.5         (Syntax error)
+    [02] MathExpr            (parsing error)
+    [03] Lepton              (Parse error in expression "+a^+b+1.1 ": unexpected token: +)
     **** ERROR ****   Excessive number of evaluation failures!  [3]
 
 The meanings of each of the columns are as follows:
@@ -102,8 +122,8 @@ The meanings of each of the columns are as follows:
 ## The Final Summary
 Once all the expressions have been completed, a summary is provided,
 that includes information relating to the build parameters of the
-benchmark binary, the architecture which the benchmark was run upon, a
-final ranking of the parsers, and a listing of expressions per parser
+benchmark binary, the architecture which the benchmark was run upon,
+a final ranking of the parsers, and a listing of expressions per parser
 that were deemed as disqualified during the benchmark.
 
 The following is an example summary generated at the completion of the benchmark:
@@ -112,9 +132,9 @@ The following is an example summary generated at the completion of the benchmark
     Benchmark settings:
       - Expressions File is "bench_expr.txt"
       - Reference parser is ExprTk
-      - Iterations per expression: 1000000
-      - Number of expressions: 67
-      - Number of excessive failures: 4
+      - Iterations per expression: 5000000
+      - Number of expressions: 70
+      - Number of excessive failures: 5
       - Release build
       - Compiled with MSVC Version 1900
       - IEEE 754 (IEC 559) is Available
@@ -139,20 +159,22 @@ The following is an example summary generated at the completion of the benchmark
                         msr mtrr osxsave pae pat pbe pclmul pdcm pge pni popcnt
                         pse pse36 sep smx ss sse sse2 sse4_1 sse4_2 ssse3 tm tm2
                         tsc vme vmx xd xsave xtpr
-      Scores:
-      #  Parser               Type       Points   Score    Failures
-      --------------------------------------------------------------
-      00 ExprTk               double     671      100      0
-      01 ExprTkFloat          float      600       91      5
-      02 muparserSSE          float      591      104      5
-      03 FParser 4.5          double     457       47      0
-      04 atmsp 1.0.4          double     411       42      2
-      05 muparser 2.2.4       double     386       39      0
-      06 MTParser             double     355       41      7
-      07 muparser 2.2.4 (omp) double     300       36      0
-      08 MathExpr             double     280       31      2
-      09 Lepton               double     104        7      2
-      10 muparserx            double      94        6      0
+
+    Scores:
+    #  Parser               Type       Points   Score    Failures
+    -------------------------------------------------------------
+    00 ExprTk               double     781      100      0
+    01 ExprTkFloat          float      643       82      9
+    02 muparserSSE          float      639       93      9
+    03 FParser 4.5          double     536       45      0
+    04 atmsp 1.0.4          double     482       40      2
+    05 muparser 2.2.4       double     445       37      0
+    06 MTParser             double     402       38     10
+    07 muparser 2.2.4 (omp) double     374       35      0
+    08 MathExpr             double     345       30      2
+    09 TinyExpr             double     296       30      2
+    10 Lepton               double     111        6      2
+    11 muparserx            double      97        5      0
 
 ## The Results
 The summaries of runs of the benchmark suite upon various architectures can be found here: [Results](https://github.com/ArashPartow/math-parser-benchmark-project/tree/master/logs)
@@ -221,8 +243,7 @@ The following is a simple example of a custom test:
 
 
 ## New Parsers
-The addition of new or unlisted C++ mathematical expression parsers is
-always welcome. If you know of a parser and would like it included in
-the suite feel free to make a request. Additionally if the associated
-benchmark implementation *(eg: src/BenchXYZW.cpp)* could be made
-available as part of the request that would very helpful.
+The addition of new or unlisted C++ mathematical expression parsers is always welcome.
+If you know of a parser and would like it included in the suite feel free to make a
+request. Additionally if the associated benchmark implementation *(eg: src/BenchXYZW.cpp)*
+could be made available as part of the request that would very helpful.

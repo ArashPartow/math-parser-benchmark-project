@@ -32,12 +32,17 @@ typedef struct {
     double answer;
 } test_case;
 
+typedef struct {
+    const char *expr1;
+    const char *expr2;
+} test_equ;
 
 
 
 void test_results() {
     test_case cases[] = {
         {"1", 1},
+        {"1 ", 1},
         {"(1)", 1},
 
         {"pi", 3.14159},
@@ -85,15 +90,24 @@ void test_results() {
         {"asin sin (-0.5)", -0.5},
         {"(asin sin (-0.5))", -0.5},
 
-        {"log 1000", 3},
-        {"log 1e3", 3},
-        {"log 1000", 3},
-        {"log 1e3", 3},
-        {"log(1000)", 3},
-        {"log(1e3)", 3},
-        {"log 1.0e3", 3},
+        {"log10 1000", 3},
+        {"log10 1e3", 3},
+        {"log10 1000", 3},
+        {"log10 1e3", 3},
+        {"log10(1000)", 3},
+        {"log10(1e3)", 3},
+        {"log10 1.0e3", 3},
         {"10^5*5e-5", 5},
 
+#ifdef TE_NAT_LOG
+        {"log 1000", 6.9078},
+        {"log e", 1},
+        {"log (e^10)", 10},
+#else
+        {"log 1000", 3},
+#endif
+
+        {"ln (e^10)", 10},
         {"100^.5+1", 11},
         {"100 ^.5+1", 11},
         {"100^+.5+1", 11},
@@ -315,7 +329,7 @@ void test_functions() {
         cross_check("exp x", exp(x));
         cross_check("floor x", floor(x));
         cross_check("ln x", log(x));
-        cross_check("log x", log10(x));
+        cross_check("log10 x", log10(x));
         cross_check("sin x", sin(x));
         cross_check("sinh x", sinh(x));
         cross_check("sqrt x", sqrt(x));
@@ -516,6 +530,58 @@ void test_optimize() {
     }
 }
 
+void test_pow() {
+#ifdef TE_POW_FROM_RIGHT
+    test_equ cases[] = {
+        {"2^3^4", "2^(3^4)"},
+        {"-2^2", "-(2^2)"},
+        {"-(2)^2", "-(2^2)"},
+        {"-(2*1)^2", "-(2^2)"},
+        {"-2^2", "-4"},
+        {"2^1.1^1.2^1.3", "2^(1.1^(1.2^1.3))"},
+        {"-a^b", "-(a^b)"},
+        {"-a^-b", "-(a^-b)"}
+    };
+#else
+    test_equ cases[] = {
+        {"2^3^4", "(2^3)^4"},
+        {"-2^2", "(-2)^2"},
+        {"-2^2", "4"},
+        {"2^1.1^1.2^1.3", "((2^1.1)^1.2)^1.3"},
+        {"-a^b", "(-a)^b"},
+        {"-a^-b", "(-a)^(-b)"}
+    };
+#endif
+
+    double a = 2, b = 3;
+
+    te_variable lookup[] = {
+        {"a", &a},
+        {"b", &b}
+    };
+
+    int i;
+    for (i = 0; i < sizeof(cases) / sizeof(test_equ); ++i) {
+        const char *expr1 = cases[i].expr1;
+        const char *expr2 = cases[i].expr2;
+
+        te_expr *ex1 = te_compile(expr1, lookup, sizeof(lookup)/sizeof(te_variable), 0);
+        te_expr *ex2 = te_compile(expr2, lookup, sizeof(lookup)/sizeof(te_variable), 0);
+
+        lok(ex1);
+        lok(ex2);
+
+        double r1 = te_eval(ex1);
+        double r2 = te_eval(ex2);
+
+        fflush(stdout);
+        lfequal(r1, r2);
+
+        te_free(ex1);
+        te_free(ex2);
+    }
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -527,6 +593,7 @@ int main(int argc, char *argv[])
     lrun("Dynamic", test_dynamic);
     lrun("Closure", test_closure);
     lrun("Optimize", test_optimize);
+    lrun("Pow", test_pow);
     lresults();
 
     return lfails != 0;

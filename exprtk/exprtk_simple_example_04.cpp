@@ -34,7 +34,7 @@ void fibonacci()
 
    compositor
       .add(
-      function_t(
+      function_t( // define function: fibonacci(x)
            "fibonacci",
            " var w := 0;             "
            " var y := 0;             "
@@ -66,7 +66,6 @@ void fibonacci()
    expression.register_symbol_table(symbol_table);
 
    parser_t parser;
-
    parser.compile(expression_str,expression);
 
    for (std::size_t i = 0; i < 40; ++i)
