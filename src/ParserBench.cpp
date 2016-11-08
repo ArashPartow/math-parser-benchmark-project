@@ -258,7 +258,9 @@ void Shootout(const std::string& sCaption,
       if (failure_count)
       {
          output(pRes, "DNQ List\n");
+
          parser_index = 0;
+
          for (auto it = results.begin(); it != results.end(); ++it)
          {
             const std::vector<Benchmark*>& vBench = it->second;
@@ -297,6 +299,7 @@ void Shootout(const std::string& sCaption,
       {
          output(pRes, "**** ERROR ****   Excessive number of evaluation failures!  [%d]\n\n",
                 failure_count);
+
          ++excessive_failure_cnt;
       }
 
@@ -367,7 +370,9 @@ void Shootout(const std::string& sCaption,
       for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
       {
          Benchmark *pBench = vBenchmarks[i];
+
          const std::map<std::string, std::string> &allFailures = pBench->GetFails();
+
          if (!allFailures.empty())
          {
             output(pRes, "  %-15s (%3d):\n",
@@ -437,7 +442,11 @@ int main(int argc, const char *argv[])
 
    if (argc >= 2)
    {
-      iCount = atoi(argv[1]);
+      if (0 >= (iCount = atoi(argv[1])))
+      {
+         std::cout << "ERROR - Invalid number of iterations!\n";
+         return 1;
+      }
    }
 
    if (argc >= 3)
