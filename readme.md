@@ -4,21 +4,33 @@ This is a benchmark suite for different implementations of open source math
 expression parsers and evaluators written in C++. Currently the following
 expression parsers are part of this benchmark:
 
-|#    |  Library       |  Author                       |  License   |  Numeric Type   |
-| --- | :------------- | :---------------------------- | :----------| :----------:|
-| 00  | [ATMSP]    (http://sourceforge.net/projects/atmsp/)    | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) | double |
-| 01  | [ExprTk]   (http://www.partow.net/programming/exprtk/) | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) | double, float, MPFR |
-| 02  | [FParser]  (http://warp.povusers.org/FunctionParser/)  | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           | double |
-| 03  | [Lepton]   (https://simtk.org/home/lepton)             | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) | double |
-| 04  | [MathExpr] (http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier              | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)| double |
+|#    |  Library       |  Author                                  |  License                      |  Numeric Type   |
+| --- | :------------- | :--------------------------------------- | :-----------------------------| :--------------:|
+| 00  | [ATMSP]    (http://sourceforge.net/projects/atmsp/)       | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) | double              |
+| 01  | [ExprTk]   (http://www.partow.net/programming/exprtk/)    | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) | double, float, MPFR |
+| 02  | [FParser]  (http://warp.povusers.org/FunctionParser/)     | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           | double              |
+| 03  | [Lepton]   (https://simtk.org/home/lepton)                | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) | double              |
+| 04  | [MathExpr] (http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier                 | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)| double |
 | 05  | [MTParser] (http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
-| 06  | [muParser] (http://muparser.beltoforion.de)            | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float |
-| 07  | [muParserX](http://muparserx.beltoforion.de)           | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float |
-| 08  | [TinyExpr] (https://github.com/codeplea/tinyexpr)      | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double        |
+| 06  | [muParser] (http://muparser.beltoforion.de)               | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float       |
+| 07  | [muParserX](http://muparserx.beltoforion.de)              | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float       |
+| 08  | [TinyExpr] (https://github.com/codeplea/tinyexpr)         | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double              |
 
 
 **Note:** This archive is not meant as a primary source for any of the libraries
 listed above as it may contain outdated versions of said libraries.
+
+## Objectives
+
+All the parsers in this benchmark suite are in one way or another POEM
+*(Parse Once Evaluate Many times)* in nature. As such the primary
+objectives for this benchmark are to ascertain the following
+properties for each of the denoted parsers in following order of
+priority:
+
+1. Correctness and precision of results relative to the *floating point type* used
+2. Robustness of the parser given various mathematical expressions
+3. Evaluation efficiency of 'compiled/parsed' expressions
 
 
 ## The Setup
