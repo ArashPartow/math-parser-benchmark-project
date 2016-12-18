@@ -2490,7 +2490,7 @@ which obviously is  not the intended  outcome by the  user. A possible
 solution to this  problem is for  one to implement  their own specific
 USR that will perform a user defined business logic in determining  if
 an encountered unknown symbol should be treated as a variable or if it
-should raise a compilation error. The following example demonstrated a
+should raise a compilation error. The following example demonstrates a
 simple user defined USR:
 
    typedef exprtk::symbol_table<T> symbol_table_t;
