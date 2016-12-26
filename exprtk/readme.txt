@@ -54,7 +54,7 @@ arithmetic operations, functions and processes:
  (03) Equalities &
       Inequalities:    =, ==, <>, !=, <, <=, >, >=
 
- (04) Boolean logic:   and, mand, mor, nand, nor, not, or, shl, shr,
+ (04) Logic operators: and, mand, mor, nand, nor, not, or, shl, shr,
                        xnor, xor, true, false
 
  (05) Functions:       abs, avg, ceil, clamp, equal, erf, erfc,  exp,
@@ -3329,8 +3329,8 @@ of a single variable compiled expression at a given point for a  given
 epsilon, using a  variant of Newton's  difference quotient called  the
 five-point stencil method. The derivative function has two  overloads,
 where  the  variable of  differentiation  can either  be  passed as  a
-reference or as a name in string form. A example usage of the function
-is as follows:
+reference or as a name in string form. Example usage of the derivative
+function is as follows:
 
    typedef exprtk::parser<T>             parser_t;
    typedef exprtk::expression<T>     expression_t;
