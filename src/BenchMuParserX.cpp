@@ -30,6 +30,49 @@ double BenchMuParserX::DoBenchmark(const std::string& sExpr, long iCount)
 
    double fTime(0);
 
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         ParserX test_p(pckALL_NON_COMPLEX);
+
+         test_p.SetExpr(test.first.c_str());
+         test_p.DefineVar("a", &a);
+         test_p.DefineVar("b", &b);
+         test_p.DefineVar("c", &c);
+
+         test_p.DefineVar("x", &x);
+         test_p.DefineVar("y", &y);
+         test_p.DefineVar("z", &z);
+         test_p.DefineVar("w", &w);
+
+         try
+         {
+            if (!is_equal(test.second,test_p.Eval().GetFloat()))
+            {
+               test_result = false;
+               break;
+            }
+         }
+         catch(...)
+         {
+            test_result = false;
+            break;
+         }
+      }
+
+      if (!test_result)
+      {
+         StopTimerAndReport("Failed variable test");
+         return m_fTime1;
+      }
+   }
+
    p.SetExpr(sExpr.c_str());
 
    p.DefineVar("a", Variable(&a));

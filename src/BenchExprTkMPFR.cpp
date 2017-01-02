@@ -1,4 +1,5 @@
 #include "BenchExprTkMPFR.h"
+
 #ifdef ENABLE_MPFR
 
 #include <cmath>
@@ -44,6 +45,39 @@ double BenchExprTkMPFR::DoBenchmark(const std::string& sExpr, long iCount)
    symbol_table.add_variable("e", e, true);
 
    symbol_table.add_constants();
+
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         exprtk::expression<mpfr::mpreal> test_expression;
+         test_expression.register_symbol_table(symbol_table);
+
+         exprtk::parser<mpfr::mpreal> parser;
+
+         if (
+              (!parser.compile(test.first,test_expression)) ||
+              (!is_equal(test.second,test_expression.value().toDouble()))
+            )
+         {
+            test_result = false;
+            break;
+         }
+      }
+
+      if (!test_result)
+      {
+         StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                   std::numeric_limits<double>::quiet_NaN(),
+                   1);
+         return std::numeric_limits<double>::quiet_NaN();
+      }
+   }
 
    expression.register_symbol_table(symbol_table);
 

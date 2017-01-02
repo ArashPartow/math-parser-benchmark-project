@@ -1,6 +1,7 @@
 #ifndef BENCHMARK_H
 #define BENCHMARK_H
 
+#include <algorithm>
 #include <map>
 #include <vector>
 #include <string>
@@ -81,5 +82,33 @@ protected:
    std::map<std::string, std::string> m_allFails;
    std::vector<double> rate_list;
 };
+
+inline std::vector<std::pair<std::string,double> > test_expressions()
+{
+   static const std::vector<std::pair<std::string,double> > test_expressions_
+                {
+                   std::make_pair("a + 0.0" ,     1.1),
+                   std::make_pair("b + 0.0" ,     2.2),
+                   std::make_pair("c + 0.0" ,     3.3),
+                   std::make_pair("x + 0.0" ,2.123456),
+                   std::make_pair("y + 0.0" ,3.123456),
+                   std::make_pair("z + 0.0" ,4.123456),
+                   std::make_pair("w + 0.0" ,5.123456)
+                };
+
+   return test_expressions_;
+}
+
+template <typename T>
+inline bool is_equal(const T v0, const T v1)
+{
+   static const T epsilon = T(0.000001);
+   //static const T epsilon = T(std::numeric_limits<double>::epsilon());
+   //static const T epsilon = T(std::numeric_limits<float>::epsilon());
+   //Is either a NaN?
+   if (v0 != v0) return false;
+   if (v1 != v1) return false;
+   return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
+}
 
 #endif

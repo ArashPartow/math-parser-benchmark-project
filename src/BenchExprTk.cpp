@@ -40,6 +40,39 @@ double BenchExprTk::DoBenchmark(const std::string& sExpr, long iCount)
 
    symbol_table.add_constants();
 
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         exprtk::expression<double> test_expression;
+         test_expression.register_symbol_table(symbol_table);
+
+         exprtk::parser<double> parser;
+
+         if (
+              (!parser.compile(test.first,test_expression)) ||
+              (!is_equal(test.second,test_expression.value()))
+            )
+         {
+            test_result = false;
+            break;
+         }
+      }
+
+      if (!test_result)
+      {
+         StopTimer(std::numeric_limits<double>::quiet_NaN(),
+                   std::numeric_limits<double>::quiet_NaN(),
+                   1);
+         return std::numeric_limits<double>::quiet_NaN();
+      }
+   }
+
    expression.register_symbol_table(symbol_table);
 
    {

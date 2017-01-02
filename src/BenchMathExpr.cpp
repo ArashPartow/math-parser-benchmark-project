@@ -51,6 +51,34 @@ double BenchMathExpr::DoBenchmark(const std::string& sExpr, long iCount)
    var_array[7] = &var_e;
    var_array[8] = &var_pi;
 
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         ROperation test_op (const_cast<char*>(test.first.c_str()), 9, var_array);
+
+         if (
+              test_op.HasError(&test_op) ||
+              (!is_equal(test.second,test_op.Val()))
+            )
+         {
+            test_result = false;
+            break;
+         }
+      }
+
+      if (!test_result)
+      {
+         StopTimerAndReport("Failed variable test");
+         return m_fTime1;
+      }
+   }
+
    ROperation op (const_cast<char*>(sExpr.c_str()), 9, var_array);
 
    if (op.HasError(&op))

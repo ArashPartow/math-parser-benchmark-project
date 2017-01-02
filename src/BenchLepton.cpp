@@ -3,7 +3,6 @@
 #include <string>
 #include <map>
 
-//#include <windows.h>
 #include <cmath>
 
 #define LEPTON_BUILDING_STATIC_LIBRARY
@@ -55,6 +54,33 @@ double BenchLepton::DoBenchmark(const std::string& sExpr, long iCount)
    }
 
    Lepton::ExpressionProgram program = Lepton::Parser::parse(sExpr).optimize().createProgram();
+
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      try
+      {
+         for (auto test : tests_list)
+         {
+            Lepton::ExpressionProgram test_program = Lepton::Parser::parse(test.first).optimize().createProgram();
+
+            if (!is_equal(test.second,test_program.evaluate(var_list)))
+            {
+               StopTimerAndReport("Failed variable test");
+               return m_fTime1;
+            }
+         }
+      }
+      catch (std::exception& e)
+      {
+         StopTimerAndReport(e.what());
+         return std::numeric_limits<double>::quiet_NaN();
+      }
+   }
 
    //Prime the I and D caches for the expression
    {

@@ -35,11 +35,45 @@ double BenchTinyExpr::DoBenchmark(const std::string& sExpr, long iCount)
                  {"w", &w}
                };
 
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         int test_error           = 0;
+         te_expr* test_expression = reinterpret_cast<te_expr*>(0);
+
+         test_expression = te_compile(test.first.c_str(), vars, sizeof(vars) / sizeof(te_variable), &test_error);
+
+         if (
+              (0 == test_expression) ||
+              test_error             ||
+              (!is_equal(test.second, te_eval(test_expression)))
+            )
+         {
+            te_free(test_expression);
+            test_result = false;
+            break;
+         }
+
+         te_free(test_expression);
+      }
+
+      if (!test_result)
+      {
+         StopTimerAndReport("Failed variable test");
+         return m_fTime1;
+      }
+   }
+
    int error           = 0;
    te_expr* expression = reinterpret_cast<te_expr*>(0);
 
    expression = te_compile(sExpr.c_str(), vars, sizeof(vars) / sizeof(te_variable), &error);
-
 
    if ((0 == expression) || error)
    {

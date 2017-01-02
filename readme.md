@@ -4,17 +4,24 @@ This is a benchmark suite for different implementations of open source math
 expression parsers and evaluators written in C++. Currently the following
 expression parsers are part of this benchmark:
 
-|#    |  Library       |  Author                                  |  License                      |  Numeric Type   |
-| --- | :------------- | :--------------------------------------- | :-----------------------------| :--------------:|
-| 00  | [ATMSP]    (http://sourceforge.net/projects/atmsp/)       | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) | double              |
-| 01  | [ExprTk]   (http://www.partow.net/programming/exprtk/)    | Arash Partow                  | [CPL v1.0](http://www.opensource.org/licenses/cpl1.0.php) | double, float, MPFR |
-| 02  | [FParser]  (http://warp.povusers.org/FunctionParser/)     | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           | double              |
-| 03  | [Lepton]   (https://simtk.org/home/lepton)                | Peter Eastman                 | [MIT](http://www.opensource.org/licenses/mit-license.php) | double              |
-| 04  | [MathExpr] (http://www.yann-ollivier.org/mathlib/mathexpr)| Yann Ollivier                 | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)| double |
-| 05  | [MTParser] (http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
-| 06  | [muParser] (http://muparser.beltoforion.de)               | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float       |
-| 07  | [muParserX](http://muparserx.beltoforion.de)              | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float       |
-| 08  | [TinyExpr] (https://github.com/codeplea/tinyexpr)         | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double              |
+|#    |  Library                                                  |  Author                       |  License                                                  |      Numeric Type     |
+| --- | :-------------------------------------------------------- | :-----------------------------| :---------------------------------------------------------| :--------------------:|
+| 00  | [ATMSP](http://sourceforge.net/projects/atmsp/)           | Heinz van Saanen              | [GPL v3](http://www.opensource.org/licenses/gpl-3.0.html) | double, MPFR          |
+| 01  | [ExprTk](http://www.partow.net/programming/exprtk/)       | Arash Partow                  | [MIT](https://opensource.org/licenses/MIT)                | double, float, MPFR   |
+| 02  | [FParser](http://warp.povusers.org/FunctionParser/)       | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           | double                |
+| 03  | [Lepton](https://simtk.org/home/lepton)                   | Peter Eastman                 | [MIT](https://opensource.org/licenses/MIT)                | double                |
+| 04  | [MathExpr](http://www.yann-ollivier.org/mathlib/mathexpr) | Yann Ollivier                 | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)     | double |
+| 05  | [MTParser](http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
+| 06  | [muParser](http://muparser.beltoforion.de)                | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
+| 07  | [muParserX](http://muparserx.beltoforion.de)              | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
+| 08  | [TinyExpr](https://github.com/codeplea/tinyexpr)          | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double                |
+
+
+**Note:** The terms double, float etc found in the table above are defined as follows:
+
+* double : [IEEE-754 Double-Precision Binary Floating-Point (64-bit)](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
+* float  : [IEEE-754 Single-precision floating-point format (32-bit)](https://en.wikipedia.org/wiki/Single-precision_floating-point_format)
+* MPFR   : [GNU Multiple Precision Floating-Point Reliably](https://en.wikipedia.org/wiki/GNU_MPFR)
 
 
 **Note:** This archive is not meant as a primary source for any of the libraries
@@ -71,8 +78,7 @@ expression suite:
 *   a-(e^(log(7+b)))
 
 
-As an example, the following execution will use the[*"bench_expr_all.txt"*]
-(https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt)
+As an example, the following execution will use the[*"bench_expr_all.txt"*](https://github.com/ArashPartow/math-parser-benchmark-project/blob/master/bench_expr_all.txt)
 set of expressions, executing each expression 100000 times:
 
     ParserBench.exe 100000 bench_expr_all.txt
@@ -136,7 +142,7 @@ Once all the expressions have been completed, a summary is provided,
 that includes information relating to the build parameters of the
 benchmark binary, the architecture which the benchmark was run upon,
 a final ranking of the parsers, and a listing of expressions per parser
-that were deemed as disqualified during the benchmark.
+that were deemed as having been disqualified during the benchmark.
 
 The following is an example summary generated at the completion of the benchmark:
 

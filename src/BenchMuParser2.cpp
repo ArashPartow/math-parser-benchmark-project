@@ -50,7 +50,7 @@ double BenchMuParser2::DoBenchmarkStd(const std::string& sExpr, long iCount)
    p.DefineVar("w", &w);
 
    p.DefineConst("pi", (double)M_PI);
-   p.DefineConst("e", (double)M_E);
+   p.DefineConst("e" , (double)M_E );
 
    try
    {
@@ -68,6 +68,49 @@ double BenchMuParser2::DoBenchmarkStd(const std::string& sExpr, long iCount)
    {
       StopTimerAndReport("unexpected exception");
       return std::numeric_limits<double>::quiet_NaN();
+   }
+
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         Parser test_p;
+
+         test_p.SetExpr(test.first.c_str());
+         test_p.DefineVar("a", &a);
+         test_p.DefineVar("b", &b);
+         test_p.DefineVar("c", &c);
+
+         test_p.DefineVar("x", &x);
+         test_p.DefineVar("y", &y);
+         test_p.DefineVar("z", &z);
+         test_p.DefineVar("w", &w);
+
+         try
+         {
+            if (!is_equal(test.second,test_p.Eval()))
+            {
+               test_result = false;
+               break;
+            }
+         }
+         catch(...)
+         {
+            test_result = false;
+            break;
+         }
+      }
+
+      if (!test_result)
+      {
+         StopTimerAndReport("Failed variable test");
+         return m_fTime1;
+      }
    }
 
    //Prime the I and D caches for the expression

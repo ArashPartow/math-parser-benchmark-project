@@ -47,18 +47,6 @@
 #endif
 
 
-template <typename T>
-inline bool is_equal(const T v0, const T v1)
-{
-   static const T epsilon = T(0.000001);
-   //static const T epsilon = T(std::numeric_limits<double>::epsilon());
-   //static const T epsilon = T(std::numeric_limits<float>::epsilon());
-   //Is either a NaN?
-   if (v0 != v0) return false;
-   if (v1 != v1) return false;
-   return (std::abs(v0 - v1) <= (std::max(T(1),std::max(std::abs(v0),std::abs(v1))) * epsilon)) ? true : false;
-}
-
 std::vector<std::string> load_expressions(const std::string& file_name)
 {
    std::vector<std::string> result;

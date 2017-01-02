@@ -20,7 +20,7 @@ double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
 
    FunctionParser Parser;
    Parser.AddConstant("pi", (double)M_PI);
-   Parser.AddConstant("e", (double)M_E);
+   Parser.AddConstant("e",  (double)M_E );
 
    if (Parser.Parse(sExpr.c_str(), "a,b,c,x,y,z,w") >= 0)
    {
@@ -38,6 +38,34 @@ double BenchFParser::DoBenchmark(const std::string& sExpr, long iCount)
                         4.123456,
                         5.123456
                       };
+
+      // Perform basic tests for the variables used
+      // in the expressions
+      {
+         bool test_result = true;
+
+         auto tests_list = test_expressions();
+
+         for (auto test : tests_list)
+         {
+            FunctionParser TestParser;
+
+            if (
+                 (TestParser.Parse(test.first.c_str(), "a,b,c,x,y,z,w") >= 0) ||
+                 (!is_equal(test.second,TestParser.Eval(vals)))
+               )
+            {
+               test_result = false;
+               break;
+            }
+         }
+
+         if (!test_result)
+         {
+            StopTimerAndReport("Failed variable test");
+            return m_fTime1;
+         }
+      }
 
       //Prime the I and D caches for the expression
       {

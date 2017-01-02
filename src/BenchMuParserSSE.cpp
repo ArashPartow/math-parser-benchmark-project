@@ -1,6 +1,5 @@
 #include "BenchMuParserSSE.h"
 
-#include <windows.h>
 #include <cmath>
 #include <cassert>
 
@@ -43,7 +42,50 @@ double BenchMuParserSSE::DoBenchmark(const std::string& sExpr, long iCount)
    mecDefineVar(hParser, "w", &w);
 
    mecDefineConst(hParser, "pi", (mecFloat_t)M_PI);
-   mecDefineConst(hParser, "e",  (mecFloat_t)M_E);
+   mecDefineConst(hParser, "e",  (mecFloat_t)M_E );
+
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         mecParserHandle_t htestParser = mecCreate();
+
+         mecSetExpr(htestParser, test.first.c_str());
+         mecDefineVar(htestParser, "a", &a);
+         mecDefineVar(htestParser, "b", &b);
+         mecDefineVar(htestParser, "c", &c);
+
+         mecDefineVar(htestParser, "x", &x);
+         mecDefineVar(htestParser, "y", &y);
+         mecDefineVar(htestParser, "z", &z);
+         mecDefineVar(htestParser, "w", &w);
+
+         mecEvalFun_t pttestfun = mecCompile(htestParser);
+
+         if (
+              mecError(htestParser) ||
+              (!is_equal((float)test.second,pttestfun()))
+            )
+         {
+            mecRelease(htestParser);
+            test_result = false;
+            break;
+         }
+
+         mecRelease(htestParser);
+      }
+
+      if (!test_result)
+      {
+         StopTimerAndReport("Failed variable test");
+         return m_fTime1;
+      }
+   }
 
    mecEvalFun_t ptfun = mecCompile(hParser);
 

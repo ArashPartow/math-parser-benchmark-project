@@ -213,7 +213,6 @@
       <Filter>lepton</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BenchNative.cpp" />
-    <ClCompile Include="..\muParserSSE\muParserSSE.cpp" />
     <ClCompile Include="..\muParserSSE\mecCallback.cpp">
       <Filter>muparsersse</Filter>
     </ClCompile>
@@ -281,6 +280,9 @@
       <Filter>tinyexpr</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BenchTinyExpr.cpp" />
+    <ClCompile Include="..\muParserSSE\muParserSSE.cpp">
+      <Filter>muparsersse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\chaiscript\chaiscript_threading.hpp">

@@ -1,7 +1,6 @@
 #include "BenchMTParser.h"
 
 #include <cmath>
-#include <Oleauto.h>
 // MTParser
 #include "MTParser/MTParserLib/MTParser.h"
 #include "MTParser/MTParserLib/MTParserExcepStrEng.h"
@@ -10,6 +9,38 @@
 
 using namespace std;
 
+class ExpFct : public MTFunctionI
+{
+   virtual const MTCHAR* getSymbol()
+   {
+      return _T("exp");
+   }
+
+   virtual const MTCHAR* getHelpString()
+   {
+      return _T("exp(x)");
+   }
+
+   virtual const MTCHAR* getDescription()
+   {
+      return _T("Calculate the value of e to the power of x, where e is the base of the natural logarithm");
+   }
+
+   virtual int getNbArgs()
+   {
+      return 1;
+   }
+
+   virtual MTDOUBLE evaluate(unsigned int nbArgs, const MTDOUBLE *pArg)
+   {
+      return exp(pArg[0]);
+   }
+
+   virtual MTFunctionI* spawn()
+   {
+      return new ExpFct();
+   }
+};
 
 //-------------------------------------------------------------------------------------------------
 BenchMTParser::BenchMTParser()
@@ -32,15 +63,62 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    MTParser p;
    p.defineVar("a", &a);
    p.defineVar("b", &b);
-   p.defineVar("c", &b);
+   p.defineVar("c", &c);
 
    p.defineVar("x", &x);
    p.defineVar("y", &y);
    p.defineVar("z", &z);
    p.defineVar("w", &w);
 
-   p.defineConst("e", M_E);
+   p.defineConst("e",   M_E);
    p.defineConst("pi", M_PI);
+
+   p.defineFunc(new ExpFct());
+
+   // Perform basic tests for the variables used
+   // in the expressions
+   {
+      bool test_result = true;
+
+      auto tests_list = test_expressions();
+
+      for (auto test : tests_list)
+      {
+         MTParser test_p;
+         test_p.defineVar("a", &a);
+         test_p.defineVar("b", &b);
+         test_p.defineVar("c", &c);
+
+         test_p.defineVar("x", &x);
+         test_p.defineVar("y", &y);
+         test_p.defineVar("z", &z);
+         test_p.defineVar("w", &w);
+
+         test_p.defineFunc(new ExpFct());
+
+         try
+         {
+            test_p.compile(test.first.c_str());
+
+            if (!is_equal(test.second,test_p.evaluate()))
+            {
+               test_result = false;
+               break;
+            }
+         }
+         catch(MTParserException&)
+         {
+            test_result = false;
+            break;
+         }
+      }
+
+      if (!test_result)
+      {
+         StopTimerAndReport("Failed variable test");
+         return m_fTime1;
+      }
+   }
 
    double fTime = 0;
    double fRes  = 0;
@@ -50,7 +128,7 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    {
       p.compile(sExpr.c_str());
    }
-   catch(MTParserException &e)
+   catch(MTParserException& e)
    {
       StopTimerAndReport(e.getDesc(0).c_str());
       return std::numeric_limits<double>::quiet_NaN();
