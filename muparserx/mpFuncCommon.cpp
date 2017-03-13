@@ -5,11 +5,11 @@
   |  Y Y  \  |  /    |     / __ \|  | \/\___ \\  ___/|  | \/     \ 
   |__|_|  /____/|____|    (____  /__|  /____  >\___  >__| /___/\  \
         \/                     \/           \/     \/           \_/
-                                       Copyright (C) 2013 Ingo Berg
+                                       Copyright (C) 2016 Ingo Berg
                                        All rights reserved.
 
   muParserX - A C++ math parser library with array and string support
-  Copyright (c) 2013, Ingo Berg
+  Copyright (c) 2016, Ingo Berg
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without 
@@ -93,7 +93,7 @@ MUP_NAMESPACE_START
     {
       switch(a_pArg[i]->GetType())
       {
-      case 'f': val = a_pArg[i]->GetFloat();   break;
+      case 'f':
       case 'i': val = a_pArg[i]->GetFloat(); break;
       case 'n': break; // ignore not in list entries (missing parameter)
       case 'c':
