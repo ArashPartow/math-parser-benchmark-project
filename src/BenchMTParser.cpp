@@ -18,6 +18,20 @@ BenchMTParser::BenchMTParser()
    m_sName = "MTParser";
 }
 
+class ExpFct : public MTFunctionI
+{
+
+	virtual const MTCHAR* getSymbol() { return _T("exp"); }
+
+	virtual const MTCHAR* getHelpString() { return _T("exp(x)"); }
+	virtual const MTCHAR* getDescription() { return _T("Calculate the value of e to the power of x, where e is the base of the natural logarithm"); }
+	virtual int getNbArgs() { return 1; }
+	virtual MTDOUBLE evaluate(unsigned int nbArgs, const MTDOUBLE *pArg) { return exp(pArg[0]); }
+
+	virtual MTFunctionI* spawn() { return new ExpFct(); }
+
+};
+
 //-------------------------------------------------------------------------------------------------
 double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
 {
@@ -41,6 +55,8 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
 
    p.defineConst("e", M_E);
    p.defineConst("pi", M_PI);
+   
+   p.defineFunc(new ExpFct());
 
    double fTime = 0;
    double fRes  = 0;
