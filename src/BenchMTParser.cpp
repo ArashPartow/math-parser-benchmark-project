@@ -32,7 +32,7 @@ double BenchMTParser::DoBenchmark(const std::string& sExpr, long iCount)
    MTParser p;
    p.defineVar("a", &a);
    p.defineVar("b", &b);
-   p.defineVar("c", &b);
+   p.defineVar("c", &c);
 
    p.defineVar("x", &x);
    p.defineVar("y", &y);

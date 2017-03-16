@@ -136,7 +136,7 @@ Once all the expressions have been completed, a summary is provided,
 that includes information relating to the build parameters of the
 benchmark binary, the architecture which the benchmark was run upon,
 a final ranking of the parsers, and a listing of expressions per parser
-that were deemed as disqualified during the benchmark.
+that were deemed as having been disqualified during the benchmark.
 
 The following is an example summary generated at the completion of the benchmark:
 
