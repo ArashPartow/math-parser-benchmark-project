@@ -4419,42 +4419,43 @@ the ExprTk header. The defines are as follows:
    (08) exprtk_disable_superscalar_unroll
    (09) exprtk_disable_rtl_io_file
    (10) exprtk_disable_rtl_vecops
+   (11) exprtk_disable_caseinsensitivity
 
 
-(1) exprtk_enable_debugging
+(01) exprtk_enable_debugging
 This define will enable printing of debug information to stdout during
 the compilation process.
 
-(2) exprtk_disable_comments
+(02) exprtk_disable_comments
 This define will disable the ability for expressions to have comments.
 Expressions that have comments when parsed with a build that has  this
 option, will result in a compilation failure.
 
-(3) exprtk_disable_break_continue
+(03) exprtk_disable_break_continue
 This  define  will  disable  the  loop-wise  'break'  and   'continue'
 capabilities. Any expression that contains those keywords will  result
 in a compilation failure.
 
-(4) exprtk_disable_sc_andor
+(04) exprtk_disable_sc_andor
 This define  will disable  the short-circuit  '&' (and)  and '|'  (or)
 operators
 
-(5) exprtk_disable_return_statement
+(05) exprtk_disable_return_statement
 This define will disable use of return statements within expressions.
 
-(6) exprtk_disable_enhanced_features
+(06) exprtk_disable_enhanced_features
 This  define  will  disable all  enhanced  features  such as  strength
 reduction and special  function optimisations and  expression specific
 type instantiations.  This feature  will reduce  compilation times and
 binary sizes but will  also result in massive  performance degradation
 of expression evaluations.
 
-(7) exprtk_disable_string_capabilities
+(07) exprtk_disable_string_capabilities
 This  define  will  disable all  string  processing  capabilities. Any
 expression that contains a string or string related syntax will result
 in a compilation failure.
 
-(8) exprtk_disable_superscalar_unroll
+(08) exprtk_disable_superscalar_unroll
 This define will set  the loop unroll batch  size to 4 operations  per
 loop  instead of  the default  8 operations.  This define  is used  in
 operations that  involve vectors  and aggregations  over vectors. When
@@ -4462,7 +4463,7 @@ targeting  non-superscalar  architectures, it  may  be recommended  to
 build using this particular option if efficiency of evaluations is  of
 concern.
 
-(9) exprtk_disable_rtl_io_file
+(09) exprtk_disable_rtl_io_file
 This  define will  disable  the  file I/O  RTL package  features. When
 present, any  attempts to register  the file I/O package with  a given
 symbol table will fail causing a compilation error.
@@ -4472,6 +4473,11 @@ This define will  disable the extended  vector operations RTL  package
 features. When present, any attempts to register the vector operations
 package with  a given  symbol table  will fail  causing a  compilation
 error.
+
+(11) exprtk_disable_caseinsensitivity
+This define  will disable  case-insensitivity when  matching variables
+and  functions. Furthermore  all reserved  and keywords  will only  be
+acknowledged when in all lower-case.
 
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

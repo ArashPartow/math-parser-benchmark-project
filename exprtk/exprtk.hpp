@@ -141,6 +141,7 @@ namespace exprtk
                 ('\'' != c);
       }
 
+      #ifndef exprtk_disable_caseinsensitivity
       inline bool imatch(const char_t c1, const char_t c2)
       {
          return std::tolower(c1) == std::tolower(c2);
@@ -163,6 +164,47 @@ namespace exprtk
 
          return false;
       }
+
+      struct ilesscompare
+      {
+         inline bool operator()(const std::string& s1, const std::string& s2) const
+         {
+            const std::size_t length = std::min(s1.size(),s2.size());
+
+            for (std::size_t i = 0; i < length;  ++i)
+            {
+               const char_t c1 = static_cast<char>(std::tolower(s1[i]));
+               const char_t c2 = static_cast<char>(std::tolower(s2[i]));
+
+               if (c1 > c2)
+                  return false;
+               else if (c1 < c2)
+                  return true;
+            }
+
+            return s1.size() < s2.size();
+         }
+      };
+
+      #else
+      inline bool imatch(const char_t c1, const char_t c2)
+      {
+         return c1 == c2;
+      }
+
+      inline bool imatch(const std::string& s1, const std::string& s2)
+      {
+         return s1 == s2;
+      }
+
+      struct ilesscompare
+      {
+         inline bool operator()(const std::string& s1, const std::string& s2) const
+         {
+            return s1 < s2;
+         }
+      };
+      #endif
 
       inline bool is_valid_sf_symbol(const std::string& symbol)
       {
@@ -333,27 +375,6 @@ namespace exprtk
       private:
 
          std::string data_;
-      };
-
-      struct ilesscompare
-      {
-         inline bool operator()(const std::string& s1, const std::string& s2) const
-         {
-            const std::size_t length = std::min(s1.size(),s2.size());
-
-            for (std::size_t i = 0; i < length;  ++i)
-            {
-               const char_t c1 = static_cast<char>(std::tolower(s1[i]));
-               const char_t c2 = static_cast<char>(std::tolower(s2[i]));
-
-               if (c1 > c2)
-                  return false;
-               else if (c1 < c2)
-                  return true;
-            }
-
-            return s1.size() < s2.size();
-         }
       };
 
       static const std::string reserved_words[] =
