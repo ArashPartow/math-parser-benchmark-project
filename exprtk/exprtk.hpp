@@ -142,6 +142,12 @@ namespace exprtk
       }
 
       #ifndef exprtk_disable_caseinsensitivity
+      inline void case_normalise(std::string& s)
+      {
+         std::transform
+              (s.begin(), s.end(), s.begin(), static_cast<int(*)(int)>(std::tolower));
+      }
+
       inline bool imatch(const char_t c1, const char_t c2)
       {
          return std::tolower(c1) == std::tolower(c2);
@@ -187,6 +193,9 @@ namespace exprtk
       };
 
       #else
+      inline void case_normalise(std::string&)
+      {}
+
       inline bool imatch(const char_t c1, const char_t c2)
       {
          return c1 == c2;
@@ -216,12 +225,12 @@ namespace exprtk
                 is_digit(symbol[3]);
       }
 
-      inline const char& front(const std::string& s)
+      inline const char_t& front(const std::string& s)
       {
          return s[0];
       }
 
-      inline const char& back(const std::string& s)
+      inline const char_t& back(const std::string& s)
       {
          return s[s.size() - 1];
       }
@@ -356,7 +365,7 @@ namespace exprtk
             return (*this);
          }
 
-         inline build_string& operator << (const char* s)
+         inline build_string& operator << (const char_t* s)
          {
             data_ += std::string(s);
             return (*this);
@@ -603,29 +612,29 @@ namespace exprtk
       inline bool wc_match(const std::string& wild_card,
                            const std::string& str)
       {
-         return match_impl<const char*,cs_match>(wild_card.data(),
-                                                 wild_card.data() + wild_card.size(),
-                                                 str.data(),
-                                                 str.data() + str.size(),
-                                                 '*',
-                                                 '?');
+         return match_impl<const char_t*,cs_match>(wild_card.data(),
+                                                   wild_card.data() + wild_card.size(),
+                                                   str.data(),
+                                                   str.data() + str.size(),
+                                                   '*',
+                                                   '?');
       }
 
       inline bool wc_imatch(const std::string& wild_card,
                             const std::string& str)
       {
-         return match_impl<const char*,cis_match>(wild_card.data(),
-                                                  wild_card.data() + wild_card.size(),
-                                                  str.data(),
-                                                  str.data() + str.size(),
-                                                  '*',
-                                                  '?');
+         return match_impl<const char_t*,cis_match>(wild_card.data(),
+                                                    wild_card.data() + wild_card.size(),
+                                                    str.data(),
+                                                    str.data() + str.size(),
+                                                    '*',
+                                                    '?');
       }
 
       inline bool sequence_match(const std::string& pattern,
                                  const std::string& str,
                                  std::size_t&       diff_index,
-                                 char&              diff_value)
+                                 char_t&            diff_value)
       {
          if (str.empty())
          {
@@ -1746,7 +1755,7 @@ namespace exprtk
          if ((3 != length) && (inf_length != length))
             return false;
 
-         const char* inf_itr = ('i' == (*itr)) ? inf_lc : inf_uc;
+         const char_t* inf_itr = ('i' == (*itr)) ? inf_lc : inf_uc;
 
          while (end != itr)
          {
@@ -1932,8 +1941,8 @@ namespace exprtk
       template <typename T>
       inline bool string_to_real(const std::string& s, T& t)
       {
-         const char* begin = s.data();
-         const char* end   = s.data() + s.size();
+         const char_t* begin = s.data();
+         const char_t* end   = s.data() + s.size();
          typename numeric::details::number_type<T>::type num_type;
          return string_to_real(begin, end, t, num_type);
       }
@@ -2260,8 +2269,8 @@ namespace exprtk
 
          inline std::string substr(const std::size_t& begin, const std::size_t& end)
          {
-            const char* begin_itr = ((base_itr_ + begin) < s_end_) ? (base_itr_ + begin) : s_end_;
-            const char* end_itr   = ((base_itr_ +   end) < s_end_) ? (base_itr_ +   end) : s_end_;
+            const char_t* begin_itr = ((base_itr_ + begin) < s_end_) ? (base_itr_ + begin) : s_end_;
+            const char_t* end_itr   = ((base_itr_ +   end) < s_end_) ? (base_itr_ +   end) : s_end_;
 
             return std::string(begin_itr,end_itr);
          }
@@ -2278,7 +2287,7 @@ namespace exprtk
 
       private:
 
-         inline bool is_end(const char* itr)
+         inline bool is_end(const char_t* itr)
          {
             return (s_end_ == itr);
          }
@@ -2466,7 +2475,7 @@ namespace exprtk
 
          inline void scan_symbol()
          {
-            const char* initial_itr = s_itr_;
+            const char_t* initial_itr = s_itr_;
 
             while (!is_end(s_itr_))
             {
@@ -2517,11 +2526,11 @@ namespace exprtk
                (15) .1234e-3
             */
 
-            const char* initial_itr = s_itr_;
-            bool dot_found          = false;
-            bool e_found            = false;
-            bool post_e_sign_found  = false;
-            bool post_e_digit_found = false;
+            const char_t* initial_itr = s_itr_;
+            bool dot_found            = false;
+            bool e_found              = false;
+            bool post_e_sign_found    = false;
+            bool post_e_digit_found   = false;
             token_t t;
 
             while (!is_end(s_itr_))
@@ -2542,7 +2551,7 @@ namespace exprtk
                }
                else if (details::imatch('e',(*s_itr_)))
                {
-                  const char& c = *(s_itr_ + 1);
+                  const char_t& c = *(s_itr_ + 1);
 
                   if (is_end(s_itr_ + 1))
                   {
@@ -2604,7 +2613,7 @@ namespace exprtk
 
          inline void scan_special_function()
          {
-            const char* initial_itr = s_itr_;
+            const char_t* initial_itr = s_itr_;
             token_t t;
 
             // $fdd(x,x,x) = at least 11 chars
@@ -2640,7 +2649,7 @@ namespace exprtk
          #ifndef exprtk_disable_string_capabilities
          inline void scan_string()
          {
-            const char* initial_itr = s_itr_ + 1;
+            const char_t* initial_itr = s_itr_ + 1;
             token_t t;
 
             if (std::distance(s_itr_,s_end_) < 2)
@@ -2744,9 +2753,9 @@ namespace exprtk
          token_list_itr_t token_itr_;
          token_list_itr_t store_token_itr_;
          token_t eof_token_;
-         const char* base_itr_;
-         const char* s_itr_;
-         const char* s_end_;
+         const char_t* base_itr_;
+         const char_t* s_itr_;
+         const char_t* s_end_;
 
          friend class token_scanner;
          friend class token_modifier;
@@ -5502,7 +5511,7 @@ namespace exprtk
 
          virtual std::string str () const = 0;
 
-         virtual const char* base() const = 0;
+         virtual const char_t* base() const = 0;
 
          virtual std::size_t size() const = 0;
       };
@@ -5545,7 +5554,7 @@ namespace exprtk
             return value_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return value_.data();
          }
@@ -7441,7 +7450,7 @@ namespace exprtk
             return ref();
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return &(*value_)[0];
          }
@@ -7521,7 +7530,7 @@ namespace exprtk
             return (*value_);
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return &(*value_)[0];
          }
@@ -7599,7 +7608,7 @@ namespace exprtk
             return value_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return value_.data();
          }
@@ -7730,7 +7739,7 @@ namespace exprtk
             return value_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return &value_[0];
          }
@@ -7869,7 +7878,7 @@ namespace exprtk
             return value_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return &value_[0];
          }
@@ -7957,7 +7966,7 @@ namespace exprtk
             return str0_node_ptr_->str();
          }
 
-         const char* base() const
+         const char_t* base() const
          {
            return str0_node_ptr_->base();
          }
@@ -8071,11 +8080,11 @@ namespace exprtk
                   const std::size_t size1    = range1.cache_size();
                   const std::size_t max_size = std::min(size0,size1);
 
-                  char* s0 = const_cast<char*>(str0_base_ptr_->base() + str0_r0);
-                  char* s1 = const_cast<char*>(str1_base_ptr_->base() + str1_r0);
+                  char_t* s0 = const_cast<char_t*>(str0_base_ptr_->base() + str0_r0);
+                  char_t* s1 = const_cast<char_t*>(str1_base_ptr_->base() + str1_r0);
 
                   loop_unroll::details lud(max_size);
-                  const char* upper_bound = s0 + lud.upper_bound;
+                  const char_t* upper_bound = s0 + lud.upper_bound;
 
                   while (s0 < upper_bound)
                   {
@@ -8232,13 +8241,13 @@ namespace exprtk
 
       struct asn_assignment
       {
-         static inline void execute(std::string& s, const char* data, const std::size_t size)
+         static inline void execute(std::string& s, const char_t* data, const std::size_t size)
          { s.assign(data,size); }
       };
 
       struct asn_addassignment
       {
-         static inline void execute(std::string& s, const char* data, const std::size_t size)
+         static inline void execute(std::string& s, const char_t* data, const std::size_t size)
          { s.append(data,size); }
       };
 
@@ -8324,7 +8333,7 @@ namespace exprtk
             return str0_node_ptr_->str();
          }
 
-         const char* base() const
+         const char_t* base() const
          {
            return str0_node_ptr_->base();
          }
@@ -8445,7 +8454,7 @@ namespace exprtk
 
                   std::copy(str1_base_ptr_->base() + s1_r0,
                             str1_base_ptr_->base() + s1_r0 + size,
-                            const_cast<char*>(base() + s0_r0));
+                            const_cast<char_t*>(base() + s0_r0));
                }
             }
 
@@ -8457,7 +8466,7 @@ namespace exprtk
             return str0_node_ptr_->str();
          }
 
-         const char* base() const
+         const char_t* base() const
          {
            return str0_node_ptr_->base();
          }
@@ -8611,7 +8620,7 @@ namespace exprtk
             return value_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return &value_[0];
          }
@@ -8731,7 +8740,7 @@ namespace exprtk
             return value_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return &value_[0];
          }
@@ -8867,7 +8876,7 @@ namespace exprtk
             return str_base_ptr_->str();
          }
 
-         const char* base() const
+         const char_t* base() const
          {
             return str_base_ptr_->base();
          }
@@ -11377,7 +11386,7 @@ namespace exprtk
                      return false;
 
                   ts.size = sbn->size();
-                  ts.data = reinterpret_cast<void*>(const_cast<char*>(sbn->base()));
+                  ts.data = reinterpret_cast<void*>(const_cast<char_t*>(sbn->base()));
                   ts.type = type_store_t::e_string;
 
                   range_list_[i].data      = ts.data;
@@ -11398,7 +11407,7 @@ namespace exprtk
                      )
                   {
                      ts.size = rp.const_size();
-                     ts.data = static_cast<char*>(ts.data) + rp.n0_c.second;
+                     ts.data = static_cast<char_t*>(ts.data) + rp.n0_c.second;
                      range_list_[i].range = reinterpret_cast<range_t*>(0);
                   }
                   else
@@ -11480,10 +11489,10 @@ namespace exprtk
                      ts.size = rp.cache_size();
                      #ifndef exprtk_disable_string_capabilities
                      if (ts.type == type_store_t::e_string)
-                        ts.data = const_cast<char*>(rdt.str_node->base()) + rp.cache.first;
+                        ts.data = const_cast<char_t*>(rdt.str_node->base()) + rp.cache.first;
                      else
                      #endif
-                        ts.data = static_cast<char*>(rdt.data) + (rp.cache.first * rdt.type_size);
+                        ts.data = static_cast<char_t*>(rdt.data) + (rp.cache.first * rdt.type_size);
                   }
                   else
                      return false;
@@ -11563,7 +11572,7 @@ namespace exprtk
             return ret_string_;
          }
 
-         const char* base() const
+         const char_t* base() const
          {
            return &ret_string_[0];
          }
@@ -18921,14 +18930,13 @@ namespace exprtk
 
             for (std::size_t i = 0; i < symbol_name_list_.size(); ++i)
             {
-               std::string& s = symbol_name_list_[i].first;
-               std::transform(s.begin(),s.end(),s.begin(),static_cast<int(*)(int)>(std::tolower));
+               details::case_normalise(symbol_name_list_[i].first);
             }
 
             std::sort(symbol_name_list_.begin(),symbol_name_list_.end());
 
             std::unique_copy(symbol_name_list_.begin(),
-                             symbol_name_list_.end(),
+                             symbol_name_list_.end  (),
                              std::back_inserter(symbols_list));
 
             return symbols_list.size();
@@ -18945,14 +18953,13 @@ namespace exprtk
 
             for (std::size_t i = 0; i < assignment_name_list_.size(); ++i)
             {
-               std::string& s = assignment_name_list_[i].first;
-               std::transform(s.begin(), s.end(), s.begin(), static_cast<int(*)(int)>(std::tolower));
+               details::case_normalise(symbol_name_list_[i].first);
             }
 
             std::sort(assignment_name_list_.begin(),assignment_name_list_.end());
 
             std::unique_copy(assignment_name_list_.begin(),
-                             assignment_name_list_.end(),
+                             assignment_name_list_.end  (),
                              std::back_inserter(assignment_list));
 
             return assignment_list.size();
@@ -36323,7 +36330,7 @@ namespace exprtk
          {
             T t = T(0);
 
-            std::memcpy(reinterpret_cast<char*>(&t),
+            std::memcpy(reinterpret_cast<char*>(&t ),
                         reinterpret_cast<char*>(&fd),
                         sizeof(fd));
             return t;
