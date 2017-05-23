@@ -5360,7 +5360,7 @@ namespace exprtk
 
          void set_ref(value_ptr* ref)
          {
-            return vector_holder_base_->set_ref(ref);
+            vector_holder_base_->set_ref(ref);
          }
 
          bool rebaseable() const
@@ -22472,7 +22472,6 @@ namespace exprtk
 
          expression_node_ptr result   = error_node();
          strvar_node_t const_str_node = static_cast<strvar_node_t>(0);
-         bool is_const_string         = false;
 
          scope_element& se = sem_.get_active_element(symbol);
 
@@ -22496,9 +22495,7 @@ namespace exprtk
 
             result = symtab_store_.get_stringvar(symbol);
 
-            is_const_string = symtab_store_.is_constant_string(symbol);
-
-            if (is_const_string)
+            if (symtab_store_.is_constant_string(symbol))
             {
                const_str_node = static_cast<strvar_node_t>(result);
                result = expression_generator_(const_str_node->str());
