@@ -2549,7 +2549,7 @@ namespace exprtk
 
                   continue;
                }
-               else if (details::imatch('e',(*s_itr_)))
+               else if ('e' == std::tolower(*s_itr_))
                {
                   const char_t& c = *(s_itr_ + 1);
 
