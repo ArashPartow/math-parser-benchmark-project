@@ -18953,7 +18953,7 @@ namespace exprtk
 
             for (std::size_t i = 0; i < assignment_name_list_.size(); ++i)
             {
-               details::case_normalise(symbol_name_list_[i].first);
+               details::case_normalise(assignment_name_list_[i].first);
             }
 
             std::sort(assignment_name_list_.begin(),assignment_name_list_.end());
