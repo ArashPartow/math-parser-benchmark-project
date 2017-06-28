@@ -1226,7 +1226,7 @@ In the following example, the  return value of the expression  will be
 within the loop body on its last iteration:
 
    var x := 1;
-   x + for (var i := i; i < 10; i += 1)
+   x + for (var i := x; i < 10; i += 1)
        {
          i / 2;
          i + 1;
@@ -1303,7 +1303,7 @@ lets review the following expression:
 
    var x := 2;      // Statement 1
    var y := x + 2;  // Statement 2
-   x + y            // Statement 3
+   x + y;           // Statement 3
    y := x + 3y;     // Statement 4
    x - y;           // Statement 5
 
