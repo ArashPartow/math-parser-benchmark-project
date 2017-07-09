@@ -18027,6 +18027,7 @@ namespace exprtk
       typedef details::scor_node<T>                             scor_node_t;
       typedef lexer::token                                          token_t;
       typedef expression_node_t*                        expression_node_ptr;
+      typedef expression<T>                                    expression_t;
       typedef symbol_table<T>                                symbol_table_t;
       typedef typename expression<T>::symtab_list_t     symbol_table_list_t;
       typedef details::vector_holder<T>*                  vector_holder_ptr;
@@ -18336,7 +18337,7 @@ namespace exprtk
                     se.active   &&
                     se.var_node &&
                     details::is_variable_node(se.var_node)
-                 )
+                  )
                {
                   variable_node_ptr vn = reinterpret_cast<variable_node_ptr>(se.var_node);
 
@@ -19862,6 +19863,17 @@ namespace exprtk
 
             return false;
          }
+      }
+
+      inline expression_t compile(const std::string& expression_string, symbol_table_t& symtab)
+      {
+         expression_t expr;
+
+         expr.register_symbol_table(symtab);
+
+         compile(expression_string,expr);
+
+         return expr;
       }
 
       void process_lexer_errors()
