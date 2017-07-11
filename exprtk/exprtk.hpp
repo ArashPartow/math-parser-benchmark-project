@@ -476,7 +476,7 @@ namespace exprtk
       {
          for (std::size_t i = 0; i < reserved_words_size; ++i)
          {
-            if (imatch(symbol,reserved_words[i]))
+            if (imatch(symbol, reserved_words[i]))
             {
                return true;
             }
@@ -489,7 +489,7 @@ namespace exprtk
       {
          for (std::size_t i = 0; i < reserved_symbols_size; ++i)
          {
-            if (imatch(symbol,reserved_symbols[i]))
+            if (imatch(symbol, reserved_symbols[i]))
             {
                return true;
             }
@@ -502,7 +502,7 @@ namespace exprtk
       {
          for (std::size_t i = 0; i < base_function_list_size; ++i)
          {
-            if (imatch(function_name,base_function_list[i]))
+            if (imatch(function_name, base_function_list[i]))
             {
                return true;
             }
@@ -515,7 +515,7 @@ namespace exprtk
       {
          for (std::size_t i = 0; i < cntrl_struct_list_size; ++i)
          {
-            if (imatch(cntrl_strct,cntrl_struct_list[i]))
+            if (imatch(cntrl_strct, cntrl_struct_list[i]))
             {
                return true;
             }
@@ -528,7 +528,7 @@ namespace exprtk
       {
          for (std::size_t i = 0; i < logic_ops_list_size; ++i)
          {
-            if (imatch(lgc_opr,logic_ops_list[i]))
+            if (imatch(lgc_opr, logic_ops_list[i]))
             {
                return true;
             }
@@ -2823,7 +2823,7 @@ namespace exprtk
                                  const token& t0 = g.token_list_[i    ];
                                  const token& t1 = g.token_list_[i + 1];
 
-                                 if (!operator()(t0,t1))
+                                 if (!operator()(t0, t1))
                                  {
                                     return i;
                                  }
@@ -2836,7 +2836,7 @@ namespace exprtk
                                  const token& t1 = g.token_list_[i + 1];
                                  const token& t2 = g.token_list_[i + 2];
 
-                                 if (!operator()(t0,t1,t2))
+                                 if (!operator()(t0, t1, t2))
                                  {
                                     return i;
                                  }
@@ -2850,7 +2850,7 @@ namespace exprtk
                                  const token& t2 = g.token_list_[i + 2];
                                  const token& t3 = g.token_list_[i + 3];
 
-                                 if (!operator()(t0,t1,t2,t3))
+                                 if (!operator()(t0, t1, t2, t3))
                                  {
                                     return i;
                                  }
@@ -3375,7 +3375,7 @@ namespace exprtk
                {
                   details::char_t c = t.value[0];
 
-                       if (t.type == lexer::token::e_lbracket)    stack_.push(std::make_pair(')',t.position));
+                       if (t.type == lexer::token::e_lbracket   ) stack_.push(std::make_pair(')',t.position));
                   else if (t.type == lexer::token::e_lcrlbracket) stack_.push(std::make_pair('}',t.position));
                   else if (t.type == lexer::token::e_lsqrbracket) stack_.push(std::make_pair(']',t.position));
                   else if (exprtk::details::is_right_bracket(c))
@@ -3716,7 +3716,7 @@ namespace exprtk
             inline bool register_scanner(lexer::token_scanner* scanner)
             {
                if (token_scanner_list.end() != std::find(token_scanner_list.begin(),
-                                                         token_scanner_list.end(),
+                                                         token_scanner_list.end  (),
                                                          scanner))
                {
                   return false;
@@ -3730,7 +3730,7 @@ namespace exprtk
             inline bool register_modifier(lexer::token_modifier* modifier)
             {
                if (token_modifier_list.end() != std::find(token_modifier_list.begin(),
-                                                          token_modifier_list.end(),
+                                                          token_modifier_list.end  (),
                                                           modifier))
                {
                   return false;
@@ -3744,7 +3744,7 @@ namespace exprtk
             inline bool register_joiner(lexer::token_joiner* joiner)
             {
                if (token_joiner_list.end() != std::find(token_joiner_list.begin(),
-                                                        token_joiner_list.end(),
+                                                        token_joiner_list.end  (),
                                                         joiner))
                {
                   return false;
@@ -3758,7 +3758,7 @@ namespace exprtk
             inline bool register_inserter(lexer::token_inserter* inserter)
             {
                if (token_inserter_list.end() != std::find(token_inserter_list.begin(),
-                                                          token_inserter_list.end(),
+                                                          token_inserter_list.end  (),
                                                           inserter))
                {
                   return false;
@@ -8453,8 +8453,8 @@ namespace exprtk
                range_t& range1 = (*str1_range_ptr_);
 
                if (
-                    range0(s0_r0,s0_r1,str0_base_ptr_->size()) &&
-                    range1(s1_r0,s1_r1,str1_base_ptr_->size())
+                    range0(s0_r0, s0_r1, str0_base_ptr_->size()) &&
+                    range1(s1_r0, s1_r1, str1_base_ptr_->size())
                   )
                {
                   std::size_t size = std::min((s0_r1 - s0_r0),(s1_r1 - s1_r0)) + 1;
@@ -35466,7 +35466,7 @@ namespace exprtk
          inline T operator()(type v0, type v1)
          {
             scoped_bft<func_2param> sb(*this);
-            base_func::update(v0,v1);
+            base_func::update(v0, v1);
             T result = this->value(base_func::expression);
 
             return result;
@@ -35482,7 +35482,7 @@ namespace exprtk
          inline T operator()(type v0, type v1, type v2)
          {
             scoped_bft<func_3param> sb(*this);
-            base_func::update(v0,v1,v2);
+            base_func::update(v0, v1, v2);
             T result = this->value(base_func::expression);
 
             return result;
@@ -35498,7 +35498,7 @@ namespace exprtk
          inline T operator()(type v0, type v1, type v2, type v3)
          {
             scoped_bft<func_4param> sb(*this);
-            base_func::update(v0,v1,v2,v3);
+            base_func::update(v0, v1, v2, v3);
             T result = this->value(base_func::expression);
 
             return result;
@@ -35514,7 +35514,7 @@ namespace exprtk
          inline T operator()(type v0, type v1, type v2, type v3, type v4)
          {
             scoped_bft<func_5param> sb(*this);
-            base_func::update(v0,v1,v2,v3,v4);
+            base_func::update(v0, v1, v2, v3, v4);
             T result = this->value(base_func::expression);
 
             return result;
@@ -35530,7 +35530,7 @@ namespace exprtk
          inline T operator()(type v0, type v1, type v2, type v3, type v4, type v5)
          {
             scoped_bft<func_6param> sb(*this);
-            base_func::update(v0,v1,v2,v3,v4,v5);
+            base_func::update(v0, v1, v2, v3, v4, v5);
             T result = this->value(base_func::expression);
 
             return result;
