@@ -224,7 +224,7 @@ of C++ compilers:
 +----------+---------------------------------------------------------+
 | true     | True state or any value other than zero (typically 1).  |
 +----------+---------------------------------------------------------+
-| false    | False state, value of zero.                             |
+| false    | False state, value of exactly zero.                     |
 +----------+---------------------------------------------------------+
 | and      | Logical AND, True only if x and y are both true.        |
 |          | (eg: x and y)                                           |
@@ -791,13 +791,26 @@ methods:
    4. bool add_vector   (const std::string& name,    vector_type&)
 
 
-The 'vector' type must consist of a contiguous array of scalars  which
-can be one of the following:
+Note: The 'vector' type must  be comprised from a contiguous  array of
+scalars with a size that is  larger than zero. The vector type  itself
+can be any one of the following:
 
    1. std::vector<scalar_t>
    2. scalar_t(&v)[N]
    3. scalar_t* and array size
    4. exprtk::vector_view<scalar_t>
+
+
+When  registering  a variable,  vector,  string or  function  with  an
+instance of a symbol_table, the call to 'add_...' may fail and  return
+a false result due to one or more of the following reasons:
+
+  1. Variable name contains invalid characters or is ill-formed
+  2. Variable name conflicts with a reserved word (eg: 'while')
+  3. Variable name conflicts with a previously registered variable
+  4. A vector of size (length) zero is being registered
+  5. A free function exceeding fifteen parameters is being registered
+  6. The symbol_table instance is in an invalid state
 
 
 (2) Expression
@@ -920,8 +933,8 @@ including  which  control  block each  expression references and their
 associated reference counts.
 
 
-  exprtk::expression e0; // constructed expression, eg: x + 1
-  exprtk::expression e1; // constructed expression, eg: 2z + y
+   exprtk::expression e0; // constructed expression, eg: x + 1
+   exprtk::expression e1; // constructed expression, eg: 2z + y
 
   +-----[ e0 cntrl block]----+     +-----[ e1 cntrl block]-----+
   | 1. Expression Node 'x+1' |     | 1. Expression Node '2z+y' |
@@ -934,7 +947,7 @@ associated reference counts.
     +--------------------+           +--------------------+
 
 
-  e0 = e1; // e0 and e1 are now 2z+y
+   e0 = e1; // e0 and e1 are now 2z+y
 
                +-----[ e1 cntrl block]-----+
                | 1. Expression Node '2z+y' |

@@ -17016,6 +17016,8 @@ namespace exprtk
             return false;
          else if (symbol_exists(vector_name))
             return false;
+         else if (0 == v_size)
+            return false;
          else
             return local_data().vector_store.add(vector_name,v,v_size);
       }
@@ -17029,6 +17031,8 @@ namespace exprtk
             return false;
          else if (symbol_exists(vector_name))
             return false;
+         else if (0 == v.size())
+            return false;
          else
             return local_data().vector_store.add(vector_name,v);
       }
@@ -17040,6 +17044,8 @@ namespace exprtk
          else if (!valid_symbol(vector_name))
             return false;
          else if (symbol_exists(vector_name))
+            return false;
+         else if (0 == v.size())
             return false;
          else
             return local_data().vector_store.add(vector_name,v);
@@ -34064,15 +34070,15 @@ namespace exprtk
             return expression_point;
          }
 
-         bool strength_reduction_enabled_;
+         bool                     strength_reduction_enabled_;
          details::node_allocator* node_allocator_;
-         synthesize_map_t synthesize_map_;
-         unary_op_map_t* unary_op_map_;
-         binary_op_map_t* binary_op_map_;
-         inv_binary_op_map_t* inv_binary_op_map_;
-         sf3_map_t* sf3_map_;
-         sf4_map_t* sf4_map_;
-         parser_t* parser_;
+         synthesize_map_t         synthesize_map_;
+         unary_op_map_t*          unary_op_map_;
+         binary_op_map_t*         binary_op_map_;
+         inv_binary_op_map_t*     inv_binary_op_map_;
+         sf3_map_t*               sf3_map_;
+         sf4_map_t*               sf4_map_;
+         parser_t*                parser_;
       };
 
       inline void set_error(const parser_error::type& error_type)
