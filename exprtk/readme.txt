@@ -1594,25 +1594,28 @@ examples of string variable definitions:
    (a) Initialise to a string
        var x := 'abc';
 
-   (b) Initialise to a string expression
+   (b) Initialise to an empty string
+       var x := '';
+
+   (c) Initialise to a string expression
        var x := 'abc' + '123';
 
-   (c) Initialise to a string range
+   (d) Initialise to a string range
        var x := 'abc123'[2:4];
 
-   (d) Initialise to another string variable
+   (e) Initialise to another string variable
        var x := 'abc';
        var y := x;
 
-   (e) Initialise to another string variable range
+   (f) Initialise to another string variable range
        var x := 'abc123';
        var y := x[2:4];
 
-   (f) Initialise to a string expression
+   (g) Initialise to a string expression
        var x := 'abc';
        var y := x + '123';
 
-   (g) Initialise to a string expression range
+   (h) Initialise to a string expression range
        var x := 'abc';
        var y := (x + '123')[1:3];
 
@@ -1788,7 +1791,7 @@ needs  to  be  'updated' to  either another  vector or  sub-range, the
 vector_view instance  can be  efficiently rebased,  and the expression
 evaluated as normal.
 
-   exprtk::vector_view<T> view = exprtk::make_vector_view(v, v.size());
+   exprtk::vector_view<T> view = exprtk::make_vector_view(v,v.size());
 
    symbol_table_t symbol_table;
    symbol_table.add_vector("v",view);
@@ -4060,7 +4063,7 @@ expressions. As an example, lets take the following expression:
    1 / sqrt(2x) * e^(3y)
 
 
-Let's say we would like to determine which sub-part of the  expression
+Lets say we would like to determine which sub-part  of the  expression
 takes the  most time  to evaluate  and perhaps  attempt to  rework the
 expression based on the results. In order to do this we will create  a
 text file  called 'test.txt'  and then  proceed to  make some educated
