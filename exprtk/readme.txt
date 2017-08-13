@@ -275,7 +275,7 @@ of C++ compilers:
 | clamp    | Clamp x in range between r0 and r1, where r0 < r1.      |
 |          | (eg: clamp(r0,x,r1))                                    |
 +----------+---------------------------------------------------------+
-| equal    | Equality test between x and y using normalized epsilon  |
+| equal    | Equality test between x and y using normalised epsilon  |
 +----------+---------------------------------------------------------+
 | erf      | Error function of x.  (eg: erf(x))                      |
 +----------+---------------------------------------------------------+
@@ -321,7 +321,7 @@ of C++ compilers:
 +----------+---------------------------------------------------------+
 | ncdf     | Normal cumulative distribution function.  (eg: ncdf(x)) |
 +----------+---------------------------------------------------------+
-| nequal   | Not-equal test between x and y using normalized epsilon |
+| nequal   | Not-equal test between x and y using normalised epsilon |
 +----------+---------------------------------------------------------+
 | pow      | x to the power of y.  (eg: pow(x,y) == x ^ y)           |
 +----------+---------------------------------------------------------+
@@ -651,7 +651,7 @@ expressions. The types are as follows:
 
 (1) Scalar Type
 The scalar type  is a singular  numeric value. The  underlying type is
-that used  to specialize  the ExprTk  components (float,  double, long
+that used  to specialise  the ExprTk  components (float,  double, long
 double, MPFR et al).
 
 
@@ -673,7 +673,7 @@ however can not interact with scalar or vector types.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [SECTION 10 - COMPONENTS]
-There are three primary components, that are specialized upon a  given
+There are three primary components, that are specialised upon a  given
 numeric type, which make up the core of ExprTk. The components are  as
 follows:
 
@@ -1345,7 +1345,7 @@ ExprTk support two forms  of conditional branching or  otherwise known
 as  if-statements.  The  first  form,  is  a  simple  function   based
 conditional  statement, that  takes exactly  three input  expressions:
 condition, consequent  and alternative.  The following  is an  example
-expression that utilizes the function based if-statement.
+expression that utilises the function based if-statement.
 
    x := if (y < z, y + 1, 2* z)
 
@@ -1464,7 +1464,7 @@ Special functions dramatically decrease  the total evaluation time  of
 expressions which would otherwise  have been written using  the common
 form by reducing the total number  of nodes in the evaluation tree  of
 an  expression  and  by  also  leveraging  the  compiler's  ability to
-correctly optimize such expressions for a given architecture.
+correctly optimise such expressions for a given architecture.
 
           3-Parameter                       4-Parameter
  +-------------+-------------+    +--------------+------------------+
@@ -1810,7 +1810,7 @@ evaluated as normal.
 
 [SECTION 15 - USER DEFINED FUNCTIONS]
 ExprTk provides a means  whereby custom functions can  be defined  and
-utilized within  expressions.  The   concept  requires  the  user   to
+utilised within  expressions.  The   concept  requires  the  user   to
 provide a reference  to the function  coupled with an  associated name
 that  will be invoked within  expressions. Functions may take numerous
 inputs but will always return a single value of the underlying numeric
@@ -1856,7 +1856,7 @@ function called 'foo':
 (2) ivararg_function
 This interface supports a variable number of scalar arguments as input
 into the function. The function operator interface uses a  std::vector
-specialized upon type T to facilitate parameter passing. The following
+specialised upon type T to facilitate parameter passing. The following
 example defines a vararg function called 'boo':
 
    template <typename T>
@@ -1879,7 +1879,7 @@ example defines a vararg function called 'boo':
 (3) igeneric_function
 This interface supports  a variable number  of arguments and  types as
 input  into  the  function. The  function  operator  interface uses  a
-std::vector  specialized  upon  the  type_store  type  to   facilitate
+std::vector  specialised  upon  the  type_store  type  to   facilitate
 parameter passing.
 
     Scalar <-- function(i_0, i_1, i_2....., i_N)
@@ -2505,7 +2505,7 @@ associated with a given expression instance.
 
 However as an expression can have more than one symbol table  instance
 associated  with  itself,  when  building  more  complex  systems that
-utilize many expressions  where each can  in turn utilize  one or more
+utilise many expressions  where each can  in turn utilise  one or more
 variables  from  a  large set  of  potential  variables, functions  or
 constants, it becomes evident  that grouping variables into  layers of
 symbol_tables will simplify and streamline the overall process.
@@ -2738,7 +2738,7 @@ expressions:
 In  this  scenario   one  can  use   the  'dependent_entity_collector'
 component as described in [Section  16] to further determine which  of
 the registered variables were  actually used in the  given expression.
-As  an example  once the  set of  utilized  variables  are known,  any
+As  an example  once the  set of  utilised  variables  are known,  any
 further 'attention'  can be  restricted to  only those  variables when
 evaluating the expression. This can be quite useful when dealing  with
 expressions that can draw from a set of hundreds or even thousands  of
@@ -3452,7 +3452,7 @@ two result variables are defined to hold the values named result0  and
 result1 respectively. The first is of scalar type (double), the second
 is of  string type.  Once the  expression has  been evaluated, the two
 variables will have been updated  with the new result values,  and can
-then be further utilized from within the calling program.
+then be further utilised from within the calling program.
 
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -4149,7 +4149,7 @@ into account when using ExprTk:
 
  (09) The  life-time of  objects registered  with or  created from  a
       specific symbol-table must span  at least the life-time  of the
-      compiled expressions which utilize objects, such as  variables,
+      compiled expressions which utilise objects, such as  variables,
       of that  symbol-table, otherwise  the result  will be undefined
       behavior.
 
