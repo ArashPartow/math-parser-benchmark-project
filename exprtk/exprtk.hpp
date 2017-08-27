@@ -161,8 +161,10 @@ namespace exprtk
       #ifndef exprtk_disable_caseinsensitivity
       inline void case_normalise(std::string& s)
       {
-         std::transform
-              (s.begin(), s.end(), s.begin(), static_cast<int(*)(int)>(std::tolower));
+         for (std::size_t i = 0; i < s.size(); ++i)
+         {
+            s[i] = static_cast<std::string::value_type>(std::tolower(s[i]));
+         }
       }
 
       inline bool imatch(const char_t c1, const char_t c2)
