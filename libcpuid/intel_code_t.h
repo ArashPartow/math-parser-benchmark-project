@@ -1,5 +1,5 @@
 /*
- * Copyright 2008  Veselin Georgiev,
+ * Copyright 2016  Veselin Georgiev,
  * anrieffNOSPAM @ mgail_DOT.com (convert to gmail)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,10 +23,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __RECOG_AMD_H__
-#define __RECOG_AMD_H__
 
-int cpuid_identify_amd(struct cpu_raw_data_t* raw, struct cpu_id_t* data, struct internal_id_info_t* internal);
-void cpuid_get_list_amd(struct cpu_list_t* list);
-
-#endif /* __RECOG_AMD_H__ */
+/*
+ * This file contains a list of internal codes we use in detection. It is
+ * of no external use and isn't a complete list of intel products.
+ */
+	CODE2(PENTIUM, 2000),
+	
+	CODE(IRWIN),
+	CODE(POTOMAC),
+	CODE(GAINESTOWN),
+	CODE(WESTMERE),
+	
+	CODE(PENTIUM_M),
+	CODE(NOT_CELERON),	
+	
+	CODE(CORE_SOLO),
+	CODE(MOBILE_CORE_SOLO),
+	CODE(CORE_DUO),
+	CODE(MOBILE_CORE_DUO),
+	
+	CODE(WOLFDALE),
+	CODE(MEROM),
+	CODE(PENRYN),
+	CODE(QUAD_CORE),
+	CODE(DUAL_CORE_HT),
+	CODE(QUAD_CORE_HT),
+	CODE(MORE_THAN_QUADCORE),
+	CODE(PENTIUM_D),
+	
+	CODE(SILVERTHORNE),
+	CODE(DIAMONDVILLE),
+	CODE(PINEVIEW),
+	CODE(CEDARVIEW),

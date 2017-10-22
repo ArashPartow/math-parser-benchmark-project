@@ -499,7 +499,7 @@ of C++ compilers:
 |          | eg:                                                     |
 |          | 1. if (x > y) z; else w;                                |
 |          | 2. if (x > y) z; else if (w != u) v;                    |
-|          | 3. if (x < y) {z; w + 1;} else u;                       |
+|          | 3. if (x < y) { z; w + 1; } else u;                     |
 |          | 4. if ((x != y) and (z > w))                            |
 |          |    {                                                    |
 |          |      y := sin(x) / u;                                   |
@@ -2351,6 +2351,42 @@ Note: For  the igeneric_function  type, there  also needs  to be a 'Z'
 parameter sequence  defined in order for the  zero parameter  trait to
 properly take effect otherwise a compilation error will occur.
 
+
+(9) Free Functions
+The ExprTk symbol  table supports the  registration of free  functions
+and lambdas  (anonymous functors)  for use  in expressions.  The basic
+requirements  are similar  to those  found in  ifunction derived  user
+defined  functions. This  includes  support  for free  functions using
+anywhere from zero up to fifteen input parameters of scalar type, with
+a return type that is also scalar. Furthermore such functions will  by
+default be assumed to have side-effects and hence will not participate
+in constant folding optimisations.
+
+In the following  example, a two  input parameter free  function named
+'compute', and a three input parameter lambda will be registered  with
+the given symbol_table instance:
+
+
+   double compute(double v0, double v1)
+   {
+      return 2.0 * v0 + v1 / 3.0;
+   }
+
+   .
+   .
+   .
+
+   typedef exprtk::symbol_table<double> symbol_table_t;
+
+   symbol_table_t symbol_table;
+
+   symbol_table.add_function("compute", compute);
+
+   symbol_table.add_function("lambda",
+                             [](double v0, double v1, double v2) -> double
+                             { return v0 / v1 + v2; });
+
+
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [SECTION 16 - EXPRESSION DEPENDENTS]
@@ -2459,7 +2495,7 @@ associated assignments:
    (5) None          x + y + z
 
 
-Note: In expression 4, both variables 'z' and 'w' are denoted as being
+Note: In expression 4, both variables 'w' and 'z' are denoted as being
 assignments even though only one of  them can ever be modified at  the
 time of evaluation. Furthermore the determination of which of the  two
 variables the  modification will  occur upon  can only  be known  with
@@ -3443,8 +3479,8 @@ values.
 
    expression.value();
 
-   printf("Result0: %15.5f\n",result0        );
-   printf("Result1: %s\n"    ,result1.c_str());
+   printf("Result0: %15.5f\n", result0        );
+   printf("Result1: %s\n"    , result1.c_str());
 
 
 In the example above, the expression will compute two results. As such
@@ -3769,12 +3805,12 @@ overloads, the definitions of which are:
 
    (1) No variables
    (2) One variable called x
-   (3) Two variable called x and y
-   (3) Three variable called x, y and z
+   (3) Two variables called x and y
+   (3) Three variables called x, y and z
 
 
-An example use of each of the three overloads for the compute  routine
-is as follows:
+Example uses of  each of the  three overloads for  the compute routine
+are as follows:
 
    T result = T(0);
 
@@ -3819,11 +3855,11 @@ is as follows:
 
 (d) integrate
 This free function will attempt to perform a numerical integration  of
-a single variable compiled expression  over a defined range and  given
-step size. The numerical integration is based on the three point  form
-of the Simpson's rule. The integrate function has two overloads, where
-the variable of integration can either be passed as a reference or  as
-a name in string form. Example usage of the function is as follows:
+a single variable compiled expression over a specified range and  step
+size. The numerical  integration is based  on the three  point form of
+Simpson's rule. The  integrate function has  two overloads, where  the
+variable of integration can  either be passed as  a reference or as  a
+name in string form. Example usage of the function is as follows:
 
    typedef exprtk::parser<T>             parser_t;
    typedef exprtk::expression<T>     expression_t;
@@ -4305,7 +4341,15 @@ into account when using ExprTk:
       performance  critical  code  paths, and  should  instead  occur
       entirely either before or after such code paths.
 
- (32) Before jumping in and using ExprTk, do take the time to  peruse
+ (32) Deep  copying  an  expression  instance  for  the  purposes  of
+      persisting to disk or otherwise transmitting elsewhere with the
+      intent to 'resurrect' the  expression instance later on  is not
+      possible due  to the  reasons described  in the  final note  of
+      Section 10. The recommendation is to instead simply persist the
+      string form  of the  expression and  compile the  expression at
+      run-time on the target.
+
+ (33) Before jumping in and using ExprTk, do take the time to  peruse
       the documentation and all of the examples, both in the main and
       the extras  distributions. Having  an informed  general view of
       what can and  can't be done,  and how something  should be done

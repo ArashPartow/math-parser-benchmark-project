@@ -831,6 +831,18 @@
     <ClInclude Include="..\atmsp\atmsp.h">
       <Filter>atmsp</Filter>
     </ClInclude>
+    <ClInclude Include="..\libcpuid\rdtsc.h">
+      <Filter>libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libcpuid\amd_code_t.h">
+      <Filter>libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libcpuid\intel_code_t.h">
+      <Filter>libcpuid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libcpuid\libcpuid_internal.h">
+      <Filter>libcpuid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">

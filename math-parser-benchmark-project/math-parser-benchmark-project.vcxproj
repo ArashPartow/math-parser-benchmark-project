@@ -187,11 +187,15 @@
     <ClInclude Include="..\lepton\MSVC_erfc.h" />
     <ClInclude Include="..\lepton\Parser.h" />
     <ClInclude Include="..\lepton\windowsIncludes.h" />
+    <ClInclude Include="..\libcpuid\amd_code_t.h" />
     <ClInclude Include="..\libcpuid\asm-bits.h" />
+    <ClInclude Include="..\libcpuid\intel_code_t.h" />
     <ClInclude Include="..\libcpuid\libcpuid.h" />
     <ClInclude Include="..\libcpuid\libcpuid_constants.h" />
+    <ClInclude Include="..\libcpuid\libcpuid_internal.h" />
     <ClInclude Include="..\libcpuid\libcpuid_types.h" />
     <ClInclude Include="..\libcpuid\libcpuid_util.h" />
+    <ClInclude Include="..\libcpuid\rdtsc.h" />
     <ClInclude Include="..\libcpuid\recog_amd.h" />
     <ClInclude Include="..\libcpuid\recog_intel.h" />
     <ClInclude Include="..\MathExpr\mathexpr.h" />
