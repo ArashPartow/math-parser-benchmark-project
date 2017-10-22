@@ -29,19 +29,19 @@
 #define COUNT_OF(array) (sizeof(array) / sizeof(array[0]))
 
 struct feature_map_t {
-	unsigned bit;
-	cpu_feature_t feature;
+   unsigned bit;
+   cpu_feature_t feature;
 };
- 
+
 void match_features(const struct feature_map_t* matchtable, int count,
                     uint32_t reg, struct cpu_id_t* data);
 
 struct match_entry_t {
-	int family, model, stepping, ext_family, ext_model;
-	int ncores, l2cache, l3cache, brand_code;
-	uint64_t model_bits;
-	int model_code;
-	char name[32];
+   int family, model, stepping, ext_family, ext_model;
+   int ncores, l2cache, l3cache, brand_code;
+   uint64_t model_bits;
+   int model_code;
+   char name[32];
 };
 
 // returns the match score:

@@ -73,7 +73,7 @@
  * \ref cpu_tsc_mark + \ref cpu_tsc_unmark + \ref cpu_clock_by_mark,
  * \ref cpu_clock_measure or \ref cpu_clock_by_ic.
  * Read carefully for pros/cons of each method. <br>
- * 
+ *
  * To read MSRs, use \ref cpu_msr_driver_open to get a handle, and then
  * \ref cpu_rdmsr for querying abilities. Some MSR decoding is available on recent
  * CPUs, and can be queried through \ref cpu_msrinfo; the various types of queries
@@ -98,19 +98,19 @@ extern "C" {
  * @brief CPU vendor, as guessed from the Vendor String.
  */
 typedef enum {
-	VENDOR_INTEL = 0,  /*!< Intel CPU */
-	VENDOR_AMD,        /*!< AMD CPU */
-	VENDOR_CYRIX,      /*!< Cyrix CPU */
-	VENDOR_NEXGEN,     /*!< NexGen CPU */
-	VENDOR_TRANSMETA,  /*!< Transmeta CPU */
-	VENDOR_UMC,        /*!< x86 CPU by UMC */
-	VENDOR_CENTAUR,    /*!< x86 CPU by IDT */
-	VENDOR_RISE,       /*!< x86 CPU by Rise Technology */
-	VENDOR_SIS,        /*!< x86 CPU by SiS */
-	VENDOR_NSC,        /*!< x86 CPU by National Semiconductor */
-	
-	NUM_CPU_VENDORS,   /*!< Valid CPU vendor ids: 0..NUM_CPU_VENDORS - 1 */
-	VENDOR_UNKNOWN = -1,
+   VENDOR_INTEL = 0,  /*!< Intel CPU */
+   VENDOR_AMD,        /*!< AMD CPU */
+   VENDOR_CYRIX,      /*!< Cyrix CPU */
+   VENDOR_NEXGEN,     /*!< NexGen CPU */
+   VENDOR_TRANSMETA,  /*!< Transmeta CPU */
+   VENDOR_UMC,        /*!< x86 CPU by UMC */
+   VENDOR_CENTAUR,    /*!< x86 CPU by IDT */
+   VENDOR_RISE,       /*!< x86 CPU by Rise Technology */
+   VENDOR_SIS,        /*!< x86 CPU by SiS */
+   VENDOR_NSC,        /*!< x86 CPU by National Semiconductor */
+
+   NUM_CPU_VENDORS,   /*!< Valid CPU vendor ids: 0..NUM_CPU_VENDORS - 1 */
+   VENDOR_UNKNOWN = -1,
 } cpu_vendor_t;
 #define NUM_CPU_VENDORS NUM_CPU_VENDORS
 
@@ -122,32 +122,32 @@ typedef enum {
  * data only.
  */
 struct cpu_raw_data_t {
-	/** contains results of CPUID for eax = 0, 1, ...*/
-	uint32_t basic_cpuid[MAX_CPUID_LEVEL][4];
+   /** contains results of CPUID for eax = 0, 1, ...*/
+   uint32_t basic_cpuid[MAX_CPUID_LEVEL][4];
 
-	/** contains results of CPUID for eax = 0x80000000, 0x80000001, ...*/
-	uint32_t ext_cpuid[MAX_EXT_CPUID_LEVEL][4];
-	
-	/** when the CPU is intel and it supports deterministic cache
-	    information: this contains the results of CPUID for eax = 4
-	    and ecx = 0, 1, ... */
-	uint32_t intel_fn4[MAX_INTELFN4_LEVEL][4];
-	
-	/** when the CPU is intel and it supports leaf 0Bh (Extended Topology
-	    enumeration leaf), this stores the result of CPUID with 
-	    eax = 11 and ecx = 0, 1, 2... */
-	uint32_t intel_fn11[MAX_INTELFN11_LEVEL][4];
-	
-	/** when the CPU is intel and supports leaf 12h (SGX enumeration leaf),
-	 *  this stores the result of CPUID with eax = 0x12 and
-	 *  ecx = 0, 1, 2... */
-	uint32_t intel_fn12h[MAX_INTELFN12H_LEVEL][4];
+   /** contains results of CPUID for eax = 0x80000000, 0x80000001, ...*/
+   uint32_t ext_cpuid[MAX_EXT_CPUID_LEVEL][4];
 
-	/** when the CPU is intel and supports leaf 14h (Intel Processor Trace
-	 *  capabilities leaf).
-	 *  this stores the result of CPUID with eax = 0x12 and
-	 *  ecx = 0, 1, 2... */
-	uint32_t intel_fn14h[MAX_INTELFN14H_LEVEL][4];
+   /** when the CPU is intel and it supports deterministic cache
+       information: this contains the results of CPUID for eax = 4
+       and ecx = 0, 1, ... */
+   uint32_t intel_fn4[MAX_INTELFN4_LEVEL][4];
+
+   /** when the CPU is intel and it supports leaf 0Bh (Extended Topology
+       enumeration leaf), this stores the result of CPUID with
+       eax = 11 and ecx = 0, 1, 2... */
+   uint32_t intel_fn11[MAX_INTELFN11_LEVEL][4];
+
+   /** when the CPU is intel and supports leaf 12h (SGX enumeration leaf),
+    *  this stores the result of CPUID with eax = 0x12 and
+    *  ecx = 0, 1, 2... */
+   uint32_t intel_fn12h[MAX_INTELFN12H_LEVEL][4];
+
+   /** when the CPU is intel and supports leaf 14h (Intel Processor Trace
+    *  capabilities leaf).
+    *  this stores the result of CPUID with eax = 0x12 and
+    *  ecx = 0, 1, 2... */
+   uint32_t intel_fn14h[MAX_INTELFN14H_LEVEL][4];
 };
 
 /**
@@ -157,7 +157,7 @@ struct cpu_raw_data_t {
  * ...
  * struct cpu_raw_data_t raw;
  * struct cpu_id_t id;
- * 
+ *
  * if (cpuid_get_raw_data(&raw) == 0 && cpu_identify(&raw, &id) == 0 && id.sgx.present) {
  *   printf("SGX is present.\n");
  *   printf("SGX1 instructions: %s.\n", id.sgx.flags[INTEL_SGX1] ? "present" : "absent");
@@ -172,187 +172,187 @@ struct cpu_raw_data_t {
  *   printf("SGX is not present.\n");
  * }
  * @endcode
- */ 
+ */
 struct cpu_sgx_t {
-	/** Whether SGX is present (boolean) */
-	uint32_t present;
-	
-	/** Max enclave size in 32-bit mode. This is a power-of-two value:
-	 *  if it is "31", then the max enclave size is 2^31 bytes (2 GiB).
-	 */
-	uint8_t max_enclave_32bit;
-	
-	/** Max enclave size in 64-bit mode. This is a power-of-two value:
-	 *  if it is "36", then the max enclave size is 2^36 bytes (64 GiB).
-	 */
-	uint8_t max_enclave_64bit;
-	
-	/**
-	 * contains SGX feature flags. See the \ref cpu_sgx_feature_t
-	 * "INTEL_SGX*" macros below.
-	 */
-	uint8_t flags[SGX_FLAGS_MAX];
-	
-	/** number of Enclave Page Cache (EPC) sections. Info for each
-	 *  section is available through the \ref cpuid_get_epc() function
-	 */
-	int num_epc_sections;
-	
-	/** bit vector of the supported extended  features that can be written
-	 *  to the MISC region of the SSA (Save State Area)
-	 */ 
-	uint32_t misc_select;
-	
-	/** a bit vector of the attributes that can be set to SECS.ATTRIBUTES
-	 *  via ECREATE. Corresponds to bits 0-63 (incl.) of SECS.ATTRIBUTES.
-	 */ 
-	uint64_t secs_attributes;
-	
-	/** a bit vector of the bits that can be set in the XSAVE feature
-	 *  request mask; Corresponds to bits 64-127 of SECS.ATTRIBUTES.
-	 */
-	uint64_t secs_xfrm;
+   /** Whether SGX is present (boolean) */
+   uint32_t present;
+
+   /** Max enclave size in 32-bit mode. This is a power-of-two value:
+    *  if it is "31", then the max enclave size is 2^31 bytes (2 GiB).
+    */
+   uint8_t max_enclave_32bit;
+
+   /** Max enclave size in 64-bit mode. This is a power-of-two value:
+    *  if it is "36", then the max enclave size is 2^36 bytes (64 GiB).
+    */
+   uint8_t max_enclave_64bit;
+
+   /**
+    * contains SGX feature flags. See the \ref cpu_sgx_feature_t
+    * "INTEL_SGX*" macros below.
+    */
+   uint8_t flags[SGX_FLAGS_MAX];
+
+   /** number of Enclave Page Cache (EPC) sections. Info for each
+    *  section is available through the \ref cpuid_get_epc() function
+    */
+   int num_epc_sections;
+
+   /** bit vector of the supported extended  features that can be written
+    *  to the MISC region of the SSA (Save State Area)
+    */
+   uint32_t misc_select;
+
+   /** a bit vector of the attributes that can be set to SECS.ATTRIBUTES
+    *  via ECREATE. Corresponds to bits 0-63 (incl.) of SECS.ATTRIBUTES.
+    */
+   uint64_t secs_attributes;
+
+   /** a bit vector of the bits that can be set in the XSAVE feature
+    *  request mask; Corresponds to bits 64-127 of SECS.ATTRIBUTES.
+    */
+   uint64_t secs_xfrm;
 };
 
 /**
  * @brief This contains the recognized CPU features/info
  */
 struct cpu_id_t {
-	/** contains the CPU vendor string, e.g. "GenuineIntel" */
-	char vendor_str[VENDOR_STR_MAX];
-	
-	/** contains the brand string, e.g. "Intel(R) Xeon(TM) CPU 2.40GHz" */
-	char brand_str[BRAND_STR_MAX];
-	
-	/** contains the recognized CPU vendor */
-	cpu_vendor_t vendor;
-	
-	/**
-	 * contain CPU flags. Used to test for features. See
-	 * the \ref cpu_feature_t "CPU_FEATURE_*" macros below.
-	 * @see Features
-	 */
-	uint8_t flags[CPU_FLAGS_MAX];
-	
-	/** CPU family */
-	int32_t family;
-	
-	/** CPU model */
-	int32_t model;
-	
-	/** CPU stepping */
-	int32_t stepping;
-	
-	/** CPU extended family */
-	int32_t ext_family;
-	
-	/** CPU extended model */
-	int32_t ext_model;
-	
-	/** Number of CPU cores on the current processor */
-	int32_t num_cores;
-	
-	/**
-	 * Number of logical processors on the current processor.
-	 * Could be more than the number of physical cores,
-	 * e.g. when the processor has HyperThreading.
-	 */
-	int32_t num_logical_cpus;
-	
-	/**
-	 * The total number of logical processors.
-	 * The same value is availabe through \ref cpuid_get_total_cpus.
-	 *
-	 * This is num_logical_cpus * {total physical processors in the system}
-	 * (but only on a real system, under a VM this number may be lower).
-	 *
-	 * If you're writing a multithreaded program and you want to run it on
-	 * all CPUs, this is the number of threads you need.
-	 *
-	 * @note in a VM, this will exactly match the number of CPUs set in
-	 *       the VM's configuration.
-	 *
-	 */
-	int32_t total_logical_cpus;
-	
-	/**
-	 * L1 data cache size in KB. Could be zero, if the CPU lacks cache.
-	 * If the size cannot be determined, it will be -1.
-	 */
-	int32_t l1_data_cache;
-	
-	/**
-	 * L1 instruction cache size in KB. Could be zero, if the CPU lacks
-	 * cache. If the size cannot be determined, it will be -1.
-	 * @note On some Intel CPUs, whose instruction cache is in fact
-	 * a trace cache, the size will be expressed in K uOps.
-	 */
-	int32_t l1_instruction_cache;
-	
-	/**
-	 * L2 cache size in KB. Could be zero, if the CPU lacks L2 cache.
-	 * If the size of the cache could not be determined, it will be -1
-	 */
-	int32_t l2_cache;
-	
-	/** L3 cache size in KB. Zero on most systems */
-	int32_t l3_cache;
+   /** contains the CPU vendor string, e.g. "GenuineIntel" */
+   char vendor_str[VENDOR_STR_MAX];
 
-	/** L4 cache size in KB. Zero on most systems */
-	int32_t l4_cache;
-	
-	/** Cache associativity for the L1 data cache. -1 if undetermined */
-	int32_t l1_assoc;
-	
-	/** Cache associativity for the L2 cache. -1 if undetermined */
-	int32_t l2_assoc;
-	
-	/** Cache associativity for the L3 cache. -1 if undetermined */
-	int32_t l3_assoc;
+   /** contains the brand string, e.g. "Intel(R) Xeon(TM) CPU 2.40GHz" */
+   char brand_str[BRAND_STR_MAX];
 
-	/** Cache associativity for the L4 cache. -1 if undetermined */
-	int32_t l4_assoc;
-	
-	/** Cache-line size for L1 data cache. -1 if undetermined */
-	int32_t l1_cacheline;
-	
-	/** Cache-line size for L2 cache. -1 if undetermined */
-	int32_t l2_cacheline;
-	
-	/** Cache-line size for L3 cache. -1 if undetermined */
-	int32_t l3_cacheline;
-	
-	/** Cache-line size for L4 cache. -1 if undetermined */
-	int32_t l4_cacheline;
+   /** contains the recognized CPU vendor */
+   cpu_vendor_t vendor;
 
-	/**
-	 * The brief and human-friendly CPU codename, which was recognized.<br>
-	 * Examples:
-	 * @code
-	 * +--------+--------+-------+-------+-------+---------------------------------------+-----------------------+
-	 * | Vendor | Family | Model | Step. | Cache |       Brand String                    | cpu_id_t.cpu_codename |
-	 * +--------+--------+-------+-------+-------+---------------------------------------+-----------------------+
-	 * | AMD    |      6 |     8 |     0 |   256 | (not available - will be ignored)     | "K6-2"                |
-	 * | Intel  |     15 |     2 |     5 |   512 | "Intel(R) Xeon(TM) CPU 2.40GHz"       | "Xeon (Prestonia)"    |
-	 * | Intel  |      6 |    15 |    11 |  4096 | "Intel(R) Core(TM)2 Duo CPU E6550..." | "Conroe (Core 2 Duo)" |
-	 * | AMD    |     15 |    35 |     2 |  1024 | "Dual Core AMD Opteron(tm) Proces..." | "Opteron (Dual Core)" |
-	 * +--------+--------+-------+-------+-------+---------------------------------------+-----------------------+
-	 * @endcode
-	 */
-	char cpu_codename[64];
-	
-	/** SSE execution unit size (64 or 128; -1 if N/A) */
-	int32_t sse_size;
-	
-	/**
-	 * contain miscellaneous detection information. Used to test about specifics of
-	 * certain detected features. See \ref cpu_hint_t "CPU_HINT_*" macros below.
-	 * @see Hints
-	 */
-	uint8_t detection_hints[CPU_HINTS_MAX];
-	
-	/** contains information about SGX features if the processor, if present */
-	struct cpu_sgx_t sgx;
+   /**
+    * contain CPU flags. Used to test for features. See
+    * the \ref cpu_feature_t "CPU_FEATURE_*" macros below.
+    * @see Features
+    */
+   uint8_t flags[CPU_FLAGS_MAX];
+
+   /** CPU family */
+   int32_t family;
+
+   /** CPU model */
+   int32_t model;
+
+   /** CPU stepping */
+   int32_t stepping;
+
+   /** CPU extended family */
+   int32_t ext_family;
+
+   /** CPU extended model */
+   int32_t ext_model;
+
+   /** Number of CPU cores on the current processor */
+   int32_t num_cores;
+
+   /**
+    * Number of logical processors on the current processor.
+    * Could be more than the number of physical cores,
+    * e.g. when the processor has HyperThreading.
+    */
+   int32_t num_logical_cpus;
+
+   /**
+    * The total number of logical processors.
+    * The same value is availabe through \ref cpuid_get_total_cpus.
+    *
+    * This is num_logical_cpus * {total physical processors in the system}
+    * (but only on a real system, under a VM this number may be lower).
+    *
+    * If you're writing a multithreaded program and you want to run it on
+    * all CPUs, this is the number of threads you need.
+    *
+    * @note in a VM, this will exactly match the number of CPUs set in
+    *       the VM's configuration.
+    *
+    */
+   int32_t total_logical_cpus;
+
+   /**
+    * L1 data cache size in KB. Could be zero, if the CPU lacks cache.
+    * If the size cannot be determined, it will be -1.
+    */
+   int32_t l1_data_cache;
+
+   /**
+    * L1 instruction cache size in KB. Could be zero, if the CPU lacks
+    * cache. If the size cannot be determined, it will be -1.
+    * @note On some Intel CPUs, whose instruction cache is in fact
+    * a trace cache, the size will be expressed in K uOps.
+    */
+   int32_t l1_instruction_cache;
+
+   /**
+    * L2 cache size in KB. Could be zero, if the CPU lacks L2 cache.
+    * If the size of the cache could not be determined, it will be -1
+    */
+   int32_t l2_cache;
+
+   /** L3 cache size in KB. Zero on most systems */
+   int32_t l3_cache;
+
+   /** L4 cache size in KB. Zero on most systems */
+   int32_t l4_cache;
+
+   /** Cache associativity for the L1 data cache. -1 if undetermined */
+   int32_t l1_assoc;
+
+   /** Cache associativity for the L2 cache. -1 if undetermined */
+   int32_t l2_assoc;
+
+   /** Cache associativity for the L3 cache. -1 if undetermined */
+   int32_t l3_assoc;
+
+   /** Cache associativity for the L4 cache. -1 if undetermined */
+   int32_t l4_assoc;
+
+   /** Cache-line size for L1 data cache. -1 if undetermined */
+   int32_t l1_cacheline;
+
+   /** Cache-line size for L2 cache. -1 if undetermined */
+   int32_t l2_cacheline;
+
+   /** Cache-line size for L3 cache. -1 if undetermined */
+   int32_t l3_cacheline;
+
+   /** Cache-line size for L4 cache. -1 if undetermined */
+   int32_t l4_cacheline;
+
+   /**
+    * The brief and human-friendly CPU codename, which was recognized.<br>
+    * Examples:
+    * @code
+    * +--------+--------+-------+-------+-------+---------------------------------------+-----------------------+
+    * | Vendor | Family | Model | Step. | Cache |       Brand String                    | cpu_id_t.cpu_codename |
+    * +--------+--------+-------+-------+-------+---------------------------------------+-----------------------+
+    * | AMD    |      6 |     8 |     0 |   256 | (not available - will be ignored)     | "K6-2"                |
+    * | Intel  |     15 |     2 |     5 |   512 | "Intel(R) Xeon(TM) CPU 2.40GHz"       | "Xeon (Prestonia)"    |
+    * | Intel  |      6 |    15 |    11 |  4096 | "Intel(R) Core(TM)2 Duo CPU E6550..." | "Conroe (Core 2 Duo)" |
+    * | AMD    |     15 |    35 |     2 |  1024 | "Dual Core AMD Opteron(tm) Proces..." | "Opteron (Dual Core)" |
+    * +--------+--------+-------+-------+-------+---------------------------------------+-----------------------+
+    * @endcode
+    */
+   char cpu_codename[64];
+
+   /** SSE execution unit size (64 or 128; -1 if N/A) */
+   int32_t sse_size;
+
+   /**
+    * contain miscellaneous detection information. Used to test about specifics of
+    * certain detected features. See \ref cpu_hint_t "CPU_HINT_*" macros below.
+    * @see Hints
+    */
+   uint8_t detection_hints[CPU_HINTS_MAX];
+
+   /** contains information about SGX features if the processor, if present */
+   struct cpu_sgx_t sgx;
 };
 
 /**
@@ -376,118 +376,118 @@ struct cpu_id_t {
  * @endcode
  */
 typedef enum {
-	CPU_FEATURE_FPU = 0,	/*!< Floating point unit */
-	CPU_FEATURE_VME,	/*!< Virtual mode extension */
-	CPU_FEATURE_DE,		/*!< Debugging extension */
-	CPU_FEATURE_PSE,	/*!< Page size extension */
-	CPU_FEATURE_TSC,	/*!< Time-stamp counter */
-	CPU_FEATURE_MSR,	/*!< Model-specific regsisters, RDMSR/WRMSR supported */
-	CPU_FEATURE_PAE,	/*!< Physical address extension */
-	CPU_FEATURE_MCE,	/*!< Machine check exception */
-	CPU_FEATURE_CX8,	/*!< CMPXCHG8B instruction supported */
-	CPU_FEATURE_APIC,	/*!< APIC support */
-	CPU_FEATURE_MTRR,	/*!< Memory type range registers */
-	CPU_FEATURE_SEP,	/*!< SYSENTER / SYSEXIT instructions supported */
-	CPU_FEATURE_PGE,	/*!< Page global enable */
-	CPU_FEATURE_MCA,	/*!< Machine check architecture */
-	CPU_FEATURE_CMOV,	/*!< CMOVxx instructions supported */
-	CPU_FEATURE_PAT,	/*!< Page attribute table */
-	CPU_FEATURE_PSE36,	/*!< 36-bit page address extension */
-	CPU_FEATURE_PN,		/*!< Processor serial # implemented (Intel P3 only) */
-	CPU_FEATURE_CLFLUSH,	/*!< CLFLUSH instruction supported */
-	CPU_FEATURE_DTS,	/*!< Debug store supported */
-	CPU_FEATURE_ACPI,	/*!< ACPI support (power states) */
-	CPU_FEATURE_MMX,	/*!< MMX instruction set supported */
-	CPU_FEATURE_FXSR,	/*!< FXSAVE / FXRSTOR supported */
-	CPU_FEATURE_SSE,	/*!< Streaming-SIMD Extensions (SSE) supported */
-	CPU_FEATURE_SSE2,	/*!< SSE2 instructions supported */
-	CPU_FEATURE_SS,		/*!< Self-snoop */
-	CPU_FEATURE_HT,		/*!< Hyper-threading supported (but might be disabled) */
-	CPU_FEATURE_TM,		/*!< Thermal monitor */
-	CPU_FEATURE_IA64,	/*!< IA64 supported (Itanium only) */
-	CPU_FEATURE_PBE,	/*!< Pending-break enable */
-	CPU_FEATURE_PNI,	/*!< PNI (SSE3) instructions supported */
-	CPU_FEATURE_PCLMUL,	/*!< PCLMULQDQ instruction supported */
-	CPU_FEATURE_DTS64,	/*!< 64-bit Debug store supported */
-	CPU_FEATURE_MONITOR,	/*!< MONITOR / MWAIT supported */
-	CPU_FEATURE_DS_CPL,	/*!< CPL Qualified Debug Store */
-	CPU_FEATURE_VMX,	/*!< Virtualization technology supported */
-	CPU_FEATURE_SMX,	/*!< Safer mode exceptions */
-	CPU_FEATURE_EST,	/*!< Enhanced SpeedStep */
-	CPU_FEATURE_TM2,	/*!< Thermal monitor 2 */
-	CPU_FEATURE_SSSE3,	/*!< SSSE3 instructionss supported (this is different from SSE3!) */
-	CPU_FEATURE_CID,	/*!< Context ID supported */
-	CPU_FEATURE_CX16,	/*!< CMPXCHG16B instruction supported */
-	CPU_FEATURE_XTPR,	/*!< Send Task Priority Messages disable */
-	CPU_FEATURE_PDCM,	/*!< Performance capabilities MSR supported */
-	CPU_FEATURE_DCA,	/*!< Direct cache access supported */
-	CPU_FEATURE_SSE4_1,	/*!< SSE 4.1 instructions supported */
-	CPU_FEATURE_SSE4_2,	/*!< SSE 4.2 instructions supported */
-	CPU_FEATURE_SYSCALL,	/*!< SYSCALL / SYSRET instructions supported */
-	CPU_FEATURE_XD,		/*!< Execute disable bit supported */
-	CPU_FEATURE_MOVBE,	/*!< MOVBE instruction supported */
-	CPU_FEATURE_POPCNT,	/*!< POPCNT instruction supported */
-	CPU_FEATURE_AES,	/*!< AES* instructions supported */
-	CPU_FEATURE_XSAVE,	/*!< XSAVE/XRSTOR/etc instructions supported */
-	CPU_FEATURE_OSXSAVE,	/*!< non-privileged copy of OSXSAVE supported */
-	CPU_FEATURE_AVX,	/*!< Advanced vector extensions supported */
-	CPU_FEATURE_MMXEXT,	/*!< AMD MMX-extended instructions supported */
-	CPU_FEATURE_3DNOW,	/*!< AMD 3DNow! instructions supported */
-	CPU_FEATURE_3DNOWEXT,	/*!< AMD 3DNow! extended instructions supported */
-	CPU_FEATURE_NX,		/*!< No-execute bit supported */
-	CPU_FEATURE_FXSR_OPT,	/*!< FFXSR: FXSAVE and FXRSTOR optimizations */
-	CPU_FEATURE_RDTSCP,	/*!< RDTSCP instruction supported (AMD-only) */
-	CPU_FEATURE_LM,		/*!< Long mode (x86_64/EM64T) supported */
-	CPU_FEATURE_LAHF_LM,	/*!< LAHF/SAHF supported in 64-bit mode */
-	CPU_FEATURE_CMP_LEGACY,	/*!< core multi-processing legacy mode */
-	CPU_FEATURE_SVM,	/*!< AMD Secure virtual machine */
-	CPU_FEATURE_ABM,	/*!< LZCNT instruction support */
-	CPU_FEATURE_MISALIGNSSE,/*!< Misaligned SSE supported */
-	CPU_FEATURE_SSE4A,	/*!< SSE 4a from AMD */
-	CPU_FEATURE_3DNOWPREFETCH,	/*!< PREFETCH/PREFETCHW support */
-	CPU_FEATURE_OSVW,	/*!< OS Visible Workaround (AMD) */
-	CPU_FEATURE_IBS,	/*!< Instruction-based sampling */
-	CPU_FEATURE_SSE5,	/*!< SSE 5 instructions supported (deprecated, will never be 1) */
-	CPU_FEATURE_SKINIT,	/*!< SKINIT / STGI supported */
-	CPU_FEATURE_WDT,	/*!< Watchdog timer support */
-	CPU_FEATURE_TS,		/*!< Temperature sensor */
-	CPU_FEATURE_FID,	/*!< Frequency ID control */
-	CPU_FEATURE_VID,	/*!< Voltage ID control */
-	CPU_FEATURE_TTP,	/*!< THERMTRIP */
-	CPU_FEATURE_TM_AMD,	/*!< AMD-specified hardware thermal control */
-	CPU_FEATURE_STC,	/*!< Software thermal control */
-	CPU_FEATURE_100MHZSTEPS,/*!< 100 MHz multiplier control */
-	CPU_FEATURE_HWPSTATE,	/*!< Hardware P-state control */
-	CPU_FEATURE_CONSTANT_TSC,	/*!< TSC ticks at constant rate */
-	CPU_FEATURE_XOP,	/*!< The XOP instruction set (same as the old CPU_FEATURE_SSE5) */
-	CPU_FEATURE_FMA3,	/*!< The FMA3 instruction set */
-	CPU_FEATURE_FMA4,	/*!< The FMA4 instruction set */
-	CPU_FEATURE_TBM,	/*!< Trailing bit manipulation instruction support */
-	CPU_FEATURE_F16C,	/*!< 16-bit FP convert instruction support */
-	CPU_FEATURE_RDRAND,     /*!< RdRand instruction */
-	CPU_FEATURE_X2APIC,     /*!< x2APIC, APIC_BASE.EXTD, MSRs 0000_0800h...0000_0BFFh 64-bit ICR (+030h but not +031h), no DFR (+00Eh), SELF_IPI (+040h) also see standard level 0000_000Bh */
-	CPU_FEATURE_CPB,	/*!< Core performance boost */
-	CPU_FEATURE_APERFMPERF,	/*!< MPERF/APERF MSRs support */
-	CPU_FEATURE_PFI,	/*!< Processor Feedback Interface support */
-	CPU_FEATURE_PA,		/*!< Processor accumulator */
-	CPU_FEATURE_AVX2,	/*!< AVX2 instructions */
-	CPU_FEATURE_BMI1,	/*!< BMI1 instructions */
-	CPU_FEATURE_BMI2,	/*!< BMI2 instructions */
-	CPU_FEATURE_HLE,	/*!< Hardware Lock Elision prefixes */
-	CPU_FEATURE_RTM,	/*!< Restricted Transactional Memory instructions */
-	CPU_FEATURE_AVX512F,	/*!< AVX-512 Foundation */
-	CPU_FEATURE_AVX512DQ,	/*!< AVX-512 Double/Quad granular insns */
-	CPU_FEATURE_AVX512PF,	/*!< AVX-512 Prefetch */
-	CPU_FEATURE_AVX512ER,	/*!< AVX-512 Exponential/Reciprocal */
-	CPU_FEATURE_AVX512CD,	/*!< AVX-512 Conflict detection */
-	CPU_FEATURE_SHA_NI,	/*!< SHA-1/SHA-256 instructions */
-	CPU_FEATURE_AVX512BW,	/*!< AVX-512 Byte/Word granular insns */
-	CPU_FEATURE_AVX512VL,	/*!< AVX-512 128/256 vector length extensions */
-	CPU_FEATURE_SGX,	/*!< SGX extensions. Non-autoritative, check cpu_id_t::sgx::present to verify presence */
-	CPU_FEATURE_RDSEED,	/*!< RDSEED instruction */
-	CPU_FEATURE_ADX,	/*!< ADX extensions (arbitrary precision) */
-	/* termination: */
-	NUM_CPU_FEATURES,
+   CPU_FEATURE_FPU = 0, /*!< Floating point unit */
+   CPU_FEATURE_VME,  /*!< Virtual mode extension */
+   CPU_FEATURE_DE,      /*!< Debugging extension */
+   CPU_FEATURE_PSE,  /*!< Page size extension */
+   CPU_FEATURE_TSC,  /*!< Time-stamp counter */
+   CPU_FEATURE_MSR,  /*!< Model-specific regsisters, RDMSR/WRMSR supported */
+   CPU_FEATURE_PAE,  /*!< Physical address extension */
+   CPU_FEATURE_MCE,  /*!< Machine check exception */
+   CPU_FEATURE_CX8,  /*!< CMPXCHG8B instruction supported */
+   CPU_FEATURE_APIC, /*!< APIC support */
+   CPU_FEATURE_MTRR, /*!< Memory type range registers */
+   CPU_FEATURE_SEP,  /*!< SYSENTER / SYSEXIT instructions supported */
+   CPU_FEATURE_PGE,  /*!< Page global enable */
+   CPU_FEATURE_MCA,  /*!< Machine check architecture */
+   CPU_FEATURE_CMOV, /*!< CMOVxx instructions supported */
+   CPU_FEATURE_PAT,  /*!< Page attribute table */
+   CPU_FEATURE_PSE36,   /*!< 36-bit page address extension */
+   CPU_FEATURE_PN,      /*!< Processor serial # implemented (Intel P3 only) */
+   CPU_FEATURE_CLFLUSH, /*!< CLFLUSH instruction supported */
+   CPU_FEATURE_DTS,  /*!< Debug store supported */
+   CPU_FEATURE_ACPI, /*!< ACPI support (power states) */
+   CPU_FEATURE_MMX,  /*!< MMX instruction set supported */
+   CPU_FEATURE_FXSR, /*!< FXSAVE / FXRSTOR supported */
+   CPU_FEATURE_SSE,  /*!< Streaming-SIMD Extensions (SSE) supported */
+   CPU_FEATURE_SSE2, /*!< SSE2 instructions supported */
+   CPU_FEATURE_SS,      /*!< Self-snoop */
+   CPU_FEATURE_HT,      /*!< Hyper-threading supported (but might be disabled) */
+   CPU_FEATURE_TM,      /*!< Thermal monitor */
+   CPU_FEATURE_IA64, /*!< IA64 supported (Itanium only) */
+   CPU_FEATURE_PBE,  /*!< Pending-break enable */
+   CPU_FEATURE_PNI,  /*!< PNI (SSE3) instructions supported */
+   CPU_FEATURE_PCLMUL,  /*!< PCLMULQDQ instruction supported */
+   CPU_FEATURE_DTS64,   /*!< 64-bit Debug store supported */
+   CPU_FEATURE_MONITOR, /*!< MONITOR / MWAIT supported */
+   CPU_FEATURE_DS_CPL,  /*!< CPL Qualified Debug Store */
+   CPU_FEATURE_VMX,  /*!< Virtualization technology supported */
+   CPU_FEATURE_SMX,  /*!< Safer mode exceptions */
+   CPU_FEATURE_EST,  /*!< Enhanced SpeedStep */
+   CPU_FEATURE_TM2,  /*!< Thermal monitor 2 */
+   CPU_FEATURE_SSSE3,   /*!< SSSE3 instructionss supported (this is different from SSE3!) */
+   CPU_FEATURE_CID,  /*!< Context ID supported */
+   CPU_FEATURE_CX16, /*!< CMPXCHG16B instruction supported */
+   CPU_FEATURE_XTPR, /*!< Send Task Priority Messages disable */
+   CPU_FEATURE_PDCM, /*!< Performance capabilities MSR supported */
+   CPU_FEATURE_DCA,  /*!< Direct cache access supported */
+   CPU_FEATURE_SSE4_1,  /*!< SSE 4.1 instructions supported */
+   CPU_FEATURE_SSE4_2,  /*!< SSE 4.2 instructions supported */
+   CPU_FEATURE_SYSCALL, /*!< SYSCALL / SYSRET instructions supported */
+   CPU_FEATURE_XD,      /*!< Execute disable bit supported */
+   CPU_FEATURE_MOVBE,   /*!< MOVBE instruction supported */
+   CPU_FEATURE_POPCNT,  /*!< POPCNT instruction supported */
+   CPU_FEATURE_AES,  /*!< AES* instructions supported */
+   CPU_FEATURE_XSAVE,   /*!< XSAVE/XRSTOR/etc instructions supported */
+   CPU_FEATURE_OSXSAVE, /*!< non-privileged copy of OSXSAVE supported */
+   CPU_FEATURE_AVX,  /*!< Advanced vector extensions supported */
+   CPU_FEATURE_MMXEXT,  /*!< AMD MMX-extended instructions supported */
+   CPU_FEATURE_3DNOW,   /*!< AMD 3DNow! instructions supported */
+   CPU_FEATURE_3DNOWEXT,   /*!< AMD 3DNow! extended instructions supported */
+   CPU_FEATURE_NX,      /*!< No-execute bit supported */
+   CPU_FEATURE_FXSR_OPT,   /*!< FFXSR: FXSAVE and FXRSTOR optimizations */
+   CPU_FEATURE_RDTSCP,  /*!< RDTSCP instruction supported (AMD-only) */
+   CPU_FEATURE_LM,      /*!< Long mode (x86_64/EM64T) supported */
+   CPU_FEATURE_LAHF_LM, /*!< LAHF/SAHF supported in 64-bit mode */
+   CPU_FEATURE_CMP_LEGACY, /*!< core multi-processing legacy mode */
+   CPU_FEATURE_SVM,  /*!< AMD Secure virtual machine */
+   CPU_FEATURE_ABM,  /*!< LZCNT instruction support */
+   CPU_FEATURE_MISALIGNSSE,/*!< Misaligned SSE supported */
+   CPU_FEATURE_SSE4A,   /*!< SSE 4a from AMD */
+   CPU_FEATURE_3DNOWPREFETCH, /*!< PREFETCH/PREFETCHW support */
+   CPU_FEATURE_OSVW, /*!< OS Visible Workaround (AMD) */
+   CPU_FEATURE_IBS,  /*!< Instruction-based sampling */
+   CPU_FEATURE_SSE5, /*!< SSE 5 instructions supported (deprecated, will never be 1) */
+   CPU_FEATURE_SKINIT,  /*!< SKINIT / STGI supported */
+   CPU_FEATURE_WDT,  /*!< Watchdog timer support */
+   CPU_FEATURE_TS,      /*!< Temperature sensor */
+   CPU_FEATURE_FID,  /*!< Frequency ID control */
+   CPU_FEATURE_VID,  /*!< Voltage ID control */
+   CPU_FEATURE_TTP,  /*!< THERMTRIP */
+   CPU_FEATURE_TM_AMD,  /*!< AMD-specified hardware thermal control */
+   CPU_FEATURE_STC,  /*!< Software thermal control */
+   CPU_FEATURE_100MHZSTEPS,/*!< 100 MHz multiplier control */
+   CPU_FEATURE_HWPSTATE,   /*!< Hardware P-state control */
+   CPU_FEATURE_CONSTANT_TSC,  /*!< TSC ticks at constant rate */
+   CPU_FEATURE_XOP,  /*!< The XOP instruction set (same as the old CPU_FEATURE_SSE5) */
+   CPU_FEATURE_FMA3, /*!< The FMA3 instruction set */
+   CPU_FEATURE_FMA4, /*!< The FMA4 instruction set */
+   CPU_FEATURE_TBM,  /*!< Trailing bit manipulation instruction support */
+   CPU_FEATURE_F16C, /*!< 16-bit FP convert instruction support */
+   CPU_FEATURE_RDRAND,     /*!< RdRand instruction */
+   CPU_FEATURE_X2APIC,     /*!< x2APIC, APIC_BASE.EXTD, MSRs 0000_0800h...0000_0BFFh 64-bit ICR (+030h but not +031h), no DFR (+00Eh), SELF_IPI (+040h) also see standard level 0000_000Bh */
+   CPU_FEATURE_CPB,  /*!< Core performance boost */
+   CPU_FEATURE_APERFMPERF, /*!< MPERF/APERF MSRs support */
+   CPU_FEATURE_PFI,  /*!< Processor Feedback Interface support */
+   CPU_FEATURE_PA,      /*!< Processor accumulator */
+   CPU_FEATURE_AVX2, /*!< AVX2 instructions */
+   CPU_FEATURE_BMI1, /*!< BMI1 instructions */
+   CPU_FEATURE_BMI2, /*!< BMI2 instructions */
+   CPU_FEATURE_HLE,  /*!< Hardware Lock Elision prefixes */
+   CPU_FEATURE_RTM,  /*!< Restricted Transactional Memory instructions */
+   CPU_FEATURE_AVX512F, /*!< AVX-512 Foundation */
+   CPU_FEATURE_AVX512DQ,   /*!< AVX-512 Double/Quad granular insns */
+   CPU_FEATURE_AVX512PF,   /*!< AVX-512 Prefetch */
+   CPU_FEATURE_AVX512ER,   /*!< AVX-512 Exponential/Reciprocal */
+   CPU_FEATURE_AVX512CD,   /*!< AVX-512 Conflict detection */
+   CPU_FEATURE_SHA_NI,  /*!< SHA-1/SHA-256 instructions */
+   CPU_FEATURE_AVX512BW,   /*!< AVX-512 Byte/Word granular insns */
+   CPU_FEATURE_AVX512VL,   /*!< AVX-512 128/256 vector length extensions */
+   CPU_FEATURE_SGX,  /*!< SGX extensions. Non-autoritative, check cpu_id_t::sgx::present to verify presence */
+   CPU_FEATURE_RDSEED,  /*!< RDSEED instruction */
+   CPU_FEATURE_ADX,  /*!< ADX extensions (arbitrary precision) */
+   /* termination: */
+   NUM_CPU_FEATURES,
 } cpu_feature_t;
 
 /**
@@ -496,9 +496,9 @@ typedef enum {
  * Usage: similar to the flags usage
  */
 typedef enum {
-	CPU_HINT_SSE_SIZE_AUTH = 0,	/*!< SSE unit size is authoritative (not only a Family/Model guesswork, but based on an actual CPUID bit) */
-	/* termination */
-	NUM_CPU_HINTS,
+   CPU_HINT_SSE_SIZE_AUTH = 0,   /*!< SSE unit size is authoritative (not only a Family/Model guesswork, but based on an actual CPUID bit) */
+   /* termination */
+   NUM_CPU_HINTS,
 } cpu_hint_t;
 
 /**
@@ -522,36 +522,36 @@ typedef enum {
  * }
  * @endcode
  */
- 
+
 typedef enum {
-	INTEL_SGX1,		/*!< SGX1 instructions support */
-	INTEL_SGX2,		/*!< SGX2 instructions support */
-	
-	/* termination: */
-	NUM_SGX_FEATURES,
+   INTEL_SGX1,    /*!< SGX1 instructions support */
+   INTEL_SGX2,    /*!< SGX2 instructions support */
+
+   /* termination: */
+   NUM_SGX_FEATURES,
 } cpu_sgx_feature_t;
 
 /**
  * @brief Describes common library error codes
  */
 typedef enum {
-	ERR_OK       =  0,	/*!< "No error" */
-	ERR_NO_CPUID = -1,	/*!< "CPUID instruction is not supported" */
-	ERR_NO_RDTSC = -2,	/*!< "RDTSC instruction is not supported" */
-	ERR_NO_MEM   = -3,	/*!< "Memory allocation failed" */
-	ERR_OPEN     = -4,	/*!< "File open operation failed" */
-	ERR_BADFMT   = -5,	/*!< "Bad file format" */
-	ERR_NOT_IMP  = -6,	/*!< "Not implemented" */
-	ERR_CPU_UNKN = -7,	/*!< "Unsupported processor" */
-	ERR_NO_RDMSR = -8,	/*!< "RDMSR instruction is not supported" */
-	ERR_NO_DRIVER= -9,	/*!< "RDMSR driver error (generic)" */
-	ERR_NO_PERMS = -10,	/*!< "No permissions to install RDMSR driver" */
-	ERR_EXTRACT  = -11,	/*!< "Cannot extract RDMSR driver (read only media?)" */
-	ERR_HANDLE   = -12,	/*!< "Bad handle" */
-	ERR_INVMSR   = -13,	/*!< "Invalid MSR" */
-	ERR_INVCNB   = -14,	/*!< "Invalid core number" */
-	ERR_HANDLE_R = -15,	/*!< "Error on handle read" */
-	ERR_INVRANGE = -16,	/*!< "Invalid given range" */
+   ERR_OK       =  0,   /*!< "No error" */
+   ERR_NO_CPUID = -1,   /*!< "CPUID instruction is not supported" */
+   ERR_NO_RDTSC = -2,   /*!< "RDTSC instruction is not supported" */
+   ERR_NO_MEM   = -3,   /*!< "Memory allocation failed" */
+   ERR_OPEN     = -4,   /*!< "File open operation failed" */
+   ERR_BADFMT   = -5,   /*!< "Bad file format" */
+   ERR_NOT_IMP  = -6,   /*!< "Not implemented" */
+   ERR_CPU_UNKN = -7,   /*!< "Unsupported processor" */
+   ERR_NO_RDMSR = -8,   /*!< "RDMSR instruction is not supported" */
+   ERR_NO_DRIVER= -9,   /*!< "RDMSR driver error (generic)" */
+   ERR_NO_PERMS = -10,  /*!< "No permissions to install RDMSR driver" */
+   ERR_EXTRACT  = -11,  /*!< "Cannot extract RDMSR driver (read only media?)" */
+   ERR_HANDLE   = -12,  /*!< "Bad handle" */
+   ERR_INVMSR   = -13,  /*!< "Invalid MSR" */
+   ERR_INVCNB   = -14,  /*!< "Invalid core number" */
+   ERR_HANDLE_R = -15,  /*!< "Error on handle read" */
+   ERR_INVRANGE = -16,  /*!< "Invalid given range" */
 } cpu_error_t;
 
 /**
@@ -559,8 +559,8 @@ typedef enum {
  *        cpu_clock_by_mark
  */
 struct cpu_mark_t {
-	uint64_t tsc;		/*!< Time-stamp from RDTSC */
-	uint64_t sys_clock;	/*!< In microsecond resolution */
+   uint64_t tsc;     /*!< Time-stamp from RDTSC */
+   uint64_t sys_clock;  /*!< In microsecond resolution */
 };
 
 /**
@@ -855,7 +855,7 @@ int cpu_clock_measure(int millis, int quad_check);
  *
  * Recommended values - millis = 50, runs = 4. For more robustness,
  * increase the number of runs.
- * 
+ *
  * NOTE: on Bulldozer and later CPUs, the busy-wait cycle runs at 1.4 IPC, thus
  * the results are skewed. This is corrected internally by dividing the resulting
  * value by 1.4.
@@ -890,10 +890,10 @@ int cpu_clock(void);
  * Describes an EPC (Enclave Page Cache) layout (physical address and size).
  * A CPU may have one or more EPC areas, and information about each is
  * fetched via \ref cpuid_get_epc.
- */ 
+ */
 struct cpu_epc_t {
-	uint64_t start_addr;
-	uint64_t length;
+   uint64_t start_addr;
+   uint64_t length;
 };
 
 /**
@@ -958,10 +958,10 @@ cpu_vendor_t cpuid_get_vendor(void);
  * @brief a structure that holds a list of processor names
  */
 struct cpu_list_t {
-	/** Number of entries in the list */
-	int num_entries;
-	/** Pointers to names. There will be num_entries of them */
-	char **names;
+   /** Number of entries in the list */
+   int num_entries;
+   /** Pointers to names. There will be num_entries of them */
+   char **names;
 };
 
 /**
@@ -1049,28 +1049,28 @@ int cpu_rdmsr(struct msr_driver_t* handle, uint32_t msr_index, uint64_t* result)
 
 
 typedef enum {
-	INFO_MPERF,                /*!< Maximum performance frequency clock. This
+   INFO_MPERF,                /*!< Maximum performance frequency clock. This
                                     is a counter, which increments as a
                                     proportion of the actual processor speed. */
-	INFO_APERF,                /*!< Actual performance frequency clock. This
+   INFO_APERF,                /*!< Actual performance frequency clock. This
                                     accumulates the core clock counts when the
                                     core is active. */
-	INFO_MIN_MULTIPLIER,       /*!< Minimum CPU:FSB ratio for this CPU,
+   INFO_MIN_MULTIPLIER,       /*!< Minimum CPU:FSB ratio for this CPU,
                                     multiplied by 100. */
-	INFO_CUR_MULTIPLIER,       /*!< Current CPU:FSB ratio, multiplied by 100.
+   INFO_CUR_MULTIPLIER,       /*!< Current CPU:FSB ratio, multiplied by 100.
                                     e.g., a CPU:FSB value of 18.5 reads as
                                     "1850". */
-	INFO_MAX_MULTIPLIER,       /*!< Maximum CPU:FSB ratio for this CPU,
+   INFO_MAX_MULTIPLIER,       /*!< Maximum CPU:FSB ratio for this CPU,
                                     multiplied by 100. */
-	INFO_TEMPERATURE,          /*!< The current core temperature in Celsius. */
-	INFO_THROTTLING,           /*!< 1 if the current logical processor is
+   INFO_TEMPERATURE,          /*!< The current core temperature in Celsius. */
+   INFO_THROTTLING,           /*!< 1 if the current logical processor is
                                     throttling. 0 if it is running normally. */
-	INFO_VOLTAGE,              /*!< The current core voltage in Volt,
-	                            multiplied by 100. */
-	INFO_BCLK,                 /*!< See \ref INFO_BUS_CLOCK. */
-	INFO_BUS_CLOCK,            /*!< The main bus clock in MHz,
-	                            e.g., FSB/QPI/DMI/HT base clock,
-	                            multiplied by 100. */
+   INFO_VOLTAGE,              /*!< The current core voltage in Volt,
+                               multiplied by 100. */
+   INFO_BCLK,                 /*!< See \ref INFO_BUS_CLOCK. */
+   INFO_BUS_CLOCK,            /*!< The main bus clock in MHz,
+                               e.g., FSB/QPI/DMI/HT base clock,
+                               multiplied by 100. */
 } cpu_msrinfo_request_t;
 
 /**

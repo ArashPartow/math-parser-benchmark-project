@@ -327,7 +327,7 @@ tru64)
    if test -f "$tmpdepfile"; then
       sed -e "s,^.*\.[a-z]*:,$object:," < "$tmpdepfile" > "$depfile"
       # That's a tab and a space in the [].
-      sed -e 's,^.*\.[a-z]*:[	 ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
+      sed -e 's,^.*\.[a-z]*:[  ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
    else
       echo "#dummy" > "$depfile"
    fi
@@ -487,23 +487,23 @@ msvisualcpp)
   do
     case "$arg" in
     "-Gm"|"/Gm"|"-Gi"|"/Gi"|"-ZI"|"/ZI")
-	set fnord "$@"
-	shift
-	shift
-	;;
+   set fnord "$@"
+   shift
+   shift
+   ;;
     *)
-	set fnord "$@" "$arg"
-	shift
-	shift
-	;;
+   set fnord "$@" "$arg"
+   shift
+   shift
+   ;;
     esac
   done
   "$@" -E |
   sed -n '/^#line [0-9][0-9]* "\([^"]*\)"/ s::echo "`cygpath -u \\"\1\\"`":p' | sort | uniq > "$tmpdepfile"
   rm -f "$depfile"
   echo "$object : \\" > "$depfile"
-  . "$tmpdepfile" | sed 's% %\\ %g' | sed -n '/^\(.*\)$/ s::	\1 \\:p' >> "$depfile"
-  echo "	" >> "$depfile"
+  . "$tmpdepfile" | sed 's% %\\ %g' | sed -n '/^\(.*\)$/ s::   \1 \\:p' >> "$depfile"
+  echo " " >> "$depfile"
   . "$tmpdepfile" | sed 's% %\\ %g' | sed -n '/^\(.*\)$/ s::\1\::p' >> "$depfile"
   rm -f "$tmpdepfile"
   ;;

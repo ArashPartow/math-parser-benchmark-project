@@ -126,31 +126,31 @@ while test -n "$1"; do
         continue;;
 
     -t) dstarg=$2
-	shift
-	shift
-	continue;;
+   shift
+   shift
+   continue;;
 
     -T) no_target_directory=true
-	shift
-	continue;;
+   shift
+   continue;;
 
     --version) echo "$0 $scriptversion"; exit $?;;
 
     *)  # When -d is used, all remaining arguments are directories to create.
-	# When -t is used, the destination is already specified.
-	test -n "$dir_arg$dstarg" && break
+   # When -t is used, the destination is already specified.
+   test -n "$dir_arg$dstarg" && break
         # Otherwise, the last argument is the destination.  Remove it from $@.
-	for arg
-	do
+   for arg
+   do
           if test -n "$dstarg"; then
-	    # $@ is not empty: it contains at least $arg.
-	    set fnord "$@" "$dstarg"
-	    shift # fnord
-	  fi
-	  shift # arg
-	  dstarg=$arg
-	done
-	break;;
+       # $@ is not empty: it contains at least $arg.
+       set fnord "$@" "$dstarg"
+       shift # fnord
+     fi
+     shift # arg
+     dstarg=$arg
+   done
+   break;;
   esac
 done
 
@@ -205,8 +205,8 @@ do
     # if double slashes aren't ignored.
     if test -d "$dst"; then
       if test -n "$no_target_directory"; then
-	echo "$0: $dstarg: Is a directory" >&2
-	exit 1
+   echo "$0: $dstarg: Is a directory" >&2
+   exit 1
       fi
       dst=$dst/`basename "$src"`
     fi
@@ -220,7 +220,7 @@ do
   # Skip lots of stat calls in the usual case.
   if test ! -d "$dstdir"; then
     defaultIFS='
-	 '
+    '
     IFS="${IFS-$defaultIFS}"
 
     oIFS=$IFS
@@ -237,10 +237,10 @@ do
       shift
       if test ! -d "$pathcomp"; then
         $mkdirprog "$pathcomp"
-	# mkdir can fail with a `File exist' error in case several
-	# install-sh are creating the directory concurrently.  This
-	# is OK.
-	test -d "$pathcomp" || exit
+   # mkdir can fail with a `File exist' error in case several
+   # install-sh are creating the directory concurrently.  This
+   # is OK.
+   test -d "$pathcomp" || exit
       fi
       pathcomp=$pathcomp/
     done
@@ -281,31 +281,31 @@ do
     # Now rename the file to the real destination.
     { $doit $mvcmd -f "$dsttmp" "$dstdir/$dstfile" 2>/dev/null \
       || {
-	   # The rename failed, perhaps because mv can't rename something else
-	   # to itself, or perhaps because mv is so ancient that it does not
-	   # support -f.
+      # The rename failed, perhaps because mv can't rename something else
+      # to itself, or perhaps because mv is so ancient that it does not
+      # support -f.
 
-	   # Now remove or move aside any old file at destination location.
-	   # We try this two ways since rm can't unlink itself on some
-	   # systems and the destination file might be busy for other
-	   # reasons.  In this case, the final cleanup might fail but the new
-	   # file should still install successfully.
-	   {
-	     if test -f "$dstdir/$dstfile"; then
-	       $doit $rmcmd -f "$dstdir/$dstfile" 2>/dev/null \
-	       || $doit $mvcmd -f "$dstdir/$dstfile" "$rmtmp" 2>/dev/null \
-	       || {
-		 echo "$0: cannot unlink or rename $dstdir/$dstfile" >&2
-		 (exit 1); exit 1
-	       }
-	     else
-	       :
-	     fi
-	   } &&
+      # Now remove or move aside any old file at destination location.
+      # We try this two ways since rm can't unlink itself on some
+      # systems and the destination file might be busy for other
+      # reasons.  In this case, the final cleanup might fail but the new
+      # file should still install successfully.
+      {
+        if test -f "$dstdir/$dstfile"; then
+          $doit $rmcmd -f "$dstdir/$dstfile" 2>/dev/null \
+          || $doit $mvcmd -f "$dstdir/$dstfile" "$rmtmp" 2>/dev/null \
+          || {
+       echo "$0: cannot unlink or rename $dstdir/$dstfile" >&2
+       (exit 1); exit 1
+          }
+        else
+          :
+        fi
+      } &&
 
-	   # Now rename the file to the real destination.
-	   $doit $mvcmd "$dsttmp" "$dstdir/$dstfile"
-	 }
+      # Now rename the file to the real destination.
+      $doit $mvcmd "$dsttmp" "$dstdir/$dstfile"
+    }
     }
   fi || { (exit 1); exit 1; }
 done
