@@ -1347,7 +1347,7 @@ conditional  statement, that  takes exactly  three input  expressions:
 condition, consequent  and alternative.  The following  is an  example
 expression that utilises the function based if-statement.
 
-   x := if (y < z, y + 1, 2* z)
+   x := if (y < z, y + 1, 2 * z)
 
 
 In the  example above,  if the  condition 'y  < z'  is true,  then the
@@ -1358,7 +1358,7 @@ essentially the  simplest form of  an if-then-else statement. A simple
 variation of  the expression  where the  value of  the if-statement is
 used within another statement is as follows:
 
-   x := 3 * if (y < z, y + 1, 2* z) / 2
+   x := 3 * if (y < z, y + 1, 2 * z) / 2
 
 
 The second form of if-statement resembles the standard syntax found in

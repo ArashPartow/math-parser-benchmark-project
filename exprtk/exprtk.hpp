@@ -2,7 +2,7 @@
  ******************************************************************
  *           C++ Mathematical Expression Toolkit Library          *
  *                                                                *
- * Author: Arash Partow (1999-2017)                               *
+ * Author: Arash Partow (1999-2018)                               *
  * URL: http://www.partow.net/programming/exprtk/index.html       *
  *                                                                *
  * Copyright notice:                                              *
@@ -2226,9 +2226,7 @@ namespace exprtk
             {
                scan_token();
 
-               if (token_list_.empty())
-                  return true;
-               else if (token_list_.back().is_error())
+               if (!token_list_.empty() && token_list_.back().is_error())
                   return false;
             }
 
@@ -2341,6 +2339,23 @@ namespace exprtk
             return (s_end_ == itr);
          }
 
+         inline bool is_comment_start(const char_t* itr)
+         {
+            #ifndef exprtk_disable_comments
+            const char_t c0 = *(itr + 0);
+            const char_t c1 = *(itr + 1);
+
+            if ('#' == c0)
+               return true;
+            else if (!is_end(itr + 1))
+            {
+               if (('/' == c0) && ('/' == c1)) return true;
+               if (('/' == c0) && ('*' == c1)) return true;
+            }
+            #endif
+            return false;
+         }
+
          inline void skip_whitespace()
          {
             while (!is_end(s_itr_) && details::is_whitespace(*s_itr_))
@@ -2370,47 +2385,72 @@ namespace exprtk
                   return (0 != mode);
                }
 
-               static inline bool comment_end(const char_t c0, const char_t c1, const int mode)
+               static inline bool comment_end(const char_t c0, const char_t c1, int& mode)
                {
-                  return (
-                           ((1 == mode) && ('\n' == c0)) ||
-                           ((2 == mode) && ( '*' == c0) && ('/' == c1))
-                         );
+                  if (
+                       ((1 == mode) && ('\n' == c0)) ||
+                       ((2 == mode) && ( '*' == c0) && ('/' == c1))
+                     )
+                  {
+                     mode = 0;
+                     return true;
+                  }
+                  else
+                     return false;
                }
             };
 
             int mode      = 0;
             int increment = 0;
 
-            if (is_end(s_itr_) || is_end((s_itr_ + 1)))
+            if (is_end(s_itr_))
                return;
             else if (!test::comment_start(*s_itr_, *(s_itr_ + 1), mode, increment))
                return;
 
+            const char_t* cmt_start = s_itr_;
+
             s_itr_ += increment;
 
-            while (!is_end(s_itr_) && !test::comment_end(*s_itr_, *(s_itr_ + 1), mode))
+            while (!is_end(s_itr_))
             {
-               ++s_itr_;
+               if ((1 == mode) && test::comment_end(*s_itr_, 0, mode))
+               {
+                  ++s_itr_;
+                  return;
+               }
+
+               if ((2 == mode))
+               {
+                  if (!is_end((s_itr_ + 1)) && test::comment_end(*s_itr_, *(s_itr_ + 1), mode))
+                  {
+                     s_itr_ += 2;
+                     return;
+                  }
+               }
+
+                ++s_itr_;
             }
 
-            if (!is_end(s_itr_))
+            if (2 == mode)
             {
-               s_itr_ += mode;
-
-               skip_whitespace();
-               skip_comments  ();
+               token_t t;
+               t.set_error(token::e_error, cmt_start, cmt_start + mode, base_itr_);
+               token_list_.push_back(t);
             }
             #endif
          }
 
          inline void scan_token()
          {
-            skip_whitespace();
-            skip_comments  ();
-
-            if (is_end(s_itr_))
+            if (details::is_whitespace(*s_itr_))
             {
+               skip_whitespace();
+               return;
+            }
+            else if (is_comment_start(s_itr_))
+            {
+               skip_comments();
                return;
             }
             else if (details::is_operator_char(*s_itr_))
@@ -17058,11 +17098,11 @@ namespace exprtk
       inline bool add_function(const std::string& function_name, ff##NN##_functor function) \
       {                                                                                     \
          if (!valid())                                                                      \
-            return false;                                                                   \
-         else if (!valid_symbol(function_name))                                             \
-            return false;                                                                   \
-         else if (symbol_exists(function_name))                                             \
-            return false;                                                                   \
+         { return false; }                                                                  \
+         if (!valid_symbol(function_name))                                                  \
+         { return false; }                                                                  \
+         if (symbol_exists(function_name))                                                  \
+         { return false; }                                                                  \
                                                                                             \
          exprtk::ifunction<T>* ifunc = new freefunc##NN(function);                          \
                                                                                             \
@@ -38214,7 +38254,7 @@ namespace exprtk
       static const char* library = "Mathematical Expression Toolkit";
       static const char* version = "2.71828182845904523536028747135266249775724709369"
                                    "9959574966967627724076630353547594571382178525166";
-      static const char* date    = "20171111";
+      static const char* date    = "20180101";
 
       static inline std::string data()
       {
