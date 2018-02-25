@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include "METL/metl.h"
-#include <iostream>
 
 //-------------------------------------------------------------------------------------------------
 BenchMETL::BenchMETL()
@@ -12,34 +11,11 @@ BenchMETL::BenchMETL()
 	m_sName = "METL";
 }
 
-template<class T>
-constexpr T recursive_pow(const T t, const int exponent)
-{
-	if (exponent == 0) return T(1);
-	if (exponent == 1) return t;
-
-	const auto intermediate = recursive_pow(t, exponent / 2);
-
-	if (exponent % 2) return intermediate * intermediate*t; // odd
-	return intermediate * intermediate; // even
-
-
-}
-
 //-------------------------------------------------------------------------------------------------
 double BenchMETL::DoBenchmark(const std::string& sExpr, long iCount)
 {
 	auto compiler = metl::makeCompiler<int, double>();
 	metl::setDefaults(compiler); // add default operators and functions for ints and doubles.
-
-	compiler.setOperator<double, int>("^", [](const double left, const int right)
-	{
-		return recursive_pow(left, right);
-	});
-	compiler.setOperator<int, int>("^", [](const int left, const int right)
-	{
-		return recursive_pow(double(left), right);
-	});
 
 	// required because metl would otherwise do int-division
 	compiler.setOperator<int, int>("/", [](const auto& left, const auto& right)
