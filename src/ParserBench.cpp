@@ -32,6 +32,7 @@
 #include "BenchFParser.h"
 #include "BenchMathExpr.h"
 #include "BenchTinyExpr.h"
+#include "BenchMETL.h"
 #include "BenchNative.h"
 
 #ifdef ENABLE_MPFR
@@ -484,6 +485,7 @@ int main(int argc, const char *argv[])
    vBenchmarks.push_back(new BenchFParser()       );
    vBenchmarks.push_back(new BenchMathExpr()      );
    vBenchmarks.push_back(new BenchTinyExpr()      );
+   vBenchmarks.push_back(new BenchMETL());
    #if defined(_MSC_VER) && defined(NDEBUG)
    vBenchmarks.push_back(new BenchMTParser()      ); // <-- Crash in debug mode
    #endif
