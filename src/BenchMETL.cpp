@@ -72,7 +72,7 @@ double BenchMETL::DoBenchmark(const std::string& sExpr, long iCount)
 				auto f = compiler.build<double>(test.first);
 				test_result = (f() == test.second);
 			}
-			catch (const std::runtime_error& err)
+			catch (const std::runtime_error&)
 			{
 				test_result = false;
 			}

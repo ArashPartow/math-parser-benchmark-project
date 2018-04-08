@@ -42,6 +42,7 @@ namespace metl
 		c.setUnaryOperatorPrecedence("+", 3);
 		c.setOperatorPrecedence("^", 2, ASSOCIATIVITY::RIGHT);
 	}
+
 	// sets default binary operators {+,-,*,/} with the corresponding call in C++ 
 	template<class T1, class T2, class... Ts>
 	void addDefaultOperators(Compiler<Ts...>& c)
@@ -70,9 +71,9 @@ namespace metl
 
 		c.template setUnaryOperator<T>(std::string("+"), unaryPlus);
 		c.template setUnaryOperator<T>("-", unaryMinus);
+
 		addDefaultOperators<T, T>(c);
 	}
-
 
 
 	template<class T, class... Ts>
@@ -104,42 +105,59 @@ namespace metl
 		c.template setFunction<T>("atanh", [](auto a) {return atanh(a); });
 	}
 
+	namespace detail
+	{
+		template<class T>
+		constexpr T recursive_pow(const T t, const int exponent)
+		{
+			if (exponent == 0) return T(1);
+			if (exponent == 1) return t;
+
+			const auto intermediate = recursive_pow(t, exponent / 2);
+
+			if (exponent % 2) return intermediate * intermediate*t; // odd
+			return intermediate * intermediate; // even
+
+
+		}
+	}
+
 	// sets defaults for basic types (currently int, 
 	template<class Grammar, class Converter, class... Ts>
 	void setDefaults(Compiler<Grammar, Converter, Ts...>& c)
 	{
 		using intType = decltype(c.impl_.literalConverters_.toInt.f(std::declval<std::string>()));
 		using realType = decltype(c.impl_.literalConverters_.toReal.f(std::declval<std::string>()));
-		
+
 		// defaults with intType
-		constexpr_if(IsInList<intType, Ts...>(), [&c](auto _) 
+		constexpr_if(IsInList<intType, Ts...>(), [&c](auto _)
 		{
 			addDefaultOperators<intType>(c);
 			constexpr_if(std::is_integral<intType>{}, [&c](auto _)
 			{
-				c.template setFunction<double>("abs", [](const auto& a) {return std::abs(a); });
+				c.template setFunction<intType>("abs", [](const auto& a) {return std::abs(a); });
 			});
 		});
 
 		// defaults with realType
-		constexpr_if(IsInList<realType, Ts...>(), [&c](auto _) 
+		constexpr_if(IsInList<realType, Ts...>(), [&c](auto _)
 		{
 			addDefaultOperators<realType>(c);
 			addBasicFunctions<realType>(c);
 			addTrigFunctions<realType>(c);
-			c.template setOperator<double, double>("^", [](const auto& left, const auto& right)
-			{
-				return std::pow(left, right);
-			});
-
 			constexpr_if(std::is_floating_point<realType>{}, [&c](auto _)
 			{
-				c.template setFunction<double>("abs", [](const auto& a) {return std::abs(a); });
+				c.template setFunction<realType>("abs", [](const auto& a) {return std::abs(a); });
+
+				c.template setOperator<realType, realType>("^", [](const auto& left, const auto& right)
+				{
+					return std::pow(left, right);
+				});
 			});
-		});		
+		});
 
 		// if both integer and real-types exist, add cast from int to real
-		constexpr_if(std::integral_constant<bool, isInList<intType, Ts...>() && isInList<realType, Ts...>() && !std::is_same<intType, realType>::value>{},
+		constexpr_if(std::integral_constant<bool, isInList<intType, Ts...>() && isInList<realType, Ts...>()>{},
 			[&c](auto _)
 		{
 			c.template setCast<intType>(_([](const intType& in)
