@@ -283,6 +283,7 @@
     <ClCompile Include="..\muParserSSE\muParserSSE.cpp">
       <Filter>muparsersse</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BenchMETL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\chaiscript\chaiscript_threading.hpp">
@@ -843,6 +844,57 @@
     <ClInclude Include="..\libcpuid\libcpuid_internal.h">
       <Filter>libcpuid</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\BenchMETL.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\actions.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\addDefaults.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Compiler.fwd.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Compiler.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Compiler.impl.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Compiler_Detail.fwd.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Compiler_Detail.impl.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\CompilerHelpers.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\DeepCopy.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\grammar.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\metl.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\nameMangling.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Stack.fwd.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\Stack.impl.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\TypeList.h">
+      <Filter>METL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\METL\VarExpression.h">
+      <Filter>METL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
@@ -897,6 +949,9 @@
     </Filter>
     <Filter Include="tinyexpr">
       <UniqueIdentifier>{b1b43109-aa45-419d-bf8d-437e1b5cbab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="METL">
+      <UniqueIdentifier>{a2250b2f-3031-4fa9-ab2f-a29b7787235c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
