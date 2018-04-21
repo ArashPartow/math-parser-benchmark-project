@@ -101,7 +101,7 @@ double BenchMETL::DoBenchmark(const std::string& sExpr, long iCount)
 		}
 	}
 
-	//Prime the I and D caches for the expression. // not sure I get what this is for
+	//Prime the I and D caches for the expression. 
 	{
 		double d0 = 0.0;
 		double d1 = 0.0;
