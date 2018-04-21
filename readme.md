@@ -11,10 +11,11 @@ expression parsers are part of this benchmark:
 | 02  | [FParser](http://warp.povusers.org/FunctionParser/)       | Juha Nieminen & Joel Yliluoma | [LGPL](http://www.gnu.org/copyleft/lesser.html)           | double                |
 | 03  | [Lepton](https://simtk.org/home/lepton)                   | Peter Eastman                 | [MIT](https://opensource.org/licenses/MIT)                | double                |
 | 04  | [MathExpr](http://www.yann-ollivier.org/mathlib/mathexpr) | Yann Ollivier                 | [Copyright Notice 1997-2000](http://www.yann-ollivier.org/mathlib/mathexpr#C)     | double |
-| 05  | [MTParser](http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
-| 06  | [muParser](http://muparser.beltoforion.de)                | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
-| 07  | [muParserX](http://muparserx.beltoforion.de)              | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
-| 08  | [TinyExpr](https://github.com/codeplea/tinyexpr)          | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double                |
+| 05  | [METL](https://github.com/TillHeinzel/METL)               | TillHeinzel                   | [Apache](https://opensource.org/licenses/Apache-2.0)      | double                |
+| 06  | [MTParser](http://www.codeproject.com/Articles/7335/An-extensible-math-expression-parser-with-plug-ins)| Mathieu Jacques | [CPOL](http://www.codeproject.com/info/cpol10.aspx)| double |
+| 07  | [muParser](http://muparser.beltoforion.de)                | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
+| 08  | [muParserX](http://muparserx.beltoforion.de)              | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
+| 09  | [TinyExpr](https://github.com/codeplea/tinyexpr)          | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double                |
 
 
 **Note:** The terms double, float etc found in the table above are defined as follows:
@@ -90,20 +91,20 @@ to evaluate the expression N times is recorded. Ranking of the parsers for
 the round is done from the fastest to the slowest. The following is an example
 summary for the expression '(a^2/sin(2*pi/b))-a/2':
 
-    Expression 64 of 70: "(a^2/sin(2*pi/b))-a/2"; Progress: ############
-    [01] ExprTk              ( 35.863 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [02] ExprTkFloat         ( 37.413 ns, 3.744852304458618164, -15768714.994192123413085938)
-    [03] muparserSSE         ( 44.672 ns, 3.744852304458618164, -15768715.739250183105468750)
-    [04] muparser 2.2.4 (omp)( 50.093 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [05] MTParser            ( 54.681 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [06] muparser 2.2.4      ( 55.816 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [07] FParser 4.5         ( 65.141 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [08] atmsp 1.0.4         ( 78.809 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [09] MathExpr            (131.242 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [10] TinyExpr            (168.341 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [11] Lepton              (402.011 ns, 3.744853294789905362, -15768714.840563148260116577)
-    [12] muparserx           (572.611 ns, 3.744853294789905362, -15768714.840563148260116577)
-
+    Expression 64 of 70: "(a^2/sin(2*pi/b))-a/2"; Progress: #############
+    [01] ExprTkFloat          ( 34.144 ns, 3.744852304458618164, -15768714.994192123413085938)
+    [02] ExprTk               ( 39.963 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [03] muparserSSE          ( 40.698 ns, 3.744852304458618164, -15768715.739250183105468750)
+    [04] muparser 2.2.4       ( 47.358 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [05] muparser 2.2.4 (omp) ( 53.252 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [06] FParser 4.5          ( 60.614 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [07] atmsp 1.0.4          ( 64.374 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [08] METL                 ( 79.018 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [09] MTParser             ( 80.352 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [10] MathExpr             (114.392 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [11] TinyExpr             (121.184 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [12] Lepton               (297.673 ns, 3.744853294789905362, -15768714.840563148260116577)
+    [13] muparserx            (498.809 ns, 3.744853294789905362, -15768714.840563148260116577)
 
 
 Parsers that can't parse the given expression or produce a result *different*
@@ -112,21 +113,23 @@ for the round and do not participate in point accumulation. The following is an
 example where a few of the parsers failed to either parse or evaluate the given
 expression of '+1.1+a^b' correctly:
 
-    Expression 63 of 96: "+a^+b+1.1"; Progress: ############
-    [01] ExprTk              ( 40.631 ns, 2.333286300554663129, 14534421.395495440810918808)
-    [02] ExprTkFloat         ( 44.212 ns, 2.333286285400390625, 14534422.159194946289062500)
-    [03] muparserSSE         ( 44.556 ns, 2.333286285400390625, 14534422.159194946289062500)
-    [04] atmsp 1.0.4         ( 47.906 ns, 2.333286300554663129, 14534421.395495440810918808)
-    [05] TinyExpr            ( 52.831 ns, 2.333286300554663129, 14534421.395495440810918808)
-    [06] MTParser            ( 56.045 ns, 2.333286300554663129, 14534421.395495440810918808)
-    [07] muparser 2.2.4      ( 67.061 ns, 2.333286300554663129, 14534421.395495440810918808)
-    [08] muparser 2.2.4 (omp)( 67.231 ns, 2.333286300554663129, 14534421.395495440810918808)
-    [09] muparserx           (251.338 ns, 2.333286300554663129, 14534421.395495440810918808)
+    Expression 63 of 96: "+a^+b+1.1"; Progress: #############
+    [01] ExprTkFloat          ( 44.579 ns, 2.333286285400390625, 14534422.159194946289062500)
+    [02] muparserSSE          ( 44.846 ns, 2.333286285400390625, 14534422.159194946289062500)
+    [03] ExprTk               ( 47.162 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [04] atmsp 1.0.4          ( 47.428 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [05] METL                 ( 48.233 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [06] TinyExpr             ( 53.620 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [07] MTParser             ( 61.204 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [08] muparser 2.2.4       ( 66.387 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [09] muparser 2.2.4 (omp) ( 71.118 ns, 2.333286300554663129, 14534421.395495440810918808)
+    [10] muparserx            (236.111 ns, 2.333286300554663129, 14534421.395495440810918808)
     DNQ List
-    [01] FParser 4.5         (Syntax error)
-    [02] MathExpr            (parsing error)
-    [03] Lepton              (Parse error in expression "+a^+b+1.1 ": unexpected token: +)
+    [01] FParser 4.5          (Syntax error)
+    [02] MathExpr             (parsing error)
+    [03] Lepton               (Parse error in expression "+a^+b+1.1 ": unexpected token: +)
     **** ERROR ****   Excessive number of evaluation failures!  [3]
+
 
 The meanings of each of the columns are as follows:
 
@@ -146,20 +149,19 @@ that were deemed as having been disqualified during the benchmark.
 
 The following is an example summary generated at the completion of the benchmark:
 
-
     Benchmark settings:
       - Expressions File is "bench_expr.txt"
       - Reference parser is ExprTk
       - Iterations per expression: 5000000
-      - Number of expressions: 70
-      - Number of excessive failures: 5
+      - Number of expressions: 74
+      - Number of excessive failures: 2
       - Release build
-      - Compiled with MSVC Version 1900
+      - Compiled with MSVC Version 1913
       - IEEE 754 (IEC 559) is Available
       - 32-bit build
       - CPU Name      : Intel(R) Xeon(R) CPU E5-2687W 0 @ 3.10GHz
-      - Num. cores    : 16
-      - Num. logical  : 32
+      - Num. cores    : 8
+      - Num. logical  : 16
       - Total logical : 16
       - L1 D cache    : 32 KB
       - L1 I cache    : 32 KB
@@ -172,27 +174,28 @@ The following is an example summary generated at the completion of the benchmark
       - L2 line size  : 64 bytes
       - L3 line size  : 64 bytes
       - CPU clock     : 3092 MHz
-      - Features      : acpi aes apic avx clflush cmov cx16 cx8 dca de ds_cpl
-                        dts dts64 est fpu fxsr ht lahf_lm lm mca mce mmx monitor
-                        msr mtrr osxsave pae pat pbe pclmul pdcm pge pni popcnt
-                        pse pse36 sep smx ss sse sse2 sse4_1 sse4_2 ssse3 tm tm2
-                        tsc vme vmx xd xsave xtpr
+      - Features      : acpi aes apic avx clflush cmov constant_tsc cx16 cx8 dca
+                        de ds_cpl dts dts64 est fpu fxsr ht lahf_lm lm mca mce
+                        mmx monitor msr mtrr osxsave pae pat pbe pclmul pdcm pge
+                        pni popcnt pse pse36 rdtscp sep smx ss sse sse2 sse4_1
+                        sse4_2 ssse3 tm tm2 tsc vme vmx x2apic xd xsave xtpr
 
     Scores:
-    #  Parser               Type       Points   Score    Failures
-    -------------------------------------------------------------
-    00 ExprTk               double     781      100      0
-    01 ExprTkFloat          float      643       82      9
-    02 muparserSSE          float      639       93      9
-    03 FParser 4.5          double     536       45      0
-    04 atmsp 1.0.4          double     482       40      2
-    05 muparser 2.2.4       double     445       37      0
-    06 MTParser             double     402       38     10
-    07 muparser 2.2.4 (omp) double     374       35      0
-    08 MathExpr             double     345       30      2
-    09 TinyExpr             double     296       30      2
-    10 Lepton               double     111        6      2
-    11 muparserx            double      97        5      0
+      #     Parser                  Type            Points   Score   Failures
+      -----------------------------------------------------------------------
+      00 ExprTk               double         901      100      0
+      01 ExprTkFloat          float          740       82      9
+      02 muparserSSE          float          726       93      9
+      03 METL                 double         686       52      0
+      04 FParser 4.5          double         584       43      0
+      05 atmsp 1.0.4          double         530       38      2
+      06 muparser 2.2.4       double         517       37      0
+      07 muparser 2.2.4 (omp) double         444       35      0
+      08 MTParser             double         381       34      0
+      09 MathExpr             double         360       29      2
+      10 TinyExpr             double         354       31      2
+      11 Lepton               double         134        8      2
+      12 muparserx            double          86        5      0
 
 ## The Results
 The summaries of runs of the benchmark suite upon various architectures can be found here: [Results](https://github.com/ArashPartow/math-parser-benchmark-project/tree/master/logs)

@@ -169,15 +169,15 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string& sExpr, long iCount)
    int nBulkSize = (int)iCount;
 
    // allocate arrays for storing the variables
-   double *a = new double[nBulkSize];
-   double *b = new double[nBulkSize];
-   double *c = new double[nBulkSize];
-   double *d = new double[nBulkSize];
-   double *x = new double[nBulkSize];
-   double *y = new double[nBulkSize];
-   double *z = new double[nBulkSize];
-   double *w = new double[nBulkSize];
-   double *result = new double[nBulkSize];
+   std::vector<double> a      (nBulkSize, 0.0);
+   std::vector<double> b      (nBulkSize, 0.0);
+   std::vector<double> c      (nBulkSize, 0.0);
+   std::vector<double> d      (nBulkSize, 0.0);
+   std::vector<double> x      (nBulkSize, 0.0);
+   std::vector<double> y      (nBulkSize, 0.0);
+   std::vector<double> z      (nBulkSize, 0.0);
+   std::vector<double> w      (nBulkSize, 0.0);
+   std::vector<double> result (nBulkSize, 0.0);
 
    // Note: There is a bit of variable swapping going on. I use aa,bb,xx,yy as
    //       buffer variables to toggle values.
@@ -206,15 +206,15 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string& sExpr, long iCount)
    {
       Parser p;
       p.SetExpr(sExpr.c_str());
-      p.DefineVar("a", a);
-      p.DefineVar("b", b);
-      p.DefineVar("c", c);
-      p.DefineVar("x", x);
-      p.DefineVar("y", y);
-      p.DefineVar("z", z);
-      p.DefineVar("w", w);
+      p.DefineVar  ("a" , a.data());
+      p.DefineVar  ("b" , b.data());
+      p.DefineVar  ("c" , c.data());
+      p.DefineVar  ("x" , x.data());
+      p.DefineVar  ("y" , y.data());
+      p.DefineVar  ("z" , z.data());
+      p.DefineVar  ("w" , w.data());
       p.DefineConst("pi", (double)M_PI);
-      p.DefineConst("e", (double)M_E);
+      p.DefineConst("e" , (double)M_E );
 
       // Do the computation
       StartTimer();
@@ -226,7 +226,7 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string& sExpr, long iCount)
          std::swap(xx,yy);
       }
 
-      p.Eval(result, nBulkSize);
+      p.Eval(result.data(), nBulkSize);
 
       // Note: Performing the addition inside the timed section is done
       //       because all other parsers do it in their main loop too.
@@ -251,16 +251,6 @@ double BenchMuParser2::DoBenchmarkBulk(const std::string& sExpr, long iCount)
       fTime = std::numeric_limits<double>::quiet_NaN();
       StopTimerAndReport("unexpected exception");
    }
-
-   delete [] a;
-   delete [] b;
-   delete [] c;
-   delete [] d;
-   delete [] x;
-   delete [] y;
-   delete [] z;
-   delete [] w;
-   delete [] result;
 
    return fTime;
 }

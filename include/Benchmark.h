@@ -28,8 +28,6 @@ public:
    Benchmark(EBaseType eBaseType = DOUBLE);
    virtual ~Benchmark();
 
-   void DoAll(std::vector<std::string> vExpr, long num);
-
    virtual double DoBenchmark(const std::string& sExpr, long iCount) = 0;
    virtual void PreprocessExpr(std::vector<std::string>& vExpr);
    virtual void PreprocessExpr(std::string& /*vExpr*/) {};

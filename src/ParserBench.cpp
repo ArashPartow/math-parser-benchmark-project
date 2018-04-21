@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <memory>
 
 #ifdef _MSC_VER
  #ifndef NOMINMAX
@@ -31,6 +32,7 @@
 #include "BenchLepton.h"
 #include "BenchFParser.h"
 #include "BenchMathExpr.h"
+#include "BenchMETL.h"
 #include "BenchTinyExpr.h"
 #include "BenchNative.h"
 
@@ -90,33 +92,33 @@ void output(FILE *pFile, const char *fmt, ...)
   fflush(nullptr);
 }
 
-void WriteResultTable(FILE* pRes, std::vector<Benchmark*>& vBenchmarks, std::vector<std::string>& vExpr)
+void WriteResultTable(FILE* pRes, std::vector<std::shared_ptr<Benchmark>>& benchmarks, const std::vector<std::string>& expressions)
 {
    output(pRes, "\n\n\n");
 
-   for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
+   for (std::size_t i = 0; i < benchmarks.size(); ++i)
    {
-      output(pRes, "%s\t",vBenchmarks[i]->GetShortName().c_str());
+      output(pRes, "%s\t",benchmarks[i]->GetShortName().c_str());
    }
 
    output(pRes, "Expression\t\n");
 
-   for (std::size_t i = 0; i < vExpr.size(); ++i)
+   for (std::size_t i = 0; i < expressions.size(); ++i)
    {
-      for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
+      for (std::size_t j = 0; j < benchmarks.size(); ++j)
       {
-         output(pRes, "%13.3f\t", vBenchmarks[j]->GetRate(i));
+         output(pRes, "%13.3f\t", benchmarks[j]->GetRate(i));
       }
 
-      output(pRes, "%s\t\n",vExpr[i].c_str());
+      output(pRes, "%s\t\n",expressions[i].c_str());
    }
 
    output(pRes, "\n\n\n");
 }
 
 void Shootout(const std::string& sCaption,
-              std::vector<Benchmark*> vBenchmarks,
-              std::vector<std::string> vExpr,
+              std::vector<std::shared_ptr<Benchmark>>& benchmarks,
+              const std::vector<std::string>& vExpr,
               int iCount,
               bool writeResultTable = false)
 {
@@ -133,9 +135,9 @@ void Shootout(const std::string& sCaption,
 
    output(pRes, "Benchmark (Shootout for file \"%s\")\n", sCaption.c_str());
 
-   Benchmark* pRefBench = vBenchmarks[0];
+   auto& pRefBench = benchmarks[0];
 
-   std::map<double, std::vector<Benchmark*>> results;
+   std::map<double, std::vector<std::shared_ptr<Benchmark>>> results;
 
    for (std::size_t i = 0; i < vExpr.size(); ++i)
    {
@@ -153,7 +155,7 @@ void Shootout(const std::string& sCaption,
       // Setup Reference parser result and total sum.
       {
          // Use the first as the reference parser.
-         Benchmark *pBench = vBenchmarks[0];
+         auto& pBench = benchmarks[0];
 
          pBench->DoBenchmark(current_expr + " ", iCount);
 
@@ -173,12 +175,12 @@ void Shootout(const std::string& sCaption,
          }
       }
 
-      for (std::size_t j = 0; j < vBenchmarks.size(); ++j)
+      for (std::size_t j = 0; j < benchmarks.size(); ++j)
       {
          output(pRes, "#");  // <- "Progress" indicator for debugging, if a parser crashes we'd
                              //    like to know which one.
 
-         Benchmark* pBench = vBenchmarks[j];
+         auto& pBench = benchmarks[j];
 
          std::string sExpr = current_expr;
 
@@ -187,7 +189,7 @@ void Shootout(const std::string& sCaption,
          // constants.
          pBench->PreprocessExpr(sExpr);
 
-         double time = 1000000.0 * pBench->DoBenchmark(sExpr + " ", iCount);
+         const double time = pBench->DoBenchmark(sExpr + " ", iCount);
 
          // The first parser is used for obtaining reference results.
          // If the reference result is a NaA the reference parser is
@@ -217,19 +219,21 @@ void Shootout(const std::string& sCaption,
 
       int ct = 1;
       int parser_index = 0;
+
       for (auto it = results.begin(); it != results.end(); ++it)
       {
-         const std::vector<Benchmark*>& vBench = it->second;
-         for (std::size_t k = 0; k < vBench.size(); ++k)
+         const auto& benchmark = it->second;
+
+         for (std::size_t k = 0; k < benchmark.size(); ++k)
          {
-            Benchmark* pBench = vBench[k];
+            auto& pBench = benchmark[k];
 
             if (pBench->ExpressionFailed(current_expr))
             {
                continue;
             }
 
-            pBench->AddPoints(vBenchmarks.size() - ct + 1);
+            pBench->AddPoints(benchmarks.size() - ct + 1);
             pBench->AddScore(pRefBench->GetTime() / pBench->GetTime() );
 
             output(pRes, "[%02d] %-20s (%9.3f ns, %26.18f, %26.18f)\n",
@@ -240,7 +244,7 @@ void Shootout(const std::string& sCaption,
                    pBench->GetSum());
          }
 
-         ct += vBench.size();
+         ct += benchmark.size();
       }
 
       if (failure_count)
@@ -251,11 +255,11 @@ void Shootout(const std::string& sCaption,
 
          for (auto it = results.begin(); it != results.end(); ++it)
          {
-            const std::vector<Benchmark*>& vBench = it->second;
+            const auto& benchmark = it->second;
 
-            for (std::size_t k = 0; k < vBench.size(); ++k)
+            for (std::size_t k = 0; k < benchmark.size(); ++k)
             {
-               Benchmark* pBench = vBench[k];
+               auto& pBench = benchmark[k];
 
                if (!pBench->ExpressionFailed(current_expr))
                   continue;
@@ -322,14 +326,14 @@ void Shootout(const std::string& sCaption,
    output(pRes, "\n\nScores:\n");
 
    // Dump scores
-   std::deque<std::pair<int,Benchmark*> > order_list;
+   std::deque<std::pair<int,std::shared_ptr<Benchmark>>> order_list;
 
-   for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
+   for (std::size_t i = 0; i < benchmarks.size(); ++i)
    {
-      order_list.push_back(std::make_pair(vBenchmarks[i]->GetPoints(),vBenchmarks[i]));
+      order_list.push_back(std::make_pair(benchmarks[i]->GetPoints(),benchmarks[i]));
    }
 
-   std::sort(order_list.begin(),order_list.end());
+   std::sort   (order_list.begin(),order_list.end());
    std::reverse(order_list.begin(),order_list.end());
 
    bool bHasFailures = false;
@@ -339,14 +343,14 @@ void Shootout(const std::string& sCaption,
 
    for (std::size_t i = 0; i < order_list.size(); ++i)
    {
-      Benchmark* pBench = order_list[i].second;
+      const auto& pBench = order_list[i].second;
       bHasFailures |= (pBench->GetFails().size() > 0);
 
       output(pRes,  "  %02d\t%-20s\t%-10s\t%6d\t%6d\t%4d\n",
              i,
              pBench->GetShortName().c_str(),
-             pBench->GetBaseType().c_str(),
-             pBench->GetPoints(),
+             pBench->GetBaseType ().c_str(),
+             pBench->GetPoints   (),
              (int)((pBench->GetScore() / (double)vExpr.size()) * 100.0),
              pBench->GetFails().size());
    }
@@ -355,11 +359,10 @@ void Shootout(const std::string& sCaption,
    if (bHasFailures)
    {
       output(pRes, "\n\nFailures:\n");
-      for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
+      for (std::size_t i = 0; i < benchmarks.size(); ++i)
       {
-         Benchmark *pBench = vBenchmarks[i];
-
-         const std::map<std::string, std::string> &allFailures = pBench->GetFails();
+         const auto& pBench = benchmarks[i];
+         const auto& allFailures = pBench->GetFails();
 
          if (!allFailures.empty())
          {
@@ -379,19 +382,19 @@ void Shootout(const std::string& sCaption,
 
    if (writeResultTable)
    {
-      WriteResultTable(pRes,vBenchmarks,vExpr);
+      WriteResultTable(pRes,benchmarks,vExpr);
    }
 
    fclose(pRes);
 }
 
-void DoBenchmark(std::vector<Benchmark*> vBenchmarks, std::vector<std::string> vExpr, int iCount)
-{
-   for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
-   {
-      vBenchmarks[i]->DoAll(vExpr, iCount);
-   }
-}
+//void DoBenchmark(std::vector<Benchmark*> benchmarks, std::vector<std::string> vExpr, int iCount)
+//{
+//   for (std::size_t i = 0; i < benchmarks.size(); ++i)
+//   {
+//      benchmarks[i]->DoAll(vExpr, iCount);
+//   }
+//}
 
 int main(int argc, const char *argv[])
 {
@@ -466,7 +469,7 @@ int main(int argc, const char *argv[])
       return 1;
    }
 
-   std::vector<Benchmark*> vBenchmarks;
+   std::vector<std::shared_ptr<Benchmark>> benchmarks;
 
    // *** IMPORTANT NOICE ***
    // The first parser in the list is denoted as being the reference parser.
@@ -475,37 +478,36 @@ int main(int argc, const char *argv[])
    // the reference parser be precise when computing expressions.
    //
 
-   vBenchmarks.push_back(new BenchExprTk()        );  // <-- Note: first parser becomes the reference!
-   vBenchmarks.push_back(new BenchMuParser2(false));
-   vBenchmarks.push_back(new BenchMuParser2(true) );
-   vBenchmarks.push_back(new BenchMuParserX()     );
-   vBenchmarks.push_back(new BenchATMSP()         );
-   vBenchmarks.push_back(new BenchLepton()        );
-   vBenchmarks.push_back(new BenchFParser()       );
-   vBenchmarks.push_back(new BenchMathExpr()      );
-   vBenchmarks.push_back(new BenchTinyExpr()      );
+   benchmarks.push_back(std::make_shared<BenchExprTk   >()     );  // <-- Note: first parser becomes the reference!
+   benchmarks.push_back(std::make_shared<BenchMuParser2>(false));
+   benchmarks.push_back(std::make_shared<BenchMuParser2>()     );
+   benchmarks.push_back(std::make_shared<BenchMuParserX>()     );
+   benchmarks.push_back(std::make_shared<BenchATMSP    >()     );
+   benchmarks.push_back(std::make_shared<BenchLepton   >()     );
+   benchmarks.push_back(std::make_shared<BenchFParser  >()     );
+   benchmarks.push_back(std::make_shared<BenchMathExpr >()     );
+   benchmarks.push_back(std::make_shared<BenchTinyExpr >()     );
    #if defined(_MSC_VER) && defined(NDEBUG)
-   vBenchmarks.push_back(new BenchMTParser()      ); // <-- Crash in debug mode
+   benchmarks.push_back(std::make_shared<BenchMTParser >()     ); // <-- Crash in debug mode
    #endif
 
    #ifdef _MSC_VER
-   vBenchmarks.push_back(new BenchMuParserSSE());
+   benchmarks.push_back(std::make_shared<BenchMuParserSSE>());
    #endif
-   vBenchmarks.push_back(new BenchExprTkFloat());
+   benchmarks.push_back(std::make_shared<BenchExprTkFloat>());
 
    #ifdef ENABLE_MPFR
-   vBenchmarks.push_back(new BenchExprTkMPFR ());
+   benchmarks.push_back(std::make_shared<BenchExprTkMPFR>());
+   #endif
+
+   #ifdef ENABLE_METL
+   benchmarks.push_back(std::make_shared<BenchMETL>());
    #endif
 
    if (nativeBenchmark)
-      vBenchmarks.push_back(new BenchNative());
+      benchmarks.push_back(std::make_shared<BenchNative>());
 
-   Shootout(benchmark_file, vBenchmarks, vExpr, iCount, writeResultTable);
-
-   for (std::size_t i = 0; i < vBenchmarks.size(); ++i)
-   {
-      delete vBenchmarks[i];
-   }
+   Shootout(benchmark_file, benchmarks, vExpr, iCount, writeResultTable);
 
    return 0;
 }
