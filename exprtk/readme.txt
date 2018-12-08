@@ -706,6 +706,61 @@ This allows for the original  element to be modified independently  of
 the  expression  instance  and  to also  allow  the  expression  to be
 evaluated using the current value of the element.
 
+Note:  Any  variable  reference  provided  to  a  given   symbol_table
+instance, must have a life time  at least as long as the  life-time of
+the  symbol_table instance.  In the  event the  variable reference  is
+invalidated  before  the  symbol_table  or  any  dependent  expression
+instances  have  been  destructed,  then  any  associated   expression
+evaluations or variable referencing via the symbol_table instance will
+result in undefined behaviour.
+
+The following bit of  code instantiates a symbol_table  and expression
+instance,  then  proceeds  to   demonstrate  various  ways  in   which
+references to  variables can  be added  to the  symbol_table, and  how
+those  references are  subsequently invalidated  resulting in  various
+forms of undefined behaviour.
+
+   typedef exprtk::symbol_table<double> symbol_table_t;
+
+   symbol_table_t symbol_table;
+   expression_t expression;
+
+   {
+      double x = 123.4567;
+      symbol_table.add_variable("x", x);
+   }             // Reference to variable x has been invalidated
+
+   std::deque<double> y {1.1, 2.2, 3.3};
+
+   symbol_table.add_variable("y", y.back());
+
+   y.pop_back(); // Reference to variable y has been invalidated
+
+   std::vector<double> z {4.4, 5.5, 6.6};
+
+   symbol_table.add_variable("z", z.front());
+
+   z.erase(z.begin());
+                 // Reference to variable z has been invalidated
+
+   double* w = new double(123.456);
+
+   symbol_table.add_variable("w", *w);
+
+   delete w;     // Reference to variable w has been invalidated
+
+   const std::string expression_str = "x + y / z * w";
+
+                 // Compilation of expression will succeed
+   parser.compile(expression_str,expression);
+
+   expression.value();
+                // Evaluation will result in undefined behaviour
+
+   symbol_table.get_variable("x")->ref() = 135.791;
+                // Assignment will result in undefined behaviour
+
+
 The  example  below demonstrates  the  relationship between variables,
 symbol_table and expression. Note  the variables are modified  as they
 normally would in a program, and when the expression is  evaluated the
