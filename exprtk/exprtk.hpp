@@ -3788,6 +3788,91 @@ namespace exprtk
             std::vector<std::pair<lexer::token,lexer::token> > error_list_;
          };
 
+         class sequence_validator_3tokens : public lexer::token_scanner
+         {
+         private:
+
+            typedef lexer::token::token_type token_t;
+            typedef std::pair<token_t,std::pair<token_t,token_t>> token_triplet_t;
+            typedef std::set<token_triplet_t> set_t;
+
+         public:
+
+            using lexer::token_scanner::operator();
+
+            sequence_validator_3tokens()
+            : lexer::token_scanner(3)
+            {
+               add_invalid(lexer::token::e_number , lexer::token::e_number , lexer::token::e_number);
+               add_invalid(lexer::token::e_string , lexer::token::e_string , lexer::token::e_string);
+               add_invalid(lexer::token::e_comma  , lexer::token::e_comma  , lexer::token::e_comma );
+
+               add_invalid(lexer::token::e_add ,lexer::token::e_add , lexer::token::e_add);
+               add_invalid(lexer::token::e_sub ,lexer::token::e_sub , lexer::token::e_sub);
+               add_invalid(lexer::token::e_div ,lexer::token::e_div , lexer::token::e_div);
+               add_invalid(lexer::token::e_mul ,lexer::token::e_mul , lexer::token::e_mul);
+               add_invalid(lexer::token::e_mod ,lexer::token::e_mod , lexer::token::e_mod);
+               add_invalid(lexer::token::e_pow ,lexer::token::e_pow , lexer::token::e_pow);
+
+               add_invalid(lexer::token::e_add ,lexer::token::e_sub , lexer::token::e_add);
+               add_invalid(lexer::token::e_sub ,lexer::token::e_add , lexer::token::e_sub);
+               add_invalid(lexer::token::e_div ,lexer::token::e_mul , lexer::token::e_div);
+               add_invalid(lexer::token::e_mul ,lexer::token::e_div , lexer::token::e_mul);
+               add_invalid(lexer::token::e_mod ,lexer::token::e_pow , lexer::token::e_mod);
+               add_invalid(lexer::token::e_pow ,lexer::token::e_mod , lexer::token::e_pow);
+            }
+
+            bool result()
+            {
+               return error_list_.empty();
+            }
+
+            bool operator() (const lexer::token& t0, const lexer::token& t1, const lexer::token& t2)
+            {
+               const set_t::value_type p = std::make_pair(t0.type,std::make_pair(t1.type,t2.type));
+
+               if (invalid_comb_.find(p) != invalid_comb_.end())
+               {
+                  error_list_.push_back(std::make_pair(t0,t1));
+               }
+
+               return true;
+            }
+
+            std::size_t error_count() const
+            {
+               return error_list_.size();
+            }
+
+            std::pair<lexer::token,lexer::token> error(const std::size_t index)
+            {
+               if (index < error_list_.size())
+               {
+                  return error_list_[index];
+               }
+               else
+               {
+                  static const lexer::token error_token;
+                  return std::make_pair(error_token,error_token);
+               }
+            }
+
+            void clear_errors()
+            {
+               error_list_.clear();
+            }
+
+         private:
+
+            void add_invalid(token_t t0, token_t t1, token_t t2)
+            {
+               invalid_comb_.insert(std::make_pair(t0,std::make_pair(t1,t2)));
+            }
+
+            set_t invalid_comb_;
+            std::vector<std::pair<lexer::token,lexer::token> > error_list_;
+         };
+
          struct helper_assembly
          {
             inline bool register_scanner(lexer::token_scanner* scanner)
@@ -19908,7 +19993,8 @@ namespace exprtk
 
             if (settings_.sequence_check_enabled())
             {
-               helper_assembly_.register_scanner(&sequence_validator_);
+               helper_assembly_.register_scanner(&sequence_validator_      );
+               helper_assembly_.register_scanner(&sequence_validator_3tkns_);
             }
          }
       }
@@ -20084,9 +20170,10 @@ namespace exprtk
             {
                if (helper_assembly_.error_token_scanner)
                {
-                  lexer::helper::bracket_checker*    bracket_checker_ptr    = 0;
-                  lexer::helper::numeric_checker*    numeric_checker_ptr    = 0;
-                  lexer::helper::sequence_validator* sequence_validator_ptr = 0;
+                  lexer::helper::bracket_checker*            bracket_checker_ptr     = 0;
+                  lexer::helper::numeric_checker*            numeric_checker_ptr     = 0;
+                  lexer::helper::sequence_validator*         sequence_validator_ptr  = 0;
+                  lexer::helper::sequence_validator_3tokens* sequence_validator3_ptr = 0;
 
                   if (0 != (bracket_checker_ptr = dynamic_cast<lexer::helper::bracket_checker*>(helper_assembly_.error_token_scanner)))
                   {
@@ -20132,6 +20219,26 @@ namespace exprtk
                      if (sequence_validator_ptr->error_count())
                      {
                         sequence_validator_ptr->clear_errors();
+                     }
+                  }
+                  else if (0 != (sequence_validator3_ptr = dynamic_cast<lexer::helper::sequence_validator_3tokens*>(helper_assembly_.error_token_scanner)))
+                  {
+                     for (std::size_t i = 0; i < sequence_validator3_ptr->error_count(); ++i)
+                     {
+                        std::pair<lexer::token,lexer::token> error_token = sequence_validator3_ptr->error(i);
+
+                        set_error(
+                           make_error(parser_error::e_token,
+                                      error_token.first,
+                                      "ERR007 - Invalid token sequence: '" +
+                                      error_token.first.value  + "' and '" +
+                                      error_token.second.value + "'",
+                                      exprtk_error_location));
+                     }
+
+                     if (sequence_validator3_ptr->error_count())
+                     {
+                        sequence_validator3_ptr->clear_errors();
                      }
                   }
                }
@@ -24055,10 +24162,14 @@ namespace exprtk
          if (null_initialisation)
             result = expression_generator_(T(0.0));
          else if (vec_to_vec_initialiser)
+         {
+            expression_node_ptr vec_node = node_allocator_.allocate<vector_node_t>(vec_holder);
+
             result = expression_generator_(
                         details::e_assign,
-                        node_allocator_.allocate<vector_node_t>(vec_holder),
+                        vec_node,
                         vec_initilizer_list[0]);
+         }
          else
             result = node_allocator_
                         .allocate<details::vector_assignment_node<T> >(
@@ -26293,15 +26404,19 @@ namespace exprtk
             return (*this)(operation,branch);
          }
 
-         inline expression_node_ptr operator() (const details::operator_type& operation, expression_node_ptr b0, expression_node_ptr b1)
+         inline expression_node_ptr operator() (const details::operator_type& operation, expression_node_ptr& b0, expression_node_ptr& b1)
          {
-            if ((0 == b0) || (0 == b1))
-               return error_node();
-            else
+            expression_node_ptr result = error_node();
+
+            if ((0 != b0) && (0 != b1))
             {
                expression_node_ptr branch[2] = { b0, b1 };
-               return expression_generator<Type>::operator()(operation,branch);
+               result = expression_generator<Type>::operator()(operation, branch);
+               b0 = branch[0];
+               b1 = branch[1];
             }
+
+            return result;
          }
 
          inline expression_node_ptr conditional(expression_node_ptr condition,
@@ -34672,13 +34787,14 @@ namespace exprtk
 
       lexer::helper::helper_assembly helper_assembly_;
 
-      lexer::helper::commutative_inserter commutative_inserter_;
-      lexer::helper::operator_joiner      operator_joiner_2_;
-      lexer::helper::operator_joiner      operator_joiner_3_;
-      lexer::helper::symbol_replacer      symbol_replacer_;
-      lexer::helper::bracket_checker      bracket_checker_;
-      lexer::helper::numeric_checker      numeric_checker_;
-      lexer::helper::sequence_validator   sequence_validator_;
+      lexer::helper::commutative_inserter       commutative_inserter_;
+      lexer::helper::operator_joiner            operator_joiner_2_;
+      lexer::helper::operator_joiner            operator_joiner_3_;
+      lexer::helper::symbol_replacer            symbol_replacer_;
+      lexer::helper::bracket_checker            bracket_checker_;
+      lexer::helper::numeric_checker            numeric_checker_;
+      lexer::helper::sequence_validator         sequence_validator_;
+      lexer::helper::sequence_validator_3tokens sequence_validator_3tkns_;
 
       template <typename ParserType>
       friend void details::disable_type_checking(ParserType& p);
@@ -38236,9 +38352,9 @@ namespace exprtk
    namespace information
    {
       static const char* library = "Mathematical Expression Toolkit";
-      static const char* version = "2.718281828459045235360287471352662497757247093699"
-                                   "95957496696762772407663035354759457138217852516642";
-      static const char* date    = "20180913";
+      static const char* version = "2.7182818284590452353602874713526624977572470936999"
+                                   "595749669676277240766303535475945713821785251664274";
+      static const char* date    = "20181216";
 
       static inline std::string data()
       {
