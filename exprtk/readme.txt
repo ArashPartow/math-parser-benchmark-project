@@ -3054,6 +3054,24 @@ constructor of the user defined USR.
 Note: The primary symbol table  for an expression is the  first symbol
 table to be registered with that instance of the expression.
 
+Note: For a successful symbol  resolution using the normal USR  all of
+the following are required:
+
+   (1) Only if successful shall the process method return TRUE
+   (2) The default_value parameter will have been set
+   (3) The error_message parameter will be empty
+   (4) usr_symbol_type input parameter field will be set to either:
+         (*) e_usr_variable_type
+         (*) e_usr_constant_type
+
+Note: For a successful symbol resolution using the extended USR all of
+the following are required:
+
+   (1) Only if successful shall the process method return TRUE
+   (2) symbol_table parameter will have had the newly resolved
+       variable or string added to it
+   (3) error_message parameter will be empty
+
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [SECTION 19 - ENABLING & DISABLING FEATURES]

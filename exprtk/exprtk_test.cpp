@@ -2833,7 +2833,13 @@ inline bool run_test03()
                                    "var a; var b; ((3in(sin((b+b)))/1.06)-a)  ",
                                    "var a; var b; ((sin(3in((b+b)))/1.06)-a)  ",
                                    "var a; var b; (3in(x*(y+z))+cos(x*(y-z))) ",
-                                   "var a; var b; (cos(x*(y+z))+3in(x*(y-z))) "
+                                   "var a; var b; (cos(x*(y+z))+3in(x*(y-z))) ",
+
+                                   "1++++",
+                                   "1+-+-+",
+                                   "1===",
+                                   "1====",
+                                   "[*][*][*][*][*]"
                                  };
 
       const std::size_t invalid_expr_size = sizeof(invalid_expr) / sizeof(std::string);
