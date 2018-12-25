@@ -13830,7 +13830,7 @@ namespace exprtk
                                                     bfunc_t p2)
          {
             return allocator
-                     .template allocate_type<node_type,T0,T1,bfunc_t&>
+                     .template allocate_type<node_type, T0, T1, bfunc_t&>
                         (p0, p1, p2);
          }
 
@@ -13918,7 +13918,7 @@ namespace exprtk
          static inline expression_node<T>* allocate(Allocator& allocator, T0 p0, T1 p1, T2 p2, bfunc_t p3, bfunc_t p4)
          {
             return allocator
-                      .template allocate_type<node_type,T0,T1,T2,bfunc_t,bfunc_t>
+                      .template allocate_type<node_type, T0, T1, T2, bfunc_t, bfunc_t>
                          (p0, p1, p2, p3, p4);
          }
 
@@ -14015,7 +14015,7 @@ namespace exprtk
                                                     bfunc_t p4, bfunc_t p5, bfunc_t p6)
          {
             return allocator
-                      .template allocate_type<node_type,T0,T1,T2,T3,bfunc_t,bfunc_t>
+                      .template allocate_type<node_type, T0, T1, T2, T3, bfunc_t, bfunc_t>
                          (p0, p1, p2, p3, p4, p5, p6);
          }
 
@@ -14100,7 +14100,7 @@ namespace exprtk
          static inline expression_node<T>* allocate(Allocator& allocator, T0 p0, T1 p1, T2 p2, tfunc_t p3)
          {
             return allocator
-                     .template allocate_type<node_type,T0,T1,T2,tfunc_t>
+                     .template allocate_type<node_type, T0, T1, T2, tfunc_t>
                         (p0, p1, p2, p3);
          }
 
@@ -14191,7 +14191,7 @@ namespace exprtk
          static inline expression_node<T>* allocate(Allocator& allocator, T0 p0, T1 p1, T2 p2)
          {
             return allocator
-                     .template allocate_type<node_type,T0,T1,T2>
+                     .template allocate_type<node_type, T0, T1, T2>
                         (p0, p1, p2);
          }
 
@@ -14292,7 +14292,7 @@ namespace exprtk
          static inline expression_node<T>* allocate(Allocator& allocator, T0 p0, T1 p1, T2 p2, T3 p3, qfunc_t p4)
          {
             return allocator
-                     .template allocate_type<node_type,T0,T1,T2,T3,qfunc_t>
+                     .template allocate_type<node_type, T0, T1, T2, T3, qfunc_t>
                         (p0, p1, p2, p3, p4);
          }
 
@@ -14375,7 +14375,7 @@ namespace exprtk
          static inline expression_node<T>* allocate(Allocator& allocator, T0 p0, T1 p1, T2 p2, T3 p3)
          {
             return allocator
-                     .template allocate_type<node_type,T0,T1,T2,T3>
+                     .template allocate_type<node_type, T0, T1, T2, T3>
                         (p0, p1, p2, p3);
          }
 
@@ -15501,37 +15501,37 @@ namespace exprtk
          template <typename ResultNode, typename OpType, typename ExprNode>
          inline expression_node<typename ResultNode::value_type>* allocate(OpType& operation, ExprNode (&branch)[1])
          {
-            return allocate<ResultNode>(operation,branch[0]);
+            return allocate<ResultNode>(operation, branch[0]);
          }
 
          template <typename ResultNode, typename OpType, typename ExprNode>
          inline expression_node<typename ResultNode::value_type>* allocate(OpType& operation, ExprNode (&branch)[2])
          {
-            return allocate<ResultNode>(operation,branch[0],branch[1]);
+            return allocate<ResultNode>(operation, branch[0], branch[1]);
          }
 
          template <typename ResultNode, typename OpType, typename ExprNode>
          inline expression_node<typename ResultNode::value_type>* allocate(OpType& operation, ExprNode (&branch)[3])
          {
-            return allocate<ResultNode>(operation,branch[0],branch[1],branch[2]);
+            return allocate<ResultNode>(operation, branch[0], branch[1], branch[2]);
          }
 
          template <typename ResultNode, typename OpType, typename ExprNode>
          inline expression_node<typename ResultNode::value_type>* allocate(OpType& operation, ExprNode (&branch)[4])
          {
-            return allocate<ResultNode>(operation,branch[0],branch[1],branch[2],branch[3]);
+            return allocate<ResultNode>(operation, branch[0], branch[1], branch[2], branch[3]);
          }
 
          template <typename ResultNode, typename OpType, typename ExprNode>
          inline expression_node<typename ResultNode::value_type>* allocate(OpType& operation, ExprNode (&branch)[5])
          {
-            return allocate<ResultNode>(operation,branch[0],branch[1],branch[2],branch[3],branch[4]);
+            return allocate<ResultNode>(operation, branch[0],branch[1], branch[2], branch[3], branch[4]);
          }
 
          template <typename ResultNode, typename OpType, typename ExprNode>
          inline expression_node<typename ResultNode::value_type>* allocate(OpType& operation, ExprNode (&branch)[6])
          {
-            return allocate<ResultNode>(operation,branch[0],branch[1],branch[2],branch[3],branch[4],branch[5]);
+            return allocate<ResultNode>(operation, branch[0], branch[1], branch[2], branch[3], branch[4], branch[5]);
          }
 
          template <typename node_type>
@@ -16094,20 +16094,20 @@ namespace exprtk
 
       typedef T (*ff00_functor)();
       typedef T (*ff01_functor)(T);
-      typedef T (*ff02_functor)(T,T);
-      typedef T (*ff03_functor)(T,T,T);
-      typedef T (*ff04_functor)(T,T,T,T);
-      typedef T (*ff05_functor)(T,T,T,T,T);
-      typedef T (*ff06_functor)(T,T,T,T,T,T);
-      typedef T (*ff07_functor)(T,T,T,T,T,T,T);
-      typedef T (*ff08_functor)(T,T,T,T,T,T,T,T);
-      typedef T (*ff09_functor)(T,T,T,T,T,T,T,T,T);
-      typedef T (*ff10_functor)(T,T,T,T,T,T,T,T,T,T);
-      typedef T (*ff11_functor)(T,T,T,T,T,T,T,T,T,T,T);
-      typedef T (*ff12_functor)(T,T,T,T,T,T,T,T,T,T,T,T);
-      typedef T (*ff13_functor)(T,T,T,T,T,T,T,T,T,T,T,T,T);
-      typedef T (*ff14_functor)(T,T,T,T,T,T,T,T,T,T,T,T,T,T);
-      typedef T (*ff15_functor)(T,T,T,T,T,T,T,T,T,T,T,T,T,T,T);
+      typedef T (*ff02_functor)(T, T);
+      typedef T (*ff03_functor)(T, T, T);
+      typedef T (*ff04_functor)(T, T, T, T);
+      typedef T (*ff05_functor)(T, T, T, T, T);
+      typedef T (*ff06_functor)(T, T, T, T, T, T);
+      typedef T (*ff07_functor)(T, T, T, T, T, T, T);
+      typedef T (*ff08_functor)(T, T, T, T, T, T, T, T);
+      typedef T (*ff09_functor)(T, T, T, T, T, T, T, T, T);
+      typedef T (*ff10_functor)(T, T, T, T, T, T, T, T, T, T);
+      typedef T (*ff11_functor)(T, T, T, T, T, T, T, T, T, T, T);
+      typedef T (*ff12_functor)(T, T, T, T, T, T, T, T, T, T, T, T);
+      typedef T (*ff13_functor)(T, T, T, T, T, T, T, T, T, T, T, T, T);
+      typedef T (*ff14_functor)(T, T, T, T, T, T, T, T, T, T, T, T, T, T);
+      typedef T (*ff15_functor)(T, T, T, T, T, T, T, T, T, T, T, T, T, T, T);
 
    protected:
 
@@ -36950,10 +36950,8 @@ namespace exprtk
 
       inline T operator() (const std::size_t& ps_index, parameter_list_t parameters)
       {
-         std::string file_name;
+         std::string file_name = to_str(string_t(parameters[0]));
          std::string access;
-
-         file_name = to_str(string_t(parameters[0]));
 
          if (file_name.empty())
             return T(0);
@@ -37035,27 +37033,27 @@ namespace exprtk
             case 0  : {
                          const string_t buffer(parameters[1]);
                          amount = buffer.size();
-                         return T(fd->write(buffer,amount) ? 1 : 0);
+                         return T(fd->write(buffer, amount) ? 1 : 0);
                       }
 
             case 1  : {
                          const string_t buffer(parameters[1]);
                          amount = std::min(buffer.size(),
                                            static_cast<std::size_t>(scalar_t(parameters[2])()));
-                         return T(fd->write(buffer,amount) ? 1 : 0);
+                         return T(fd->write(buffer, amount) ? 1 : 0);
                       }
 
             case 2  : {
                          const vector_t vec(parameters[1]);
                          amount = vec.size();
-                         return T(fd->write(vec,amount) ? 1 : 0);
+                         return T(fd->write(vec, amount) ? 1 : 0);
                       }
 
             case 3  : {
                          const vector_t vec(parameters[1]);
                          amount = std::min(vec.size(),
                                            static_cast<std::size_t>(scalar_t(parameters[2])()));
-                         return T(fd->write(vec,amount) ? 1 : 0);
+                         return T(fd->write(vec, amount) ? 1 : 0);
                       }
          }
 
@@ -37256,10 +37254,10 @@ namespace exprtk
    namespace details
    {
       template <typename T>
-      inline void kahan_sum(T& sum, T& error, T v)
+      inline void kahan_sum(T& sum, T& error, const T v)
       {
-         T x = v - error;
-         T y = sum + x;
+         const T x = v - error;
+         const T y = sum + x;
          error = (y - sum) - x;
          sum = y;
       }
@@ -37983,7 +37981,7 @@ namespace exprtk
          else if (helper::invalid_range(y, r0, r1))
             return std::numeric_limits<T>::quiet_NaN();
 
-         T a = scalar_t(parameters[0])();
+         const T a = scalar_t(parameters[0])();
 
          for (std::size_t i = r0; i <= r1; ++i)
          {
@@ -38081,7 +38079,7 @@ namespace exprtk
          else if (helper::invalid_range(z, r0, r1))
             return std::numeric_limits<T>::quiet_NaN();
 
-         T a = scalar_t(parameters[0])();
+         const T a = scalar_t(parameters[0])();
 
          for (std::size_t i = r0; i <= r1; ++i)
          {
