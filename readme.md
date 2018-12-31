@@ -183,19 +183,19 @@ The following is an example summary generated at the completion of the benchmark
     Scores:
       #     Parser                  Type            Points   Score   Failures
       -----------------------------------------------------------------------
-      00 ExprTk               double         901      100      0
-      01 ExprTkFloat          float          740       82      9
-      02 muparserSSE          float          726       93      9
-      03 METL                 double         686       52      0
-      04 FParser 4.5          double         584       43      0
-      05 atmsp 1.0.4          double         530       38      2
-      06 muparser 2.2.4       double         517       37      0
-      07 muparser 2.2.4 (omp) double         444       35      0
-      08 MTParser             double         381       34      0
-      09 MathExpr             double         360       29      2
-      10 TinyExpr             double         354       31      2
-      11 Lepton               double         134        8      2
-      12 muparserx            double          86        5      0
+      00    ExprTk                  double          901      100     0
+      01    ExprTkFloat             float           740       82     9
+      02    muparserSSE             float           726       93     9
+      03    METL                    double          686       52     0
+      04    FParser 4.5             double          584       43     0
+      05    atmsp 1.0.4             double          530       38     2
+      06    muparser 2.2.4          double          517       37     0
+      07    muparser 2.2.4 (omp)    double          444       35     0
+      08    MTParser                double          381       34     0
+      09    MathExpr                double          360       29     2
+      10    TinyExpr                double          354       31     2
+      11    Lepton                  double          134        8     2
+      12    muparserx               double           86        5     0
 
 ## The Results
 The summaries of runs of the benchmark suite upon various architectures can be found here: [Results](https://github.com/ArashPartow/math-parser-benchmark-project/tree/master/logs)

@@ -1869,15 +1869,16 @@ embedded into the expression.
 
 There are five types of function interface:
 
-  +---+----------------------+-------------+----------------------+
-  | # |         Name         | Return Type | Input Types          |
-  +---+----------------------+-------------+----------------------+
-  | 1 | ifunction            | Scalar      | Scalar               |
-  | 2 | ivararg_function     | Scalar      | Scalar               |
-  | 3 | igeneric_function    | Scalar      | Scalar,Vector,String |
-  | 4 | igeneric_function II | String      | Scalar,Vector,String |
-  | 5 | function_compositor  | Scalar      | Scalar               |
-  +---+----------------------+-------------+----------------------+
+  +---+----------------------+--------------+----------------------+
+  | # |         Name         | Return Type  | Input Types          |
+  +---+----------------------+--------------+----------------------+
+  | 1 | ifunction            | Scalar       | Scalar               |
+  | 2 | ivararg_function     | Scalar       | Scalar               |
+  | 3 | igeneric_function    | Scalar       | Scalar,Vector,String |
+  | 4 | igeneric_function II | String       | Scalar,Vector,String |
+  | 5 | igeneric_function III| String/Scalar| Scalar,Vector,String |
+  | 6 | function_compositor  | Scalar       | Scalar               |
+  +---+----------------------+--------------+----------------------+
 
 (1) ifunction
 This interface supports zero to 20 input parameters of only the scalar
@@ -2253,7 +2254,60 @@ as follows:
    (4) Scalar                                (4) String
 
 
-(5) function_compositor
+(5) igeneric_function III
+In this section we will discuss an extension of the  igeneric_function
+interface that will allow for the overloading of a user defined custom
+function, where by it can return either a scalar or string value  type
+depending on the input parameter  sequence with which the function  is
+invoked.
+
+   template <typename T>
+   struct foo : public exprtk::igeneric_function<T>
+   {
+      typedef typename exprtk::igeneric_function<T>::parameter_list_t
+                                                     parameter_list_t;
+
+      foo()
+      : exprtk::igeneric_function<T>
+        (
+          "T:T|S:TS",
+          igfun_t::e_rtrn_overload
+        )
+      {}
+
+      // Scalar value returning invocations
+      inline T operator()(const std::size_t& ps_index,
+                          parameter_list_t parameters)
+      {
+         ...
+      }
+
+      // String value returning invocations
+      inline T operator()(const std::size_t& ps_index,
+                          std::string& result,
+                          parameter_list_t& parameters)
+      {
+         ...
+      }
+   };
+
+
+In the  example above  the custom  user defined  function "foo" can be
+invoked by using  either one of  two input parameter  sequences, which
+are defined as follows:
+
+   Sequence-0    Sequence-1
+   'T' -> T      'TS' -> S
+   (1) Scalar    (1) Scalar
+                 (2) String
+
+
+The parameter  sequence definitions  are identical  to the  previously
+define igeneric_function, with the  exception of the inclusion  of the
+return type - which can only be either a scalar T or a string S.
+
+
+(6) function_compositor
 The function  compositor is  a factory  that allows  one to define and
 construct a function using ExprTk syntax. The functions are limited to
 returning a single scalar value and consuming up to six parameters  as
@@ -2770,7 +2824,7 @@ expression being compiled.
 
 This can become problematic, as in the default scenario it is  assumed
 the symbol_table that is registered with the expression instance  will
-already  posses  the  externally  available  variables,  functions and
+already possess  the  externally  available  variables,  functions and
 constants needed during the compilation of the expression.
 
 In the event there are symbols in the expression that can't be  mapped
@@ -2893,7 +2947,7 @@ after which the expression itself can be evaluated.
 
    for (auto& var_name : variable_list)
    {
-      T& v = symbol_table.variable_ref(var_name);
+      T& v = unknown_var_symbol_table.variable_ref(var_name);
 
       v = ...;
    }
