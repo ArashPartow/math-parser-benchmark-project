@@ -71,7 +71,7 @@ void black_scholes_merton_model()
 
       printf("BSM(%s,%5.3f,%5.3f,%5.3f,%5.3f,%5.3f) = %10.6f\n",
              callput_flag.c_str(),
-             s,x,t,r,v,
+             s, x, t, r, v,
              bsm);
    }
 
@@ -82,7 +82,7 @@ void black_scholes_merton_model()
 
       printf("BSM(%s,%5.3f,%5.3f,%5.3f,%5.3f,%5.3f) = %10.6f\n",
              callput_flag.c_str(),
-             s,x,t,r,v,
+             s, x, t, r, v,
              bsm);
    }
 }

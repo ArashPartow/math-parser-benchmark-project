@@ -4251,6 +4251,62 @@ inline bool run_test10()
    }
 
    {
+      const std::string expression =
+                           "for (var i := 0; i < min(x[],y[],z[]); i += 1)"
+                           "{ z[i] := 3sin(x[i]) + 2log(y[i]); }";
+
+      std::vector<std::string> var_symbol_list;
+      std::vector<std::string> func_symbol_list;
+
+      if (!exprtk::collect_variables(expression, var_symbol_list))
+      {
+         printf("run_test10() - Failed to collect variables.\n");
+         return false;
+      }
+
+      if (!exprtk::collect_functions(expression, func_symbol_list))
+      {
+         printf("run_test10() - Failed to collect functions.\n");
+         return false;
+      }
+
+      std::sort(var_symbol_list .begin(), var_symbol_list .end());
+      std::sort(func_symbol_list.begin(), func_symbol_list.end());
+
+      std::vector<std::string> expected_var_symbol_list;
+      std::vector<std::string> expected_func_symbol_list;
+
+      expected_var_symbol_list.push_back("i");
+      expected_var_symbol_list.push_back("x");
+      expected_var_symbol_list.push_back("y");
+      expected_var_symbol_list.push_back("z");
+
+      expected_func_symbol_list.push_back("log");
+      expected_func_symbol_list.push_back("min");
+      expected_func_symbol_list.push_back("sin");
+
+      const bool var_result = (var_symbol_list.size() == expected_var_symbol_list.size()) &&
+                               std::equal(var_symbol_list.begin(),
+                                          var_symbol_list.end(),
+                                          expected_var_symbol_list.begin());
+      if (!var_result)
+      {
+         printf("run_test10() - Failed collected variable comparison between recieved and expected variables\n");
+         return false;
+      }
+
+      const bool func_result = (func_symbol_list.size() == expected_func_symbol_list.size()) &&
+                               std::equal(func_symbol_list.begin(),
+                                          func_symbol_list.end(),
+                                          expected_func_symbol_list.begin());
+      if (!func_result)
+      {
+         printf("run_test10() - Failed collected fuctions comparison between recieved and expected functions\n");
+         return false;
+      }
+   }
+
+   {
       std::string expression_list[] =
       {
         "var x; 1",

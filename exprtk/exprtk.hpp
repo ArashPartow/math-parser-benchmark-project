@@ -20191,7 +20191,7 @@ namespace exprtk
                dec_.return_present_ = true;
 
                e = expression_generator_
-                     .return_envelope(e,results_context_,retinvk_ptr);
+                     .return_envelope(e, results_context_, retinvk_ptr);
             }
 
             expr.set_expression(e);
@@ -35328,36 +35328,102 @@ namespace exprtk
       friend void details::disable_type_checking(ParserType& p);
    };
 
+   namespace details
+   {
+      template <typename T>
+      struct collector_helper
+      {
+         typedef exprtk::symbol_table<T> symbol_table_t;
+         typedef exprtk::expression<T>     expression_t;
+         typedef exprtk::parser<T>             parser_t;
+         typedef typename parser_t::dependent_entity_collector::symbol_t symbol_t;
+         typedef typename parser_t::unknown_symbol_resolver usr_t;
+
+         struct resolve_as_vector : public parser_t::unknown_symbol_resolver
+         {
+            typedef exprtk::parser<T> parser_t;
+
+            resolve_as_vector()
+            : usr_t(usr_t::e_usrmode_extended)
+            {}
+
+            virtual bool process(const std::string& unknown_symbol,
+                                 symbol_table_t& symbol_table,
+                                 std::string&)
+            {
+               static T v[1];
+               symbol_table.add_vector(unknown_symbol,v);
+               return true;
+            }
+         };
+
+         static inline bool collection_pass(const std::string& expression_string,
+                                            std::set<std::string>& symbol_set,
+                                            const bool collect_variables,
+                                            const bool collect_functions,
+                                            const bool vector_pass = false)
+         {
+            symbol_table_t symbol_table;
+            expression_t   expression;
+            parser_t       parser;
+
+            resolve_as_vector vect_resolver;
+
+            expression.register_symbol_table(symbol_table);
+
+            if (vector_pass)
+               parser.enable_unknown_symbol_resolver(&vect_resolver);
+            else
+               parser.enable_unknown_symbol_resolver();
+
+            if (collect_variables)
+               parser.dec().collect_variables() = true;
+
+            if (collect_functions)
+               parser.dec().collect_functions() = true;
+
+            bool pass_result = false;
+
+            if (parser.compile(expression_string, expression))
+            {
+               pass_result = true;
+
+               std::deque<symbol_t> symb_list;
+               parser.dec().symbols(symb_list);
+
+               for (std::size_t i = 0; i < symb_list.size(); ++i)
+               {
+                  symbol_set.insert(symb_list[i].first);
+               }
+            }
+
+            return pass_result;
+         }
+      };
+   }
+
    template <typename Allocator,
              template <typename, typename> class Sequence>
-   inline bool collect_variables(const std::string& expr_str,
+   inline bool collect_variables(const std::string& expression,
                                  Sequence<std::string, Allocator>& symbol_list)
    {
       typedef double T;
-      typedef exprtk::symbol_table<T> symbol_table_t;
-      typedef exprtk::expression<T>     expression_t;
-      typedef exprtk::parser<T>             parser_t;
-      typedef parser_t::dependent_entity_collector::symbol_t symbol_t;
+      typedef details::collector_helper<T> collect_t;
 
-      symbol_table_t symbol_table;
-      expression_t   expression;
-      parser_t       parser;
+      std::set<std::string> symbol_set;
 
-      expression.register_symbol_table(symbol_table);
+      const bool variable_pass = collect_t::collection_pass(expression, symbol_set, true, false, false);
+      const bool vector_pass   = collect_t::collection_pass(expression, symbol_set, true, false,  true);
 
-      parser.enable_unknown_symbol_resolver();
-      parser.dec().collect_variables() = true;
-
-      if (!parser.compile(expr_str, expression))
+      if (!variable_pass && !vector_pass)
          return false;
 
-      std::deque<symbol_t> symb_list;
+      std::set<std::string>::iterator itr = symbol_set.begin();
 
-      parser.dec().symbols(symb_list);
-
-      for (std::size_t i = 0; i < symb_list.size(); ++i)
+      while (symbol_set.end() != itr)
       {
-         symbol_list.push_back(symb_list[i].first);
+         symbol_list.push_back(*itr);
+         ++itr;
       }
 
       return true;
@@ -35404,34 +35470,26 @@ namespace exprtk
 
    template <typename Allocator,
              template <typename, typename> class Sequence>
-   inline bool collect_functions(const std::string& expr_str,
+   inline bool collect_functions(const std::string& expression,
                                  Sequence<std::string, Allocator>& symbol_list)
    {
       typedef double T;
-      typedef exprtk::symbol_table<T> symbol_table_t;
-      typedef exprtk::expression<T>     expression_t;
-      typedef exprtk::parser<T>             parser_t;
-      typedef parser_t::dependent_entity_collector::symbol_t symbol_t;
+      typedef details::collector_helper<T> collect_t;
 
-      symbol_table_t symbol_table;
-      expression_t   expression;
-      parser_t       parser;
+      std::set<std::string> symbol_set;
 
-      expression.register_symbol_table(symbol_table);
+      const bool variable_pass = collect_t::collection_pass(expression, symbol_set, false, true, false);
+      const bool vector_pass   = collect_t::collection_pass(expression, symbol_set, false, true,  true);
 
-      parser.enable_unknown_symbol_resolver();
-      parser.dec().collect_functions() = true;
-
-      if (!parser.compile(expr_str, expression))
+      if (!variable_pass && !vector_pass)
          return false;
 
-      std::deque<symbol_t> symb_list;
+      std::set<std::string>::iterator itr = symbol_set.begin();
 
-      parser.dec().symbols(symb_list);
-
-      for (std::size_t i = 0; i < symb_list.size(); ++i)
+      while (symbol_set.end() != itr)
       {
-         symbol_list.push_back(symb_list[i].first);
+         symbol_list.push_back(*itr);
+         ++itr;
       }
 
       return true;
