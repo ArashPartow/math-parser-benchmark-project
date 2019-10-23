@@ -35362,7 +35362,7 @@ namespace exprtk
                                             const bool collect_variables,
                                             const bool collect_functions,
                                             const bool vector_pass,
-                                            symbol_table_t& ext_symbol_table = symbol_table_t())
+                                            symbol_table_t& ext_symbol_table)
          {
             symbol_table_t symbol_table;
             expression_t   expression;
