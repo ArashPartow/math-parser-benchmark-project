@@ -3649,10 +3649,11 @@ namespace exprtk
             sequence_validator()
             : lexer::token_scanner(2)
             {
-               add_invalid(lexer::token::e_number ,lexer::token::e_number );
-               add_invalid(lexer::token::e_string ,lexer::token::e_string );
-               add_invalid(lexer::token::e_number ,lexer::token::e_string );
-               add_invalid(lexer::token::e_string ,lexer::token::e_number );
+               add_invalid(lexer::token::e_number, lexer::token::e_number);
+               add_invalid(lexer::token::e_string, lexer::token::e_string);
+               add_invalid(lexer::token::e_number, lexer::token::e_string);
+               add_invalid(lexer::token::e_string, lexer::token::e_number);
+
                add_invalid_set1(lexer::token::e_assign );
                add_invalid_set1(lexer::token::e_shr    );
                add_invalid_set1(lexer::token::e_shl    );
@@ -3726,21 +3727,21 @@ namespace exprtk
 
             void add_invalid_set1(lexer::token::token_type t)
             {
-               add_invalid(t,lexer::token::e_assign);
-               add_invalid(t,lexer::token::e_shr   );
-               add_invalid(t,lexer::token::e_shl   );
-               add_invalid(t,lexer::token::e_lte   );
-               add_invalid(t,lexer::token::e_ne    );
-               add_invalid(t,lexer::token::e_gte   );
-               add_invalid(t,lexer::token::e_lt    );
-               add_invalid(t,lexer::token::e_gt    );
-               add_invalid(t,lexer::token::e_eq    );
-               add_invalid(t,lexer::token::e_comma );
-               add_invalid(t,lexer::token::e_div   );
-               add_invalid(t,lexer::token::e_mul   );
-               add_invalid(t,lexer::token::e_mod   );
-               add_invalid(t,lexer::token::e_pow   );
-               add_invalid(t,lexer::token::e_colon );
+               add_invalid(t, lexer::token::e_assign);
+               add_invalid(t, lexer::token::e_shr   );
+               add_invalid(t, lexer::token::e_shl   );
+               add_invalid(t, lexer::token::e_lte   );
+               add_invalid(t, lexer::token::e_ne    );
+               add_invalid(t, lexer::token::e_gte   );
+               add_invalid(t, lexer::token::e_lt    );
+               add_invalid(t, lexer::token::e_gt    );
+               add_invalid(t, lexer::token::e_eq    );
+               add_invalid(t, lexer::token::e_comma );
+               add_invalid(t, lexer::token::e_div   );
+               add_invalid(t, lexer::token::e_mul   );
+               add_invalid(t, lexer::token::e_mod   );
+               add_invalid(t, lexer::token::e_pow   );
+               add_invalid(t, lexer::token::e_colon );
             }
 
             bool invalid_bracket_check(lexer::token::token_type base, lexer::token::token_type t)
@@ -3750,7 +3751,7 @@ namespace exprtk
                   switch (t)
                   {
                      case lexer::token::e_assign : return (']' != base);
-                     case lexer::token::e_string : return true;
+                     case lexer::token::e_string : return (')' != base);
                      default                     : return false;
                   }
                }
@@ -3821,23 +3822,23 @@ namespace exprtk
             sequence_validator_3tokens()
             : lexer::token_scanner(3)
             {
-               add_invalid(lexer::token::e_number , lexer::token::e_number , lexer::token::e_number);
-               add_invalid(lexer::token::e_string , lexer::token::e_string , lexer::token::e_string);
-               add_invalid(lexer::token::e_comma  , lexer::token::e_comma  , lexer::token::e_comma );
+               add_invalid(lexer::token::e_number, lexer::token::e_number, lexer::token::e_number);
+               add_invalid(lexer::token::e_string, lexer::token::e_string, lexer::token::e_string);
+               add_invalid(lexer::token::e_comma , lexer::token::e_comma , lexer::token::e_comma );
 
-               add_invalid(lexer::token::e_add ,lexer::token::e_add , lexer::token::e_add);
-               add_invalid(lexer::token::e_sub ,lexer::token::e_sub , lexer::token::e_sub);
-               add_invalid(lexer::token::e_div ,lexer::token::e_div , lexer::token::e_div);
-               add_invalid(lexer::token::e_mul ,lexer::token::e_mul , lexer::token::e_mul);
-               add_invalid(lexer::token::e_mod ,lexer::token::e_mod , lexer::token::e_mod);
-               add_invalid(lexer::token::e_pow ,lexer::token::e_pow , lexer::token::e_pow);
+               add_invalid(lexer::token::e_add   , lexer::token::e_add   , lexer::token::e_add   );
+               add_invalid(lexer::token::e_sub   , lexer::token::e_sub   , lexer::token::e_sub   );
+               add_invalid(lexer::token::e_div   , lexer::token::e_div   , lexer::token::e_div   );
+               add_invalid(lexer::token::e_mul   , lexer::token::e_mul   , lexer::token::e_mul   );
+               add_invalid(lexer::token::e_mod   , lexer::token::e_mod   , lexer::token::e_mod   );
+               add_invalid(lexer::token::e_pow   , lexer::token::e_pow   , lexer::token::e_pow   );
 
-               add_invalid(lexer::token::e_add ,lexer::token::e_sub , lexer::token::e_add);
-               add_invalid(lexer::token::e_sub ,lexer::token::e_add , lexer::token::e_sub);
-               add_invalid(lexer::token::e_div ,lexer::token::e_mul , lexer::token::e_div);
-               add_invalid(lexer::token::e_mul ,lexer::token::e_div , lexer::token::e_mul);
-               add_invalid(lexer::token::e_mod ,lexer::token::e_pow , lexer::token::e_mod);
-               add_invalid(lexer::token::e_pow ,lexer::token::e_mod , lexer::token::e_pow);
+               add_invalid(lexer::token::e_add   , lexer::token::e_sub   , lexer::token::e_add   );
+               add_invalid(lexer::token::e_sub   , lexer::token::e_add   , lexer::token::e_sub   );
+               add_invalid(lexer::token::e_div   , lexer::token::e_mul   , lexer::token::e_div   );
+               add_invalid(lexer::token::e_mul   , lexer::token::e_div   , lexer::token::e_mul   );
+               add_invalid(lexer::token::e_mod   , lexer::token::e_pow   , lexer::token::e_mod   );
+               add_invalid(lexer::token::e_pow   , lexer::token::e_mod   , lexer::token::e_pow   );
             }
 
             bool result()
@@ -6999,7 +7000,7 @@ namespace exprtk
                r0 = n0_c.second;
             else if (n0_e.first)
             {
-               T r0_value = n0_e.second->value();
+               const T r0_value = n0_e.second->value();
 
                if (r0_value < 0)
                   return false;
@@ -7013,7 +7014,7 @@ namespace exprtk
                r1 = n1_c.second;
             else if (n1_e.first)
             {
-               T r1_value = n1_e.second->value();
+               const T r1_value = n1_e.second->value();
 
                if (r1_value < 0)
                   return false;
@@ -9471,10 +9472,7 @@ namespace exprtk
 
          inline T value() const
          {
-            if (!arg_list_.empty())
-               return VarArgFunction::process(arg_list_);
-            else
-               return std::numeric_limits<T>::quiet_NaN();
+            return VarArgFunction::process(arg_list_);
          }
 
          inline typename expression_node<T>::node_type type() const
@@ -9773,8 +9771,8 @@ namespace exprtk
 
                while (vec < upper_bound)
                {
-                 #define exprtk_loop(N) \
-                  vec[N] = v;           \
+                  #define exprtk_loop(N) \
+                  vec[N] = v;            \
 
                   exprtk_loop( 0) exprtk_loop( 1)
                   exprtk_loop( 2) exprtk_loop( 3)
@@ -20661,25 +20659,25 @@ namespace exprtk
 
             switch (current_token().type)
             {
-               case token_t::e_assign : current_state.set(e_level00,e_level00,details::e_assign); break;
-               case token_t::e_addass : current_state.set(e_level00,e_level00,details::e_addass); break;
-               case token_t::e_subass : current_state.set(e_level00,e_level00,details::e_subass); break;
-               case token_t::e_mulass : current_state.set(e_level00,e_level00,details::e_mulass); break;
-               case token_t::e_divass : current_state.set(e_level00,e_level00,details::e_divass); break;
-               case token_t::e_modass : current_state.set(e_level00,e_level00,details::e_modass); break;
-               case token_t::e_swap   : current_state.set(e_level00,e_level00,details::e_swap  ); break;
-               case token_t::e_lt     : current_state.set(e_level05,e_level06,details::    e_lt); break;
-               case token_t::e_lte    : current_state.set(e_level05,e_level06,details::   e_lte); break;
-               case token_t::e_eq     : current_state.set(e_level05,e_level06,details::    e_eq); break;
-               case token_t::e_ne     : current_state.set(e_level05,e_level06,details::    e_ne); break;
-               case token_t::e_gte    : current_state.set(e_level05,e_level06,details::   e_gte); break;
-               case token_t::e_gt     : current_state.set(e_level05,e_level06,details::    e_gt); break;
-               case token_t::e_add    : current_state.set(e_level07,e_level08,details::   e_add); break;
-               case token_t::e_sub    : current_state.set(e_level07,e_level08,details::   e_sub); break;
-               case token_t::e_div    : current_state.set(e_level10,e_level11,details::   e_div); break;
-               case token_t::e_mul    : current_state.set(e_level10,e_level11,details::   e_mul); break;
-               case token_t::e_mod    : current_state.set(e_level10,e_level11,details::   e_mod); break;
-               case token_t::e_pow    : current_state.set(e_level12,e_level12,details::   e_pow); break;
+               case token_t::e_assign : current_state.set(e_level00,e_level00, details::e_assign); break;
+               case token_t::e_addass : current_state.set(e_level00,e_level00, details::e_addass); break;
+               case token_t::e_subass : current_state.set(e_level00,e_level00, details::e_subass); break;
+               case token_t::e_mulass : current_state.set(e_level00,e_level00, details::e_mulass); break;
+               case token_t::e_divass : current_state.set(e_level00,e_level00, details::e_divass); break;
+               case token_t::e_modass : current_state.set(e_level00,e_level00, details::e_modass); break;
+               case token_t::e_swap   : current_state.set(e_level00,e_level00, details::e_swap  ); break;
+               case token_t::e_lt     : current_state.set(e_level05,e_level06, details::    e_lt); break;
+               case token_t::e_lte    : current_state.set(e_level05,e_level06, details::   e_lte); break;
+               case token_t::e_eq     : current_state.set(e_level05,e_level06, details::    e_eq); break;
+               case token_t::e_ne     : current_state.set(e_level05,e_level06, details::    e_ne); break;
+               case token_t::e_gte    : current_state.set(e_level05,e_level06, details::   e_gte); break;
+               case token_t::e_gt     : current_state.set(e_level05,e_level06, details::    e_gt); break;
+               case token_t::e_add    : current_state.set(e_level07,e_level08, details::   e_add); break;
+               case token_t::e_sub    : current_state.set(e_level07,e_level08, details::   e_sub); break;
+               case token_t::e_div    : current_state.set(e_level10,e_level11, details::   e_div); break;
+               case token_t::e_mul    : current_state.set(e_level10,e_level11, details::   e_mul); break;
+               case token_t::e_mod    : current_state.set(e_level10,e_level11, details::   e_mod); break;
+               case token_t::e_pow    : current_state.set(e_level12,e_level12, details::   e_pow); break;
                default                : if (token_t::e_symbol == current_token().type)
                                         {
                                            static const std::string s_and   =   "and";
@@ -23504,8 +23502,7 @@ namespace exprtk
                  if (*iter == delimiter)
                  {
                      result.push_back(std::string(current_begin, iter));
-                     ++iter;
-                     current_begin = iter;
+                     current_begin = ++iter;
                  }
                  else
                      ++iter;
