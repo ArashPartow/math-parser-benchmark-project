@@ -84,7 +84,7 @@ void vector_randu()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string vecrandu_program =
+   const std::string vecrandu_program =
                 " var noise[6] := [0];                     "
                 "                                          "
                 " if (randu(noise,0,5) == false)           "

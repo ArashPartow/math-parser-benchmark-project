@@ -29,7 +29,8 @@ void polynomial()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string expression_string = "25x^5 - 35x^4 - 15x^3 + 40x^2 - 15x + 1";
+   const std::string expression_string =
+                  "25x^5 - 35x^4 - 15x^3 + 40x^2 - 15x + 1";
 
    const T r0 = T(0);
    const T r1 = T(1);
@@ -48,7 +49,7 @@ void polynomial()
 
    for (x = r0; x <= r1; x += delta)
    {
-      printf("%19.15f\t%19.15f\n",x,expression.value());
+      printf("%19.15f\t%19.15f\n", x, expression.value());
    }
 }
 

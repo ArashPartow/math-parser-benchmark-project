@@ -31,7 +31,7 @@ void savitzky_golay_filter()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string sgfilter_program =
+   const std::string sgfilter_program =
                   " var weight[9] :=                                          "
                   "       {                                                   "
                   "         -21, 14,  39,                                     "

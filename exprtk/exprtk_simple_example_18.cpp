@@ -29,7 +29,7 @@ void file_io()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string fileio_program =
+   const std::string fileio_program =
                 " var file_name := 'file.txt';                         "
                 " var stream    := null;                               "
                 "                                                      "

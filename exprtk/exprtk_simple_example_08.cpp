@@ -65,7 +65,7 @@ void composite()
 
       for (std::size_t i = 0; i < parser.error_count(); ++i)
       {
-         err_t error = parser.get_error(i);
+         const err_t error = parser.get_error(i);
 
          printf("Error: %02d  Position: %02d Type: [%14s] Msg: %s\tExpression: %s\n",
                 static_cast<unsigned int>(i),
@@ -78,7 +78,7 @@ void composite()
       return;
    }
 
-   T result = expression.value();
+   const T result = expression.value();
 
    printf("%s = %e\n", expression_string.c_str(), result);
 }

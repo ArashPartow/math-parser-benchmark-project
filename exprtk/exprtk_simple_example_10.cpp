@@ -64,7 +64,7 @@ void newton_sqrt()
            " }                                                     ",
            "x"));
 
-   std::string expression_str = "newton_sqrt(x)";
+   const std::string expression_str = "newton_sqrt(x)";
 
    expression_t expression;
    expression.register_symbol_table(symbol_table);
@@ -76,7 +76,7 @@ void newton_sqrt()
    {
       x = static_cast<T>(i);
 
-      T result = expression.value();
+      const T result = expression.value();
 
       printf("sqrt(%03d) - Result: %15.13f\tReal: %15.13f\n",
              static_cast<unsigned int>(i),

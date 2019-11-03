@@ -47,7 +47,7 @@ void monte_carlo_pi()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string monte_carlo_pi_program =
+   const std::string monte_carlo_pi_program =
                   " var experiments[5 * 10^7] := [(rnd_01^2 + rnd_01^2) <= 1]; "
                   " 4 * sum(experiments) / experiments[];                      ";
 

@@ -29,7 +29,7 @@ void bubble_sort()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string bubblesort_program =
+   const std::string bubblesort_program =
                   " var upper_bound := v[];                           "
                   " var swapped := false;                             "
                   " repeat                                            "

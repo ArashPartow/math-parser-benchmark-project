@@ -29,7 +29,7 @@ void black_scholes_merton_model()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string bsm_model_program =
+   const std::string bsm_model_program =
                   " var d1 := (log(s / x) + (r + v^2 / 2) * t) / (v * sqrt(t)); "
                   " var d2 := d1 - v * sqrt(t);                                 "
                   "                                                             "

@@ -29,7 +29,7 @@ void vector_function()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string expression_string =
+   const std::string expression_string =
                   " for (var i := 0; i < min(x[],y[],z[]); i += 1) "
                   " {                                              "
                   "   z[i] := 3sin(x[i]) + 2log(y[i]);             "

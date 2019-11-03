@@ -30,7 +30,7 @@ void linear_least_squares()
    typedef exprtk::expression<T>     expression_t;
    typedef exprtk::parser<T>             parser_t;
 
-   std::string linear_least_squares_program =
+   const std::string linear_least_squares_program =
                   " if (x[] == y[])                                       "
                   " {                                                     "
                   "   beta  := (sum(x * y) - sum(x) * sum(y) / x[]) /     "
