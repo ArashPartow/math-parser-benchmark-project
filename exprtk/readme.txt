@@ -428,8 +428,8 @@ of C++ compilers:
 | [r0:r1]  | The closed interval [r0,r1] of the specified string.    |
 |          | eg: Given a string x with a value of 'abcdefgh' then:   |
 |          | 1. x[1:4] == 'bcde'                                     |
-|          | 2. x[ :5] == x[:5] == 'abcdef'                          |
-|          | 3. x[3: ] == x[3:] =='cdefgh'                           |
+|          | 2. x[ :5] == x[:10 / 2] == 'abcdef'                     |
+|          | 3. x[2 + 1: ] == x[3:] =='defgh'                        |
 |          | 4. x[ : ] == x[:] == 'abcdefgh'                         |
 |          | 5. x[4/2:3+2] == x[2:5] == 'cdef'                       |
 |          |                                                         |
@@ -920,7 +920,7 @@ The above denoted AST will be evaluated in the following order:
 Generally an expression in ExprTk can be thought of as a free function
 similar to those  found in imperative  languages. This form  of pseudo
 function will have a name, it may have a set of one or more inputs and
-will return at least one value as its result. Futhermore the  function
+will return at least one value as its result. Furthermore the function
 when invoked, may  cause a side-effect  that changes the  state of the
 host program.
 
@@ -1023,7 +1023,7 @@ copied,  it  will then  result  in two  or more  identical expressions
 utilizing the exact same  references for variables. This  obviously is
 not the  default assumed  scenario and  will give  rise to non-obvious
 behaviours  when  using the  expressions in  various contexts such  as
-muli-threading et al.
+multi-threading et al.
 
 The prescribed method for cloning an expression is to compile it  from
 its string  form. Doing so will allow the 'user' to  properly consider
@@ -1315,7 +1315,7 @@ in a statement will cause it to have a side-effect:
    (b) Invoking a user-defined function that has side-effects
 
 The following are examples of expressions where the side-effect status
-of the statements (or sub-exressions) within the expressions have been
+of the  statements (sub-expressions) within the expressions  have been
 noted:
 
   +-+----------------------+------------------------------+
@@ -3843,7 +3843,7 @@ follows:
       }
    }
    else
-     printf("An error occured.");
+     printf("An error occurred.");
 
 
 (b) collect_functions
@@ -3867,7 +3867,7 @@ follows:
       }
    }
    else
-     printf("An error occured.");
+     printf("An error occurred.");
 
 
 Note: When either the 'collect_variables'  or 'collect_functions' free
@@ -3879,10 +3879,10 @@ true.
 
 Note: The  default interface  provided for  both the collect_variables
 and collect_functions  free_functions, assumes  that expressions  will
-only be utilising  the ExprTk reserved  funnctions (eg: abs,  cos, min
+only be utilising  the ExprTk  reserved  functions (eg: abs,  cos, min
 etc). When user defined functions are  to be used in an expression,  a
 symbol_table  instance  containing  said functions  can  be  passed to
-either routine, and  will be incorparated  during the compilation  and
+either routine, and  will be incorporated  during the compilation  and
 Dependent Entity  Collection processes.  In the  following example,  a
 user  defined  free  function   named  'foo'  is  registered   with  a
 symbol_table.  Finally  the   symbol_table  instance  and   associated
@@ -3912,7 +3912,7 @@ expression string are passed to the exprtk::collect_functions routine.
       }
    }
    else
-     printf("An error occured.");
+     printf("An error occurred.");
 
 
 (c) compute
