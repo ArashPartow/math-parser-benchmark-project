@@ -284,6 +284,7 @@
       <Filter>muparsersse</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BenchMETL.cpp" />
+    <ClCompile Include="..\src\BenchMexce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\chaiscript\chaiscript_threading.hpp">
@@ -895,6 +896,8 @@
     <ClInclude Include="..\include\BenchMETL.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\BenchMexce.h" />
+    <ClInclude Include="..\mexce\mexce.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">

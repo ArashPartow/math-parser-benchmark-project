@@ -42,6 +42,7 @@ SOURCES += \
     BenchLepton.cpp \
     Benchmark.cpp \
     BenchMathExpr.cpp \
+    BenchMexce.cpp \
     BenchMuParser2.cpp \
     BenchMuParserX.cpp \
     cpuid.cpp \
@@ -113,6 +114,7 @@ HEADERS += \
     BenchLepton.h \
     Benchmark.h \
     BenchMathExpr.h \
+    BenchMexce.h \
     BenchMuParser2.h \
     BenchMuParserX.h \
     cpuid.h \

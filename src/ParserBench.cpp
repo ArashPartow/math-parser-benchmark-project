@@ -34,6 +34,7 @@
 #include "BenchMathExpr.h"
 #include "BenchMETL.h"
 #include "BenchTinyExpr.h"
+#include "BenchMexce.h"
 #include "BenchNative.h"
 
 #ifdef ENABLE_MPFR
@@ -487,6 +488,7 @@ int main(int argc, const char *argv[])
    benchmarks.push_back(std::make_shared<BenchFParser  >()     );
    benchmarks.push_back(std::make_shared<BenchMathExpr >()     );
    benchmarks.push_back(std::make_shared<BenchTinyExpr >()     );
+   benchmarks.push_back(std::make_shared<BenchMexce    >()     );
    #if defined(_MSC_VER) && defined(NDEBUG)
    benchmarks.push_back(std::make_shared<BenchMTParser >()     ); // <-- Crash in debug mode
    #endif
