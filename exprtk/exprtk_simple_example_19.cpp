@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 19                                          *
- * Author: Arash Partow (1999-2020)                           *
+ * Author: Arash Partow (1999-2021)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -55,7 +55,7 @@ public:
       if (
            (1 == ps_index) &&
            !exprtk::rtl::vecops::helper::
-              load_vector_range<T>::process(parameters,r0,r1,1,2,0)
+              load_vector_range<T>::process(parameters, r0, r1, 1, 2, 0)
          )
          return T(0);
 
@@ -81,8 +81,8 @@ template <typename T>
 void vector_randu()
 {
    typedef exprtk::symbol_table<T> symbol_table_t;
-   typedef exprtk::expression<T>     expression_t;
-   typedef exprtk::parser<T>             parser_t;
+   typedef exprtk::expression<T>   expression_t;
+   typedef exprtk::parser<T>       parser_t;
 
    const std::string vecrandu_program =
                 " var noise[6] := [0];                     "
@@ -109,9 +109,9 @@ void vector_randu()
    randu<T>                    randu;
 
    symbol_table_t symbol_table;
-   symbol_table.add_vector  ("signal" , signal);
-   symbol_table.add_function("println",println);
-   symbol_table.add_function("randu"  ,  randu);
+   symbol_table.add_vector  ("signal" , signal );
+   symbol_table.add_function("println", println);
+   symbol_table.add_function("randu"  , randu  );
 
    expression_t expression;
    expression.register_symbol_table(symbol_table);

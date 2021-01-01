@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 13                                          *
- * Author: Arash Partow (1999-2020)                           *
+ * Author: Arash Partow (1999-2021)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -89,7 +89,7 @@ void savitzky_golay_filter()
 
    for (std::size_t i = 0; i < v_out.size(); ++i)
    {
-      printf("%10.6f\t%10.6f\n",v_in[i],v_out[i]);
+      printf("%10.6f\t%10.6f\n", v_in[i], v_out[i]);
    }
 }
 
