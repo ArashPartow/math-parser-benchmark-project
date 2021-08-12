@@ -6,7 +6,7 @@
 // Author: Ioannis Makris
 //
 // mexce can compile and evaluate a mathematical expression at runtime.
-// The generated machine code will mostly use the FPU.
+// The generated machine code will mostly use the x87 FPU.
 //
 // An example:
 // -----------
@@ -17,11 +17,10 @@
 // 
 // mexce::evaluator eval;
 // 
-// eval.bind(x, "x");
-// eval.bind(y, "y");
-// eval.bind(z, "z");
+// // associate runtime variables with their aliases in the expression.
+// eval.bind(x, "x", y, "y", z, "z");
 // 
-// eval.assign_expression("0.3+(-sin(2.33+x-logb((.3*pi+(88/y)/e),3.2+z)))/98");
+// eval.set_expression("0.3+(-sin(2.33+x-logb((.3*pi+(88/y)/e),3.2+z)))/988.472e-02");
 // 
 // cout << endl << "Evaluation results:" << endl;
 // for (int i = 0; i < 10; i++, x-=0.1f, y+=0.212, z+=2) {
@@ -118,12 +117,19 @@ public:
     evaluator();
     ~evaluator();
 
-    template <typename T>
-    void bind(T& v, const std::string& s);
+    template <typename T, typename ...Args>
+    void bind(T& referenced_variable, const std::string& variable_name, Args&... args);
 
-    void unbind(const std::string&);
-    void assign_expression(std::string);
+    template <typename ...Args>
+    void unbind(const std::string& variable_name, Args&... args);
+
+    void unbind_all();
+
+    void set_expression(std::string);
+
     double evaluate();
+
+    double evaluate(const std::string& expression);
 
 private:
 
@@ -150,6 +156,9 @@ private:
 
     friend
     uint8_t* impl::push_intermediate_code(evaluator* ev, const std::string& s);
+
+    template <typename = void> void bind() {}
+    template <typename = void> void unbind() {}
 };
 
 
@@ -169,6 +178,16 @@ protected:
     std::string             m_message;
     size_t                  m_position;
 };
+
+
+inline
+double evaluator::evaluate(const std::string& expression)
+{
+    evaluator ev;
+    ev.m_variables = m_variables;
+    ev.set_expression(expression);
+    return ev.evaluate();
+}
 
 
 
@@ -482,9 +501,135 @@ inline Function Sin()
 
 inline Function Cos()
 {
+#ifndef MEXCE_ACCURACY
     static uint8_t code[] = {
         0xd9, 0xff                                  // fcos
     };
+#else
+
+    static uint64_t mfactors[] = {  // Maclaurin expansion factors (80-bit)
+
+#if (MEXCE_ACCURACY > 9)
+        0x9c9962823eb07306, 0x000000000000bf93,     // - 1 / (30!),
+#endif
+#if (MEXCE_ACCURACY > 8)
+        0x850c5131a842e9ba, 0x0000000000003f9d,     //   1 / (28!),
+#endif
+#if (MEXCE_ACCURACY > 7)
+        0xc4742fe35272cd1c, 0x000000000000bfa6,     // - 1 / (26!),
+#endif
+#if (MEXCE_ACCURACY > 6)
+        0xf96780cb97abbe65, 0x0000000000003faf,     //   1 / (24!),
+#endif
+#if (MEXCE_ACCURACY > 5)
+        0x8671cb6dbfc294a3, 0x000000000000bfb9,     // - 1 / (22!),
+#endif
+#if (MEXCE_ACCURACY > 4)
+        0xf2a15d201011283d, 0x0000000000003fc1,     //   1 / (20!),
+#endif
+#if (MEXCE_ACCURACY > 3)
+        0xb413c31dcbecbbde, 0x000000000000bfca,     // - 1 / (18!),
+#endif
+#if (MEXCE_ACCURACY > 2)
+        0xd73f9f399dc0f88f, 0x0000000000003fd2,     //   1 / (16!),
+#endif
+#if (MEXCE_ACCURACY > 1)
+        0xc9cba54603e4e906, 0x000000000000bfda,     // - 1 / (14!),
+#endif
+#if (MEXCE_ACCURACY > 0)
+        0x8f76c77fc6c4bdaa, 0x0000000000003fe2,     //   1 / (12!),
+#endif
+        0x93f27dbbc4fae397, 0x000000000000bfe9,     // - 1 / (10!),  
+        0xd00d00d00d00d00d, 0x0000000000003fef,     //   1 / ( 8!),
+        0xb60b60b60b60b60b, 0x000000000000bff5,     // - 1 / ( 6!),
+        0xaaaaaaaaaaaaaaab, 0x0000000000003ffa,     //   1 / ( 4!),
+        0x8000000000000000, 0x000000000000bffe,     // - 1 / ( 2!),
+        0x8000000000000000, 0x0000000000003fff      //   1   
+    };
+
+    static uint8_t code[] = {
+        0xd9, 0xeb,                                 // fldpi                    }
+        0xdc, 0xc0,                                 // fadd        st(0),st     }
+        0xd9, 0xc9,                                 // fxch        st(1)        } bring arg to range [0, 2*pi)
+        0xd9, 0xf5,                                 // fprem1                   }
+        0xdd, 0xd9,                                 // fstp        st(1)        }
+
+        0xdc, 0xc8,                                 // fmul        st(0),st  
+        0xb8, 0, 0, 0, 0,                           // mov         eax, dword ptr [addr_fct26]  
+        0xdb, 0x28,                                 // fld         tword ptr [eax]  
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x10,                           // fld         tword ptr [eax+8]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x20,                           // fld         tword ptr [eax+10h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x30,                           // fld         tword ptr [eax+18h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x40,                           // fld         tword ptr [eax+20h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x50,                           // fld         tword ptr [eax+28h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+
+#if (MEXCE_ACCURACY > 0)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x60,                           // fld         tword ptr [eax+30h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 1)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x70,                           // fld         tword ptr [eax+38h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 2)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0x05, 0x80, 0x00, 0x00, 0x00,               // add         eax, 80h
+        0xdb, 0x28,                                 // fld         tword ptr [eax]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 3)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x10,                           // fld         tword ptr [eax+10h]  
+        0xde, 0xc1,                                 // faddp       st(1),st
+#endif
+#if (MEXCE_ACCURACY > 4)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x20,                           // fld         tword ptr [eax+20h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 5)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x30,                           // fld         tword ptr [eax+30h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 6)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x40,                           // fld         tword ptr [eax+40h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 7)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x50,                           // fld         tword ptr [eax+50h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 8)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x60,                           // fld         tword ptr [eax+60h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+#if (MEXCE_ACCURACY > 9)
+        0xd8, 0xc9,                                 // fmul        st,st(1)  
+        0xdb, 0x68, 0x70,                           // fld         tword ptr [eax+70h]  
+        0xde, 0xc1,                                 // faddp       st(1),st  
+#endif
+        0xdd, 0xd9                                  // fstp        st(1)  
+    };
+
+    *((void**)(code+13)) = (void*)mfactors;
+#endif
+
     return Function("cos", 1, 0, sizeof(code), code);
 }
 
@@ -1312,7 +1457,6 @@ void asmd_optimizer(elist_it_t it, evaluator* ev, elist_t* elist)
 
     double neutral = fclass==1 ? 0.0 : 1.0;
 
-
     bool arg2_inv = (fname == "sub" || fname == "div");
 
     if (f->parent != elist->end() &&  (*f->parent)->element_type == CFUNC) {
@@ -1754,7 +1898,7 @@ inline
 evaluator::evaluator():
     m_constants(impl::built_in_constants_map())
 {
-    assign_expression("0");
+    set_expression("0");
 }
 
 
@@ -1765,8 +1909,8 @@ evaluator::~evaluator()
 }
 
 
-template <typename T>
-void evaluator::bind(T& v, const std::string& s)
+template <typename T, typename ...Args>
+void evaluator::bind(T& v, const std::string& s, Args&... args)
 {
     using namespace impl;
     if (function_map().find(s) != function_map().end()) {
@@ -1776,12 +1920,13 @@ void evaluator::bind(T& v, const std::string& s)
         throw std::logic_error("Attempted to bind a variable, named as an existing constant");
     }
     m_variables[s] = make_shared<Variable>(&v, s, get_ndt<T>());
+
+    bind(args...);
 }
 
 
-
-inline
-void evaluator::unbind(const std::string& s)
+template <typename ...Args>
+void evaluator::unbind(const std::string& s, Args&... args)
 {
     if (s.length() == 0)
         throw std::logic_error("Variable name was an empty string");
@@ -1790,14 +1935,21 @@ void evaluator::unbind(const std::string& s)
     if (it != m_variables.end()) {
         assert(it->second->element_type == impl::CVAR);
         if (it->second->referenced) {
-            assign_expression("0");
+            set_expression("0");
         }
         m_variables.erase(it);
+        unbind(args...);
         return;
     }
     throw std::logic_error("Attempted to unbind an unknown variable");
 }
 
+
+inline
+void evaluator::unbind_all()
+{
+    m_variables.clear();
+}
 
 
 inline
@@ -1811,7 +1963,7 @@ double evaluator::evaluate() {
 
 
 inline
-void evaluator::assign_expression(std::string e)
+void evaluator::set_expression(std::string e)
 {
     using namespace impl;
     using mpe = mexce_parsing_exception;
@@ -1901,7 +2053,7 @@ void evaluator::assign_expression(std::string e)
                     state = 2;
                     break;
                 }
-            case 2: //currently reading a numeric literal, found dot
+            case 2: // currently reading a numeric literal, found dot
                 if (is_numeric(e[i])) {
                     temp.content += e[i];
                     break;
@@ -1945,9 +2097,26 @@ void evaluator::assign_expression(std::string e)
                     state = 0;
                     break;
                 }
-                else {
-                    throw (mpe((string("\"")+e[i])+"\" not expected", i));
+                if (e[i] == 'e' && state < 7) {
+                    temp.content += e[i];
+                    state = 7;
+                    break;
                 }
+                throw (mpe((string("\"")+e[i])+"\" not expected", i));
+            case 7: // read the 'e' (exponent) while reading a numeric literal
+                if (e[i] == '+' || e[i] == '-') {
+                    temp.content += e[i];
+                    state = 8;
+                    break;
+                }
+                throw (mpe("expecting '+'/'-' followed by the exponent of the numeric literal", i));
+            case 8: // reading the exponent of the numeric literal
+                if (is_numeric(e[i])) {
+                    temp.content += e[i];
+                    state = 2;
+                    break;
+                }
+                throw (mpe("expecting the exponent of the numeric literal", i));
             case 3: //currently reading alphanumeric
                 if (is_alphabetic(e[i]) || is_numeric(e[i])) {
                     temp.content += e[i];
@@ -1958,14 +2127,14 @@ void evaluator::assign_expression(std::string e)
                         temp.type = VARIABLE_NAME;
                         tokens.push_back(temp);
                         state = 5;
+                        break;
                     }
-                    else
                     if (m_constants.find(temp.content) != m_constants.end()) {
                         temp.type = CONSTANT_NAME;
                         tokens.push_back(temp);
                         state = 5;
+                        break;
                     }
-                    else
                     if ((i_fnc = function_map().find(temp.content)) != function_map().end()) {
                         temp.type = FUNCTION_NAME;
                         tokens.push_back(temp);
@@ -1973,12 +2142,10 @@ void evaluator::assign_expression(std::string e)
                         bdarray.push_back(make_pair(0, i_fnc->second.num_args));
                         function_parentheses++;
                         state = 6;
+                        break;
                     }
-                    else {
-                        throw (mpe(string(temp.content) +
-                            " is not a known constant, variable or function name", i));
-                    }
-                    break;
+                    throw (mpe(string(temp.content) +
+                        " is not a known constant, variable or function name", i));
                 }
                 if (e[i] == ')') {
                     temp.type = m_variables.find(temp.content) != m_variables.end() ? VARIABLE_NAME : 
@@ -1998,8 +2165,9 @@ void evaluator::assign_expression(std::string e)
                         function_parentheses--;
                         bdarray.pop_back();
                     }
-                    else
+                    else {
                         throw (mpe("\")\" not expected", i));
+                    }
                     state = 5;
                     break;
                 }
@@ -2039,9 +2207,7 @@ void evaluator::assign_expression(std::string e)
                     state = 0;
                     break;
                 }
-                else {
-                    throw (mpe((string("\"")+e[i])+"\" not expected", i));
-                }
+                throw (mpe((string("\"")+e[i])+"\" not expected", i));
             case 5: //just read an expression (constant/variable/right parenthesis)
                 if (e[i] == ' ')
                     break;
@@ -2078,17 +2244,13 @@ void evaluator::assign_expression(std::string e)
                     state = 0;
                     break;
                 }
-                else {
-                    throw (mpe((string("\"")+e[i])+"\" not expected", i));
-                }
+                throw (mpe((string("\"")+e[i])+"\" not expected", i));
             case 6: //just read a function name
                 if (e[i] == '(') {
                     state = 0;
                     break;
                 }
-                else {
-                    throw (mpe("Expected a \"(\"", i));
-                }
+                throw (mpe("Expected a \"(\"", i));
         }
     }
     if ((bdarray.back().first > 0) || (function_parentheses > 0)) {

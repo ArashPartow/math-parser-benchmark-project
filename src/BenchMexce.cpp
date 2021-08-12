@@ -26,13 +26,7 @@ double BenchMexce::DoBenchmark(const std::string& sExpr, long iCount)
 
    mexce::evaluator ev;
 
-   ev.bind(a, "a");
-   ev.bind(b, "b");
-   ev.bind(c, "c");
-   ev.bind(x, "x");
-   ev.bind(y, "y");
-   ev.bind(z, "z");
-   ev.bind(w, "w");
+   ev.bind(a, "a", b, "b", c, "c", x, "x", y, "y", z, "z", w, "w");
 
    // Perform basic tests for the variables used
    // in the expressions
@@ -44,7 +38,7 @@ double BenchMexce::DoBenchmark(const std::string& sExpr, long iCount)
       for (auto test : tests_list)
       {
          try {
-             ev.assign_expression(test.first.c_str());
+             ev.set_expression(test.first.c_str());
          }
          catch (mexce::mexce_parsing_exception&) {
              test_result = false;
@@ -68,7 +62,7 @@ double BenchMexce::DoBenchmark(const std::string& sExpr, long iCount)
 
 
    try {
-       ev.assign_expression(sExpr.c_str());
+       ev.set_expression(sExpr.c_str());
    }
    catch (mexce::mexce_parsing_exception& e) {
        StopTimerAndReport(e.what());

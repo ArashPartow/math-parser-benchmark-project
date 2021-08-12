@@ -4295,9 +4295,11 @@ into account when using ExprTk:
       function names are case-insensitive.
 
  (07) Variable, vector, string variable and function names must begin
-      with  a letter  (A-Z or  a-z), then  can be  comprised of  any
-      combination of letters, digits,  underscores and dots. (eg:  x,
-      var1 or power_func99, person.age, item.size.0)
+      with  a letter  (A-Z or  a-z), then  can  be  comprised of  any
+      combination of letters, digits, underscores and dots, ending in
+      either a letter (A-Z or a-z), digit or underscore. (eg: x,  y2,
+      var1,  power_func99,  person.age,  item.size.0). The associated
+      regex pattern is: [a-zA-Z]([a-zA-Z0-9_.]*|[a-zA-Z0-9_])
 
  (08) Expression lengths and sub-expression lists are limited only by
       storage capacity.

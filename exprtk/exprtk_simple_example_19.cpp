@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 19                                          *
- * Author: Arash Partow (1999-2020)                           *
+ * Author: Arash Partow (1999-2021)                           *
  * URL: http://www.partow.net/programming/exprtk/index.html   *
  *                                                            *
  * Copyright notice:                                          *
@@ -55,7 +55,7 @@ public:
       if (
            (1 == ps_index) &&
            !exprtk::rtl::vecops::helper::
-              load_vector_range<T>::process(parameters,r0,r1,1,2,0)
+              load_vector_range<T>::process(parameters, r0, r1, 1, 2, 0)
          )
          return T(0);
 

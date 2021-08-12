@@ -13,9 +13,8 @@ int main()
     
     mexce::evaluator eval;
 
-    eval.bind(x0, "x");
-    eval.bind(y, "y");
-    eval.bind(z, "z");
+    // associate runtime variables with their aliases in the expression.
+    eval.bind(x0, "x", y, "y", z, "z");
 
     // binding a variable as "log" will fail, as there is a function called "log"
     cout << endl << "Attempting to bind 'x' as 'log'" << endl;
@@ -38,7 +37,7 @@ int main()
     // replaces previous binding of variable x0 to "x"
     eval.bind(x, "x");
 
-    eval.assign_expression("0.3+(-sin(2.33+x-logb((.3*pi+(88/y)/e),3.2+z)))/98");
+    eval.set_expression("0.3+(-sin(2.33+x-logb((.3*pi+(88/y)/e),3.2+z)))/988.472e-02");
     
     cout << endl << "Evaluation results:" << endl;
     for (int i = 0; i < 10; i++, x-=0.1f, y+=0.212, z+=2) {

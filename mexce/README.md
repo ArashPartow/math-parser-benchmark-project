@@ -7,7 +7,7 @@ Mini Expression Compiler/Evaluator
 mexce is a small runtime compiler of mathematical expressions, written in C++. It generates machine code that primarily uses the x87 FPU.
 It is a single header with no dependencies.
 
-I wrote this back in 2003 as part of a larger application and then its existence was almost forgotten. The code was now updated with added support for x64 and Data Execution Prevention, which probably did not exist back then.
+I wrote this back in 2003 as part of a larger application and then its existence was almost forgotten. The code was now updated with added support for x64 and Data Execution Prevention.
 
 It currently supports Windows and Linux.
 
@@ -22,11 +22,10 @@ int     z  = 200;
 
 mexce::evaluator eval;
 
-eval.bind(x, "x");
-eval.bind(y, "y");
-eval.bind(z, "z");
+// associate runtime variables with their aliases in the expression
+eval.bind(x, "x", y, "y", z, "z");
 
-eval.assign_expression("0.3+(-sin(2.33+x-logb((.3*pi+(88/y)/e),3.2+z)))/98");
+eval.set_expression("0.3+(-sin(2.33+x-logb((.3*pi+(88/y)/e),3.2+z)))/988.472e-02");
 
 cout << endl << "Evaluation results:" << endl;
 for (int i = 0; i < 10; i++, x-=0.1f, y+=0.212, z+=2) {
@@ -37,16 +36,16 @@ for (int i = 0; i < 10; i++, x-=0.1f, y+=0.212, z+=2) {
 Output:
 ```
 Evaluation results:
-  0.289926
-  0.290975
-  0.292393
-  0.294023
-  0.295788
-  0.297623
-  0.299475
-  0.301293
-  0.303031
-  0.304649
+  0.200122
+  0.210523
+  0.224581
+  0.240747
+  0.258237
+  0.276433
+  0.294792
+  0.312816
+  0.330053
+  0.346095
 ```
 
 ## Performance

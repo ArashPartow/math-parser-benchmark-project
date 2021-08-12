@@ -404,7 +404,6 @@
     <ClCompile Include="..\src\BenchLepton.cpp" />
     <ClCompile Include="..\src\Benchmark.cpp" />
     <ClCompile Include="..\src\BenchMathExpr.cpp" />
-    <ClCompile Include="..\src\BenchMexce.cpp" />
     <ClCompile Include="..\src\BenchMETL.cpp" />
     <ClCompile Include="..\src\BenchMTParser.cpp" />
     <ClCompile Include="..\src\BenchMuParser2.cpp" />
