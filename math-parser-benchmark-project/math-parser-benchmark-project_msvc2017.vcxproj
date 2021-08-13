@@ -169,6 +169,7 @@
     <ClInclude Include="..\include\Benchmark.h" />
     <ClInclude Include="..\include\BenchMathExpr.h" />
     <ClInclude Include="..\include\BenchMETL.h" />
+    <ClInclude Include="..\include\BenchMexce.h" />
     <ClInclude Include="..\include\BenchMTParser.h" />
     <ClInclude Include="..\include\BenchMuParser2.h" />
     <ClInclude Include="..\include\BenchMuParserSSE.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="..\metl\Stack.impl.h" />
     <ClInclude Include="..\metl\TypeList.h" />
     <ClInclude Include="..\metl\VarExpression.h" />
+    <ClInclude Include="..\mexce\mexce.h" />
     <ClInclude Include="..\mpfr\include\config.h" />
     <ClInclude Include="..\mpfr\include\gmp-mparam.h" />
     <ClInclude Include="..\mpfr\include\gmp.h" />
@@ -403,6 +405,7 @@
     <ClCompile Include="..\src\Benchmark.cpp" />
     <ClCompile Include="..\src\BenchMathExpr.cpp" />
     <ClCompile Include="..\src\BenchMETL.cpp" />
+    <ClCompile Include="..\src\BenchMexce.cpp" />
     <ClCompile Include="..\src\BenchMTParser.cpp" />
     <ClCompile Include="..\src\BenchMuParser2.cpp" />
     <ClCompile Include="..\src\BenchMuParserSSE.cpp" />

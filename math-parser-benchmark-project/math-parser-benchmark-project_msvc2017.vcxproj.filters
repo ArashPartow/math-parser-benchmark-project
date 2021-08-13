@@ -284,6 +284,7 @@
       <Filter>muparsersse</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BenchMETL.cpp" />
+    <ClCompile Include="..\src\BenchMexce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\chaiscript\chaiscript_threading.hpp">
@@ -895,6 +896,12 @@
     <ClInclude Include="..\include\BenchMETL.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\mexce\mexce.h">
+      <Filter>mexce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BenchMexce.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fparser\fparser.hh">
@@ -952,6 +959,9 @@
     </Filter>
     <Filter Include="metl">
       <UniqueIdentifier>{121d274d-9553-487e-9d0e-5d05f26a7453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mexce">
+      <UniqueIdentifier>{d6cfefbf-e466-4c35-ba0c-2a2bcbf490cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
