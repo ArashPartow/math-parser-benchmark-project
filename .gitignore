@@ -18,3 +18,6 @@
 *.iobj
 *.ipdb
 Shootout_*.txt
+*.opendb
+*.db-wal
+*.db-shm

@@ -1,8 +1,12 @@
 #ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #define __IXMLDOMDocument_INTERFACE_DEFINED__	// exclude this stupid XML garbage which causes problems
 
+#ifndef NOMINMAX
 #define NOMINMAX	// avoids min/max macros
+#endif
 
 #define NOGDICAPMASKS
 #define NOVIRTUALKEYCODES

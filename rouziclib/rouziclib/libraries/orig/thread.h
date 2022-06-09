@@ -583,7 +583,9 @@ struct thread_queue_t
     #pragma comment( lib, "winmm.lib" )
 
     #define _CRT_NONSTDC_NO_DEPRECATE 
+    #ifndef _CRT_SECURE_NO_WARNINGS
     #define _CRT_SECURE_NO_WARNINGS
+    #endif
 
     #if !defined( _WIN32_WINNT ) || _WIN32_WINNT < 0x0501 
         #undef _WIN32_WINNT

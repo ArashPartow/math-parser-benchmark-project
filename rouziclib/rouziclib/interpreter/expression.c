@@ -427,14 +427,15 @@ prio_loop_start:
 			// Identify operator
 			int is_comparison = 0;
 			const char *identified_op=NULL, *identified_cmd=NULL;
-			const char *op[] =  {  "==",   "<",    ">",    "<=",   ">=",   "!=",   "+",   "-",   "*",   "/",  "%",   "^",   "^-" };
-			const char *cmd[] = { "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "add", "sub", "mul", "div", "mod", "pow", "pow" };
+			const char *op[] =    {  "==",   "<",    ">",    "<=",   ">=",   "!=",   "+",   "-",   "*",   "/",  "%",   "^",   "^-" };
+			const char *cmd_r[] = { "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "add", "sub", "mul", "div", "mod", "pow", "pow" };
+			const char *cmd_d[] = { "cmp",  "cmp",  "cmp",  "cmp",  "cmp",  "cmp",  "add", "sub", "mul", "div", "mod", "pow", "pow" };
 			for (i=0; i < sizeof(op)/sizeof(*op); i++)
 				if (compare_varlen_word_to_fixlen_word(sym[is].p, sym[is].p_len, op[i]))
 				{
 					identified_op = op[i];
-					identified_cmd = cmd[i];
-					is_comparison = (strcmp(identified_cmd, "cmpr") == 0);
+					identified_cmd = use_real ? cmd_r[i] : cmd_d[i];
+					is_comparison = (strcmp(identified_cmd, use_real ? "cmpr" : "cmp") == 0);
 					break;
 				}
 
