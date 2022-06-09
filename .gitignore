@@ -1,4 +1,3 @@
-
 *.exe
 *.exp
 *.lib
@@ -12,10 +11,10 @@
 *.bin
 *.lock
 *.vsidx
-.vs/math-parser-benchmark-project_msvc2022/v17/.suo
+*.suo
 *.db
 *.dll
 *.idb
 *.iobj
 *.ipdb
-*.txt
+Shootout_*.txt
