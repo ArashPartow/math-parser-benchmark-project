@@ -1,0 +1,14 @@
+extern int create_symlink(const char *oldname, const char *newname, const int is_dir);
+extern int create_dir(const char *path);
+extern int create_dir_recursive(const char *path);
+extern int create_dirs_for_file(const char *filepath);
+extern int move_file(const char *path, const char *newpath);
+extern int copy_file(const char *path, const char *newpath, const int overwrite);
+extern int remove_file(const char *path);
+extern int remove_empty_dir(const char *path);
+extern int remove_every_file(const char *path);
+extern int remove_dir(const char *path);
+extern void system_open(const char *path);
+extern void system_open_url(const char *url);
+extern void show_file_in_explorerW(const wchar_t *wpath);
+extern void show_file_in_explorer(const char *path);

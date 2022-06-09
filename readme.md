@@ -1,3 +1,14 @@
+### Changes by me, Michel Rouzic
+
+* Made a Visual Studio 2022 project
+* Fixed something that prevented compilation in mecParserBase.cpp
+* Edited `run_all_benchmarks.sh` so that it would be a valid bash file and have an editable executable path
+* Edited the Visual Studio project so that it runs some benchmarks after compilation
+
+My interpreter is written for 64-bit x86 and uses 64-bit integers, but this project can only be compiled for 32-bit x86 (I tried changing that, some libraries don't support that, which is somewhat baffling in 2022), so my interpreter might be at a performance disadvantage.
+
+Despite having a fairly average performance in the Release build, my interpreter (rouziclib) ranks at the top (second only to muparserSSE) in the Debug build, probably due to the extreme simplicity of the execution code.
+
 # The Great C++ Mathematical Expression Parser Benchmark
 
 This is a benchmark suite for different implementations of open source math
@@ -16,6 +27,7 @@ expression parsers are part of this benchmark:
 | 07  | [muParser](http://muparser.beltoforion.de)                | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
 | 08  | [muParserX](http://muparserx.beltoforion.de)              | Ingo Berg                     | [MIT](http://www.opensource.org/licenses/mit-license.php) | double, float         |
 | 09  | [TinyExpr](https://github.com/codeplea/tinyexpr)          | Lewis Van Winkle              | [Zlib](https://opensource.org/licenses/Zlib)              | double                |
+| 10  | [rouziclib](https://github.com/Photosounder/rouziclib)    | Michel Rouzic                 | [Apache](https://opensource.org/licenses/Apache-2.0)      | double, double-double, MPFR    |
 
 
 **Note:** The terms double, float etc found in the table above are defined as follows:
@@ -23,6 +35,7 @@ expression parsers are part of this benchmark:
 * double : [IEEE-754 Double-Precision Binary Floating-Point (64-bit)](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 * float  : [IEEE-754 Single-precision floating-point format (32-bit)](https://en.wikipedia.org/wiki/Single-precision_floating-point_format)
 * MPFR   : [GNU Multiple Precision Floating-Point Reliably](https://en.wikipedia.org/wiki/GNU_MPFR)
+* double-double: [Double-double arithmetic (128-bit)](https://en.wikipedia.org/wiki/Quadruple-precision_floating-point_format#Double-double_arithmetic)
 
 
 **Note:** This archive is not meant as a primary source for any of the libraries

@@ -971,6 +971,12 @@ namespace mec
     }
   }
 
+  // Added by me, Michel Rouzic, because otherwise this doesn't compile
+  float pow_fi(float x, int y)
+  {
+      return powf(x, (float) y);
+  }
+
 #if !defined(NO_MICROSOFT_STYLE_INLINE_ASSEMBLY)
   //---------------------------------------------------------------------------
   /** \brief A bytecode parsing engine written in inline assembly. 
@@ -993,7 +999,7 @@ namespace mec
     value_type *pStack = m_pStackZero; //&m_vStackBuffer[0];
 
     value_type (*pow_func_ff)(value_type, value_type) = pow;
-    value_type (*pow_func_fi)(value_type, int) = pow;
+    value_type (*pow_func_fi)(value_type, int) = pow_fi;        // Michel Rouzic edit
     
     SPackedToken *pRPN = m_vByteCode.GetRPNBasePtr();
 
