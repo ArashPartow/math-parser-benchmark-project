@@ -48,7 +48,7 @@ int vk_create_instance()
 	char **ext, *add_ext[] = { "" }, *layers[] = { "VK_LAYER_KHRONOS_validation", "VK_LAYER_LUNARG_standard_validation" };
 
 	// Count the extensions
-	if (SDL_Vulkan_GetInstanceExtensions(fb.window, &ext_count, NULL) == 0)		// get the extension count
+	if (SDL_Vulkan_GetInstanceExtensions(fb->window, &ext_count, NULL) == 0)		// get the extension count
 	{
 		fprintf_rl(stderr, "Couldn't get extension count in vk_create_instance(): %s\n", SDL_GetError());
 		return -1;
@@ -59,7 +59,7 @@ int vk_create_instance()
 	// Get the extensions
 	ext = calloc(ext_count+add_ext_count, sizeof(char *));
 
-	if (SDL_Vulkan_GetInstanceExtensions(fb.window, &ext_count, ext) == 0)		// get the extensions
+	if (SDL_Vulkan_GetInstanceExtensions(fb->window, &ext_count, ext) == 0)		// get the extensions
 	{
 		fprintf_rl(stderr, "Couldn't get the extensions in vk_create_instance(): %s\n", SDL_GetError());
 		return -1;
@@ -75,7 +75,7 @@ int vk_create_instance()
 	// Create the instance
 	VkInstanceCreateInfo create_info = { .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, .enabledLayerCount = sizeof(layers)/sizeof(char *), .ppEnabledLayerNames = layers, .enabledExtensionCount = ext_count+add_ext_count, .ppEnabledExtensionNames = ext, .pApplicationInfo = &appInfo };
 
-	ret = vkCreateInstance(&create_info, NULL, &fb.vk.instance);
+	ret = vkCreateInstance(&create_info, NULL, &fb->vk.instance);
 	VK_ERR_RET("vkCreateInstance (in vk_create_instance)", ret);
 
 	free(ext);
@@ -89,16 +89,16 @@ int vk_pick_physical_device()
 	uint32_t dev_count;
 
 	// Count devices
-	ret = vkEnumeratePhysicalDevices(fb.vk.instance, &dev_count, NULL);
+	ret = vkEnumeratePhysicalDevices(fb->vk.instance, &dev_count, NULL);
 	VK_ERR_RET("vkEnumeratePhysicalDevices #1 (in vk_pick_physical_device)", ret);
 
 	if (dev_count > 0)
 	{
 		VkPhysicalDevice *dev = calloc(dev_count, sizeof(VkPhysicalDevice));
-		ret = vkEnumeratePhysicalDevices(fb.vk.instance, &dev_count, dev);
+		ret = vkEnumeratePhysicalDevices(fb->vk.instance, &dev_count, dev);
 		VK_ERR_RET("vkEnumeratePhysicalDevices #2 (in vk_pick_physical_device)", ret);
 
-		fb.vk.gpu = dev[0];		// pick the first one
+		fb->vk.gpu = dev[0];		// pick the first one
 		free(dev);
 	}
 
@@ -112,12 +112,12 @@ int vk_init_queue()
 	uint32_t fam_count = 0, extension_count = 0;
 
 	// Pick the queue family index
-	vkGetPhysicalDeviceQueueFamilyProperties(fb.vk.gpu, &fam_count, NULL);
+	vkGetPhysicalDeviceQueueFamilyProperties(fb->vk.gpu, &fam_count, NULL);
 
 	if (fam_count > 0)
 	{
 		VkQueueFamilyProperties *fam_prop = calloc(fam_count, sizeof(VkQueueFamilyProperties));
-		vkGetPhysicalDeviceQueueFamilyProperties(fb.vk.gpu, &fam_count, fam_prop);
+		vkGetPhysicalDeviceQueueFamilyProperties(fb->vk.gpu, &fam_count, fam_prop);
 
 		for (i=0; i < fam_count; i++)
 			if (fam_prop[i].queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))	// pick the queue family with the needed features
@@ -134,16 +134,16 @@ int vk_init_queue()
 	const VkDeviceQueueCreateInfo queueInfo = { .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, .queueFamilyIndex = queue_fam_index, .queueCount = 1, .pQueuePriorities = (const float[]) {1.f} };
 	VkDeviceCreateInfo deviceInfo = { .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, .queueCreateInfoCount = 1, .pQueueCreateInfos = &queueInfo, .enabledExtensionCount = sizeof(ext)/sizeof(char *), .ppEnabledExtensionNames = ext };
 
-	ret = vkCreateDevice(fb.vk.gpu, &deviceInfo, NULL, &fb.vk.device);
+	ret = vkCreateDevice(fb->vk.gpu, &deviceInfo, NULL, &fb->vk.device);
 	VK_ERR_RET("vkCreateDevice (in vk_init_queue)", ret);
 
 	// Get queue
-	vkGetDeviceQueue(fb.vk.device, queue_fam_index, 0, &fb.vk.queue);
+	vkGetDeviceQueue(fb->vk.device, queue_fam_index, 0, &fb->vk.queue);
 
 	// Create command pool
 	const VkCommandPoolCreateInfo cmd_pool_info = { .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, .queueFamilyIndex = queue_fam_index, .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT };
 
-	ret = vkCreateCommandPool(fb.vk.device, &cmd_pool_info, NULL, &fb.vk.cmd_pool);
+	ret = vkCreateCommandPool(fb->vk.device, &cmd_pool_info, NULL, &fb->vk.cmd_pool);
 	VK_ERR_RET("vkCreateCommandPool (in vk_init_queue)", ret);
 }
 

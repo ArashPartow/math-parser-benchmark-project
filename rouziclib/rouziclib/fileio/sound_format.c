@@ -92,6 +92,17 @@ int convert_samples_f32_sel_chan_to_f32(float *in, float *out, size_t sample_cou
 	return 1;
 }
 
+int convert_samples_f32_interleaved_to_f32_planar(float *in, float *out, size_t sample_count, int channel_count)
+{
+	int i, ic;
+
+	for (i=0; i < sample_count; i++)
+		for (ic=0; ic < channel_count; ic++)
+			out[ic*sample_count + i] = in[i*channel_count + ic];
+
+	return 1;
+}
+
 int convert_samples_i16_left_to_f32(int16_t *in, float *out, size_t sample_count, int channel_count)
 {
 	return convert_samples_i16_sel_chan_to_f32(in, out, sample_count, channel_count, 0);

@@ -76,10 +76,10 @@ loop_start:
 
 					switch (p[0])
 					{
-						case '^':	// covers both ^ and ^-
+						case '^':	// covers ^, ^- and ^+
 							sym[is].operator_priority = 5;
 							n = 1;
-							if (p[1] == '-')
+							if (p[1] == '-' || p[1] == '+')
 								n = 2;
 							break;
 						case '*':
@@ -117,19 +117,15 @@ loop_start:
 			}
 			else
 			{
-				// Try to read number
-				strtod(p, &endptr);
-				n = endptr - p;
-
-				// Handle negation by turning it into subtraction
-				if (p[0] == '-' && n == 0)	// if there's a '-' not part of a value
+				// Handle preceding sign by turning it into an operation
+				if (p[0] == '-' || p[0] == '+')	// if there's a '-' or '+' before a value or anything else
 				{
-					// Handle negation by inserting a 0 value symbol
+					// Handle sign by inserting a 0 value symbol
 					sym[is].type = sym_value;
 					sym[is].p = "0";
 					sym[is].p_len = 1;
 
-					// Add '-' operator
+					// Add '-' or '+' operator
 					is = *sym_count;
 					alloc_enough(&sym, *sym_count+=1, sym_as, sizeof(symbol_data_t), 2.);
 					sym[is].type = sym_operator;
@@ -427,9 +423,9 @@ prio_loop_start:
 			// Identify operator
 			int is_comparison = 0;
 			const char *identified_op=NULL, *identified_cmd=NULL;
-			const char *op[] =    {  "==",   "<",    ">",    "<=",   ">=",   "!=",   "+",   "-",   "*",   "/",  "%",   "^",   "^-" };
-			const char *cmd_r[] = { "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "add", "sub", "mul", "div", "mod", "pow", "pow" };
-			const char *cmd_d[] = { "cmp",  "cmp",  "cmp",  "cmp",  "cmp",  "cmp",  "add", "sub", "mul", "div", "mod", "pow", "pow" };
+			const char *op[] =    {  "==",   "<",    ">",    "<=",   ">=",   "!=",   "+",   "-",   "*",   "/",  "%",   "^",   "^-",   "^+" };
+			const char *cmd_r[] = { "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "cmpr", "add", "sub", "mul", "div", "mod", "pow", "pow", "pow" };
+			const char *cmd_d[] = { "cmp",  "cmp",  "cmp",  "cmp",  "cmp",  "cmp",  "add", "sub", "mul", "div", "mod", "pow", "pow", "pow" };
 			for (i=0; i < sizeof(op)/sizeof(*op); i++)
 				if (compare_varlen_word_to_fixlen_word(sym[is].p, sym[is].p_len, op[i]))
 				{
@@ -459,23 +455,24 @@ prio_loop_start:
 			// Pick result ID
 			result_id = find_res_taken(is_comparison ? res_taken_i : res_taken_r, res_taken_count);
 
-			// Handle ^- exception (negative exponent) by inserting extra command
-			if (compare_varlen_word_to_fixlen_word(sym[is].p, sym[is].p_len, "^-"))
-			{
-				int result_id2 = find_res_taken(res_taken_r, res_taken_count);
+			// Handle ^- and ^+ exceptions (negative and positive exponent) by inserting extra command
+			if (sym[is].p[0] == '^' && sym[is].p_len == 2)
+				if (sym[is].p[1] == '-' || sym[is].p[1] == '+')
+				{
+					int result_id2 = find_res_taken(res_taken_r, res_taken_count);
 
-				// Print neg command
-				bufprintf(prog, "%c v%d = sub%s 0", var_decl, result_id2, cmd_suffix);
-				i = is+1;
-				print_any_var(prog, &sym[i]);
-				bufprintf(prog, "\n");
+					// Print neg command
+					bufprintf(prog, "%c v%d = %s%s 0", var_decl, result_id2, sym[is].p[1] == '-' ? "sub" : "add", cmd_suffix);
+					i = is+1;
+					print_any_var(prog, &sym[i]);
+					bufprintf(prog, "\n");
 
-				// Replace input with result
-				sym[i].type = sym_result_real;
-				sym[i].result_id = result_id2;
+					// Replace input with result
+					sym[i].type = sym_result_real;
+					sym[i].result_id = result_id2;
 
-				res_taken_r[result_id2] = 0;
-			}
+					res_taken_r[result_id2] = 0;
+				}
 
 			// Print start of command
 			if (is_comparison)

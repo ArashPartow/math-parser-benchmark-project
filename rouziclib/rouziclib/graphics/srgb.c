@@ -198,7 +198,7 @@ void convert_lrgb_to_srgb(int mode)
 	static int init=1;
 	static lut_t lsrgb_l, dither_l, bytecheck_l;
 	const int32_t black_threshold = (1. / (255.*12.92)) * ONEF + 0.5;	// 10 for LBD==15
-	int32_t pixc = fb.w*fb.h;
+	int32_t pixc = fb->w*fb->h;
 
 	if (init)
 	{
@@ -216,7 +216,7 @@ void convert_lrgb_to_srgb(int mode)
 	{
 		for (i=0; i<pixc; i++)
 		{
-			p = fb.r.l[i];
+			p = fb->r.l[i];
 
 			/*#ifdef _DEBUG
 			if (p.r > ONE)
@@ -233,8 +233,8 @@ void convert_lrgb_to_srgb(int mode)
 			ps.g = bytecheck_l.lutb[lsrgb_l.lutint[p.g] + dither >> 5];
 			ps.r = bytecheck_l.lutb[lsrgb_l.lutint[p.b] + dither >> 5];
 
-			//fb.r.srgb[i] = srgb_change_order_pixel(ps, ORDER_BGRA);
-			fb.r.srgb[i] = ps;
+			//fb->r.srgb[i] = srgb_change_order_pixel(ps, ORDER_BGRA);
+			fb->r.srgb[i] = ps;
 
 			id = (id+1) & 0x3FFF;
 
@@ -249,13 +249,13 @@ void convert_lrgb_to_srgb(int mode)
 	{
 		for (i=0; i<pixc; i++)
 		{
-			p = fb.r.l[i];
+			p = fb->r.l[i];
 
 			ps.b = lsrgb_l.lutint[p.r] >> 5;
 			ps.g = lsrgb_l.lutint[p.g] >> 5;
 			ps.r = lsrgb_l.lutint[p.b] >> 5;
-			//fb.r.srgb[i] = srgb_change_order_pixel(ps, ORDER_BGRA);
-			fb.r.srgb[i] = ps;
+			//fb->r.srgb[i] = srgb_change_order_pixel(ps, ORDER_BGRA);
+			fb->r.srgb[i] = ps;
 		}
 	}
 }
@@ -269,7 +269,7 @@ void convert_frgb_to_srgb(int mode)
 	static int init=1;
 	static lut_t lsrgb_fl_l, dither_l, bytecheck_l;
 	const float black_threshold = (1.f / (255.f*12.92f));
-	int32_t pixc = fb.w*fb.h;
+	int32_t pixc = fb->w*fb->h;
 
 	if (init)
 	{
@@ -287,7 +287,7 @@ void convert_frgb_to_srgb(int mode)
 	{
 		for (i=0; i<pixc; i++)
 		{
-			p = fb.r.f[i];
+			p = fb->r.f[i];
 
 			#ifdef _DEBUG
 			if (p.r > 1.f)
@@ -304,7 +304,7 @@ void convert_frgb_to_srgb(int mode)
 			ps.g = bytecheck_l.lutb[lsrgb_fl(p.g, lsrgb_fl_l.lutint) + dither >> 5];
 			ps.b = bytecheck_l.lutb[lsrgb_fl(p.b, lsrgb_fl_l.lutint) + dither >> 5];
 
-			fb.r.srgb[i] = srgb_change_order_pixel(ps, ORDER_ABGR);
+			fb->r.srgb[i] = srgb_change_order_pixel(ps, ORDER_ABGR);
 
 			id = (id+1) & 0x3FFF;
 
@@ -319,13 +319,13 @@ void convert_frgb_to_srgb(int mode)
 	{
 		for (i=0; i<pixc; i++)
 		{
-			p = fb.r.f[i];
+			p = fb->r.f[i];
 
 			ps.r = lsrgb_fl(p.r, lsrgb_fl_l.lutint) >> 5;
 			ps.g = lsrgb_fl(p.g, lsrgb_fl_l.lutint) >> 5;
 			ps.b = lsrgb_fl(p.b, lsrgb_fl_l.lutint) >> 5;
 
-			fb.r.srgb[i] = srgb_change_order_pixel(ps, ORDER_ABGR);
+			fb->r.srgb[i] = srgb_change_order_pixel(ps, ORDER_ABGR);
 		}
 	}
 }
@@ -336,7 +336,7 @@ void blit_lrgb_on_srgb(srgb_t *srgb0, srgb_t *srgb1)
 	lrgb_t p, l0;
 	static int init=1;
 	static lut_t lsrgb_l, slrgb_l;
-	int32_t pixc = fb.w*fb.h;
+	int32_t pixc = fb->w*fb->h;
 	srgb_t s0, s1;
 
 	if (init)
@@ -357,7 +357,7 @@ void blit_lrgb_on_srgb(srgb_t *srgb0, srgb_t *srgb1)
 	if (LBD==15 && check_ssse3() && check_sse41())
 	{
 		uint64_t *s0_ptr = (uint64_t *) srgb0, *s1_ptr = (uint64_t *) srgb1;
-		__m128i *l_ptr = (__m128i *) fb.r.l;
+		__m128i *l_ptr = (__m128i *) fb->r.l;
 		size_t step_count = pixc>>1;
 
 		for (i=0; i < step_count; i++)
@@ -369,7 +369,7 @@ void blit_lrgb_on_srgb(srgb_t *srgb0, srgb_t *srgb1)
 
 	for (; i < pixc; i++)
 	{
-		p = fb.r.l[i];
+		p = fb->r.l[i];
 
 		if (p.a > 0)
 		{
@@ -395,9 +395,9 @@ void blit_lrgb_on_srgb(srgb_t *srgb0, srgb_t *srgb1)
 
 void convert_linear_rgb_to_srgb(int mode)
 {
-	if (fb.use_drawq)
+	if (fb->use_drawq)
 		return ;
-	else if (fb.r.use_frgb)
+	else if (fb->r.use_frgb)
 		convert_frgb_to_srgb(mode);
 	else
 		convert_lrgb_to_srgb(mode);
@@ -408,7 +408,7 @@ void convert_srgb_to_lrgb()
 	int32_t i;
 	static int init=1;
 	static lut_t slrgb_l;
-	int32_t pixc = fb.w*fb.h;
+	int32_t pixc = fb->w*fb->h;
 
 	if (init)
 	{
@@ -419,25 +419,25 @@ void convert_srgb_to_lrgb()
 
 	for (i=0; i<pixc; i++)
 	{
-		fb.r.l[i].r = slrgb_l.lutint[fb.r.srgb[i].r];
-		fb.r.l[i].g = slrgb_l.lutint[fb.r.srgb[i].g];
-		fb.r.l[i].b = slrgb_l.lutint[fb.r.srgb[i].b];
+		fb->r.l[i].r = slrgb_l.lutint[fb->r.srgb[i].r];
+		fb->r.l[i].g = slrgb_l.lutint[fb->r.srgb[i].g];
+		fb->r.l[i].b = slrgb_l.lutint[fb->r.srgb[i].b];
 	}
 }
 
 void convert_frgb_to_lrgb()
 {
-	int32_t i, pixc = fb.w*fb.h*4;
+	int32_t i, pixc = fb->w*fb->h*4;
 	const float offset = (float) (1UL << 23-LBD);		// 23 (mantissa) - 15 (fractional bits of the result) = 8 (offset)
 	float *pf, v=0.f;
 	uint16_t *pl;
 	uint32_t *vint = (uint32_t *) &v;
 
-	if (fb.r.l==NULL)
-		fb.r.l = calloc (fb.w*fb.h, sizeof(lrgb_t));
+	if (fb->r.l==NULL)
+		fb->r.l = calloc (fb->w*fb->h, sizeof(lrgb_t));
 
-	pf = (float *) fb.r.f;
-	pl = (uint16_t *) fb.r.l;
+	pf = (float *) fb->r.f;
+	pl = (uint16_t *) fb->r.l;
 
 	for (i=0; i<pixc; i++)
 	{
@@ -448,17 +448,17 @@ void convert_frgb_to_lrgb()
 
 void convert_frgb_to_lrgb_ratio(const float ratio)
 {
-	int32_t i, pixc = fb.w*fb.h*4;
+	int32_t i, pixc = fb->w*fb->h*4;
 	const float offset = (float) (1UL << 23-LBD);		// 23 (mantissa) - 15 (fractional bits of the result) = 8 (offset)
 	float *pf, v=0.f;
 	uint16_t *pl;
 	uint32_t *vint = (uint32_t *) &v;
 
-	if (fb.r.l==NULL)
-		fb.r.l = calloc (fb.w*fb.h, sizeof(lrgb_t));
+	if (fb->r.l==NULL)
+		fb->r.l = calloc (fb->w*fb->h, sizeof(lrgb_t));
 
-	pf = (float *) fb.r.f;
-	pl = (uint16_t *) fb.r.l;
+	pf = (float *) fb->r.f;
+	pl = (uint16_t *) fb->r.l;
 
 	for (i=0; i<pixc; i++)
 	{

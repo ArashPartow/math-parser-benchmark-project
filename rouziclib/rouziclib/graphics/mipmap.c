@@ -734,8 +734,9 @@ void free_mipmap(mipmap_t *m)
 	if (m==NULL)
 		return;
 
-	for (i=0; i < m->lvl_count; i++)
-		free_mipmap_level(&m->lvl[i]);
+	if (m->lvl)
+		for (i=0; i < m->lvl_count; i++)
+			free_mipmap_level(&m->lvl[i]);
 	free(m->lvl);
 
 	memset(m, 0, sizeof(mipmap_t));

@@ -43,7 +43,7 @@ void mac_file_dialog_win_filter(NSSavePanel *dialog, const char *win_filter)
 	free(f1);
 }
 
-char *open_file_dialog(char *filter)
+char *open_file_dialog(const char *filter)
 {
 	char *path=NULL;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -71,7 +71,7 @@ char *open_file_dialog(char *filter)
 	return path;
 }
 
-char *save_file_dialog(char *filter)	// the filter is the UTF-8 Windows filter with \1 instead of \0
+char *save_file_dialog(const char *filter)	// the filter is the UTF-8 Windows filter with \1 instead of \0
 {
 	char *path=NULL;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];

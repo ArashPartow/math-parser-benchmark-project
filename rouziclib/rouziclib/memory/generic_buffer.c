@@ -96,7 +96,7 @@ buffer_t *append_buf(buffer_t *a, buffer_t *b)		// append b to a
 	if (a==NULL)
 		return a;
 
-	alloc_enough(&a->buf, a->len + b->len,  &a->as, sizeof(char), 1.5);
+	alloc_enough(&a->buf, a->len + b->len + 1,  &a->as, sizeof(char), 1.5);
 	memcpy(&a->buf[a->len], b->buf, b->len);
 	a->len += b->len;
 

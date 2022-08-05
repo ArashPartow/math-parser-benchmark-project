@@ -93,7 +93,7 @@ typedef struct
 	int32_t w, h;
 	rect_t window_dl;	// window draw limit (based on the usual drawing thickness)
 	xyi_t maxdim;		// formerly max[wh]
-	int use_drawq;
+	int use_drawq, use_dqnq;
 	int srgb_order;		// channel order of the sRGB output
 	int64_t frame_count;	// count main loop iterations
 
@@ -128,6 +128,23 @@ typedef struct
 	int sector_size;	// size of the sectors in powers of two. sector_size==6 means 64x64 sized sectors
 	int sector_w;		// number of sectors per row (for instance rows of 30 64x64 sectors for 1920x1080)
 	int entry_count;	// number of entries in the main queue
+
+	// Draw queue enqueue
+	volatile uint8_t *dqnq_data;			// circular buffer where drawing instructions are enqueued from the main thread and read by the dqnq thread
+	size_t dqnq_as;
+	volatile int32_t dqnq_read_pos;			// where the dqnq thread starts reading
+	int32_t dqnq_write_pos;				// where the main thread starts writing (only used by the main thread)
+	volatile int32_t dqnq_room_for_writing;		// how much room is left for writing
+	volatile int32_t dqnq_size_to_read;		// how much data is left to read
+	int32_t dqnq_wasted_room;			// how many bytes currently can't be used for writing at the end of the buffer
+	int32_t dqnq_write_pos_next;			// next position where the main thread will start writing
+	volatile int32_t dqnq_read_wait_flag;		// flag set by the dqnq thread to signal the main thread that it's waiting for more data
+	volatile int32_t dqnq_end_wait_flag;		// flag set by the main thread to signal the dqnq thread that it's waiting for the dqnq processing to end
+	rl_sem_t dqnq_read_sem;				// semaphore used for blocking the dqnq thread when it lacks data
+	rl_sem_t dqnq_end_sem;				// semaphore used for blocking the main thread while it waits for the dqnq thread to finish
+	rl_mutex_t dqnq_mutex;				// mutex used to protect resets and read read/write positions simultaneously
+	rl_thread_t dqnq_thread;			// dqnq thread handle
+	volatile int dqnq_thread_on;
 
 	#ifdef RL_OPENCL
 	int interop_sync;

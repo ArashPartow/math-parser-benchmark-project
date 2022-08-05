@@ -75,6 +75,7 @@ extern xyi_t cmp_ge_xyi(xyi_t a, xyi_t b);
 #define abs_xy(a)	func1_xy(a, fabs)
 #define abs_xyz(a)	func1_xyz(a, fabs)
 #define abs_xyi(a)	func1_xyi(a, abs)
+#define sqrt_xy(a)	func1_xy(a, sqrt)
 #define cos_xy(a)	func1_xy(a, cos)
 #define cos_xyz(a)	func1_xyz(a, cos)
 #define sin_xy(a)	func1_xy(a, sin)
@@ -91,6 +92,7 @@ extern xyi_t func1_xyi(xyi_t a, int (*f)(int));
 extern xyq_t func1_xyq(xyq_t a, ddouble_t (*f)(ddouble_t));
 
 #define fmod_xy(a, b)	func2_xy(a, b, fmod)
+#define copysign_xy(a, b) func2_xy(a, b, copysign)
 #define add_xyq(a,b)	func2_xyq(a, b, add_qq)
 #define sub_xyq(a,b)	func2_xyq(a, b, sub_qq)
 #define mul_xyq(a,b)	func2_xyq(a, b, mul_qq)

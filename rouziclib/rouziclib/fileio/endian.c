@@ -308,8 +308,12 @@ uint64_t read_BE64(const void *ptr, size_t *index)
 // Print to buffer
 void print_LE16(uint8_t *buf, uint16_t data)
 {
+#ifdef ASS_LE
+	*((uint16_t *) buf) = data;
+#else
 	for (int i=0; i < sizeof(data); i++)
 		buf[i] = data >> (i<<3);
+#endif
 }
 
 void print_LE24(uint8_t *buf, uint32_t data)
@@ -320,14 +324,22 @@ void print_LE24(uint8_t *buf, uint32_t data)
 
 void print_LE32(uint8_t *buf, uint32_t data)
 {
+#ifdef ASS_LE
+	*((uint32_t *) buf) = data;
+#else
 	for (int i=0; i < sizeof(data); i++)
 		buf[i] = data >> (i<<3);
+#endif
 }
 
 void print_LE64(uint8_t *buf, uint64_t data)
 {
+#ifdef ASS_LE
+	*((uint64_t *) buf) = data;
+#else
 	for (int i=0; i < sizeof(data); i++)
 		buf[i] = data >> (i<<3);
+#endif
 }
 
 void print_BE16(uint8_t *buf, uint16_t data)
@@ -352,6 +364,30 @@ void print_BE64(uint8_t *buf, uint64_t data)
 {
 	for (int i=0; i < sizeof(data); i++)
 		buf[7-i] = data >> (i<<3);
+}
+
+void write_byte8(uint8_t **p, uint8_t data)
+{
+	**p = data;
+	(*p) += sizeof(data);
+}
+
+void write_LE16(uint8_t **p, uint16_t data)
+{
+	print_LE16(*p, data);
+	(*p) += sizeof(data);
+}
+
+void write_LE32(uint8_t **p, uint32_t data)
+{
+	print_LE32(*p, data);
+	(*p) += sizeof(data);
+}
+
+void write_LE64(uint8_t **p, uint64_t data)
+{
+	print_LE64(*p, data);
+	(*p) += sizeof(data);
 }
 
 // Write to generic buffer

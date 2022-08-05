@@ -112,7 +112,7 @@ void mouse_post_event_proc(mouse_t *mouse, zoom_t *zc)
 	zc->just_reset = 0;
 
 	#ifdef RL_SDL
-	sdl_update_mouse(fb.window, mouse);
+	sdl_update_mouse(fb->window, mouse);
 	#endif
 
 	zoom_keyboard_control(zc, &mouse->zoom_flag);
@@ -173,7 +173,7 @@ void mouse_post_event_proc(mouse_t *mouse, zoom_t *zc)
 		mouse->u = zc->offset_u;
 	mouse->u_stored = mouse->u;			// store mouse->u before it gets changed by temporary zoom changes
 
-	if (mouse->b.clicks==1 && (mouse->b.lmb==2 || mouse->b.rmb==2))		// store the origin of a click
+	if (mouse->b.lmb==2 || mouse->b.rmb==2)		// store the origin of a click
 	{
 		mouse->b.orig = mouse->u;
 
@@ -216,15 +216,15 @@ void mouse_post_event_proc(mouse_t *mouse, zoom_t *zc)
 	reset_insert_rect_array();			// nothing to do with the mouse but this is about the right place to put it
 
 	// Drawwing queue discard logic
-	if (fb.use_drawq && mouse->window_minimised_flag == 2)
+	if (fb->use_drawq && mouse->window_minimised_flag == 2)
 	{
-		fb.discard = 1;
+		fb->discard = 1;
 		data_cl_realloc(-1);
 	}
 
-	if (fb.use_drawq && mouse->window_minimised_flag == -2)
+	if (fb->use_drawq && mouse->window_minimised_flag == -2)
 	{
-		fb.discard = 0;
+		fb->discard = 0;
 		data_cl_realloc(1L << 20);
 	}
 }

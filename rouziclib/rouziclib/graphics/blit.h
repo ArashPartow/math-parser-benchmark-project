@@ -28,6 +28,7 @@ extern void blit_scale_frgb(raster_t r, xy_t pscale, xy_t pos, int interp);
 extern void blit_scale_dq(raster_t *r, xy_t pscale, xy_t pos, int interp);
 extern void blit_scale(raster_t *r, xy_t pscale, xy_t pos, int interp);
 extern void blit_scale_rotated(raster_t *r, xy_t pscale, xy_t pos, double angle, xy_t rot_centre, int interp);
+extern rect_t blit_in_rect_off_rotated(raster_t *raster, rect_t r, xy_t off, int keep_aspect_ratio, double angle, xy_t rot_centre, int interp);
 extern rect_t blit_in_rect_rotated(raster_t *raster, rect_t r, int keep_aspect_ratio, double angle, xy_t rot_centre, int interp);
 
 #define blit_in_rect(raster, r, keep_aspect_ratio, interp)	blit_in_rect_rotated(raster, r, keep_aspect_ratio, 0., XY0, interp)

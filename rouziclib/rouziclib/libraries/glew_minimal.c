@@ -552,5 +552,3 @@ GLboolean GLEWAPIENTRY glewIsSupported (const char* name)
   }
   return ret;
 }
-
-

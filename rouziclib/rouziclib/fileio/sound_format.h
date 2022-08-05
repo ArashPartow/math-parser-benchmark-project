@@ -13,6 +13,8 @@ extern int convert_samples_i16_to_f32(int16_t *in, float *out, size_t sample_cou
 extern int convert_samples_f32_to_f32(float *in, float *out, size_t sample_count, int channel_count);
 extern int convert_samples_i16_to_f32_mono(int16_t *in, float *out, size_t sample_count, int channel_count);
 extern int convert_samples_f32_to_f32_mono(float *in, float *out, size_t sample_count, int channel_count);
+extern int convert_samples_f32_sel_chan_to_f32(float *in, float *out, size_t sample_count, int channel_count, int ic);
+extern int convert_samples_f32_interleaved_to_f32_planar(float *in, float *out, size_t sample_count, int channel_count);
 extern int convert_samples_i16_left_to_f32(int16_t *in, float *out, size_t sample_count, int channel_count);
 extern int convert_samples_i16_right_to_f32(int16_t *in, float *out, size_t sample_count, int channel_count);
 extern int convert_samples_f32_left_to_f32(float *in, float *out, size_t sample_count, int channel_count);

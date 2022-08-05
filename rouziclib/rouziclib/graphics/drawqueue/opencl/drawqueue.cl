@@ -91,7 +91,7 @@ float4 draw_queue(global float *df, global int *poslist, global int *entrylist, 
 	return pv;
 }
 
-kernel __attribute__((reqd_work_group_size(16,16,1))) void draw_queue_srgb_kernel(const ulong df_index, const ulong poslist_index, const ulong entrylist_index, global uchar *data_cl, write_only image2d_t srgb, const int sector_w, const int sector_size, const int randseed)
+kernel /*__attribute__((reqd_work_group_size(16,16,1)))*/ void draw_queue_srgb_kernel(const ulong df_index, const ulong poslist_index, const ulong entrylist_index, global uchar *data_cl, write_only image2d_t srgb, const int sector_w, const int sector_size, const int randseed)
 {
 	const int2 p = (int2) (get_global_id(0), get_global_id(1));
 	const int fbi = p.y * get_global_size(0) + p.x;

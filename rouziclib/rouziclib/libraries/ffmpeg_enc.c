@@ -3,8 +3,8 @@
 ff_videnc_t ff_video_enc_init_file(const char *path, xyi_t dim, double fps, int codec_id, int bit_depth, int crf)	// codec can be AV_CODEC_ID_H265
 {
 	int ret;
-	AVOutputFormat *fmt;
-	AVCodec *codec;
+	const AVOutputFormat *fmt;
+	const AVCodec *codec;
 	AVDictionary *fmt_opts=NULL;
 	ff_videnc_t d={0};
 	char str[32];
@@ -27,7 +27,7 @@ ff_videnc_t ff_video_enc_init_file(const char *path, xyi_t dim, double fps, int 
 
 	// Set format header infos
 	d.fmt_ctx->oformat = fmt;
-	snprintf(d.fmt_ctx->filename, sizeof(d.fmt_ctx->filename), "%s", path);
+	snprintf(d.fmt_ctx->url, sizeof(d.fmt_ctx->url), "%s", path);
 
 	// Set format's private options to be passed to avformat_write_header()
 	ret = av_dict_set(&fmt_opts, "movflags", "faststart", 0);
@@ -54,7 +54,7 @@ ff_videnc_t ff_video_enc_init_file(const char *path, xyi_t dim, double fps, int 
 		d.st->time_base = (AVRational) {1, nearbyint(fps)};
 
 	// Set codec parameters
-	d.codec_ctx = d.st->codec;
+	d.codec_ctx = avcodec_alloc_context3(codec);
 	d.codec_ctx->sample_fmt = codec->sample_fmts ?  codec->sample_fmts[0] : AV_SAMPLE_FMT_S16;
 	d.codec_ctx->width = dim.x;
 	d.codec_ctx->height = dim.y;
@@ -119,6 +119,8 @@ ff_videnc_t ff_video_enc_init_file(const char *path, xyi_t dim, double fps, int 
 	d.frame->width  = d.codec_ctx->width;
 	d.frame->height = d.codec_ctx->height;
 	ret = av_image_alloc(d.frame->data, d.frame->linesize, d.codec_ctx->width, d.codec_ctx->height, d.codec_ctx->pix_fmt, 4);
+
+	d.packet = av_packet_alloc();
 
 	d.s16_buf = calloc(mul_x_by_y_xyi(dim) * 3, sizeof(uint16_t));
 
@@ -282,7 +284,6 @@ int ff_video_enc_write_raster(ff_videnc_t *d, raster_t *r)
 int ff_video_enc_write_frame(ff_videnc_t *d, AVFrame *frame)
 {
 	int ret;
-	AVPacket pkt={0};
 
 	// Set frame pts, monotonically increasing, starting from 0
 	if (frame)
@@ -299,12 +300,10 @@ int ff_video_enc_write_frame(ff_videnc_t *d, AVFrame *frame)
 		return -1;
 	}
 
-	av_init_packet(&pkt);
-
 	while (ret >= 0)
 	{
 		// Encode frame
-		ret = avcodec_receive_packet(d->codec_ctx, &pkt);
+		ret = avcodec_receive_packet(d->codec_ctx, d->packet);
 		ffmpeg_retval(ret);
 		if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
 		{
@@ -314,15 +313,15 @@ int ff_video_enc_write_frame(ff_videnc_t *d, AVFrame *frame)
 		}
 		else if (ret >= 0)
 		{
-			av_packet_rescale_ts(&pkt, d->codec_ctx->time_base, d->st->time_base);
-			pkt.stream_index = d->st->index;
+			av_packet_rescale_ts(d->packet, d->codec_ctx->time_base, d->st->time_base);
+			d->packet->stream_index = d->st->index;
 
 			// Write the compressed frame to the file
-			av_interleaved_write_frame(d->fmt_ctx, &pkt);
+			av_interleaved_write_frame(d->fmt_ctx, d->packet);
 		}
 	}
 
-	av_packet_unref(&pkt);
+	av_packet_unref(d->packet);
 
 	return ret == AVERROR_EOF;	// 0 on success
 }
@@ -338,12 +337,13 @@ void ff_video_enc_finalise_file(ff_videnc_t *d)
 	}
 
 	av_write_trailer(d->fmt_ctx);
-	avcodec_close(d->st->codec);
+	avcodec_close(d->codec_ctx);
 	avio_close(d->fmt_ctx->pb);
 
 	avformat_free_context(d->fmt_ctx);
 	av_freep(&d->frame->data[0]);
 	av_frame_free(&d->frame);
+	av_packet_free(&d->packet);
 
 	free_null(&d->s16_buf);
 

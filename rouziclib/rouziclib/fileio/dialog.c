@@ -28,7 +28,7 @@ char *open_file_dialog(const char *filter)		// the filter must use \1 instead of
 	free(wfilter);
 
 	#ifdef RL_SDL
-	SDL_RaiseWindow(fb.window);
+	SDL_RaiseWindow(fb->window);
 	#endif
 
 	if (ret)
@@ -65,7 +65,7 @@ char *save_file_dialog(const char *filter)		// the filter must use \1 instead of
 	free(wfilter);
 
 	#ifdef RL_SDL
-	SDL_RaiseWindow(fb.window);
+	SDL_RaiseWindow(fb->window);
 	#endif
 
 	if (ret)

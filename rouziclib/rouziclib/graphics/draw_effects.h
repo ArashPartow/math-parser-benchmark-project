@@ -1,5 +1,9 @@
-extern void draw_effect_noarg(enum dq_type type);
-extern void draw_effect_arg_double(enum dq_type type, double v);
+extern void draw_effect_noarg_dq(enum dq_type effect_type);
+extern void draw_effect_arg_double_dq(enum dq_type effect_type, double v);
+extern void draw_colour_matrix_dq(double *matrix);
+
+extern void draw_effect_noarg(enum dq_type effect_type);
+extern void draw_effect_arg_double(enum dq_type effect_type, double v);
 extern void draw_colour_matrix(double *matrix);
 
 #define draw_clamp()			draw_effect_noarg(DQT_CLAMP)

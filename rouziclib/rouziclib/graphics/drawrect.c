@@ -3,7 +3,7 @@ void draw_rect_full_dq(rect_t box, double radius, frgb_t colour, double intensit
 	float *df;
 	double grad;
 	xyi_t ip;
-	rect_t fr, screen_box = rect(XY0, xy(fb.w-1, fb.h-1));
+	rect_t fr, screen_box = rect(XY0, xy(fb->w-1, fb->h-1));
 	recti_t bbi, fri;
 
 	if (intensity==0.)
@@ -22,7 +22,7 @@ void draw_rect_full_dq(rect_t box, double radius, frgb_t colour, double intensit
 
 	fri.p0 = xy_to_xyi(max_xy(fr.p0, screen_box.p0));
 	fri.p1 = xy_to_xyi(min_xy(fr.p1, screen_box.p1));
-	fri = rshift_recti(fri, fb.sector_size);
+	fri = rshift_recti(fri, fb->sector_size);
 
 	if (fri.p1.x <= fri.p0.x || fri.p1.y <= fri.p0.y)	// if there is no plain fill area
 		fri = recti(xyi(-1,-1), xyi(-1,-1));
@@ -47,7 +47,7 @@ void draw_rect_full_dq(rect_t box, double radius, frgb_t colour, double intensit
 	for (ip.y=bbi.p0.y; ip.y<=bbi.p1.y; ip.y++)
 		for (ip.x=bbi.p0.x; ip.x<=bbi.p1.x; ip.x++)
 			if (check_point_within_box_int(ip, fri)!=1)			// if we're not inside the plain fill area
-				drawq_add_sector_id(ip.y*fb.sector_w + ip.x);	// add sector reference
+				drawq_add_sector_id(ip.y*fb->sector_w + ip.x);	// add sector reference
 
 	if (fri.p0.x == -1)
 		return ;
@@ -63,14 +63,14 @@ void draw_rect_full_dq(rect_t box, double radius, frgb_t colour, double intensit
 	for (ip.y=fri.p0.y; ip.y<=fri.p1.y; ip.y++)
 		for (ip.x=fri.p0.x; ip.x<=fri.p1.x; ip.x++)
 			if (check_point_within_box_int(xyi(ip.x, ip.y), fri)==1)	// if we're inside the plain fill area
-				drawq_add_sector_id(ip.y*fb.sector_w + ip.x);	// add sector reference
+				drawq_add_sector_id(ip.y*fb->sector_w + ip.x);	// add sector reference
 }
 
 void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_func_t bf, double intensity)
 {
 	double grad;
 	xyi_t ip, pf, d0, d1, gv;
-	rect_t gr, fr, screen_box = rect(XY0, xy(fb.w-1, fb.h-1));
+	rect_t gr, fr, screen_box = rect(XY0, xy(fb->w-1, fb->h-1));
 	recti_t gri, fri, rfp;
 	int32_t fbi, p, iradf, ratio;
 	const int32_t fp=16;
@@ -112,7 +112,7 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 
 			for (ip.x=gri.p0.x; ip.x<=gri.p1.x; ip.x++)
 			{
-				fbi = ip.y*fb.w + ip.x;
+				fbi = ip.y*fb->w + ip.x;
 
 				pf.x = ip.x << fp;
 				d0.x = (int64_t) (pf.x - rfp.p0.x) * iradf >> fp;
@@ -121,7 +121,7 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				p = gv.x * gv.y >> 15;
 				p = p * ratio >> 15;
 
-				bf(&fb.r.l[fbi], colour, p);
+				bf(&fb->r.l[fbi], colour, p);
 			}
 		}
 	}
@@ -142,12 +142,12 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				p = gv.x * gv.y >> 15;
 				p = p * ratio >> 15;
 
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 			}
 
 			p = gv.y * ratio >> 15;
 			for (; ip.x <= fri.p1.x; ip.x++)		// mid X section
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 
 			for (; ip.x <= gri.p1.x; ip.x++)		// last X section
 			{
@@ -157,7 +157,7 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				p = gv.x * gv.y >> 15;
 				p = p * ratio >> 15;
 
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 			}
 		}
 
@@ -171,11 +171,11 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				gv.x = fperfr_d0(d0.x) >> 15;
 				p = gv.x * ratio >> 15;
 
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 			}
 
 			for (; ip.x <= fri.p1.x; ip.x++)		// mid X section
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, ratio);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, ratio);
 
 			for (; ip.x <= gri.p1.x; ip.x++)		// last X section
 			{
@@ -184,7 +184,7 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				gv.x = fperfr_d0(-d1.x) >> 15;
 				p = gv.x * ratio >> 15;
 
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 			}
 		}
 
@@ -204,12 +204,12 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				p = gv.x * gv.y >> 15;
 				p = p * ratio >> 15;
 
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 			}
 
 			p = gv.y * ratio >> 15;
 			for (; ip.x <= fri.p1.x; ip.x++)		// mid X section
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 
 			for (; ip.x <= gri.p1.x; ip.x++)		// last X section
 			{
@@ -219,21 +219,44 @@ void draw_rect_full_lrgb(rect_t box, double radius, lrgb_t colour, const blend_f
 				p = gv.x * gv.y >> 15;
 				p = p * ratio >> 15;
 
-				bf(&fb.r.l[ip.y*fb.w + ip.x], colour, p);
+				bf(&fb->r.l[ip.y*fb->w + ip.x], colour, p);
 			}
 		}
 	}
 }
 
+void draw_rect_full_dqnq(rect_t box, double radius, frgb_t colour, double intensity)
+{
+	const enum dqnq_type type = DQNQT_RECT_FULL;
+
+	// Get pointer to data buffer
+	uint8_t *p = (uint8_t *) dqnq_new_entry(type);
+
+	// Write arguments to buffer
+	write_LE32(&p, float_as_u32(box.p0.x));
+	write_LE32(&p, float_as_u32(box.p0.y));
+	write_LE32(&p, float_as_u32(box.p1.x));
+	write_LE32(&p, float_as_u32(box.p1.y));
+	write_LE32(&p, float_as_u32(radius));
+	write_LE32(&p, float_as_u32(colour.r * intensity));
+	write_LE32(&p, float_as_u32(colour.g * intensity));
+	write_LE32(&p, float_as_u32(colour.b * intensity));
+
+	dqnq_finish_entry(type);
+}
+
 void draw_rect_full(rect_t box, double radius, col_t colour, const blend_func_t bf, double intensity)
 {
-	if (fb.discard)
+	if (fb->discard)
 		return;
 
 	radius = drawing_focus_adjust(focus_rlg, radius, NULL, 0);	// adjusts the focus
 
-	if (fb.use_drawq)
-		draw_rect_full_dq(box, radius, col_to_frgb(colour), intensity);
+	if (fb->use_drawq)
+		if (fb->use_dqnq)
+			draw_rect_full_dqnq(box, radius, col_to_frgb(colour), intensity);
+		else
+			draw_rect_full_dq(box, radius, col_to_frgb(colour), intensity);
 	else
 		draw_rect_full_lrgb(box, radius, col_to_lrgb(colour), bf, intensity);
 }
@@ -265,23 +288,44 @@ void draw_black_rect_dq(rect_t box, double radius, double intensity)
 	for (ip.y=bbi.p0.y; ip.y<=bbi.p1.y; ip.y++)
 		for (ip.x=bbi.p0.x; ip.x<=bbi.p1.x; ip.x++)
 		{
-			int32_t sector_id = ip.y*fb.sector_w + ip.x;
-			if (fb.sector_count[sector_id] > 0 && fb.pending_bracket[sector_id] == 0)	// if the sector contains something at the current bracket level
+			int32_t sector_id = ip.y*fb->sector_w + ip.x;
+			if (fb->sector_count[sector_id] > 0 && fb->pending_bracket[sector_id] == 0)	// if the sector contains something at the current bracket level
 				drawq_add_sector_id(sector_id);	// add sector reference
 		}
 
 	// TODO clear lists in obscured sectors, don't add to empty sectors
 }
 
+void draw_black_rect_dqnq(rect_t box, double radius, double intensity)
+{
+	const enum dqnq_type type = DQNQT_RECT_BLACK;
+
+	// Get pointer to data buffer
+	uint8_t *p = (uint8_t *) dqnq_new_entry(type);
+
+	// Write arguments to buffer
+	write_LE32(&p, float_as_u32(box.p0.x));
+	write_LE32(&p, float_as_u32(box.p0.y));
+	write_LE32(&p, float_as_u32(box.p1.x));
+	write_LE32(&p, float_as_u32(box.p1.y));
+	write_LE32(&p, float_as_u32(radius));
+	write_LE32(&p, float_as_u32(intensity));
+
+	dqnq_finish_entry(type);
+}
+
 void draw_black_rect(rect_t box, double radius, double intensity)
 {
-	if (fb.discard)
+	if (fb->discard)
 		return;
 
 	radius = drawing_focus_adjust(focus_rlg, radius, NULL, 0);	// adjusts the focus
 
-	if (fb.use_drawq)
-		draw_black_rect_dq(box, radius, intensity);
+	if (fb->use_drawq)
+		if (fb->use_dqnq)
+			draw_black_rect_dqnq(box, radius, intensity);
+		else
+			draw_black_rect_dq(box, radius, intensity);
 	else
 		draw_rect_full_lrgb(box, radius, col_to_lrgb(make_grey(0.)), blend_alphablendfg, intensity);
 }
@@ -309,25 +353,46 @@ void draw_black_rect_inverted_dq(rect_t box, double radius, double intensity)
 	df[5] = intensity;
 
 	// Find the affected sectors (all sectors outside the inner box)
-	rect_t screen_box = rect(XY0, xy(fb.w-1, fb.h-1));
-	for (ip.y=0; ip.y <= fb.h-1 >> fb.sector_size; ip.y++)
-		for (ip.x=0; ip.x <= fb.w-1 >> fb.sector_size; ip.x++)
+	rect_t screen_box = rect(XY0, xy(fb->w-1, fb->h-1));
+	for (ip.y=0; ip.y <= fb->h-1 >> fb->sector_size; ip.y++)
+		for (ip.x=0; ip.x <= fb->w-1 >> fb->sector_size; ip.x++)
 			if (ip.x <= bbi.p0.x || ip.y <= bbi.p0.y || ip.x >= bbi.p1.x || ip.y >= bbi.p1.y)
 			{
-				int32_t sector_id = ip.y*fb.sector_w + ip.x;
-				if (fb.sector_count[sector_id] > 0 && fb.pending_bracket[sector_id] == 0)	// if the sector contains something at the current bracket level
+				int32_t sector_id = ip.y*fb->sector_w + ip.x;
+				if (fb->sector_count[sector_id] > 0 && fb->pending_bracket[sector_id] == 0)	// if the sector contains something at the current bracket level
 					drawq_add_sector_id(sector_id);	// add sector reference
 			}
 }
 
+void draw_black_rect_inverted_dqnq(rect_t box, double radius, double intensity)
+{
+	const enum dqnq_type type = DQNQT_RECT_BLACK_INV;
+
+	// Get pointer to data buffer
+	uint8_t *p = (uint8_t *) dqnq_new_entry(type);
+
+	// Write arguments to buffer
+	write_LE32(&p, float_as_u32(box.p0.x));
+	write_LE32(&p, float_as_u32(box.p0.y));
+	write_LE32(&p, float_as_u32(box.p1.x));
+	write_LE32(&p, float_as_u32(box.p1.y));
+	write_LE32(&p, float_as_u32(radius));
+	write_LE32(&p, float_as_u32(intensity));
+
+	dqnq_finish_entry(type);
+}
+
 void draw_black_rect_inverted(rect_t box, double radius, double intensity)
 {
-	if (fb.discard)
+	if (fb->discard)
 		return;
 
 	radius = drawing_focus_adjust(focus_rlg, radius, NULL, 0);	// adjusts the focus
 
-	if (fb.use_drawq)
-		draw_black_rect_inverted_dq(box, radius, intensity);
+	if (fb->use_drawq)
+		if (fb->use_dqnq)
+			draw_black_rect_inverted_dqnq(box, radius, intensity);
+		else
+			draw_black_rect_inverted_dq(box, radius, intensity);
 	// TODO lrgb version
 }

@@ -72,8 +72,8 @@ double calc_strwidth_len(vector_font_t *font, const uint8_t *string, double scal
 		// Arabic form substitution
 		c = get_arabic_form(co, &string[i+1], len-(i+1), con_prev);	// substitute for Arabic form if needed
 		ucd = get_unicode_data(c);
-		if (ucd.bidicat!=bidicat_NSM)				// if character that is not a combining mark
-			con_prev = unicode_arabic_can_connect(co, 1);	// if the current character connects with the next (in Arabic)
+		if (ucd.bidicat!=bidicat_NSM)					// if character that is not a combining mark
+			con_prev = unicode_arabic_can_connect(co, 1);		// if the current character connects with the next (in Arabic)
 
 		// Ligature exceptions
 		if (c >= cp_ins_start && c < cp_ins_end)
@@ -160,9 +160,9 @@ word_stats_t make_word_stats(vector_font_t *font, const uint8_t *string, const i
 
 void free_word_stats(word_stats_t ws)
 {
-	free (ws.word_length);
-	free (ws.word_start);
-	free (ws.word_end);
+	free(ws.word_length);
+	free(ws.word_start);
+	free(ws.word_end);
 }
 
 // gives to correct word length to use for adding to the length of the line starting at iw_start

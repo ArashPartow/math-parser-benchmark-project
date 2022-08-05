@@ -79,6 +79,7 @@ int check_ctrl_id(rect_t box, xy_t pos, double radius, mouse_t mouse, int type)	
 
 void proc_mouse_ctrl_button(int mb, int clicks, ctrl_button_state_t *state, const int cur_point_within_box, const int orig_point_within_box)
 {
+	// Detect if click originated in this box
 	if (orig_point_within_box && mb != -1)
 		state->orig = 1;
 

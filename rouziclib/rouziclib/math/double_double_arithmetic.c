@@ -295,7 +295,7 @@ ddouble_t string_to_ddouble(const char *string, char **endptr)
 	int i, neg=0, digits_end=0, separator_pos, p_len, exponent=0, digit_count, dest_index, carry;
 	const int print = 0;	// set to 1 to print buffer contents
 	const char *p;
-	char *endptr2=NULL, buf_a[635+1], buf_b[635+1];
+	char *endptr2=NULL, buf_a[635+2], buf_b[635+2];
 	double vd, a, digit_mul;
 	ddouble_t r={0};
 

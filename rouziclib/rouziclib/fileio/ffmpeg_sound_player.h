@@ -20,7 +20,7 @@ typedef struct
 	rl_thread_t thread_handle;
 	audframe_t *frame;
 	int frame_as;
-	volatile double ts_req, speed, volume, ts_cb;
+	volatile double ts_req, speed, volume, vol0, vol1, ts_cb;
 	double duration;
 	double time_offset;	// offset to convert between callback sample time and timestamp
 	int ifr, is;	// frame index and sample index in that frame

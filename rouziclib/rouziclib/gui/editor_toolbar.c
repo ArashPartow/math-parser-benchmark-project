@@ -33,6 +33,9 @@ void gui_layout_markup_window(int *markup_te_ret, gui_layout_t **markup_layout)
 
 	make_gui_layout(&layout, layout_src, sizeof(layout_src)/sizeof(char *), "Layout markup");
 
+	if (mouse.window_minimised_flag > 0)
+		return;
+
 	// Window
 	static flwindow_t window={0};
 	flwindow_init_defaults(&window);
@@ -117,19 +120,8 @@ void gui_layout_edit_toolbar_core(int *toggle_edit_on, int *markup_te_ret, gui_l
 	gui_layout_init_pos_scale(&layout, xy(-16., -16.), 1., XY0, 0);
 	make_gui_layout(&layout, layout_src, sizeof(layout_src)/sizeof(char *), "Layout editing toolbar");
 
-	/*if (layout.sm==0.)
-	{
-		layout.offset = xy(-16., -16.);
-		layout.sm = 1.;
-	}
-
-	if (pinned)
-	{
-		layout.offset = mad_xy(set_xy(1.3/zc.zoomscale), xy(1.25, -0.25), rect_p01(zc.corners));
-		layout.sm = 1.3 * 1. / zc.zoomscale;
-	}
-
-	make_gui_layout(&layout, layout_src, sizeof(layout_src)/sizeof(char *), "Layout editing toolbar");*/
+	if (mouse.window_minimised_flag > 0)
+		return;
 
 	// Selection logic and display unimplemented elements
 	if (lp)
@@ -149,23 +141,6 @@ void gui_layout_edit_toolbar_core(int *toggle_edit_on, int *markup_te_ret, gui_l
 	}
 
 	// Layout elements
-
-	/*if (lp == &layout)
-	{
-		//draw_rect_fromlayout(2, &layout, 0);
-		if (lp)
-			draw_unit_grid(lp->offset, lp->sm);
-	}
-	else
-	{
-		if (lp)
-			draw_unit_grid(lp->offset, lp->sm);
-		//draw_rect_fromlayout(2, &layout, 0);
-	}*/
-	/*draw_rect_fromlayout(0, &layout, 0);
-	draw_label_fromlayout(&layout, 1, ALIG_LEFT);	// temporary, title/drag thing
-
-	ctrl_checkbox_fromlayout(&pinned, &layout, 10);*/
 
 	// Draw editing grid and toolbar window
 	if (lp && lp != &layout)

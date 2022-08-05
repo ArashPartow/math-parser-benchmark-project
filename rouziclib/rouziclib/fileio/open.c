@@ -70,7 +70,7 @@ uint8_t *load_raw_file(const char *path, size_t *size)
 	fsize = ftell(in_file);
 	rewind(in_file);
 
-	data = calloc (fsize+1, sizeof(uint8_t));
+	data = calloc(fsize+1, sizeof(uint8_t));
 	fread(data, 1, fsize, in_file);
 
 	fclose(in_file);
@@ -99,7 +99,7 @@ uint8_t *load_raw_file_dos_conv(const char *path, size_t *size)	// loads raw fil
 	fsize = ftell(in_file);
 	rewind(in_file);
 
-	data = calloc (fsize+1, sizeof(uint8_t));
+	data = calloc(fsize+1, sizeof(uint8_t));
 
 	for (i=0; i < fsize; i++)
 	{
@@ -117,7 +117,6 @@ uint8_t *load_raw_file_dos_conv(const char *path, size_t *size)	// loads raw fil
 	uint8_t *ra = realloc(data, fsize-offset+1);
 	if (ra)
 		data = ra;
-
 
 	if (size)
 		*size = fsize - offset;

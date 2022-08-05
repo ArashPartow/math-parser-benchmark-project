@@ -69,9 +69,9 @@ int check_cpuinfo(const enum cpu_feat_n fid)
 void __cpuid(int *cpuinfo, int info)
 {
 	__asm__ __volatile__(
-		"xchg %%ebx, %%edi;"
+		"xchg %%rbx, %%rdi;"
 		"cpuid;"
-		"xchg %%ebx, %%edi;"
+		"xchg %%rbx, %%rdi;"
 		:"=a" (cpuinfo[0]), "=D" (cpuinfo[1]), "=c" (cpuinfo[2]), "=d" (cpuinfo[3])
 		:"0" (info)
 	);

@@ -17,7 +17,7 @@ void draw_line_thin_lrgb(xy_t p1, xy_t p2, double radius, lrgb_t colour, const b
 	grad = GAUSSRAD(intensity, radius);	// solves e^-x² = GAUSSLIMIT for x, giving 2.92 (the necessary Gaussian radius) for GAUSSLIMIT of 0.0002
 	bradius = grad * sqrt(2.);		// bounding radius, the maximum radius necessary at each end of the line
 
-	border_clip(fb.w-1, fb.h-1, &p1, &p2, grad);	// cut the part of the segment outside the screen
+	border_clip(fb->w-1, fb->h-1, &p1, &p2, grad);	// cut the part of the segment outside the screen
 
 	ratio = 32768. * intensity + 0.5;
 
@@ -146,9 +146,9 @@ void draw_line_thin_lrgb(xy_t p1, xy_t p2, double radius, lrgb_t colour, const b
 
 		while (1)
 		{
-			if (ix>=0 && ix<fb.w && iy>=0 && iy<fb.h)
+			if (ix>=0 && ix<fb->w && iy>=0 && iy<fb->h)
 			{
-				fbi = iy*fb.w+ix;
+				fbi = iy*fb->w+ix;
 				xrp = ((int64_t) ix * costh >> fpi) - ((int64_t) iy * sinth >> fpi);
 				yrp = ((int64_t) ix * sinth >> fpi) + ((int64_t) iy * costh >> fpi);
 
@@ -158,7 +158,7 @@ void draw_line_thin_lrgb(xy_t p1, xy_t p2, double radius, lrgb_t colour, const b
 				p >>= 15;
 				p = p * ratio >> 15;
 
-				bf(&fb.r.l[fbi], colour, p);
+				bf(&fb->r.l[fbi], colour, p);
 			}
 
 			if (ix==bx1 && iy==by1) break;
@@ -191,7 +191,7 @@ void draw_line_thin_frgb(xy_t p1, xy_t p2, double radius, frgb_t colour, const b
 	grad = GAUSSRAD_HQ * radius;			// erfr and gaussian can go up to x = ±4
 	bradius = grad * sqrt(2.);		// bounding radius, the maximum radius necessary at each end of the line
 
-	border_clip(fb.w-1, fb.h-1, &p1, &p2, grad);	// cut the part of the segment outside the screen
+	border_clip(fb->w-1, fb->h-1, &p1, &p2, grad);	// cut the part of the segment outside the screen
 
 	dx12 = p2.x-p1.x;
 	dy12 = p2.y-p1.y;
@@ -313,9 +313,9 @@ void draw_line_thin_frgb(xy_t p1, xy_t p2, double radius, frgb_t colour, const b
 
 		while (1)
 		{
-			if (ix>=0 && ix<fb.w && iy>=0 && iy<fb.h)
+			if (ix>=0 && ix<fb->w && iy>=0 && iy<fb->h)
 			{
-				fbi = iy*fb.w+ix;
+				fbi = iy*fb->w+ix;
 
 				xrp = ixf * costh - iyf * sinth;
 				yrp = ixf * sinth + iyf * costh;
@@ -325,7 +325,7 @@ void draw_line_thin_frgb(xy_t p1, xy_t p2, double radius, frgb_t colour, const b
 				p *= fastgaussianf_d1(yrp-yr1);
 				p *= ratio;
 
-				bf(&fb.r.f[fbi], colour, p);
+				bf(&fb->r.f[fbi], colour, p);
 			}
 
 			if (ix==bx1 && iy==by1) break;
@@ -353,11 +353,11 @@ void draw_line_thin_dq(xy_t p1, xy_t p2, double radius, frgb_t colour, const int
 	xyi_t bb_dim;
 
 	grad = GAUSSRAD_HQ * radius;		// erfr and gaussian can go up to x = ±4
-	//if (fb.use_drawq==2)
+	//if (fb->use_drawq==2)
 		grad = GAUSSRAD(intensity, radius);	// solves e^-x² = GAUSSLIMIT for x, giving 2.92 (the necessary Gaussian radius) for GAUSSLIMIT of 0.0002
 
 	if (fastabs(p2.x-p1.x)+fastabs(p2.y-p1.y) > 1e6)	// cut out lines that are in the millions of pixels
-		border_clip(fb.w-1, fb.h-1, &p1, &p2, grad);	// cut the part of the segment outside the screen
+		border_clip(fb->w-1, fb->h-1, &p1, &p2, grad);	// cut the part of the segment outside the screen
 	if (p1.x==p2.x && p1.y==p2.y)			// if there's no line to display
 		return ;
 
@@ -366,16 +366,16 @@ void draw_line_thin_dq(xy_t p1, xy_t p2, double radius, frgb_t colour, const int
 
 	bb.p0.x = ceil (box.p0.x - grad);	bb.p0.x = MAXN(bb.p0.x, 0);
 	bb.p0.y = ceil (box.p0.y - grad);	bb.p0.y = MAXN(bb.p0.y, 0);
-	bb.p1.x = floor(box.p1.x + grad);	bb.p1.x = MINN(bb.p1.x, fb.w-1);
-	bb.p1.y = floor(box.p1.y + grad);	bb.p1.y = MINN(bb.p1.y, fb.h-1);
+	bb.p1.x = floor(box.p1.x + grad);	bb.p1.x = MINN(bb.p1.x, fb->w-1);
+	bb.p1.y = floor(box.p1.y + grad);	bb.p1.y = MINN(bb.p1.y, fb->h-1);
 
-	bb = rshift_recti(bb, fb.sector_size);
+	bb = rshift_recti(bb, fb->sector_size);
 
 	// store the drawing parameters in the main drawing queue
 	df = drawq_add_to_main_queue(DQT_LINE_THIN_ADD);
 	if (df==NULL)
 		return;
-	if (0)//fb.use_drawq==1)
+	if (0)//fb->use_drawq==1)
 	{
 		df[0] = p1.x;
 		df[1] = p1.y;
@@ -418,7 +418,7 @@ void draw_line_thin_dq(xy_t p1, xy_t p2, double radius, frgb_t colour, const int
 			drawq_add_sectors_for_area(bb);		// add all sector references
 		else
 		{
-			double sec_size = 1<<fb.sector_size, inv_sec_size = 1. / sec_size;
+			double sec_size = 1<<fb->sector_size, inv_sec_size = 1. / sec_size;
 
 			c0 = p1.y - c1 * p1.x;
 
@@ -441,22 +441,46 @@ void draw_line_thin_dq(xy_t p1, xy_t p2, double radius, frgb_t colour, const int
 				sec1 = MINN(bb.p1.x, sec1);
 
 				for (ix=sec0; ix <= sec1; ix++)
-					drawq_add_sector_id(iy*fb.sector_w + ix);	// add sector reference
+					drawq_add_sector_id(iy*fb->sector_w + ix);	// add sector reference
 			}
 		}
 	}
 }
 
+void draw_line_thin_dqnq(xy_t p1, xy_t p2, double radius, frgb_t colour, const int bf, double intensity, int quality)
+{
+	const enum dqnq_type type = DQNQT_LINE_THIN_ADD;
+
+	// Get pointer to data buffer
+	uint8_t *p = (uint8_t *) dqnq_new_entry(type);
+
+	// Write arguments to buffer
+	write_LE64(&p, double_as_u64(p1.x));
+	write_LE64(&p, double_as_u64(p1.y));
+	write_LE64(&p, double_as_u64(p2.x));
+	write_LE64(&p, double_as_u64(p2.y));
+	write_LE32(&p, float_as_u32(radius));
+	write_LE32(&p, float_as_u32(colour.r * intensity));
+	write_LE32(&p, float_as_u32(colour.g * intensity));
+	write_LE32(&p, float_as_u32(colour.b * intensity));
+	write_LE32(&p, float_as_u32(colour.a * intensity));
+
+	dqnq_finish_entry(type);
+}
+
 void draw_line_thin(xy_t p1, xy_t p2, double radius, col_t colour, const blend_func_t bf, double intensity)
 {
-	if (fb.discard)
+	if (fb->discard)
 		return;
 
 	radius = drawing_focus_adjust(focus_rlg, radius, &intensity, 0);	// adjusts the focus
 
-	if (fb.use_drawq)
-		draw_line_thin_dq(p1, p2, radius, col_to_frgb(colour), 0, intensity, 0);
-	else if (fb.r.use_frgb)
+	if (fb->use_drawq)
+		if (fb->use_dqnq)
+			draw_line_thin_dqnq(p1, p2, radius, col_to_frgb(colour), 0, intensity, 0);
+		else
+			draw_line_thin_dq(p1, p2, radius, col_to_frgb(colour), 0, intensity, 0);
+	else if (fb->r.use_frgb)
 		draw_line_thin_frgb(p1, p2, radius, col_to_frgb(colour), get_blend_fl_equivalent(bf), intensity);
 	else
 		draw_line_thin_lrgb(p1, p2, radius, col_to_lrgb(colour), bf, intensity);

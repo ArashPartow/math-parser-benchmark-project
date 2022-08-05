@@ -25,7 +25,10 @@ int draw_vector_char(vector_font_t *font, uint32_t c, xy_t p, xy_t off, double s
 		else
 			fixoff -= l->bl;
 
-		draw_vobj(l->obj, xy(p.x + off.x + fixoff*scale, p.y + off.y), scale, 0., line_thick, colour);
+		if (fb->use_dqnq)
+			draw_vobj_dqnq(l->obj, xy(p.x + off.x + fixoff*scale, p.y + off.y), scale, 0., line_thick, colour);
+		else
+			draw_vobj(l->obj, xy(p.x + off.x + fixoff*scale, p.y + off.y), scale, 0., line_thick, colour);
 	}
 
 	// Alias
@@ -86,7 +89,7 @@ int draw_vector_char_lookahead(vector_font_t *font, uint32_t c, const char *stri
 	rect_t bound_box;
 
 	bound_box = make_rect_off( add_xy(p, *off), set_xy(24. * scale), xy(0.5, 0.5) );
-	if (check_box_box_intersection(fb.window_dl, bound_box)==0)
+	if (check_box_box_intersection(fb->window_dl, bound_box)==0)
 		onscreen = 0;
 
 	if (onscreen)
@@ -303,6 +306,7 @@ void draw_string_full(vector_font_t *font, const char *string, xy_t p, xy_t off,
 	}
 
 	off.x += base_off;
+	off_ls.x = off.x;
 
 	colm = colour;
 	if (drawline==0)

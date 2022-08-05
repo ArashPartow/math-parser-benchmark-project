@@ -9,6 +9,8 @@ My interpreter is written for 64-bit x86 and uses 64-bit integers, but this proj
 
 Despite having a fairly average performance in the Release build, my interpreter (rouziclib) ranks at the top (second only to muparserSSE) in the Debug build, probably due to the extreme simplicity of the execution code.
 
+Thanks to this benchmark I was able to improve my interpreter so that it evaluates all the weirdest expressions correctly.
+
 # The Great C++ Mathematical Expression Parser Benchmark
 
 This is a benchmark suite for different implementations of open source math

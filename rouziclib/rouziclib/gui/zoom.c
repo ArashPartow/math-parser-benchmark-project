@@ -15,13 +15,13 @@ double to_screen_coord_x(zoom_t zc, double x)
 {
 	x -= zc.offset_u.x;
 
-	return x * zc.scrscale + 0.5*(double)fb.w - 0.5;
+	return x * zc.scrscale + 0.5*(double)fb->w - 0.5;
 }
 
 double to_screen_coord_y(zoom_t zc, double y)
 {
 	y -= zc.offset_u.y;
-	return -y * zc.scrscale + 0.5*(double)fb.h - 0.5;
+	return -y * zc.scrscale + 0.5*(double)fb->h - 0.5;
 }
 
 xy_t to_screen_coord_xy(zoom_t zc, xy_t p)
@@ -31,12 +31,12 @@ xy_t to_screen_coord_xy(zoom_t zc, xy_t p)
 
 double to_world_coord_x(zoom_t zc, double x)
 {
-	return (x - 0.5*(double)fb.w + 0.5) * zc.iscrscale + zc.offset_u.x;
+	return (x - 0.5*(double)fb->w + 0.5) * zc.iscrscale + zc.offset_u.x;
 }
 
 double to_world_coord_y(zoom_t zc, double y)
 {
-	return -(y - 0.5*(double)fb.h + 0.5) * zc.iscrscale + zc.offset_u.y;
+	return -(y - 0.5*(double)fb->h + 0.5) * zc.iscrscale + zc.offset_u.y;
 }
 
 xy_t to_world_coord_xy(zoom_t zc, xy_t p)
@@ -75,9 +75,9 @@ void zoom_toggle(zoom_t *zc, int *flag_zoom_key)
 		// Uncapture and move cursor to the centre of the screen
 		#ifdef RL_SDL
 		SDL_SetRelativeMouseMode(0);
-		SDL_WarpMouseInWindow(fb.window, fb.w/2, fb.h/2);
+		SDL_WarpMouseInWindow(fb->window, fb->w/2, fb->h/2);
 		#endif
-		zc->mouse->a = xy(fb.w/2, fb.h/2);
+		zc->mouse->a = xy(fb->w/2, fb->h/2);
 		zc->mouse->u = to_world_coord_xy(*zc, zc->mouse->a);
 
 		#ifdef __EMSCRIPTEN__
@@ -142,26 +142,26 @@ void calc_screen_limits(zoom_t *zc)
 	zc->offset_u = xyq_to_xy(zc->offset_uq);
 	#endif
 
-	if (3*fb.w > 3*fb.h)				// if widescreen (more than 3:3 (formerly 4:3))
-		zc->scrscale = (double) fb.h / 18.;	// for 1920x1080 srcscale would be 60
+	if (3*fb->w > 3*fb->h)				// if widescreen (more than 3:3 (formerly 4:3))
+		zc->scrscale = (double) fb->h / 18.;	// for 1920x1080 srcscale would be 60
 	else
-		zc->scrscale = (double) fb.w / 18.;
+		zc->scrscale = (double) fb->w / 18.;
 	zc->scrscale_unzoomed = zc->scrscale;
 
-	zc->limit_u = mul_xy(xy(fb.w, fb.h), set_xy(0.5/zc->scrscale_unzoomed));
+	zc->limit_u = mul_xy(xy(fb->w, fb->h), set_xy(0.5/zc->scrscale_unzoomed));
 
 	zc->scrscale *= zc->zoomscale;
 	zc->iscrscale = 1. / zc->scrscale;
 
 	zc->drawlim_u = set_xy(zc->iscrscale * GAUSSRAD_HQ * zc->drawing_thickness);
 
-	xy_t dim = mul_xy(xy(fb.w, fb.h), set_xy(0.5*zc->iscrscale));
+	xy_t dim = mul_xy(xy(fb->w, fb->h), set_xy(0.5*zc->iscrscale));
 	zc->corners.p0 = sub_xy(zc->offset_u, dim);
 	zc->corners.p1 = add_xy(zc->offset_u, dim);
 	zc->corners_dl.p0 = sub_xy(zc->corners.p0, zc->drawlim_u);
 	zc->corners_dl.p1 = add_xy(zc->corners.p1, zc->drawlim_u);
-	fb.window_dl.p0 = set_xy(-GAUSSRAD_HQ * zc->drawing_thickness);			// drawing limit in pixels
-	fb.window_dl.p1 = sub_xy( xy(fb.w-1, fb.h-1), fb.window_dl.p0 );
+	fb->window_dl.p0 = set_xy(-GAUSSRAD_HQ * zc->drawing_thickness);			// drawing limit in pixels
+	fb->window_dl.p1 = sub_xy( xy(fb->w-1, fb->h-1), fb->window_dl.p0 );
 }
 
 void toggle_guizoom(zoom_t *zc, int on)	// used for temporarily disabling zooming to display objects independently of the zooming system
@@ -270,6 +270,9 @@ void zoom_overlay_control(zoom_t *zc, int *flag_zoom_key)
 {
 	xy_t move_vector=XY0;
 	double zoom_way = 0.;
+
+	if (mouse.window_minimised_flag > 0)
+		return;
 
 	// Overlay controls
 	if (zc->overlay_ctrl)

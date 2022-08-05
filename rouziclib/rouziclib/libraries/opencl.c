@@ -413,8 +413,8 @@ void init_framebuffer_cl(const clctx_t *clctx)		// inits the linear CL buffer an
 {
 	cl_int ret;
 
-	if (fb.clctx.command_queue==NULL)
-		fb.clctx = *clctx;		// copy the original cl context
+	if (fb->clctx.command_queue==NULL)
+		fb->clctx = *clctx;		// copy the original cl context
 }
 
 void cl_make_srgb_tex()
@@ -425,41 +425,41 @@ void cl_make_srgb_tex()
 	// Detect whether or not to do interop sync
 	size_t info_size;
 	cl_bool val;
-	ret = clGetDeviceInfo(fb.clctx.device_id, CL_DEVICE_PREFERRED_INTEROP_USER_SYNC, sizeof(cl_bool), &val, &info_size);
-	fb.interop_sync = val;
+	ret = clGetDeviceInfo(fb->clctx.device_id, CL_DEVICE_PREFERRED_INTEROP_USER_SYNC, sizeof(cl_bool), &val, &info_size);
+	fb->interop_sync = val;
 
 	// Create an OpenGL 2D texture normally
 	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &fb.gltex);						// generate the texture ID
-	glBindTexture(GL_TEXTURE_2D, fb.gltex);				// binding the texture
+	glGenTextures(1, &fb->gltex);						// generate the texture ID
+	glBindTexture(GL_TEXTURE_2D, fb->gltex);				// binding the texture
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// regular sampler params
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);	// need to set GL_NEAREST
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0); 		// set the base and max mipmap levels
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fb.maxdim.x, fb.maxdim.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);		// specify texture dimensions, format etc
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fb->maxdim.x, fb->maxdim.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);		// specify texture dimensions, format etc
 
-	fb.cl_srgb = clCreateFromGLTexture(fb.clctx.context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, fb.gltex, &ret);	// Creating the OpenCL image corresponding to the texture (once)
-	CL_ERR_NORET("clCreateFromGLTexture (in cl_make_srgb_tex(), for fb.cl_srgb)", ret);
+	fb->cl_srgb = clCreateFromGLTexture(fb->clctx.context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, fb->gltex, &ret);	// Creating the OpenCL image corresponding to the texture (once)
+	CL_ERR_NORET("clCreateFromGLTexture (in cl_make_srgb_tex(), for fb->cl_srgb)", ret);
 
-	if (fb.interop_sync==0)		// acquire the GL texture with OpenCL only once if no interop sync is needed
+	if (fb->interop_sync==0)		// acquire the GL texture with OpenCL only once if no interop sync is needed
 	{
-		ret = clEnqueueAcquireGLObjects_wrap(fb.clctx.command_queue, 1,  &fb.cl_srgb, 0, 0, NULL);		// get the ownership of cl_srgb
-		CL_ERR_NORET("clEnqueueAcquireGLObjects (in cl_make_srgb_tex(), for fb.cl_srgb)", ret);
+		ret = clEnqueueAcquireGLObjects_wrap(fb->clctx.command_queue, 1,  &fb->cl_srgb, 0, 0, NULL);		// get the ownership of cl_srgb
+		CL_ERR_NORET("clEnqueueAcquireGLObjects (in cl_make_srgb_tex(), for fb->cl_srgb)", ret);
 
-		fb.opt_glfinish = 1;
+		fb->opt_glfinish = 1;
 	}
 	else
 	{
-		fb.opt_clfinish = 1;
-		fb.opt_glfinish = 1;
-		fb.opt_interop = 1;
+		fb->opt_clfinish = 1;
+		fb->opt_glfinish = 1;
+		fb->opt_interop = 1;
 	}
 
 #else
-	fb.cl_srgb = clCreateBuffer(fb.clctx.context, CL_MEM_WRITE_ONLY, mul_x_by_y_xyi(fb.maxdim)*4, NULL, &ret);
-	CL_ERR_NORET("clCreateBuffer (in cl_make_srgb_tex(), for fb.cl_srgb)", ret);
+	fb->cl_srgb = clCreateBuffer(fb->clctx.context, CL_MEM_WRITE_ONLY, mul_x_by_y_xyi(fb->maxdim)*4, NULL, &ret);
+	CL_ERR_NORET("clCreateBuffer (in cl_make_srgb_tex(), for fb->cl_srgb)", ret);
 #endif
 }
 
@@ -467,16 +467,16 @@ cl_int init_fb_cl()
 {
 	cl_int ret;
 
-	if (fb.clctx.command_queue)
+	if (fb->clctx.command_queue)
 	{
-		clReleaseMemObject(fb.data_cl);
-		deinit_clctx(&fb.clctx, 0);
+		clReleaseMemObject(fb->data_cl);
+		deinit_clctx(&fb->clctx, 0);
 	}
 
 	#ifdef RL_OPENCL_GL
-	ret = init_cl_context(&fb.clctx, 1);
+	ret = init_cl_context(&fb->clctx, 1);
 	#else
-	ret = init_cl_context(&fb.clctx, 0);
+	ret = init_cl_context(&fb->clctx, 0);
 	#endif
 	CL_ERR_RET("init_cl_context", ret);
 
@@ -588,20 +588,23 @@ void dialog_cl_gl_interop_options()
 
 	make_gui_layout(&layout, layout_src, sizeof(layout_src)/sizeof(char *), "CL/GL options");
 
+	if (mouse.window_minimised_flag > 0)
+		return;
+
 	// Window
 	static flwindow_t window={0};
 	flwindow_init_defaults(&window);
 	draw_dialog_window_fromlayout(&window, cur_wind_on, &cur_parent_area, &layout, 0);
 
 	// Controls
-	ctrl_checkbox_fromlayout(&fb.opt_clfinish, &layout, 10);
-	ctrl_checkbox_fromlayout(&fb.opt_glfinish, &layout, 11);
-	ctrl_checkbox_fromlayout(&fb.opt_interop, &layout, 12);
+	ctrl_checkbox_fromlayout(&fb->opt_clfinish, &layout, 10);
+	ctrl_checkbox_fromlayout(&fb->opt_glfinish, &layout, 11);
+	ctrl_checkbox_fromlayout(&fb->opt_interop, &layout, 12);
 
 	// FPS and info
-	double td = fb.timing[circ_index(fb.timing_index-1, fb.timing_count)].flip_end - fb.timing[circ_index(fb.timing_index-2, fb.timing_count)].flip_end;
+	double td = fb->timing[circ_index(fb->timing_index-1, fb->timing_count)].flip_end - fb->timing[circ_index(fb->timing_index-2, fb->timing_count)].flip_end;
 	gui_printf_to_label(&layout, 20, 0, "%.1f FPS", 1./fps_estimate_2speeds(td, 0));
-	gui_printf_to_label(&layout, 21, 0, "CL_DEVICE_PREFERRED_INTEROP_USER_SYNC is %s", fb.interop_sync ? "true" : "false");
+	gui_printf_to_label(&layout, 21, 0, "CL_DEVICE_PREFERRED_INTEROP_USER_SYNC is %s", fb->interop_sync ? "true" : "false");
 	draw_label_fromlayout(&layout, 20, ALIG_CENTRE | MONODIGITS);
 	draw_label_fromlayout(&layout, 21, ALIG_CENTRE | MONODIGITS);
 
@@ -611,7 +614,7 @@ void dialog_cl_gl_interop_options()
 
 	if (pattern_on)
 	{
-		static is=0;
+		static int is=0;
 		xy_t ip;
 
 		is = (is+1) % 9;

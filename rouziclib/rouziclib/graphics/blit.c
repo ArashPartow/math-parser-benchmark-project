@@ -29,8 +29,8 @@ int sprite_offsets(raster_t r, xyi_t *pos, xyi_t *offset, xyi_t *start, xyi_t *s
 	offset->y = pos->y;
 	if (pos->x < 0)			start->x = -pos->x;		else	start->x = 0;
 	if (pos->y < 0)			start->y = -pos->y;		else	start->y = 0;
-	if (pos->x+r.dim.x >= fb.r.dim.x)	stop->x = fb.r.dim.x - pos->x;	else	stop->x = r.dim.x;
-	if (pos->y+r.dim.y >= fb.r.dim.y)	stop->y = fb.r.dim.y - pos->y;	else	stop->y = r.dim.y;
+	if (pos->x+r.dim.x >= fb->r.dim.x)	stop->x = fb->r.dim.x - pos->x;	else	stop->x = r.dim.x;
+	if (pos->y+r.dim.y >= fb->r.dim.y)	stop->y = fb->r.dim.y - pos->y;	else	stop->y = r.dim.y;
 
 	if (stop->x <= start->x || stop->y <= start->y)
 		return 1;					// a return value of 1 means the sprite is off-screen
@@ -61,21 +61,21 @@ void blit_sprite(raster_t r, xyi_t pos, const blend_func_t bf, int hmode, int vm
 	{
 		for (iy=start.y; iy<stop.y; iy++)
 		{
-			iy_r0 = (iy + offset.y) * fb.r.dim.x + offset.x;
+			iy_r0 = (iy + offset.y) * fb->r.dim.x + offset.x;
 			iy_r1 = iy * r.dim.x;
-			memcpy(&fb.r.l[iy_r0+start.x], &r.l[iy_r1+start.x], (stop.x-start.x) * sizeof(lrgb_t));
+			memcpy(&fb->r.l[iy_r0+start.x], &r.l[iy_r1+start.x], (stop.x-start.x) * sizeof(lrgb_t));
 		}
 		return;
 	}
 
 	for (iy=start.y; iy<stop.y; iy++)
 	{
-		iy_r0 = (iy + offset.y) * fb.r.dim.x + offset.x;
+		iy_r0 = (iy + offset.y) * fb->r.dim.x + offset.x;
 		iy_r1 = iy * r.dim.x;
 
 		for (ix=start.x; ix<stop.x; ix++)
 		{
-			bf(&fb.r.l[iy_r0+ix], r.l[iy_r1+ix], 32768);
+			bf(&fb->r.l[iy_r0+ix], r.l[iy_r1+ix], 32768);
 		}
 	}
 }
@@ -88,19 +88,19 @@ void blit_layout(raster_t r)
 	// Current layout: ONES: 349998   MIDS: 20470   ZEROS: 169436
 	// Cycles:	ONES: 7		MIDS: 11	ZEROS: ~0
 
-	wh = fb.r.dim.x * fb.r.dim.y;
+	wh = fb->r.dim.x * fb->r.dim.y;
 	for (i=0; i<wh; i++)
 	{
 		p = &r.l[i];
 
 		if (p->a)
 		if (p->a==ONE)
-			fb.r.l[i] = *p;
+			fb->r.l[i] = *p;
 		else
 		{
-			fb.r.l[i].r = (((int32_t) p->r - (int32_t) fb.r.l[i].r) * p->a >> LBD) + fb.r.l[i].r;
-			fb.r.l[i].g = (((int32_t) p->g - (int32_t) fb.r.l[i].g) * p->a >> LBD) + fb.r.l[i].g;
-			fb.r.l[i].b = (((int32_t) p->b - (int32_t) fb.r.l[i].b) * p->a >> LBD) + fb.r.l[i].b;
+			fb->r.l[i].r = (((int32_t) p->r - (int32_t) fb->r.l[i].r) * p->a >> LBD) + fb->r.l[i].r;
+			fb->r.l[i].g = (((int32_t) p->g - (int32_t) fb->r.l[i].g) * p->a >> LBD) + fb->r.l[i].g;
+			fb->r.l[i].b = (((int32_t) p->b - (int32_t) fb->r.l[i].b) * p->a >> LBD) + fb->r.l[i].b;
 		}
 	}
 }
@@ -113,11 +113,11 @@ void blit_scale_nearest(raster_t r, xy_t pos, xy_t ipscale, xyi_t start, xyi_t s
 	if (r.l==NULL)
 		return ;
 
-	if (lastw <= fb.r.dim.x)		// if the width of the screen has increased
+	if (lastw <= fb->r.dim.x)		// if the width of the screen has increased
 	{
-		lastw = fb.r.dim.x;
+		lastw = fb->r.dim.x;
 		if (xluti) free (xluti);
-		xluti = calloc (fb.r.dim.x, sizeof(int32_t));	// change the size of xluti
+		xluti = calloc (fb->r.dim.x, sizeof(int32_t));	// change the size of xluti
 	}
 
 	for (ix=start.x; ix<stop.x; ix++)	// recompute LUT
@@ -129,7 +129,7 @@ void blit_scale_nearest(raster_t r, xy_t pos, xy_t ipscale, xyi_t start, xyi_t s
 
 		for (ix=start.x; ix<stop.x; ix++)
 		{
-			fb.r.l[iy*fb.r.dim.x + ix] = r.l[biyw + xluti[ix]];
+			fb->r.l[iy*fb->r.dim.x + ix] = r.l[biyw + xluti[ix]];
 		}
 	}
 }
@@ -183,8 +183,8 @@ void blit_scale_lrgb(raster_t r, xy_t pscale, xy_t pos, int interp)
 
 	start.x = MAXN(0, floor(MINN(p0.x, p1.x)));
 	start.y = MAXN(0, floor(MINN(p0.y, p1.y)));
-	stop.x = MINN(fb.r.dim.x, ceil(MAXN(p0.x, p1.x)+1));	// not sure about the logic of the +1 but it works with LINEAR_INTERP
-	stop.y = MINN(fb.r.dim.y, ceil(MAXN(p0.y, p1.y)+1));
+	stop.x = MINN(fb->r.dim.x, ceil(MAXN(p0.x, p1.x)+1));	// not sure about the logic of the +1 but it works with LINEAR_INTERP
+	stop.y = MINN(fb->r.dim.y, ceil(MAXN(p0.y, p1.y)+1));
 
 	if (nsx*nsy == 1)		// if unfiltered nearest neighbour (only 1 pixel in -> 1 pixel out)
 	{
@@ -232,7 +232,7 @@ void blit_scale_lrgb(raster_t r, xy_t pscale, xy_t pos, int interp)
 				}
 
 				for (ic=0; ic<3; ic++)
-					((uint16_t *) &fb.r.l[iy*fb.r.dim.x + ix])[ic] = ((uint16_t *) &fb.r.l[iy*fb.r.dim.x + ix])[ic] + (uint16_t) (sumf[ic] + 0.5f);
+					((uint16_t *) &fb->r.l[iy*fb->r.dim.x + ix])[ic] = ((uint16_t *) &fb->r.l[iy*fb->r.dim.x + ix])[ic] + (uint16_t) (sumf[ic] + 0.5f);
 			}
 		}
 	}
@@ -240,10 +240,10 @@ void blit_scale_lrgb(raster_t r, xy_t pscale, xy_t pos, int interp)
 
 void blit_scale_frgb(raster_t r, xy_t pscale, xy_t pos, int interp)
 {
-	if (r.f==NULL || fb.r.f==NULL)
+	if (r.f==NULL || fb->r.f==NULL)
 		return ;
 
-	blit_scale_float(fb.r.f, fb.r.dim, r.f, r.dim, 4, pscale, pos, get_pixel_address_contig);
+	blit_scale_float(fb->r.f, fb->r.dim, r.f, r.dim, 4, pscale, pos, get_pixel_address_contig);
 }
 
 void blit_scale_dq(raster_t *r, xy_t pscale, xy_t pos, int interp)
@@ -304,17 +304,17 @@ void blit_scale_dq(raster_t *r, xy_t pscale, xy_t pos, int interp)
 	// Go through the affected sectors
 	for (iy=bbi.p0.y; iy<=bbi.p1.y; iy++)
 		for (ix=bbi.p0.x; ix<=bbi.p1.x; ix++)
-			drawq_add_sector_id(iy*fb.sector_w + ix);	// add sector reference
+			drawq_add_sector_id(iy*fb->sector_w + ix);	// add sector reference
 }
 
 void blit_scale(raster_t *r, xy_t pscale, xy_t pos, int interp)
 {
-	if (fb.discard)
+	if (fb->discard)
 		return;
 
-	if (fb.use_drawq)
+	if (fb->use_drawq)
 		blit_scale_dq(r, pscale, pos, interp);
-	else if (fb.r.use_frgb==0)
+	else if (fb->r.use_frgb==0)
 		blit_scale_lrgb(*r, pscale, pos, interp);
 	else
 		blit_scale_frgb(*r, pscale, pos, interp);
@@ -399,12 +399,12 @@ void blit_scale_rotated_dq(raster_t *r, xy_t pscale, xy_t pos, double angle, xy_
 	// go through the affected sectors
 	for (iy=bbi.p0.y; iy<=bbi.p1.y; iy++)
 		for (ix=bbi.p0.x; ix<=bbi.p1.x; ix++)
-			drawq_add_sector_id(iy*fb.sector_w + ix);	// add sector reference
+			drawq_add_sector_id(iy*fb->sector_w + ix);	// add sector reference
 }
 
 void blit_scale_rotated(raster_t *r, xy_t pscale, xy_t pos, double angle, xy_t rot_centre, int interp)
 {
-	if (fb.discard)
+	if (fb->discard)
 		return;
 
 	if (angle==0.)
@@ -413,17 +413,17 @@ void blit_scale_rotated(raster_t *r, xy_t pscale, xy_t pos, double angle, xy_t r
 		return ;
 	}
 
-	if (fb.use_drawq)
+	if (fb->use_drawq)
 		blit_scale_rotated_dq(r, pscale, pos, angle, rot_centre, interp);
 }
 
-rect_t blit_in_rect_rotated(raster_t *raster, rect_t r, int keep_aspect_ratio, double angle, xy_t rot_centre, int interp)
+rect_t blit_in_rect_off_rotated(raster_t *raster, rect_t r, xy_t off, int keep_aspect_ratio, double angle, xy_t rot_centre, int interp)
 {
 	xy_t pscale, pos;
 	rect_t image_frame = r;
 
 	if (keep_aspect_ratio)
-		image_frame = fit_rect_in_area( xyi_to_xy(raster->dim), image_frame, xy(0.5, 0.5) );
+		image_frame = fit_rect_in_area( xyi_to_xy(raster->dim), image_frame, off );
 
 	pscale = div_xy(get_rect_dim(image_frame), xyi_to_xy(raster->dim));
 	pos = mad_xy(pscale, set_xy(0.5), keep_aspect_ratio ? image_frame.p0 : rect_p01(image_frame));
@@ -431,4 +431,9 @@ rect_t blit_in_rect_rotated(raster_t *raster, rect_t r, int keep_aspect_ratio, d
 	blit_scale_rotated(raster, pscale, pos, angle, rot_centre, interp);
 
 	return wc_rect(image_frame);
+}
+
+rect_t blit_in_rect_rotated(raster_t *raster, rect_t r, int keep_aspect_ratio, double angle, xy_t rot_centre, int interp)
+{
+	return blit_in_rect_off_rotated(raster, r, xy(0.5, 0.5), keep_aspect_ratio, angle, rot_centre, interp);
 }

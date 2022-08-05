@@ -1,4 +1,5 @@
-_Thread_local framebuffer_t fb={0};
+framebuffer_t fbs={0};
+_Thread_local framebuffer_t *fb=&fbs;
 _Thread_local zoom_t zc={0};
 mouse_t mouse={0};
 vector_font_t *font=NULL;

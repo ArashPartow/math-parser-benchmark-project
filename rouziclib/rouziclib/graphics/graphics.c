@@ -263,29 +263,26 @@ void cl_unref_raster(raster_t *r)
 	#endif
 }
 
-framebuffer_t init_framebuffer(xyi_t dim, xyi_t maxdim, const int mode)
+framebuffer_t *init_framebuffer(xyi_t dim, xyi_t maxdim, const int mode)
 {
-	framebuffer_t fb={0};
+	framebuffer_t *fb = calloc(1, sizeof(framebuffer_t));
 
 	if (is0_xyi(maxdim))
 		maxdim = dim;
 
-	fb.r = make_raster(NULL, dim, maxdim, mode);
-	fb.w = fb.r.dim.x;
-	fb.h = fb.r.dim.y;
-	fb.maxdim = maxdim;
+	fb->r = make_raster(NULL, dim, maxdim, mode);
+	fb->w = fb->r.dim.x;
+	fb->h = fb->r.dim.y;
+	fb->maxdim = maxdim;
 
 	return fb;
 }
 
-void init_tls_fb(xyi_t dim)	// initalisation of thread-local fb and zc in fRGB mode, used for video generation. Just free_raster(&fb.r); at the end
+void init_tls_fb(xyi_t dim)	// initalisation of thread-local fb and zc in fRGB mode, used for video generation. Just free_raster(&fb->r); and free_null(&fb); at the end
 {
-	memset(&fb, 0, sizeof(framebuffer_t));
-	fb.w = dim.x;
-	fb.h = dim.y;
-	fb.r = make_raster(NULL, dim, XYI0, IMAGE_USE_FRGB);
-	fb.r.use_frgb = 1;
-	fb.use_drawq = 0;
+	fb = init_framebuffer(dim, XYI0, IMAGE_USE_FRGB);
+	fb->r.use_frgb = 1;
+	fb->use_drawq = 0;
 
 	zc = init_zoom(&mouse, drawing_thickness);
 	calc_screen_limits(&zc);
@@ -293,12 +290,12 @@ void init_tls_fb(xyi_t dim)	// initalisation of thread-local fb and zc in fRGB m
 
 void enlarge_framebuffer(xyi_t newdim)
 {
-	if (fb.use_drawq==0)
-		alloc_enough(get_raster_buffer_ptr(&fb.r), mul_x_by_y_xyi(newdim), &fb.r.as, get_raster_mode_elem_size(get_raster_mode(fb.r)), 1.2);
+	if (fb->use_drawq==0)
+		alloc_enough(get_raster_buffer_ptr(&fb->r), mul_x_by_y_xyi(newdim), &fb->r.as, get_raster_mode_elem_size(get_raster_mode(fb->r)), 1.2);
 
-	fb.r.dim = newdim;
-	fb.w = fb.r.dim.x;
-	fb.h = fb.r.dim.y;
+	fb->r.dim = newdim;
+	fb->w = fb->r.dim.x;
+	fb->h = fb->r.dim.y;
 }
 
 double intensity_scaling(double scale, double scale_limit)	// gives an intensity ratio that decreases if the scale of the thing to be drawn is below a scale threshold
@@ -329,10 +326,10 @@ void thickness_limit(double *thickness, double *brightness, double limit)	// sam
 
 void screen_blank()
 {
-	if (fb.use_drawq)
+	if (fb->use_drawq)
 		return ;
-	else if (fb.r.use_frgb)
-		memset(fb.r.f, 0, fb.w*fb.h*sizeof(frgb_t));
+	else if (fb->r.use_frgb)
+		memset(fb->r.f, 0, fb->w*fb->h*sizeof(frgb_t));
 	else
-		memset(fb.r.l, 0, fb.w*fb.h*sizeof(lrgb_t));
+		memset(fb->r.l, 0, fb->w*fb->h*sizeof(lrgb_t));
 }

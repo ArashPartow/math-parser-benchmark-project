@@ -187,7 +187,7 @@ void drawq_soft_run()
 			rl_mutex_init(&d->cont_mtx);
 			d->thread_id = i;
 			d->thread_count = DQS_THREADS;
-			d->block = (float **) calloc_2d(4, 1 << 2*fb.sector_size, 4*sizeof(float));	// alloc float blocks once, one block per bracket level
+			d->block = (float **) calloc_2d(4, 1 << 2*fb->sector_size, 4*sizeof(float));	// alloc float blocks once, one block per bracket level
 
 			// Create thread
 			rl_mutex_lock(&d->proc_mtx);		// lock proc_mtx so the thread has to wait to proceed
@@ -200,8 +200,8 @@ void drawq_soft_run()
 
 	// Acquire destination texture
 	#ifdef RL_SDL
-	fb.tex_lock = 1;
-	SDL_LockTexture(fb.texture, NULL, &fb.r.srgb, &r_pitch);
+	fb->tex_lock = 1;
+	SDL_LockTexture(fb->texture, NULL, &fb->r.srgb, &r_pitch);
 	#endif
 	r_pitch /= sizeof(srgb_t);
 
@@ -213,10 +213,10 @@ void drawq_soft_run()
 		// Realloc and copy data
 		if (i==0)
 		{
-			alloc_enough_and_copy(&d->data, fb.data, fb.data_cl_as, &d->data_as, 1, 1.);
-			alloc_enough_and_copy(&d->drawq_data, fb.drawq_data, fb.drawq_data[DQ_END], &d->drawq_as,  sizeof(int32_t), 1.5);
-			alloc_enough_and_copy(&d->sector_pos, fb.sector_pos, fb.sectors, &d->sector_list_as,       sizeof(int32_t), 1.5);
-			alloc_enough_and_copy(&d->entry_list, fb.entry_list, fb.entry_list_end, &d->entry_list_as, sizeof(int32_t), 1.5);
+			alloc_enough_and_copy(&d->data, fb->data, fb->data_cl_as, &d->data_as, 1, 1.);
+			alloc_enough_and_copy(&d->drawq_data, fb->drawq_data, fb->drawq_data[DQ_END], &d->drawq_as,  sizeof(int32_t), 1.5);
+			alloc_enough_and_copy(&d->sector_pos, fb->sector_pos, fb->sectors, &d->sector_list_as,       sizeof(int32_t), 1.5);
+			alloc_enough_and_copy(&d->entry_list, fb->entry_list, fb->entry_list_end, &d->entry_list_as, sizeof(int32_t), 1.5);
 		}
 		else
 		{
@@ -226,13 +226,13 @@ void drawq_soft_run()
 			d->entry_list = d0->entry_list;
 		}
 
-		d->sector_size = fb.sector_size;
-		d->sector_w = fb.sector_w;
-		d->timing = &fb.timing[fb.timing_index];
+		d->sector_size = fb->sector_size;
+		d->sector_w = fb->sector_w;
+		d->timing = &fb->timing[fb->timing_index];
 
-		d->srgb = fb.r.srgb;
-		d->r_dim = fb.r.dim;
-		d->srgb_order = fb.srgb_order;
+		d->srgb = fb->r.srgb;
+		d->r_dim = fb->r.dim;
+		d->srgb_order = fb->srgb_order;
 		d->r_pitch = r_pitch;
 
 		d->current_locks++;
@@ -240,9 +240,9 @@ void drawq_soft_run()
 		rl_mutex_unlock(&d->proc_mtx);	// this makes the thread start processing this frame
 	}
 
-	fb.timing[fb.timing_index].cl_copy_end = get_time_hr();
+	fb->timing[fb->timing_index].cl_copy_end = get_time_hr();
 
-	fb.timing[fb.timing_index].cl_enqueue_end = get_time_hr();
+	fb->timing[fb->timing_index].cl_enqueue_end = get_time_hr();
 }
 
 void drawq_soft_finish()

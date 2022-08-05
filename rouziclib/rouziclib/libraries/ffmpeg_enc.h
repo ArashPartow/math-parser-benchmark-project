@@ -6,6 +6,7 @@ typedef struct
 	AVCodecContext *codec_ctx;	// a shortcut to st->codec
 	AVStream *st;
 	AVFrame *frame;
+	AVPacket *packet;
 	int pts;
 	uint16_t *s16_buf;
 } ff_videnc_t;

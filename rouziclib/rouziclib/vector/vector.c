@@ -230,6 +230,47 @@ void draw_vobj_fullarg(vobj_t *o, xy_t p, xy_t scale, double angle, double line_
 	}
 }
 
+void draw_vobj_fullarg_dq(vobj_t *o, xy_t p, xy_t scale, double angle, double line_thick, frgb_t colour)
+{
+	int32_t i;
+	seg_t rs;
+
+	if (o==NULL)
+		return;
+
+	for (i=0; i<o->count; i++)
+	{
+		rs = rot_seg(o->seg[i], scale.x, angle);
+
+		if (rs.p1.x==rs.p2.x && rs.p1.y==rs.p2.y)	// gaussian dot
+			draw_point_dq(xy(rs.p1.x+p.x, -rs.p1.y+p.y), line_thick, colour, o->seg[i].m);
+		else
+			draw_line_thin_dq(xy(rs.p1.x+p.x, -rs.p1.y+p.y), xy(rs.p2.x+p.x, -rs.p2.y+p.y), line_thick, colour, 0, o->seg[i].m, 0);
+	}
+}
+
+void draw_vobj_dqnq(vobj_t *o, xy_t pos, double scale, double angle, double line_thick, col_t colour)
+{
+	const enum dqnq_type type = DQNQT_VOBJ;
+
+	// Get pointer to data buffer
+	uint8_t *p = (uint8_t *) dqnq_new_entry(type);
+
+	// Write arguments to buffer
+	write_LE64(&p, (uint64_t) o);
+	write_LE32(&p, float_as_u32(pos.x));
+	write_LE32(&p, float_as_u32(pos.y));
+	write_LE32(&p, float_as_u32(scale));
+	write_LE32(&p, float_as_u32(line_thick));
+	frgb_t col = col_to_frgb(colour);
+	write_LE32(&p, float_as_u32(col.r));
+	write_LE32(&p, float_as_u32(col.g));
+	write_LE32(&p, float_as_u32(col.b));
+	write_LE32(&p, float_as_u32(col.a));
+
+	dqnq_finish_entry(type);
+}
+
 xy_t *vobj_to_map(vobj_t *o, int32_t dofree)	// naively assumes the vobj is a sequential curve
 {
 	xy_t *map;

@@ -46,7 +46,7 @@ extern frgb_t get_raster_pixel_in_frgb(raster_t r, const size_t index);
 extern frgb_t get_raster_pixel_in_frgb_xyi(raster_t r, xyi_t p);
 extern void free_raster(raster_t *r);
 extern void cl_unref_raster(raster_t *r);
-extern framebuffer_t init_framebuffer(xyi_t dim, xyi_t maxdim, const int mode);
+extern framebuffer_t *init_framebuffer(xyi_t dim, xyi_t maxdim, const int mode);
 extern void init_tls_fb(xyi_t dim);
 extern double intensity_scaling(double scale, double scale_limit);
 extern void thickness_limit(double *thickness, double *brightness, double limit);

@@ -592,7 +592,7 @@ struct thread_queue_t
         #define _WIN32_WINNT 0x501// requires Windows XP minimum
     #endif
 
-    #define _WINSOCKAPI_
+    //#define _WINSOCKAPI_
     #pragma warning( push )
     #pragma warning( disable: 4668 ) // 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
     #pragma warning( disable: 4255 )

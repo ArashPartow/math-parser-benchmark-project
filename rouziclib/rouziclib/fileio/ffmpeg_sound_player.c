@@ -37,7 +37,7 @@ loop_start:
 			goto loop_start;
 		}
 
-		if (abs(double_diff_ulp(data->speed, 1.)) < 100)
+		if (llabs(double_diff_ulp(data->speed, 1.)) < 100)
 		{
 			// Load the frame, either by seeking or sequentially
 			buf_pos = 0;
@@ -76,7 +76,7 @@ loop_start:
 
 			data->frame[ip].used = 1;
 			data->frame[ip].sample_count = sample_count;
-			data->frame[ip].channels = data->stream->frame->channels;
+			data->frame[ip].channels = data->stream->frame->ch_layout.nb_channels;
 			data->frame[ip].samplerate = data->stream->codec_ctx->sample_rate;
 			alloc_enough_and_copy(&data->frame[ip].buffer, buf, data->frame[ip].len = ret, &data->frame[ip].as, sizeof(float), 1.);
 			data->frame[ip].info = info;
@@ -182,7 +182,7 @@ void audio_player_main(audio_player_data_t *data, char *path, double ts_req, dou
 void audio_player_callback(float *stream, audiosys_t *sys, int bus_index, audio_player_data_t *data)
 {
 	int i, ifr;
-	double t;
+	double t, ibl, vol_t;
 int debug=1;
 
 	// Deinit
@@ -193,18 +193,27 @@ int debug=1;
 		if (bus_index == -1)	// this signals a blocking deinitialisation
 			rl_thread_join_and_null(&data->thread_handle);
 
+		data->vol1 = NAN;
 		return;
 	}
 
-	// Only play if speed == 1
-	if (abs(double_diff_ulp(data->speed, 1.)) >= 100)
+	// Only play if speed == 1 and thread_on
+	if (fabs(data->speed - 1.) >= 2e-14 || data->thread_on==0)
+	{
+		data->vol1 = NAN;
 		return;
-
-	if (data->thread_on==0)
-		return;
+	}
 
 	rl_mutex_lock(&data->mutex);
 
+	// Prepare volume interpolation
+	data->vol0 = data->vol1;
+	if (isnan(data->vol0))
+		data->vol0 = data->volume;
+	data->vol1 = data->volume;
+	ibl = 1. / (double) sys->buffer_len;
+
+	// Go through each sample
 	for (t=data->ts_cb, i=0; i < sys->buffer_len; i++, t+=sys->sec_per_sample)
 	{
 		// Search for frame when no frame is selected
@@ -223,18 +232,22 @@ int debug=1;
 				}
 		}
 
+		// Interpolate volume
+		vol_t = mix(data->vol0, data->vol1, (double) i * ibl);
+		//if (data->vol0 != data->vol1 && ((i & 0xFF) == 0 || i == sys->buffer_len -1)) fprintf_rl(stdout, "mix(%.6f , %.6f, %.6f) = %.6f (%4d/%4d)\n", data->vol0, data->vol1, (double) i * ibl, vol_t, i, sys->buffer_len);
+
 		// Copy samples from frame
 		if (data->ifr != -1)
 		{
 			if (data->frame[data->ifr].channels==1)
 			{
-				stream[i*2  ] += data->frame[data->ifr].buffer[data->is] * data->volume;
-				stream[i*2+1] += data->frame[data->ifr].buffer[data->is] * data->volume;
+				stream[i*2  ] += data->frame[data->ifr].buffer[data->is] * vol_t;
+				stream[i*2+1] += data->frame[data->ifr].buffer[data->is] * vol_t;
 			}
 			else
 			{
-				stream[i*2  ] += data->frame[data->ifr].buffer[data->is*data->frame[data->ifr].channels] * data->volume;
-				stream[i*2+1] += data->frame[data->ifr].buffer[data->is*data->frame[data->ifr].channels + 1] * data->volume;
+				stream[i*2  ] += data->frame[data->ifr].buffer[data->is*data->frame[data->ifr].channels] * vol_t;
+				stream[i*2+1] += data->frame[data->ifr].buffer[data->is*data->frame[data->ifr].channels + 1] * vol_t;
 			}
 		}
 else if (debug)

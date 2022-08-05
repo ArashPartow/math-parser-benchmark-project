@@ -1,0 +1,81 @@
+cfftpack:
+	https://github.com/zywina/cfftpack
+	May 5, 2018
+	only download fftpack.[ch]
+	in fftpack.c get rid of ftnlen logical complex TRUE_ FALSE_
+	turn the four instances of .5f into .5
+	put c__1 and c__2 inside the functions that use them (without static)
+	in the C files replace complex with fft_complex_t and delete the complex-related macros
+	turn fftpack.[ch] into fftpack_float.[ch] and fftpack_double.[ch]
+	in the C files change #include "fftpack.h"
+	delete the "#ifndef fft_real_t" section
+	in each pair replace fft_real_t with float or double
+	append f or d to all functions using the regex :%s/_(/_f(/g (or :%s/_(/_d(/g)
+	replace fft_complex_t with fft_complexf_t / fft_complexd_t
+	in fftpack_float.c replace the functions sqrt cos sin log atan with their float equivalent also using :s//&f/g
+	then turn real constants to float using :%s/\.[0-9]\+/&f/g then do :%s/FFTPACK 5.1f/FFTPACK 5.1/g
+	replaces instances of pi with 3.1415927f or 3.14159265358979323846
+	change the include guards in each header
+	delete extern declarations of functions inside functions using /extern.*[^;]$ and Shift-N Shift-J repeatedly then :%g/[^^]extern.*/d
+	make all function declarations take only one line using /^\/\* Subroutine \*\/ .*[^)]$ and Shift-N Shift-J repeatedly
+	remove spaces from those joined lines using :%s/\(^\/\* Subroutine .* \*\) \(.*\)/\1\2/
+	get all function prototypes using :%v/^\/\* Subroutine/d, copy them, cancel the deletion and paste them at the top
+	do s/\/\* Subroutine \*\/\(.*\)/extern\1; on all of them
+	add xercon to the prototypes
+	remove extra blank lines using :%s/\n\n\n/\r\r/g
+
+glew:
+	download source zip from http://glew.sourceforge.net/
+	release 2.1.0, July 31, 2017
+	only take include/GL/glew.h and src/glew.c
+
+clew:
+	https://github.com/martijnberger/clew/blob/master/include/clew.h
+	https://github.com/martijnberger/clew/blob/master/src/clew.c
+	Sep 12, 2016
+
+stb_image:
+	https://github.com/nothings/stb/blob/master/stb_image.h
+	v2.25, Feb 2, 2020
+
+stb_image_write:
+	https://github.com/nothings/stb/blob/master/stb_image_write.h
+	v1.14, Feb 2, 2020
+	Delete the function stbiw__fopen()
+
+stb_vorbis:
+	https://github.com/nothings/stb/blob/master/stb_vorbis.c
+	v1.22, Jul 12, 2021
+	comment out the line that says '#define alloca __builtin_alloca'
+
+minimp3:
+	https://github.com/lieff/minimp3/blob/master/minimp3.h
+	Jul 31, 2021
+
+dr_flac:
+	https://github.com/mackron/dr_libs/blob/master/dr_flac.h
+	Apr 10, 2022
+
+thread.h:
+	https://github.com/mattiasgustavsson/libs/blob/main/thread.h
+	v0.3, Nov 28, 2017
+	in thread_create() we need a #ifdef _MSC_VER to keep MinGW happy with __try and __except
+	:%s/\<thread_create\>/th_thread_create/g
+	comment out the '#include <windows.h>' line
+	comment out the '#define _WINSOCKAPI_' line
+	put '#ifndef _CRT_SECURE_NO_WARNINGS' before '#define _CRT_SECURE_NO_WARNINGS'
+
+tinyexpr (not really needed anymore):
+	https://github.com/codeplea/tinyexpr/tree/logic
+	Jul 10, 2018
+	only download tinyexpr.[ch]
+	in tinyexpr.c replace 'te_fun2 t = s->function;' lines with 'const void *t = s->function;'
+
+miniz:
+	https://github.com/richgel999/miniz/releases
+	release 2.2.0, Jun 27, 2021
+	only download miniz.[ch], the versions found in miniz-2.x.x.zip
+
+miniaudio:
+	https://github.com/mackron/miniaudio/blob/dev/miniaudio.h
+	v0.11.9, Apr 20, 2022

@@ -16,6 +16,8 @@ extern seg_t rot_seg(seg_t seg, double scale, double th);
 extern void rot_vobj(vobj_t *o, double x, double y, double scale, double angle);
 extern rect_t vobj_bounding_rect(vobj_t *o);
 extern void draw_vobj_fullarg(vobj_t *o, xy_t p, xy_t scale, double angle, double line_thick, col_t colour);
+extern void draw_vobj_fullarg_dq(vobj_t *o, xy_t p, xy_t scale, double angle, double line_thick, frgb_t colour);
+extern void draw_vobj_dqnq(vobj_t *o, xy_t pos, double scale, double angle, double line_thick, col_t colour);
 extern xy_t *vobj_to_map(vobj_t *o, int32_t dofree);
 extern vobj_t *map_to_vobj(xy_t *map, int32_t mapsize, int32_t dofree);
 

@@ -2,7 +2,6 @@
 
 #ifdef _WIN32
 typedef UINT_PTR        SOCKET;
-#include <WinSock2.h>
 #endif
 
 #include <curl/curl.h>

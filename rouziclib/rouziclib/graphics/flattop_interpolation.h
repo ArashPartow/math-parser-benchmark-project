@@ -1,7 +1,7 @@
-typedef struct
+typedef struct interp_param_t
 {
 	double top, knee, c0, c1;
-	double (*func)();
+	double (*func)(double,double,struct interp_param_t);
 } interp_param_t;
 
 typedef struct
