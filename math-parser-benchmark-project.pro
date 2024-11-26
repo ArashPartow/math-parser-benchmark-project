@@ -2,6 +2,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
+CONFIG += c++20
 
 # set up custom build directory
 #CONFIG(debug, debug|release) {
@@ -44,6 +45,9 @@ SOURCES += \
     BenchMathExpr.cpp \
     BenchMuParser2.cpp \
     BenchMuParserX.cpp \
+    MathExpr/example.cpp \
+    MathExpr/example_c.cpp \
+    MathExpr/mathexpr_c.cpp \
     cpuid.cpp \
     FormelGenerator.cpp \
     ParserBench.cpp \
@@ -103,7 +107,28 @@ SOURCES += \
     libcpuid/rdtsc.c \
     libcpuid/libcpuid_util.c \
     libcpuid/cpuid_main.c \
-    libcpuid/asm-bits.c
+    libcpuid/asm-bits.c \
+    src/BenchATMSP.cpp \
+    src/BenchChaiScript.cpp \
+    src/BenchExprTk.cpp \
+    src/BenchExprTkFloat.cpp \
+    src/BenchExprTkMPFR.cpp \
+    src/BenchFParser.cpp \
+    src/BenchLepton.cpp \
+    src/BenchMETL.cpp \
+    src/BenchMTParser.cpp \
+    src/BenchMathExpr.cpp \
+    src/BenchMuParser2.cpp \
+    src/BenchMuParserSSE.cpp \
+    src/BenchMuParserX.cpp \
+    src/BenchNative.cpp \
+    src/BenchTinyExpr.cpp \
+    src/BenchZeCalculator.cpp \
+    src/Benchmark.cpp \
+    src/FormelGenerator.cpp \
+    src/ParserBench.cpp \
+    src/Stopwatch.cpp \
+    src/cpuid.cpp
 
 HEADERS += \
     BenchATMSP.h \
@@ -195,5 +220,49 @@ HEADERS += \
     muparserx/mpFuncCommon.h \
     muparserx/mpFuncCmplx.h \
     muparserx/mpError.h \
-    muparserx/mpDefines.h
+    muparserx/mpDefines.h \
+    zecalculator/error.h \
+    zecalculator/evaluation/ast/decl/evaluation.h \
+    zecalculator/evaluation/ast/evaluation.h \
+    zecalculator/evaluation/ast/impl/evaluation.h \
+    zecalculator/evaluation/evaluation.h \
+    zecalculator/evaluation/rpn/decl/evaluation.h \
+    zecalculator/evaluation/rpn/evaluation.h \
+    zecalculator/evaluation/rpn/impl/evaluation.h \
+    zecalculator/external/expected.h \
+    zecalculator/math_objects/aliases.h \
+    zecalculator/math_objects/builtin_binary_functions.h \
+    zecalculator/math_objects/builtin_unary_functions.h \
+    zecalculator/math_objects/decl/expression.h \
+    zecalculator/math_objects/decl/function.h \
+    zecalculator/math_objects/decl/sequence.h \
+    zecalculator/math_objects/expression.h \
+    zecalculator/math_objects/forward_declares.h \
+    zecalculator/math_objects/function.h \
+    zecalculator/math_objects/global_constant.h \
+    zecalculator/math_objects/global_variable.h \
+    zecalculator/math_objects/impl/expression.h \
+    zecalculator/math_objects/impl/function.h \
+    zecalculator/math_objects/impl/sequence.h \
+    zecalculator/math_objects/object_list.h \
+    zecalculator/math_objects/sequence.h \
+    zecalculator/mathworld/decl/mathworld.h \
+    zecalculator/mathworld/impl/mathworld.h \
+    zecalculator/mathworld/mathworld.h \
+    zecalculator/parsing/data_structures/decl/node.h \
+    zecalculator/parsing/data_structures/impl/node.h \
+    zecalculator/parsing/data_structures/node.h \
+    zecalculator/parsing/data_structures/token.h \
+    zecalculator/parsing/decl/parser.h \
+    zecalculator/parsing/impl/parser.h \
+    zecalculator/parsing/parser.h \
+    zecalculator/parsing/shared.h \
+    zecalculator/utils/name_map.h \
+    zecalculator/utils/refs.h \
+    zecalculator/utils/slotted_deque.h \
+    zecalculator/utils/substr_info.h \
+    zecalculator/utils/tuple.h \
+    zecalculator/utils/utils.h \
+    zecalculator/zecalculator-single.h \
+    zecalculator/zecalculator.h
 
