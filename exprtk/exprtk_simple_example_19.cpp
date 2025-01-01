@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 19                                          *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -89,7 +89,7 @@ void vector_randu()
    const std::string vecrandu_program =
       " var noise[6] := [0];                          "
       "                                               "
-      " if (randu(noise,0,5) == false)                "
+      " if (randu(noise, 0, 5) == false)              "
       " {                                             "
       "    println('Failed to generate noise');       "
       "    return [false];                            "
