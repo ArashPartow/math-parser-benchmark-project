@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 24                                          *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -64,50 +64,50 @@ void rpn_example()
    typedef exprtk::parser<T>       parser_t;
 
    const std::string rpn_program =
-      " var stack[1000] := [0];                                                   "
-      " var stack_size  := 0;                                                     "
-      "                                                                           "
-      " for (var i := 0; i < rpn_expression[]; i += 1)                            "
-      " {                                                                         "
-      "    var c := rpn_expression[i : i + 1];                                    "
-      "                                                                           "
-      "    if (c == ' ')                                                          "
-      "    {                                                                      "
-      "       continue;                                                           "
-      "    }                                                                      "
-      "    else if (is_digit(c))                                                  "
-      "    {                                                                      "
-      "       stack[stack_size] := to_num(c);                                     "
-      "       stack_size        += 1;                                             "
-      "    }                                                                      "
-      "    else                                                                   "
-      "    {                                                                      "
-      "       var operator := c;                                                  "
-      "       var operand1 := stack[stack_size - 2];                              "
-      "       var operand2 := stack[stack_size - 1];                              "
-      "       stack_size   -= 2;                                                  "
-      "                                                                           "
-      "       switch                                                              "
-      "       {                                                                   "
-      "          case operator == '+' : stack[stack_size] := operand1 + operand2; "
-      "          case operator == '-' : stack[stack_size] := operand1 - operand2; "
-      "          case operator == '*' : stack[stack_size] := operand1 * operand2; "
-      "          case operator == '/' : stack[stack_size] := operand1 / operand2; "
-      "          case operator == '^' : stack[stack_size] := operand1 ^ operand2; "
-      "       };                                                                  "
-      "                                                                           "
-      "       stack_size += 1;                                                    "
-      "    }                                                                      "
-      " };                                                                        "
-      "                                                                           "
-      " println(stack[0], ' = ', rpn_expression);                                 "
-      "                                                                           ";
+      " var stack[1000] := [0];                                                  "
+      " var top_index   := 0;                                                    "
+      "                                                                          "
+      " for (var i := 0; i < rpn_expression[]; i += 1)                           "
+      " {                                                                        "
+      "    var c := rpn_expression[i : i + 1];                                   "
+      "                                                                          "
+      "    if (c == ' ')                                                         "
+      "    {                                                                     "
+      "       continue;                                                          "
+      "    }                                                                     "
+      "    else if (is_digit(c))                                                 "
+      "    {                                                                     "
+      "       stack[top_index] := to_num(c);                                     "
+      "       top_index        += 1;                                             "
+      "    }                                                                     "
+      "    else                                                                  "
+      "    {                                                                     "
+      "       var operator := c;                                                 "
+      "       var operand1 := stack[top_index - 2];                              "
+      "       var operand2 := stack[top_index - 1];                              "
+      "       top_index    -= 2;                                                 "
+      "                                                                          "
+      "       switch                                                             "
+      "       {                                                                  "
+      "          case operator == '+' : stack[top_index] := operand1 + operand2; "
+      "          case operator == '-' : stack[top_index] := operand1 - operand2; "
+      "          case operator == '*' : stack[top_index] := operand1 * operand2; "
+      "          case operator == '/' : stack[top_index] := operand1 / operand2; "
+      "          case operator == '^' : stack[top_index] := operand1 ^ operand2; "
+      "       };                                                                 "
+      "                                                                          "
+      "       top_index += 1;                                                    "
+      "    }                                                                     "
+      " };                                                                       "
+      "                                                                          "
+      " println(stack[0], ' = ', rpn_expression);                                "
+      "                                                                          ";
 
    std::string rpn_expression;
 
-   char_process<T,is_digit_func<T>> isdigit;
-   char_process<T,to_num_func<T>>   tonum;
-   exprtk::rtl::io::println<T>      println;
+   char_process<T,is_digit_func<T> > isdigit;
+   char_process<T,to_num_func<T> >   tonum;
+   exprtk::rtl::io::println<T>       println;
 
    symbol_table_t symbol_table;
    symbol_table.add_stringvar("rpn_expression", rpn_expression);

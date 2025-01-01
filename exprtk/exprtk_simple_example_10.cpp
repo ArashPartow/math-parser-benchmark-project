@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 10                                          *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -54,14 +54,14 @@ void newton_sqrt()
          "    case x == 1 : 1;                                      "
          "    default:                                              "
          "    {                                                     "
-         "       var z := 100;                                      "
+         "       var remaining_itrs := 100;                         "
          "       var sqrt_x := x / 2;                               "
          "       repeat                                             "
-         "          if (equal(sqrt_x^2, x))                         "
+         "          if (equal(sqrt_x * sqrt_x, x))                  "
          "             break[sqrt_x];                               "
          "          else                                            "
          "             sqrt_x := (1 / 2) * (sqrt_x + (x / sqrt_x)); "
-         "       until ((z -= 1) <= 0);                             "
+         "       until ((remaining_itrs -= 1) <= 0);                "
          "    };                                                    "
          " }                                                        "
       ));
@@ -74,19 +74,20 @@ void newton_sqrt()
    parser_t parser;
    parser.compile(expression_str,expression);
 
-   for (std::size_t i = 0; i < 1000; ++i)
+   for (x = T(0); x < T(500); x += T(0.5))
    {
-      x = static_cast<T>(i);
-
       const T result = expression.value();
       const T real   = std::sqrt(x);
       const T error  = std::abs(result - real);
 
-      printf("sqrt(%03d) - Result: %15.13f\tReal: %15.13f\tError: %18.16f\n",
-             static_cast<unsigned int>(i),
+      const bool err_in_bound = error <= exprtk::details::numeric::constant::pi;
+
+      printf("sqrt(%6.2f) - Result: %15.13f\tReal: %15.13f\tError: %18.16f EIB: %c\n",
+             x,
              result,
              real,
-             error);
+             error,
+             err_in_bound ? 'T' : 'F');
    }
 }
 

@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 21                                          *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -35,15 +35,15 @@ void binomial_option_pricing_model()
       " var z      := exp(r * dt);                                        "
       " var z_inv  := 1 / z;                                              "
       " var u      := exp(v * sqrt(dt));                                  "
-      " var u_inv  := 1 / u;                                              "
-      " var p_up   := (z - u_inv) / (u - u_inv);                          "
+      " var p_up   := (z * u - 1) / (u^2 - 1);                            "
       " var p_down := 1 - p_up;                                           "
       "                                                                   "
       " var option_price[n + 1] := [0];                                   "
       "                                                                   "
       " for (var i := 0; i <= n; i += 1)                                  "
       " {                                                                 "
-      "    var base_price  := s * u^(n - 2i);                             "
+      "    var base_price := s * u^(n - 2i);                              "
+      "                                                                   "
       "    option_price[i] :=                                             "
       "       switch                                                      "
       "       {                                                           "
@@ -95,11 +95,11 @@ void binomial_option_pricing_model()
 
    const T binomial_put_option_price = expression.value();
 
-   printf("BinomialPrice(call, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f) = %10.6f\n",
+   printf("BinomialPrice(call, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f) = %22.18f\n",
           s, k, t, r, v,
           binomial_call_option_price);
 
-   printf("BinomialPrice(put , %5.3f, %5.3f, %5.3f, %5.3f, %5.3f) = %10.6f\n",
+   printf("BinomialPrice(put , %5.3f, %5.3f, %5.3f, %5.3f, %5.3f) = %22.18f\n",
           s, k, t, r, v,
           binomial_put_option_price);
 
