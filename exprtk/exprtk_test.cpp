@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Examples and Unit-Tests                                    *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -5608,6 +5608,12 @@ inline std::size_t load_expressions(const std::string& file_name,
 }
 
 template <typename T>
+inline T isnan(const T t)
+{
+   return std::isnan(t) ? T(1) : T(0);
+}
+
+template <typename T>
 bool run_test14()
 {
    typedef exprtk::expression<T>             expression_t;
@@ -5652,6 +5658,7 @@ bool run_test14()
    symbol_table.add_function("poly10", poly10);
    symbol_table.add_function("poly11", poly11);
    symbol_table.add_function("poly12", poly12);
+   symbol_table.add_function("isnan" , isnan );
 
    symbol_table.add_package(vector_package);
 
@@ -9985,15 +9992,18 @@ struct my_usr_ext exprtk_test_final : public exprtk::parser<T>::unknown_symbol_r
 template <typename T>
 bool run_test20()
 {
-   typedef exprtk::expression<T> expression_t;
+   typedef exprtk::expression<T>   expression_t;
+   typedef exprtk::symbol_table<T> symbol_table_t;
 
    {
+
+
       for (std::size_t i = 0; i < 100; ++i)
       {
-         exprtk::symbol_table<T> symbol_table0; // primary symbol_table
-         exprtk::symbol_table<T> symbol_table1;
-         exprtk::symbol_table<T> symbol_table2;
-         exprtk::symbol_table<T> symbol_table3;
+         symbol_table_t symbol_table0; // primary symbol_table
+         symbol_table_t symbol_table1;
+         symbol_table_t symbol_table2;
+         symbol_table_t symbol_table3;
 
          symbol_table0.add_constants();
 
@@ -10038,10 +10048,10 @@ bool run_test20()
    {
       for (std::size_t i = 0; i < 100; ++i)
       {
-         exprtk::symbol_table<T> symbol_table0; // primary symbol_table
-         exprtk::symbol_table<T> symbol_table1;
-         exprtk::symbol_table<T> symbol_table2;
-         exprtk::symbol_table<T> symbol_table3;
+         symbol_table_t symbol_table0; // primary symbol_table
+         symbol_table_t symbol_table1;
+         symbol_table_t symbol_table2;
+         symbol_table_t symbol_table3;
 
          symbol_table0.add_constants();
 
@@ -10074,9 +10084,6 @@ bool run_test20()
       T              var;
       std::string    str;
       std::vector<T> vec(10,0.0);
-
-      typedef exprtk::symbol_table<T> symbol_table_t;
-      typedef exprtk::expression<T>   expression_t;
 
       bool result = true;
 
@@ -10388,6 +10395,8 @@ bool run_test21()
    typedef exprtk::parser<T>       parser_t;
    typedef exprtk::parser_error::type error_type;
 
+   bool error_found = false;
+
    {
       T x = T(1.1);
       T y = T(2.2);
@@ -10440,8 +10449,6 @@ bool run_test21()
       };
 
       static const std::size_t expression_list_size = sizeof(expression_list) / sizeof(std::string);
-
-      bool error_found = false;
 
       for (std::size_t i = 0; i < expression_list_size; ++i)
       {
@@ -10534,8 +10541,6 @@ bool run_test21()
          };
 
       static const std::size_t expression_list_size = sizeof(expression_list) / sizeof(std::string);
-
-      bool error_found = false;
 
       for (std::size_t i = 0; i < expression_list_size; ++i)
       {
@@ -10816,8 +10821,6 @@ bool run_test21()
 
       const std::size_t expressions_size = sizeof(expressions) / sizeof(local_test_t);
 
-      bool error_found = false;
-
       for (std::size_t i = 0; i < expressions_size; ++i)
       {
          const std::string expression_str   = expressions[i].first;
@@ -11006,8 +11009,6 @@ bool run_test21()
       symbol_table.add_variable("a", a);
       symbol_table.add_variable("b", b);
       symbol_table.add_variable("c", c);
-
-      bool error_found = false;
 
       for (std::size_t e = 0; e < expressions_size; ++e)
       {
@@ -11316,8 +11317,6 @@ bool run_test21()
          "var successes := 0; var x := 1 ; for(var i:=0; i < vv8[]; i += 1) { successes += (abs(x + vv8))[i / x] == i + x; }; successes == vv8[]",
       };
 
-      bool error_found = false;
-
       for (std::size_t e = 0; e < sizeof(expressions)/sizeof(std::string); ++e)
       {
          T vs8[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
@@ -11417,20 +11416,29 @@ bool run_test21()
          "sum(vv0 * 2) == (vv0[] * (vv0[] + 1)) and (vv0[] == vv0_size)",
          "sum(2vv0 + 1) == (vv0[] * (vv0[] + 1) + vv0[]) and (vv0[] == vv0_size)",
          "sum(1 + 2vv0) == (vv0[] * (vv0[] + 1) + vv0[]) and (vv0[] == vv0_size)",
+         "sum((2 * vv0) + 1) == (vv0[] * (vv0[] + 1) + vv0[]) and (vv0[] == vv0_size)",
+         "sum(1 + (2 * vv0)) == (vv0[] * (vv0[] + 1) + vv0[]) and (vv0[] == vv0_size)",
+         "sum((vv0 * 2) + 1) == (vv0[] * (vv0[] + 1) + vv0[]) and (vv0[] == vv0_size)",
+         "sum(1 + (vv0 * 2)) == (vv0[] * (vv0[] + 1) + vv0[]) and (vv0[] == vv0_size)",
          "var x := 1; sum(2vv0 + x) == (vv0[] * (vv0[] + 1) + x * vv0[]) and (vv0[] == vv0_size)",
          "var x := 1; sum(x + 2vv0) == (vv0[] * (vv0[] + 1) + x * vv0[]) and (vv0[] == vv0_size)",
+         "var x := 1; sum((2 * vv0) + x) == (vv0[] * (vv0[] + 1) + x * vv0[]) and (vv0[] == vv0_size)",
+         "var x := 1; sum(x + (2 * vv0)) == (vv0[] * (vv0[] + 1) + x * vv0[]) and (vv0[] == vv0_size)",
+         "var x := 1; sum((vv0 * 2) + x) == (vv0[] * (vv0[] + 1) + x * vv0[]) and (vv0[] == vv0_size)",
+         "var x := 1; sum(x + (vv0 * 2)) == (vv0[] * (vv0[] + 1) + x * vv0[]) and (vv0[] == vv0_size)",
          "sum(vv0 += 1) == (vv0[] * (vv0[] + 1) / 2 + vv0[]) and (vv0[] == vv0_size)",
          "var x:= 1; sum(vv0 += x) == (vv0[] * (vv0[] + 1) / 2 + x * vv0[]) and (vv0[] == vv0_size)",
          "var x:= 1; sum(vv0 -= x) == (vv0[] * (vv0[] + 1 - 2x) / 2) and (vv0[] == vv0_size)",
          "(sum(2vv0) == 2 * sum(vv0)) and (vv0[] == vv0_size)",
+         "(sum(2 * vv0) == 2 * sum(vv0)) and (vv0[] == vv0_size)",
          "(sum(vv0 * 2) == 2 * sum(vv0)) and (vv0[] == vv0_size)",
          "var x:= 1; sum(2vv0) == (vv0[] * (vv0[] + 1)) and (vv0[] == vv0_size)",
+         "var x:= 1; sum(2 * vv0) == (vv0[] * (vv0[] + 1)) and (vv0[] == vv0_size)",
+         "var x:= 1; sum(vv0 * 2) == (vv0[] * (vv0[] + 1)) and (vv0[] == vv0_size)",
          "var x := 2; sum(if (x > 1) { vv0 } else { vv1 }) == sum(vv0)",
          "dot(2 * vv0,vv1 - 1) + dot(2 * vv0,vv1 - 1) == 2sum(2vv0 * (vv1 - 1))",
          "(0 * dot(2 * vv0,vv1 - 1)) == 0"
       };
-
-      bool error_found = false;
 
       for (std::size_t e = 0; e < sizeof(expressions) / sizeof(std::string); ++e)
       {
@@ -11483,6 +11491,8 @@ bool run_test21()
                       error.diagnostic.c_str());
             }
 
+            error_found = true;
+
             continue;
          }
 
@@ -11503,6 +11513,8 @@ bool run_test21()
                       static_cast<unsigned int>(i),
                       result,
                       expression_string.c_str());
+
+               error_found = true;
             }
          }
 
@@ -11592,6 +11604,7 @@ bool run_test21()
       if (expression.value() != T(1))
       {
          printf("run_test21() - Error: Failed evaluation Expected 1 got: %f (1)\n", value0);
+         error_found = true;
       }
 
       vv.rebase(v1.data());
@@ -11602,6 +11615,7 @@ bool run_test21()
       if (expression.value() != T(1))
       {
          printf("run_test21() - Error: Failed evaluation Expected 1 got: %f (1)\n", value1);
+         error_found = true;
       }
 
       vv.rebase(v0.data());
@@ -11679,6 +11693,7 @@ bool run_test21()
       if (expression.value() != T(1))
       {
          printf("run_test21() - Error: Failed evaluation Expected 1 got: %f (2)\n", value0);
+         error_found = true;
       }
 
       vv.rebase(v1.data());
@@ -11689,12 +11704,397 @@ bool run_test21()
       if (expression.value() != T(1))
       {
          printf("run_test21() - Error: Failed evaluation Expected 1 got: %f (2)\n", value1);
+         error_found = true;
       }
 
       vv.rebase(v0.data());
       vv_size_handler.register_vector_view(vv);
 
       expression.release();
+   }
+
+   {
+      const std::size_t max_vector_size = 10;
+
+      std::vector<T> vec1(max_vector_size, 1);
+      std::vector<T> vec2(max_vector_size, 2);
+      std::vector<T> vec3(max_vector_size, 3);
+
+      const std::string expressions[] =
+      {
+         "return [x + 10]",
+         "return [10 + x]",
+         "return [2x + 10]",
+         "return [10 + 2x]",
+         "return [(x * 2) + 10]",
+         "return [10 + (x * 2)]",
+         "return [(2 * x) + 10]",
+         "return [10 + (2 * x)]",
+         "return [x + k]",
+         "return [k + x]",
+         "return [2x + k]",
+         "return [k + 2x]",
+         "return [(x * 2) + k]",
+         "return [k + (x * 2)]",
+         "return [(2 * x) + k]",
+         "return [k + (2 * x)]",
+         "return [x + y]" ,
+         "return [y + x]" ,
+         "return [2x + y]",
+         "return [y + 2x]",
+         "return [2x + 2y]",
+         "return [2y + 2x]",
+         "return [(2 * x) + y]",
+         "return [y + (2 * x)]",
+         "return [(x * 2) + y]",
+         "return [y + (x * 2)]",
+         "return [(2 * x) + (2 * y)]",
+         "return [(2 * y) + (2 * x)]",
+         "return [(x * 2) + (y * 2)]",
+         "return [(y * 2) + (x * 2)]",
+      };
+
+      const T expected_values[] =
+      {
+         T(2 + 10),
+         T(2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 + 10),
+         T(2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 * 2 + 10),
+         T(2 + 3),
+         T(3 + 2),
+         T(2 * 2 + 3),
+         T(3 + 2 * 2),
+         T(2 * 2 + 2 * 3),
+         T(2 * 3 + 2 * 2),
+         T(2 * 2 + 3),
+         T(3 + (2 * 2)),
+         T(2 * 2 + 3),
+         T(3 + 2 * 2),
+         T(2 * 2 + 2 * 3),
+         T(2 * 3 + 2 * 2),
+         T(2 * 2 + 3 * 2),
+         T(3 * 2 + 2 * 2),
+      };
+
+      const std::size_t expressions_size = sizeof(expressions) / sizeof(std::string);
+
+      for (std::size_t i = 0; i < expressions_size; ++i)
+      {
+         const std::string& expression_string = expressions[i];
+
+         exprtk::vector_view<T> x_view = exprtk::make_vector_view(vec1, vec1.size());
+
+         for (std::size_t vector_size = 1; vector_size <= 10; ++vector_size)
+         {
+            symbol_table_t symbol_table;
+            expression_t   expression;
+            parser_t       parser;
+
+            T k = T(10);
+
+            symbol_table.add_variable("k", k     );
+            symbol_table.add_vector  ("x", x_view);
+            symbol_table.add_vector  ("y", vec3  );
+
+            expression.register_symbol_table(symbol_table);
+
+            if (!parser.compile(expression_string, expression))
+            {
+               printf("run_test21() - Error: %s\tExpression: %s\n",
+                     parser.error().c_str(),
+                     expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            x_view.rebase(vec2.data());
+
+            x_view.set_size(vector_size);
+
+            expression.value();
+
+            if (!expression.return_invoked())
+            {
+               printf("run_test21() - Error: expected return_invoked for expression: %s\n",
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            const exprtk::results_context<T>& results = expression.results();
+
+            if (results.count() != 1)
+            {
+               printf("run_test21() - Error: expected 1 return value, instead got: %d for expression: %s\n",
+                      static_cast<int>(results.count()),
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            if (results[0].type != exprtk::results_context<T>::type_store_t::e_vector)
+            {
+               printf("run_test21() - Error: expected vector type for return value for expression: %s\n",
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            typename exprtk::type_store<T>::vector_view vector(results[0]);
+
+            if (vector.size() != vector_size)
+            {
+               printf("run_test21() - Error: expected vector size %d instead got: %d for expression: %s\n",
+                      static_cast<int>(vector_size),
+                      static_cast<int>(vector.size()),
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            for (std::size_t j = 0; j < vector.size(); ++j)
+            {
+               if (vector[j] != expected_values[i])
+               {
+                  printf("run_test21() - Error: expected vector[%d] expected %f instead got: %f for expression: %s\n",
+                         static_cast<int>(j),
+                         expected_values[i],
+                         vector[j],
+                         expression_string.c_str());
+
+                  error_found = true;
+               }
+            }
+         }
+      }
+   }
+
+   {
+      expression_t expression;
+      parser_t     parser;
+
+      std::string expressions[] =
+      {
+         "1 + 2"         ,
+         "return [1 + 2]",
+         "z + 2"         ,
+         "1 + 2"         ,
+         "z + 2"
+      };
+
+      typedef std::pair<T,bool> test_t;
+
+      test_t expected_results[] =
+      {
+         test_t(3                                   , false ),
+         test_t(std::numeric_limits<T>::quiet_NaN() , true  ),
+         test_t(std::numeric_limits<T>::quiet_NaN() , false ),
+         test_t(3                                   , false ),
+         test_t(std::numeric_limits<T>::quiet_NaN() , false )
+      };
+
+      const std::size_t expressions_size = sizeof(expressions) / sizeof(std::string);
+
+      for (std::size_t i = 0; i < expressions_size; ++i)
+      {
+         const std::string& expression_string = expressions[i];
+
+         parser.compile(expression_string, expression);
+
+         test_t& expected_result = expected_results[i];
+
+         const T    result      = expression.value();
+         const bool ret_invoked = expression.return_invoked();
+
+         const bool result_check = std::isnan(result) ? std::isnan(expected_result.first) : result == expected_result.first;
+
+         if (!result_check || (ret_invoked != expected_result.second))
+         {
+            printf("run_test21() - Error: Expression: %s result: %f ret_invoked: %c  "
+                   "expected result: %f ret_invoked: %c \n",
+                   expression_string.c_str(),
+                   result,
+                   ret_invoked ? 'T' : 'F',
+                   expected_result.first,
+                   expected_result.second ? 'T' : 'F');
+
+            error_found = true;
+
+            continue;
+         }
+      }
+
+   }
+
+   {
+      const std::size_t max_vector_size = 10;
+
+      std::vector<T> vec1(max_vector_size, 1);
+      std::vector<T> vec2(max_vector_size, 2);
+
+      std::vector<T> vec3(max_vector_size / 2, 3);
+
+      const std::string expressions[] =
+      {
+         "return [x + y]" ,
+         "return [y + x]" ,
+         "return [2x + y]",
+         "return [y + 2x]",
+         "return [2x + 2y]",
+         "return [2y + 2x]",
+         "return [(2 * x) + y]",
+         "return [y + (2 * x)]",
+         "return [(x * 2) + y]",
+         "return [y + (x * 2)]",
+         "return [(2 * x) + (2 * y)]",
+         "return [(2 * y) + (2 * x)]",
+         "return [(x * 2) + (y * 2)]",
+         "return [(y * 2) + (x * 2)]",
+      };
+
+      const T expected_values[] =
+      {
+         T(2 + 3),
+         T(3 + 2),
+         T(2 * 2 + 3),
+         T(3 + 2 * 2),
+         T(2 * 2 + 2 * 3),
+         T(2 * 3 + 2 * 2),
+         T(2 * 2 + 3),
+         T(3 + (2 * 2)),
+         T(2 * 2 + 3),
+         T(3 + 2 * 2),
+         T(2 * 2 + 2 * 3),
+         T(2 * 3 + 2 * 2),
+         T(2 * 2 + 3 * 2),
+         T(3 * 2 + 2 * 2),
+      };
+
+      const std::size_t expressions_size = sizeof(expressions) / sizeof(std::string);
+
+      for (std::size_t i = 0; i < expressions_size; ++i)
+      {
+         const std::string& expression_string = expressions[i];
+
+         exprtk::vector_view<T> x_view = exprtk::make_vector_view(vec1, vec1.size());
+
+         for (std::size_t vector_size = vec3.size() + 1; vector_size <= 10; ++vector_size)
+         {
+            symbol_table_t symbol_table;
+            expression_t   expression;
+            parser_t       parser;
+
+            symbol_table.add_vector  ("x", x_view);
+            symbol_table.add_vector  ("y", vec3  );
+
+            expression.register_symbol_table(symbol_table);
+
+            if (!parser.compile(expression_string, expression))
+            {
+               printf("run_test21() - Error: %s\tExpression: %s\n",
+                      parser.error().c_str(),
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            x_view.rebase(vec2.data());
+
+            x_view.set_size(vector_size);
+
+            expression.value();
+
+            if (!expression.return_invoked())
+            {
+               printf("run_test21() - Error: expected return_invoked for expression: %s\n",
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            const exprtk::results_context<T>& results = expression.results();
+
+            if (results.count() != 1)
+            {
+               printf("run_test21() - Error: expected 1 return value, instead got: %d for expression: %s\n",
+                      static_cast<int>(results.count()),
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            if (results[0].type != exprtk::results_context<T>::type_store_t::e_vector)
+            {
+               printf("run_test21() - Error: expected vector type for return value for expression: %s\n",
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            typename exprtk::type_store<T>::vector_view vector(results[0]);
+
+            if (vector.size() != vec3.size())
+            {
+               printf("run_test21() - Error: expected vector size %d instead got: %d for expression: %s\n",
+                      static_cast<int>(vec3.size()),
+                      static_cast<int>(vector.size()),
+                      expression_string.c_str());
+
+               error_found = true;
+
+               continue;
+            }
+
+            for (std::size_t j = 0; j < vector.size(); ++j)
+            {
+               if (vector[j] != expected_values[i])
+               {
+                  printf("run_test21() - Error: expected vector[%d] expected %f instead got: %f for expression: %s\n",
+                         static_cast<int>(j),
+                         expected_values[i],
+                         vector[j],
+                         expression_string.c_str());
+
+                  error_found = true;
+               }
+            }
+         }
+      }
+   }
+
+   if (error_found)
+   {
+      return false;
    }
 
    return true;
@@ -12792,6 +13192,178 @@ bool run_test22()
             result = false;
             continue;
          }
+      }
+   }
+
+   {
+      typedef std::pair<std::string,std::size_t> exprpack_t;
+
+      const exprpack_t expression_list[] =
+      {
+         exprpack_t("var x := 1;", 1 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2;", 2 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2;", 3 * sizeof(T) ),
+
+         exprpack_t("const var x := 1;", 1 * sizeof(T) ),
+         exprpack_t("const var x := 1; const var y := 2;", 2 * sizeof(T) ),
+         exprpack_t("const var x := 1; const var y := 2; const var z := 2;", 3 * sizeof(T) ),
+
+         exprpack_t("const var x := 1;", 1 * sizeof(T) ),
+         exprpack_t("const var x := 1; var y := 2;", 2 * sizeof(T) ),
+         exprpack_t("const var x := 1; var y := 2; const var z := 2;", 3 * sizeof(T) ),
+
+         exprpack_t("var x := 1;", 1 * sizeof(T) ),
+         exprpack_t("var x := 1; const var y := 2;", 2 * sizeof(T) ),
+         exprpack_t("var x := 1; const var y := 2; var z := 2;", 3 * sizeof(T) ),
+
+         exprpack_t("var x;", 1 * sizeof(T) ),
+         exprpack_t("var x; var y;", 2 * sizeof(T) ),
+         exprpack_t("var x; var y; var z;", 3 * sizeof(T) ),
+
+         exprpack_t("var v[10];", 10 * sizeof(T) ),
+         exprpack_t("var v[10]; var w[20];", 30 * sizeof(T) ),
+         exprpack_t("var v[10]; var w[20]; var u[20];", 50 * sizeof(T) ),
+
+         exprpack_t("var x := 1; var v[10];", 11 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var v[10];", 12 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2; var v[10];", 13 * sizeof(T) ),
+
+         exprpack_t("var x := 1; if (x > 2) { var a := x + 1; };", 2 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; if (x > 2) { var a := x + 1; };", 3 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2; if (x > 2) { var a := x + 1; };", 4 * sizeof(T) ),
+
+         exprpack_t("var x := 1; if (x > 2) { var a[10] := [x + 1]; };", 11 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; if (x > 2) { var a[10] := [x + 1]; };", 12 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2; if (x > 2) { var a[10] := [x + 1]; };", 13 * sizeof(T) ),
+
+         exprpack_t("var x := 1; if (x > 2) { var a := x + 1; } else { var a := x + 2; };", 2 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; if (x > 2) { var a := x + 1; } else { var a := x + 2; };", 3 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2; if (x > 2) { var a := x + 1; } else { var a := x + 2; };", 4 * sizeof(T) ),
+
+         exprpack_t("var x := 1; if (x > 2) { var a := x + 1; } else { var a := x + 2; var b := a; };", 3 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; if (x > 2) { var a := x + 1; } else { var a := x + 2; var b := a; };", 4 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2; if (x > 2) { var a := x + 1; } else { var a := x + 2; var b := a; };", 5 * sizeof(T) ),
+
+         exprpack_t("var v[10]; v[7] + 1;", 10 * sizeof(T) ),
+      };
+
+      const std::size_t expression_list_size = sizeof(expression_list) / sizeof(exprpack_t);
+
+      for (std::size_t i = 0; i < expression_list_size; ++i)
+      {
+         const exprpack_t& exprpack = expression_list[i];
+
+         expression_t expression;
+         parser_t     parser;
+
+         if (!parser.compile(exprpack.first, expression))
+         {
+            printf("run_test22() - Error: Max expression/vector size check. Diag: %s Expression: %s [01]\n",
+                   parser.error().c_str(),
+                   exprpack.first.c_str());
+
+            result = false;
+            continue;
+         }
+
+         if (parser.total_local_symbol_size_bytes() != exprpack.second)
+         {
+            printf("run_test22() - Error: Mismatch in expected expression size. Expected size: %d instead got: %d "
+                   "Expression: %s [02]\n",
+                   static_cast<int>(exprpack.second),
+                   static_cast<int>(parser.total_local_symbol_size_bytes()),
+                   exprpack.first.c_str());
+
+            result = false;
+            continue;
+         }
+      }
+   }
+
+   {
+      typedef std::pair<std::string,std::size_t> exprpack_t;
+
+      const exprpack_t expression_list[] =
+      {
+         exprpack_t("var x := 1;", 0 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 1;", 1 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 1; var z := 1;", 2 * sizeof(T) ),
+
+         exprpack_t("var x;", 0 * sizeof(T) ),
+         exprpack_t("var x; var y;", 1 * sizeof(T) ),
+         exprpack_t("var x; var y; var z;", 2 * sizeof(T) ),
+
+         exprpack_t("var x{};", 0 * sizeof(T) ),
+         exprpack_t("var x{}; var y{};", 1 * sizeof(T) ),
+         exprpack_t("var x{}; var y{}; var z{};", 2 * sizeof(T) ),
+
+         exprpack_t("const var x := 1;", 0 * sizeof(T) ),
+         exprpack_t("const var x := 1; const var y := 1;", 1 * sizeof(T) ),
+         exprpack_t("const var x := 1; const var y := 1; const var z := 1;", 2 * sizeof(T) ),
+
+         exprpack_t("const var x := 1;", 0 * sizeof(T) ),
+         exprpack_t("const var x := 1; var y := 1;", 1 * sizeof(T) ),
+         exprpack_t("const var x := 1; var y := 1; const var z := 1;", 2 * sizeof(T) ),
+
+         exprpack_t("var x := 1;", 0 * sizeof(T) ),
+         exprpack_t("var x := 1; const var y := 1;", 1 * sizeof(T) ),
+         exprpack_t("var x := 1; const var y := 1; var z := 1;", 2 * sizeof(T) ),
+
+         exprpack_t("var v[10];", 9 * sizeof(T) ),
+         exprpack_t("var x := 1; var v[10];", 10 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var v[10];", 11 * sizeof(T) ),
+         exprpack_t("var x := 1; var y := 2; var z := 2; var v[10];", 12 * sizeof(T) ),
+      };
+
+      const std::size_t expression_list_size = sizeof(expression_list) / sizeof(exprpack_t);
+
+      for (std::size_t i = 0; i < expression_list_size; ++i)
+      {
+         const exprpack_t& exprpack = expression_list[i];
+
+         expression_t expression;
+         parser_t     parser;
+
+         parser.settings().set_max_total_local_symbol_size_bytes(exprpack.second);
+         parser.settings().set_max_local_vector_size(exprpack.second / sizeof(T));
+
+         if (parser.compile(exprpack.first, expression))
+         {
+            printf("run_test22() - Error: Expected the expression to fail compilation due to size check. Expression: %s [03]\n",
+                   exprpack.first.c_str());
+
+            result = false;
+            continue;
+         }
+
+         if (parser.total_local_symbol_size_bytes() != 0)
+         {
+            printf("run_test22() - Error: Expected zero size expression, instead got: %d "
+                   "Expression: %s [02]\n",
+                   static_cast<int>(parser.total_local_symbol_size_bytes()),
+                   exprpack.first.c_str());
+
+            result = false;
+            continue;
+         }
+      }
+   }
+
+   {
+      expression_t expression;
+      parser_t     parser;
+
+      parser.settings().set_max_total_local_symbol_size_bytes(100);
+      parser.settings().set_max_local_vector_size(200);
+
+      const std::string expression_str = "var x := 1;";
+
+      if (parser.compile(expression_str, expression))
+      {
+         printf("run_test22() - Error: Expected the expression to fail compilation due to size check. Expression: %s [04]\n",
+                expression_str.c_str());
+
+         result = false;
       }
    }
 

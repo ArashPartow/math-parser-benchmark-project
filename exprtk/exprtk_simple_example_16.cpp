@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 16                                          *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -34,10 +34,13 @@ void linear_least_squares()
    const std::string linear_least_squares_program =
       " if (x[] == y[])                                        "
       " {                                                      "
-      "    beta  := (sum(x * y) - sum(x) * sum(y) / x[]) /     "
-      "             (sum(x^2) - sum(x)^2 / x[]);               "
+      "    var mean_x := avg(x);                               "
+      "    var mean_y := avg(y);                               "
       "                                                        "
-      "    alpha := avg(y) - beta * avg(x);                    "
+      "    beta  := sum((x - mean_x) * (y - mean_y)) /         "
+      "             sum((x - mean_x)^2);                       "
+      "                                                        "
+      "    alpha := mean_y - beta * mean_x;                    "
       "                                                        "
       "    rmse  := sqrt(sum((beta * x + alpha - y)^2) / y[]); "
       " }                                                      "
@@ -48,8 +51,8 @@ void linear_least_squares()
       "    rmse  := null;                                      "
       " }                                                      ";
 
-   T x[] = {T(  1), T(  2), T(3), T(  4), T(  5), T(6), T(  7), T(  8), T(  9), T(10)};
-   T y[] = {T(8.7), T(6.8), T(6), T(5.6), T(3.8), T(3), T(2.4), T(1.7), T(0.4), T(-1)};
+   T x[] = { T(1.0), T(2.0), T(3.0), T(4.0), T(5.0), T(6.0), T(7.0), T(8.0), T(9.0), T(10) };
+   T y[] = { T(8.7), T(6.8), T(6.0), T(5.6), T(3.8), T(3.0), T(2.4), T(1.7), T(0.4), T(-1) };
 
    T alpha = T(0);
    T beta  = T(0);
@@ -66,7 +69,11 @@ void linear_least_squares()
    expression.register_symbol_table(symbol_table);
 
    parser_t parser;
-   parser.compile(linear_least_squares_program,expression);
+   if (!parser.compile(linear_least_squares_program,expression))
+   {
+      printf("error: %s\n",parser.error().c_str());
+      return;
+   }
 
    expression.value();
 
