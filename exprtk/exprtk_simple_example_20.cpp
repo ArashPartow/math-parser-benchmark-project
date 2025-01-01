@@ -3,7 +3,7 @@
  *         C++ Mathematical Expression Toolkit Library        *
  *                                                            *
  * Simple Example 20                                          *
- * Author: Arash Partow (1999-2024)                           *
+ * Author: Arash Partow (1999-2025)                           *
  * URL: https://www.partow.net/programming/exprtk/index.html  *
  *                                                            *
  * Copyright notice:                                          *
@@ -32,9 +32,9 @@ struct vector_access_rtc : public exprtk::vector_access_runtime_check
 
    bool handle_runtime_violation(violation_context& context)
    {
-      const map_t::iterator itr = vector_map.find(static_cast<void*>(context.base_ptr));
-      std::string vector_name   = (itr != vector_map.end()) ?
-                                  itr->second : "Unknown"   ;
+      const map_t::iterator itr     = vector_map.find(static_cast<void*>(context.base_ptr));
+      const std::string vector_name = (itr != vector_map.end()) ?
+                                      itr->second : "Unknown"   ;
 
       printf("Runtime vector access violation\n"
              "Vector: %s base: %p end: %p access: %p typesize: %d\n",
@@ -83,17 +83,17 @@ void vector_overflow_example()
 
    parser.register_vector_access_runtime_check(vec_rtc);
 
+   if (!parser.compile(expression_str, expression))
+   {
+      printf("Error: %s\tExpression: %s\n",
+             parser.error().c_str(),
+             expression_str.c_str());
+
+      return;
+   }
+
    try
    {
-      if (!parser.compile(expression_str, expression))
-      {
-         printf("Error: %s\tExpression: %s\n",
-                parser.error().c_str(),
-                expression_str.c_str());
-
-         return;
-      }
-
       expression.value();
    }
    catch(std::runtime_error& exception)
